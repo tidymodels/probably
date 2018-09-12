@@ -17,5 +17,8 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0.9000
 Suggests: 
     testthat
-
-
+Remotes:
+    r-lib/vctrs
+Imports: 
+    rlang,
+    vctrs
