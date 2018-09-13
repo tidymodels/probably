@@ -4,7 +4,7 @@
 \name{probably-package}
 \alias{probably}
 \alias{probably-package}
-\title{probably: Tools for post-processing class probability estimates.}
+\title{probably: Tools for post-processing class probability estimates}
 \description{
 Models can be improved by post-processing class probabilities, by: recalibration, conversion to hard probabilities, assessment of equivocal zones, and other activities. probably contains tools for conducting these operations.
 }
