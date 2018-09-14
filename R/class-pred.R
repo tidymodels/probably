@@ -1,113 +1,140 @@
 
+# ------------------------------------------------------------------------------
+# Creation
+
 #' @importFrom vctrs new_vctr
-new_class_pred <- function(x, labels, equivocal_label, ..., subclass = NULL) {
+new_class_pred <- function(x, labels, ..., subclass = NULL) {
 
   stopifnot(is.integer(x))
   stopifnot(is.character(labels))
-  stopifnot(is.character(equivocal_label))
 
   new_vctr(
     .data = x,
     labels = labels,
-    equivocal_label = equivocal_label,
     ...,
-    class = c(subclass, "class_pred", "factor")
+    class = c(subclass, "class_pred")
   )
 
 }
 
 #' @export
-#' @importFrom vctrs vec_cast
 #' @importFrom rlang abort
-class_pred <- function(x, which = NULL, equivocal_label = "?") {
+#' @importFrom vctrs vec_cast
+class_pred <- function(x = factor(), which = integer()) {
 
+  # Check invariants
   if(!is.factor(x)) {
     abort("`x` must be a factor.")
-  }
-
-  if(is.null(which)) {
-    which <- integer(0)
   }
 
   if(!is.numeric(which)) {
     abort("`which` must be a numeric.")
   }
 
-  if(!is.character(equivocal_label)) {
-    abort("`equivocal_label` must be a character.")
-  }
+  # which can be double, but convert to integer and warn about
+  # any lossy conversion
+  which <- vec_cast(which, integer())
 
-  if(! (length(equivocal_label) == 1) ) {
-    abort("`equivocal_label` must be a character.")
-  }
+  # no duplicates allowed
+  which <- unique(which)
 
-  which <- vec_cast(which, integer(0))
+  # # more checks on values of which with regard to length of x?
+  # if(max(which) > length(x)) stop("The largest value of which can be length(x)")
 
   labs <- levels(x)
 
+  # rip out the underlying integer structure
+  # as_integer() also removes attributes
   x_int <- rlang::as_integer(unclass(x))
 
-  # declare as equivocal
+  # declare equivocal
   x_int[which] <- 0L
 
   new_class_pred(
     x = x_int,
-    labels = labs,
-    equivocal_label = equivocal_label
+    labels = labs
   )
 }
 
-#' @export
-format.class_pred <- function(x) {
+# ------------------------------------------------------------------------------
+# Printing
 
-  x <- unclass(x)
+# Always return a character vector
+# Rely on as.character.factor() for NA handling
+# Used by data.frame() columns and general printing
+format.class_pred <- function(x, ...) {
 
+  x <- format_as_factor(x)
+
+  out <- as.character.factor(x)
+
+  out
+}
+
+# This is different from as_factor()
+# This changes enough to be able to print right
+#' @importFrom vctrs vec_data
+format_as_factor <- function(x, ...) {
+
+  lab_equivocal <- "?" # global option?
+  labs_known <- attr(x, "labels")
+
+  # In this order b/c `0 = equivocal`
+  labs <- c(lab_equivocal, labs_known)
+
+  # strip attributes
+  x <- vec_data(x)
+
+  # Factors start at 1
   x <- x + 1L
 
-  attr(x, "levels") <- c(attr(x, "equivocal_label"), attr(x, "labels"))
-
+  attr(x, "levels") <- labs
   class(x) <- "factor"
 
-  format(x)
+  x
+}
 
-  invisible(x)
+# ------------------------------------------------------------------------------
+# Methods
+
+#' @export
+is_equivocal <- function(x, ...) {
+  UseMethod("is_equivocal")
 }
 
 #' @export
-`[.class_pred` <- function(x, i, ...) {
-
-  x_new <- rlang::as_integer(unclass(NextMethod()))
-
-  new_class_pred(
-    x = x_new,
-    labels = attr(x, "labels"),
-    equivocal_label = attr(x, "equivocal_label")
-  )
-
+#' @importFrom rlang abort
+is_equivocal.default <- function(x, ...) {
+  cls <- quote_collapse(class(x))
+  msg <- paste0("No implementation of `is_equivocal()` for object of class ", cls, ".")
+  abort(msg)
 }
 
-print.class_pred <- function(x) {
-  attr(x, "levels") <- c(attr(x, "equivocal_label"), attr(x, "labels"))
-  print.factor(x)
+#' @export
+is_equivocal.class_pred <- function(x, ...) {
+  is_0 <- vec_data(x) == 0L
+
+  # NA values are also FALSE
+  is_0[is.na(is_0)] <- FALSE
+
+  as.logical(is_0)
 }
 
-as.character.class_pred <- function(x) {
-
-  x <- unclass(x)
-
-  x <- x + 1L
-
-  attr(x, "levels") <- c(attr(x, "equivocal_label"), attr(x, "labels"))
-
-  class(x) <- "factor"
-
-  as.character.factor(x)
-}
-
-which_equivocal <- function(x) {
+#' @export
+which_equivocal <- function(x, ...) {
   UseMethod("which_equivocal")
 }
 
-which_equivocal.class_pred <- function(x) {
-  unclass(x) == 0
+#' @export
+#' @importFrom rlang abort
+which_equivocal.default <- function(x, ...) {
+  cls <- quote_collapse(class(x))
+  msg <- paste0("No implementation of `which_equivocal()` for object of class ", cls, ".")
+  abort(msg)
+}
+
+#' @export
+#' @importFrom vctrs vec_data
+which_equivocal.class_pred <- function(x, ...) {
+  which(vec_data(x) == 0L)
 }
