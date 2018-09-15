@@ -151,3 +151,15 @@ union_labels <- function(x, y) {
 
   sort(union(x_labels, y_labels))
 }
+
+# # class_pred <-> factor
+# # new_factor() is not currently exported!!!?
+# vec_type2.class_pred.factor <- function(x, y) new_factor(levels = union_labels_levels(y, x))
+# vec_type2.factor.class_pred <- function(x, y) new_factor(levels = union_labels_levels(x, y))
+#
+# union_labels_levels <- function(x, y) {
+#   x_labels <- attr(x, "labels")
+#   y_labels <- attr(y, "levels")
+#
+#   sort(union(x_labels, y_labels))
+# }
