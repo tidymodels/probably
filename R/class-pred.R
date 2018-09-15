@@ -43,6 +43,11 @@ class_pred <- function(x = factor(), which = integer()) {
 
   labs <- levels(x)
 
+  # Check for `?` in labels. Not allowed.
+  if("?" %in% labs) {
+    abort("`\"?\"` is reserved for equivocal values and must not already be a level.")
+  }
+
   # rip out the underlying integer structure
   # as_integer() also removes attributes
   x_int <- rlang::as_integer(unclass(x))
@@ -95,23 +100,40 @@ format_as_factor <- function(x, ...) {
 }
 
 # ------------------------------------------------------------------------------
-# Methods
+# Coercion
 
 #' @export
-is_equivocal <- function(x, ...) {
+as_class_pred <- function(x, which) {
+  UseMethod("as_class_pred")
+}
+
+as_class_pred.default <- function(x, which) {
+  abort_default(x, "as_class_pred")
+}
+
+#' @export
+as_class_pred.factor <- function(x, which = integer()) {
+  class_pred(x, which)
+}
+
+# ------------------------------------------------------------------------------
+# Methods
+
+# -----------------------
+# is_equivocal
+
+#' @export
+is_equivocal <- function(x) {
   UseMethod("is_equivocal")
 }
 
 #' @export
-#' @importFrom rlang abort
-is_equivocal.default <- function(x, ...) {
-  cls <- quote_collapse(class(x))
-  msg <- paste0("No implementation of `is_equivocal()` for object of class ", cls, ".")
-  abort(msg)
+is_equivocal.default <- function(x) {
+  abort_default(x, "is_equivocal")
 }
 
 #' @export
-is_equivocal.class_pred <- function(x, ...) {
+is_equivocal.class_pred <- function(x) {
   is_0 <- vec_data(x) == 0L
 
   # NA values are also FALSE
@@ -120,21 +142,47 @@ is_equivocal.class_pred <- function(x, ...) {
   as.logical(is_0)
 }
 
+# -----------------------
+# which_equivocal
+
 #' @export
-which_equivocal <- function(x, ...) {
+which_equivocal <- function(x) {
   UseMethod("which_equivocal")
 }
 
 #' @export
-#' @importFrom rlang abort
-which_equivocal.default <- function(x, ...) {
-  cls <- quote_collapse(class(x))
-  msg <- paste0("No implementation of `which_equivocal()` for object of class ", cls, ".")
-  abort(msg)
+which_equivocal.default <- function(x) {
+  abort_default(x, "which_equivocal")
 }
 
 #' @export
 #' @importFrom vctrs vec_data
-which_equivocal.class_pred <- function(x, ...) {
-  which(vec_data(x) == 0L)
+which_equivocal.class_pred <- function(x) {
+  which(is_equivocal(x))
+}
+
+# -----------------------
+# any_equivocal
+
+#' @export
+any_equivocal <- function(x) {
+  UseMethod("any_equivocal")
+}
+
+#' @export
+any_equivocal.default <- function(x) {
+  abort_default(x, "any_equivocal")
+}
+
+#' @export
+any_equivocal.class_pred <- function(x) {
+  any(is_equivocal(x))
+}
+
+# -----------------------
+# is_class_pred
+
+#' @export
+is_class_pred <- function(x) {
+  inherits(x, "class_pred")
 }

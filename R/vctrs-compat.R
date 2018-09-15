@@ -57,7 +57,10 @@ vec_cast.class_pred.factor <- function(x, to) {
 
 #' @export
 #' @importFrom vctrs vec_data
+#' @importFrom vctrs warn_lossy_cast
 vec_cast.factor.class_pred <- function(x, to) {
+
+  warn_lossy_cast(x, to, locations = which_equivocal(x))
 
   x_data <- vec_data(x)
   labs <- attr(x, "labels")
@@ -67,9 +70,42 @@ vec_cast.factor.class_pred <- function(x, to) {
   factor(x_data, labels = labs)
 }
 
+# character -> class_pred, assume no equivocal values
+
+#' @method vec_cast.class_pred factor
+#' @export
+vec_cast.class_pred.character <- function(x, to) {
+  class_pred(factor(x), integer())
+}
+
+# class_pred -> character, equivocals become NA
+# as.factor() comes for free with this, but the lossy message is displayed
+# twice because it calls as.character() twice
+
+#' @export
+#' @importFrom vctrs vec_data
+#' @importFrom vctrs warn_lossy_cast
+vec_cast.character.class_pred <- function(x, to) {
+
+  # same implementation as vec_cast.factor.class_pred()
+  # but with different lossy cast message. ? -> NA so we want to be noisy
+  warn_lossy_cast(x, to, locations = which_equivocal(x))
+
+  x_data <- vec_data(x)
+  labs <- attr(x, "labels")
+
+  x_data[is_equivocal(x)] <- NA_integer_
+
+  as.character(factor(x_data, labels = labs))
+
+  # # I want to do this, but can't currently cast factor -> character?
+  # vec_cast(vec_cast(x, factor()), character())
+}
+
 # ------------------------------------------------------------------------------
 # Coercion
 
+# -----------------------
 # Required coercion
 
 #' @export
@@ -98,6 +134,7 @@ vec_type2.NULL.class_pred <- function(x, y) {
   class_pred()
 }
 
+# -----------------------
 # Custom coercion
 
 # class_pred + class_pred = class_pred with unioned labels
