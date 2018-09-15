@@ -67,6 +67,7 @@ class_pred <- function(x = factor(), which = integer()) {
 # Always return a character vector
 # Rely on as.character.factor() for NA handling
 # Used by data.frame() columns and general printing
+#' @export
 format.class_pred <- function(x, ...) {
 
   x <- format_as_factor(x)
