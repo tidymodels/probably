@@ -20,6 +20,8 @@ Depends:
     yardstick
 Imports: 
     dplyr,
+    glue,
+    purrr,
     rlang,
     tidyr,
     tidyselect,
