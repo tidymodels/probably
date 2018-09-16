@@ -7,8 +7,8 @@
 \usage{
 threshold_data(.data, ...)
 
-\method{threshold_data}{data.frame}(.data, truth, estimate, ..., na_rm = TRUE,
-  thresholds = NULL, summarize = FALSE)
+\method{threshold_data}{data.frame}(.data, truth, estimate, ...,
+  na_rm = TRUE, thresholds = NULL, summarize = FALSE)
 }
 \arguments{
 \item{.data}{A tibble or data frame.}
