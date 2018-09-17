@@ -43,9 +43,11 @@ class_pred <- function(x = factor(), which = integer()) {
 
   labs <- levels(x)
 
-  # Check for `?` in labels. Not allowed.
-  if("?" %in% labs) {
-    abort("`\"?\"` is reserved for equivocal values and must not already be a level.")
+  # Check for `EQ` in labels. Not allowed.
+  eq <- probably.equivocal_label
+  if(eq %in% labs) {
+    msg <- paste0("`\"", eq, "\"` is reserved for equivocal values and must not already be a level.")
+    abort(msg)
   }
 
   # rip out the underlying integer structure
@@ -82,7 +84,7 @@ format.class_pred <- function(x, ...) {
 #' @importFrom vctrs vec_data
 format_as_factor <- function(x, ...) {
 
-  lab_equivocal <- "?" # global option?
+  lab_equivocal <- paste0("[", probably.equivocal_label, "]")
   labs_known <- attr(x, "labels")
 
   # In this order b/c `0 = equivocal`
@@ -186,4 +188,12 @@ any_equivocal.class_pred <- function(x) {
 #' @export
 is_class_pred <- function(x) {
   inherits(x, "class_pred")
+}
+
+# ------------------------------------------------------------------------------
+# Base S3 Methods
+
+#' @export
+levels.class_pred <- function(x) {
+  attr(x, "labels")
 }

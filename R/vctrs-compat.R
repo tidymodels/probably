@@ -4,8 +4,28 @@
 # Abbreviation used in tibbles and str() (through that, rstudio)
 
 #' @export
+#' @importFrom vctrs vec_ptype_abbr
 vec_ptype_abbr.class_pred <- function(x) {
   "clss_prd"
+}
+
+#' @export
+#' @importFrom vctrs vec_print_header
+vec_print_header.class_pred <- function(x) {
+  # no header
+}
+
+#' @export
+#' @importFrom vctrs vec_print_data
+vec_print_data.class_pred <- function(x) {
+  print(format_as_factor(x), max.levels = 0)
+}
+
+#' @export
+#' @importFrom vctrs vec_print_footer
+vec_print_footer.class_pred <- function(x) {
+  cat_levels(x)
+  cat_eq_count(x)
 }
 
 # ------------------------------------------------------------------------------
@@ -62,7 +82,9 @@ vec_cast.class_pred.factor <- function(x, to) {
 #' @importFrom vctrs warn_lossy_cast
 vec_cast.factor.class_pred <- function(x, to) {
 
-  warn_lossy_cast(x, to, locations = which_equivocal(x))
+  if(any_equivocal(x)) {
+    warn_lossy_cast(x, to, locations = which_equivocal(x))
+  }
 
   x_data <- vec_data(x)
   labs <- attr(x, "labels")
@@ -91,7 +113,9 @@ vec_cast.character.class_pred <- function(x, to) {
 
   # same implementation as vec_cast.factor.class_pred()
   # but with different lossy cast message. ? -> NA so we want to be noisy
-  warn_lossy_cast(x, to, locations = which_equivocal(x))
+  if(any_equivocal(x)) {
+    warn_lossy_cast(x, to, locations = which_equivocal(x))
+  }
 
   x_data <- vec_data(x)
   labs <- attr(x, "labels")
