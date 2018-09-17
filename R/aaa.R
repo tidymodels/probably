@@ -16,4 +16,6 @@ dummy <- function() { }
 
 }
 
+requireNamespace("yardstick", quietly = TRUE)
+
 ## nocov end

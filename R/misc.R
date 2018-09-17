@@ -1,5 +1,4 @@
 #' @import rlang
-#' @import yardstick
 #' @importFrom utils globalVariables
 
 # is there a forcats for this?

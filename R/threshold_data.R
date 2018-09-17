@@ -1,9 +1,9 @@
 #' Generate data for thresholding two-class data
-#' 
+#'
 #' `threshold_data` can take a set of class probability predictions
 #'  and determine performance characteristics across different values
-#'  of the probability threshold and any grouping variables. 
-#'  
+#'  of the probability threshold and any grouping variables.
+#'
 #' @param .data A tibble or data frame.
 #' @param truth A two-level factor of the true outcome labels.
 #'  Note that that the global option `yardstick.event_first` will be
@@ -12,18 +12,18 @@
 #'  that larger values are more indicative of the event of interest.
 #' @param ... An optional set of variables or `dplyr` selectors
 #'  that capture columns that are used as grouping variables.
-#'  See [tidyselect::select_helpers()]. 
-#' @param na_rm A single logical: should missing data be removed? 
+#'  See [tidyselect::select_helpers()].
+#' @param na_rm A single logical: should missing data be removed?
 #' @param thresholds A numeric vector of values for the probability
 #'  threshold to call a sample an event. If unspecified, a series
 #'  of values between 0.5 and 1.0 are used. **Note**: if this
-#'  argument is used, it must be named. 
-#' @param summarize A single logical. Should the averages of the 
+#'  argument is used, it must be named.
+#' @param summarize A single logical. Should the averages of the
 #'  performance estimates be computed over all variables included
-#'  in `...`? **Note**: if this argument is used, it must be 
-#'  named. 
+#'  in `...`? **Note**: if this argument is used, it must be
+#'  named.
 #' @return A tibble with columns for the performance
-#'  characteristics, the threshold, and any grouping variables 
+#'  characteristics, the threshold, and any grouping variables
 #'  specified in `...`.
 #' @export
 
@@ -36,7 +36,7 @@ threshold_data <-
 #' @importFrom tidyselect vars_select
 #' @importFrom dplyr rename select mutate group_by do summarise_if
 #' @importFrom dplyr %>% tibble ungroup
-#' @importFrom tidyr gather 
+#' @importFrom tidyr gather
 #' @importFrom stats na.omit
 #' @export
 threshold_data.data.frame <-
@@ -49,13 +49,13 @@ threshold_data.data.frame <-
            summarize = FALSE) {
     if (is.null(thresholds))
       thresholds <- seq(0.5, 1, length = 21)
-    
+
     obs   <- tidyselect::vars_select(names(.data),!!!enquo(truth))
     probs <- tidyselect::vars_select(names(.data),!!!enquo(estimate))
     rs_ch <- tidyselect::vars_select(names(.data),!!!quos(...))
-    
+
     rs_ch <- unname(rs_ch)
-    
+
     obs <- sym(obs)
     probs <- sym(probs)
     if (length(rs_ch) == 0) {
@@ -67,9 +67,9 @@ threshold_data.data.frame <-
       else
         rs_id <- sym(rs_ch)
     }
-    
+
     if (length(probs) > 1 | length(obs) > 1)
-      stop("`truth` and `estimate` should only be single columns.", 
+      stop("`truth` and `estimate` should only be single columns.",
            call. = FALSE)
     if (!inherits(.data[[obs]], "factor"))
       stop("`truth` should be a factor", call. = FALSE)
@@ -77,7 +77,7 @@ threshold_data.data.frame <-
       stop("`truth` should be a 2 level factor", call. = FALSE)
     if (!is.numeric(.data[[probs]]))
       stop("`estimate` should be numericr", call. = FALSE)
-    
+
     .data <-
       .data %>%
       dplyr::rename(truth = !!obs, prob = !!probs)
@@ -86,35 +86,35 @@ threshold_data.data.frame <-
     } else {
       .data <- .data %>% dplyr::select(truth, prob)
     }
-    
+
     if (na_rm)
       .data <-
       .data %>%
       na.omit()
-    
+
     .data <-
       expand_preds(.data,
                    threshold = thresholds,
                    inc = c("truth", "prob", rs_ch)) %>%
       mutate(alt_pred = recode_data(truth, prob, .threshold))
-    
+
     if (!is.null(rs_id)) {
       .data <- .data %>% group_by(!!!rs_id, .threshold)
     } else {
       .data <- .data %>% group_by(.threshold)
     }
-    
+
     .data <-
       .data %>%
       dplyr::do(two_class(., truth, alt_pred)) %>%
-      mutate(distance = 
+      mutate(distance =
                (1 - sensitivity) ^ 2 + (1 - specificity) ^ 2)
-    
+
     perf_names <- colnames(.data)
     perf_names <-
       perf_names[!(perf_names %in% c(".threshold", rs_ch))]
     perf_names <- syms(perf_names)
-    
+
     if (summarize) {
       .data <-
         .data %>%
@@ -132,6 +132,7 @@ threshold_data.data.frame <-
   }
 
 # replace with yardstick::metric_set
+#' @importFrom yardstick sens spec j_index
 two_class <- function(...) {
   tibble(
     sensitivity = yardstick::sens(...),

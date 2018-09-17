@@ -16,15 +16,15 @@ ByteCompile: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 6.1.0.9000
 Depends:
-    R (>= 2.10),
-    yardstick
+    R (>= 2.10)
 Imports: 
     dplyr,
     glue,
     rlang,
     tidyr,
     tidyselect,
-    vctrs
+    vctrs,
+    yardstick
 Suggests: 
     testthat
 Remotes:
