@@ -2,8 +2,10 @@
 # Printing
 
 # Abbreviation used in tibbles and str() (through that, rstudio)
+
+#' @export
 vec_ptype_abbr.class_pred <- function(x) {
-  "cpred"
+  "clss_prd"
 }
 
 # ------------------------------------------------------------------------------
