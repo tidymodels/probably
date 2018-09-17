@@ -82,7 +82,9 @@ vec_cast.class_pred.factor <- function(x, to) {
 #' @importFrom vctrs warn_lossy_cast
 vec_cast.factor.class_pred <- function(x, to) {
 
-  warn_lossy_cast(x, to, locations = which_equivocal(x))
+  if(any_equivocal(x)) {
+    warn_lossy_cast(x, to, locations = which_equivocal(x))
+  }
 
   x_data <- vec_data(x)
   labs <- attr(x, "labels")
