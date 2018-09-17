@@ -9,7 +9,7 @@ dummy <- function() { }
   pkgenv <- environment(dummy)
 
   makeActiveBinding(
-    "global_equivocal_label",
+    "probably.equivocal_label",
     function() getOption("probably.equivocal_label", "EQ"),
     pkgenv
   )
