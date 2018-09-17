@@ -46,7 +46,8 @@ class_pred <- function(x = factor(), which = integer()) {
   # Check for `EQ` in labels. Not allowed.
   eq <- probably.equivocal_label
   if(eq %in% labs) {
-    abort("`\"", eq, "\"` is reserved for equivocal values and must not already be a level.")
+    msg <- paste0("`\"", eq, "\"` is reserved for equivocal values and must not already be a level.")
+    abort(msg)
   }
 
   # rip out the underlying integer structure
