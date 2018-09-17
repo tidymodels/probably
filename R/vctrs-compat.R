@@ -24,19 +24,8 @@ vec_print_data.class_pred <- function(x) {
 #' @export
 #' @importFrom vctrs vec_print_footer
 vec_print_footer.class_pred <- function(x) {
-  lvls <- attr(x, "labels")
-  lvls <- paste0(lvls, collapse = " ")
-
-  cat_lvls <- "Levels: "
-  cat_lvls <- paste0(cat_lvls, lvls)
-  cat(cat_lvls)
-
-  cat("\n")
-
-  eq_count <- sum(is_equivocal(x))
-  cat_eq <- "EQ Count: "
-  cat_eq <- paste0(cat_eq, eq_count)
-  cat(cat_eq)
+  cat_levels(x)
+  cat_eq_count(x)
 }
 
 # ------------------------------------------------------------------------------

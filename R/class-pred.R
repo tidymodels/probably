@@ -188,3 +188,11 @@ any_equivocal.class_pred <- function(x) {
 is_class_pred <- function(x) {
   inherits(x, "class_pred")
 }
+
+# ------------------------------------------------------------------------------
+# Base S3 Methods
+
+#' @export
+levels.class_pred <- function(x) {
+  attr(x, "labels")
+}
