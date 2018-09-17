@@ -9,6 +9,36 @@ vec_ptype_abbr.class_pred <- function(x) {
   "clss_prd"
 }
 
+#' @export
+#' @importFrom vctrs vec_print_header
+vec_print_header.class_pred <- function(x) {
+  # no header
+}
+
+#' @export
+#' @importFrom vctrs vec_print_data
+vec_print_data.class_pred <- function(x) {
+  print(format_as_factor(x), max.levels = 0)
+}
+
+#' @export
+#' @importFrom vctrs vec_print_footer
+vec_print_footer.class_pred <- function(x) {
+  lvls <- attr(x, "labels")
+  lvls <- paste0(lvls, collapse = " ")
+
+  cat_lvls <- "Levels: "
+  cat_lvls <- paste0(cat_lvls, lvls)
+  cat(cat_lvls)
+
+  cat("\n")
+
+  eq_count <- sum(is_equivocal(x))
+  cat_eq <- "EQ Count: "
+  cat_eq <- paste0(cat_eq, eq_count)
+  cat(cat_eq)
+}
+
 # ------------------------------------------------------------------------------
 # Casting
 
@@ -92,7 +122,9 @@ vec_cast.character.class_pred <- function(x, to) {
 
   # same implementation as vec_cast.factor.class_pred()
   # but with different lossy cast message. ? -> NA so we want to be noisy
-  warn_lossy_cast(x, to, locations = which_equivocal(x))
+  if(any_equivocal(x)) {
+    warn_lossy_cast(x, to, locations = which_equivocal(x))
+  }
 
   x_data <- vec_data(x)
   labs <- attr(x, "labels")
