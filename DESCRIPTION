@@ -21,7 +21,6 @@ Depends:
 Imports: 
     dplyr,
     glue,
-    purrr,
     rlang,
     tidyr,
     tidyselect,

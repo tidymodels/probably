@@ -49,7 +49,6 @@
 #'         min_prob = .5
 #'       )
 #'   )
-#' @importFrom purrr map_lgl
 #' @importFrom glue glue_collapse
 #' @importFrom tidyselect vars_select
 #' @export
@@ -70,7 +69,7 @@ make_class_pred <-
 
     probs <- .data[, prob_names]
 
-    num_cols <- purrr::map_lgl(probs, is.numeric)
+    num_cols <- vapply(probs, is.numeric, logical(1))
     if (any(!num_cols))
       stop (
         "At least one column is not numeric: ",
