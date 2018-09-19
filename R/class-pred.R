@@ -276,6 +276,40 @@ is_class_pred <- function(x) {
   inherits(x, "class_pred")
 }
 
+# -----------------------
+# reportable_rate
+
+#' Calculate the reportable rate
+#'
+#' The _reportable rate_ is defined as the percentage of class predictions
+#' that are _not_ equivocal.
+#'
+#' The reportable rate is calculated as `(n_not_equivocal / n)`.
+#'
+#' @examples
+#'
+#' x <- class_pred(factor(1:5), which = c(1, 2))
+#'
+#' # 3 / 5
+#' reportable_rate(x)
+#'
+#' @export
+reportable_rate <- function(x) {
+  UseMethod("reportable_rate")
+}
+
+#' @export
+reportable_rate.default <- function(x) {
+  abort_default(x, "reportable_rate")
+}
+
+#' @export
+reportable_rate.class_pred <- function(x) {
+  n <- length(x)
+  n_eq <- sum(is_equivocal(x))
+  (n - n_eq) / n
+}
+
 # ------------------------------------------------------------------------------
 # Base S3 Methods
 
