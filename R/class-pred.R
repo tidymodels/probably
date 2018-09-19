@@ -3,14 +3,16 @@
 # Creation
 
 #' @importFrom vctrs new_vctr
-new_class_pred <- function(x, labels, ..., subclass = NULL) {
+new_class_pred <- function(x, labels, ordered, ..., subclass = NULL) {
 
   stopifnot(is.integer(x))
   stopifnot(is.character(labels))
+  stopifnot(is.logical(ordered))
 
   new_vctr(
     .data = x,
     labels = labels,
+    ordered = ordered,
     ...,
     class = c(subclass, "class_pred")
   )
@@ -65,8 +67,11 @@ class_pred <- function(x = factor(), which = integer()) {
   # no duplicates allowed
   which <- unique(which)
 
-  # # more checks on values of which with regard to length of x?
-  # if(max(which) > length(x)) stop("The largest value of which can be length(x)")
+  # which cannot go outside the range of the number of values in x
+  if(length(which) > 0L && max(which) > length(x)) {
+    msg <- paste0("The largest value of which can be ", length(x))
+    abort(msg)
+  }
 
   labs <- levels(x)
 
@@ -86,7 +91,8 @@ class_pred <- function(x = factor(), which = integer()) {
 
   new_class_pred(
     x = x_int,
-    labels = labs
+    labels = labs,
+    ordered = is.ordered(x)
   )
 }
 
@@ -114,6 +120,12 @@ format_as_factor <- function(x, ...) {
   lab_equivocal <- paste0("[", probably.equivocal_label, "]")
   labs_known <- attr(x, "labels")
 
+  if(is_ordered_class_pred(x)) {
+    cls <- c("ordered", "factor")
+  } else {
+    cls <- "factor"
+  }
+
   # In this order b/c `0 = equivocal`
   labs <- c(lab_equivocal, labs_known)
 
@@ -124,7 +136,7 @@ format_as_factor <- function(x, ...) {
   x <- x + 1L
 
   attr(x, "levels") <- labs
-  class(x) <- "factor"
+  class(x) <- cls
 
   x
 }

@@ -13,9 +13,16 @@ abort_default <- function(x, fn) {
 # Smart enough to truncate the levels if they get too long
 cat_levels <- function(x, width = getOption("width")) {
 
+  ord <- is_ordered_class_pred(x)
+
+  if(ord) {
+    colsep <- " < "
+  } else {
+    colsep <- " "
+  }
+
   lev <- levels(x)
   n_lev <- length(lev)
-  colsep <- " "
 
   header <- "Levels: "
 
@@ -72,4 +79,9 @@ cat_eq_count <- function(x) {
   cat_eq <- paste0(cat_eq, eq_count)
   cat(cat_eq)
   cat("\n")
+}
+
+# Check if a class_pred object came from an ordered factor
+is_ordered_class_pred <- function(x) {
+  attr(x, "ordered")
 }

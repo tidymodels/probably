@@ -94,6 +94,22 @@ vec_cast.factor.class_pred <- function(x, to) {
   factor(x_data, labels = labs)
 }
 
+# ordered -> class_pred, assume no equivocal values
+
+#' @method vec_cast.class_pred ordered
+#' @export
+vec_cast.class_pred.ordered <- function(x, to) {
+  vec_cast.class_pred.factor(x, to)
+}
+
+# class_pred -> ordered, equivocals become NAs
+# Is vctrs missing vec_cast.ordered generic?
+
+#' @export
+vec_cast.ordered.class_pred <- function(x, to) {
+  as.ordered(vec_cast.factor.class_pred(x, to))
+}
+
 # character -> class_pred, assume no equivocal values
 
 #' @method vec_cast.class_pred factor
