@@ -2,6 +2,7 @@
 
 S3method(any_equivocal,class_pred)
 S3method(any_equivocal,default)
+S3method(as_class_pred,default)
 S3method(as_class_pred,factor)
 S3method(format,class_pred)
 S3method(is_equivocal,class_pred)
