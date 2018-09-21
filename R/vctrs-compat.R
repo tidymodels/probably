@@ -1,4 +1,19 @@
 # ------------------------------------------------------------------------------
+# Reexports - from `generics`
+
+# these reexports are necessary so we have as.factor() overloaded.
+# this way, as.factor() calls vec_cast() so we get the right behavior from vctrs.
+# This works because vctrs has as.factor.vctrs_vctr() and suggests `generics`
+
+#' @importFrom generics as.factor
+#' @export
+generics::as.factor
+
+#' @importFrom generics as.ordered
+#' @export
+generics::as.ordered
+
+# ------------------------------------------------------------------------------
 # Printing
 
 # Abbreviation used in tibbles and str() (through that, rstudio)
@@ -91,7 +106,7 @@ vec_cast.factor.class_pred <- function(x, to) {
 
   x_data[is_equivocal(x)] <- NA_integer_
 
-  factor(x_data, labels = labs)
+  factor(x_data, levels = labs)
 }
 
 # ordered -> class_pred, assume no equivocal values
@@ -119,8 +134,6 @@ vec_cast.class_pred.character <- function(x, to) {
 }
 
 # class_pred -> character, equivocals become NA
-# as.factor() comes for free with this, but the lossy message is displayed
-# twice because it calls as.character() twice
 
 #' @export
 #' @importFrom vctrs vec_data
@@ -138,7 +151,7 @@ vec_cast.character.class_pred <- function(x, to) {
 
   x_data[is_equivocal(x)] <- NA_integer_
 
-  as.character(factor(x_data, labels = labs))
+  as.character(factor(x_data, levels = labs))
 
   # # I want to do this, but can't currently cast factor -> character?
   # vec_cast(vec_cast(x, factor()), character())

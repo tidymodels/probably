@@ -20,6 +20,7 @@ Depends:
 Imports: 
     dplyr,
     glue,
+    generics,
     rlang,
     tidyr,
     tidyselect,
@@ -28,4 +29,5 @@ Imports:
 Suggests: 
     testthat
 Remotes:
-    r-lib/vctrs
+    r-lib/vctrs#85,
+    r-lib/generics#12
