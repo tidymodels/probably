@@ -1,4 +1,5 @@
 #' @import rlang
+#' @importFrom utils globalVariables
 
 ## nocov start
 
