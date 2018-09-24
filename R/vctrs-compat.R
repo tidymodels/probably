@@ -106,7 +106,10 @@ vec_cast.factor.class_pred <- function(x, to) {
 
   x_data[is_equivocal(x)] <- NA_integer_
 
-  factor(x_data, levels = labs)
+  # Specify levels as full sequence along labels in case the
+  # data is missing a level from equivocal masking
+  # ie class_pred(factor(c(1,1,2)), which = 3)
+  factor(x_data, levels = seq_along(labs), labels = labs)
 }
 
 # ordered -> class_pred, assume no equivocal values
@@ -151,7 +154,7 @@ vec_cast.character.class_pred <- function(x, to) {
 
   x_data[is_equivocal(x)] <- NA_integer_
 
-  as.character(factor(x_data, levels = labs))
+  as.character(factor(x_data, levels = seq_along(labs), labels = labs))
 
   # # I want to do this, but can't currently cast factor -> character?
   # vec_cast(vec_cast(x, factor()), character())
