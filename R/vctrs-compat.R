@@ -97,10 +97,6 @@ vec_cast.class_pred.factor <- function(x, to) {
 #' @importFrom vctrs warn_lossy_cast
 vec_cast.factor.class_pred <- function(x, to) {
 
-  if(any_equivocal(x)) {
-    warn_lossy_cast(x, to, locations = which_equivocal(x))
-  }
-
   x_data <- vec_data(x)
   labs <- attr(x, "labels")
 
@@ -147,12 +143,6 @@ vec_cast.class_pred.character <- function(x, to) {
 #' @importFrom vctrs vec_data
 #' @importFrom vctrs warn_lossy_cast
 vec_cast.character.class_pred <- function(x, to) {
-
-  # similar implementation as vec_cast.factor.class_pred()
-  # but with different lossy cast message. ? -> NA so we want to be noisy
-  if(any_equivocal(x)) {
-    warn_lossy_cast(x, to, locations = which_equivocal(x))
-  }
 
   x_data <- vec_data(x)
   labs <- attr(x, "labels")
