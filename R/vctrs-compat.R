@@ -40,7 +40,7 @@ vec_print_data.class_pred <- function(x) {
 #' @importFrom vctrs vec_print_footer
 vec_print_footer.class_pred <- function(x) {
   cat_levels(x)
-  cat_eq_count(x)
+  cat_reportable(x)
 }
 
 # ------------------------------------------------------------------------------

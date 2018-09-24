@@ -84,11 +84,13 @@ cat_levels <- function(x, width = getOption("width")) {
   )
 }
 
-cat_eq_count <- function(x) {
-  eq_count <- sum(is_equivocal(x))
-  cat_eq <- "EQ Count: "
-  cat_eq <- paste0(cat_eq, eq_count)
-  cat(cat_eq)
+cat_reportable <- function(x) {
+  reportable <- reportable_rate(x)
+  reportable <- paste0(formatC(100 * reportable, format = "f", digits = 1), "%")
+  cat_report <- "Reportable: "
+  cat_report <- paste0(cat_report, reportable)
+  cat_report
+  cat(cat_report)
   cat("\n")
 }
 
