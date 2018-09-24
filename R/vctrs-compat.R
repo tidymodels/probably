@@ -149,7 +149,7 @@ vec_cast.class_pred.character <- function(x, to) {
 #' @importFrom vctrs warn_lossy_cast
 vec_cast.character.class_pred <- function(x, to) {
 
-  # same implementation as vec_cast.factor.class_pred()
+  # similar implementation as vec_cast.factor.class_pred()
   # but with different lossy cast message. ? -> NA so we want to be noisy
   if(any_equivocal(x)) {
     warn_lossy_cast(x, to, locations = which_equivocal(x))
@@ -160,13 +160,7 @@ vec_cast.character.class_pred <- function(x, to) {
 
   x_data[is_equivocal(x)] <- NA_integer_
 
-  if(is.ordered(to)) {
-    constructor <- ordered
-  } else {
-    constructor <- factor
-  }
-
-  as.character(constructor(x_data, levels = seq_along(labs), labels = labs))
+  as.character(factor(x_data, levels = seq_along(labs), labels = labs))
 
   # # I want to do this, but can't currently cast factor -> character?
   # vec_cast(vec_cast(x, factor()), character())
