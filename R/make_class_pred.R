@@ -143,7 +143,7 @@ two_class_pred <-
     else {
       eq_ind <- which(
         .data[[prob_name]] >= threshold - buffer[1] &
-          .data[[prob_name]] <= threshold + buffer[2]
+        .data[[prob_name]] <= threshold + buffer[2]
       )
     }
 
