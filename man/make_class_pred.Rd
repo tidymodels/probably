@@ -9,7 +9,7 @@ make_class_pred(.data, ..., levels, ordered = FALSE,
   min_prob = 1/length(levels))
 
 two_class_pred(.data, ..., levels, threshold = 0.5, ordered = FALSE,
-  buffer = 0, range = NULL)
+  buffer = 0.05)
 }
 \arguments{
 \item{.data}{A data frame or tibble.}
@@ -36,12 +36,9 @@ this value (by row), the row is marked as \emph{equivocal}.}
 \item{threshold}{A single numeric value for the threshold to call a row to
 be labeled as the first value of \code{levels}.}
 
-\item{buffer}{A single numeric value for the buffer around \code{threshold} that
-defines the equivocal zone (i.e., \code{threshold - buffer} to
-\code{threshold + buffer}).}
-
-\item{range}{A numeric vector of length two that explicitly defines the
-equivocal zone.}
+\item{buffer}{A numeric vector of length 1 or 2 for the buffer around \code{threshold} that
+defines the equivocal zone (i.e., \code{threshold - buffer[1]} to
+\code{threshold + buffer[2]}). A length 1 vector is recycled to length 2.}
 }
 \value{
 A vector of class \code{\link{class_pred}}.
@@ -52,6 +49,8 @@ These functions can be used to convert class probability estimates to
 }
 \examples{
 library(dplyr)
+
+# threshold of .5 +/- .15
 new_factor <-
   segment_logistic \%>\%
   two_class_pred(
@@ -60,6 +59,14 @@ new_factor <-
     buffer = .15
   )
 
+# threshold of c(.5 - .05, .5 + .15)
+new_factor <-
+  segment_logistic \%>\%
+  two_class_pred(
+    .pred_good,
+    levels = levels(segment_logistic[["Class"]]),
+    buffer = c(0.05, 0.15)
+  )
 
 species_probs \%>\%
   mutate(

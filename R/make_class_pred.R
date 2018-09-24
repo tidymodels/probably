@@ -21,15 +21,15 @@
 #'  this value (by row), the row is marked as _equivocal_.
 #' @param threshold A single numeric value for the threshold to call a row to
 #'  be labeled as the first value of `levels`.
-#' @param buffer A single numeric value for the buffer around `threshold` that
-#'  defines the equivocal zone (i.e., `threshold - buffer` to
-#'  `threshold + buffer`).
-#' @param range A numeric vector of length two that explicitly defines the
-#'  equivocal zone.
+#' @param buffer A numeric vector of length 1 or 2 for the buffer around `threshold` that
+#'  defines the equivocal zone (i.e., `threshold - buffer[1]` to
+#'  `threshold + buffer[2]`). A length 1 vector is recycled to length 2.
 #' @return A vector of class [`class_pred`].
 #'
 #' @examples
 #' library(dplyr)
+#'
+#' # threshold of .5 +/- .15
 #' new_factor <-
 #'   segment_logistic %>%
 #'   two_class_pred(
@@ -38,6 +38,14 @@
 #'     buffer = .15
 #'   )
 #'
+#' # threshold of c(.5 - .05, .5 + .15)
+#' new_factor <-
+#'   segment_logistic %>%
+#'   two_class_pred(
+#'     .pred_good,
+#'     levels = levels(segment_logistic[["Class"]]),
+#'     buffer = c(0.05, 0.15)
+#'   )
 #'
 #' species_probs %>%
 #'   mutate(
@@ -102,47 +110,37 @@ two_class_pred <-
            levels,
            threshold = 0.5,
            ordered = FALSE,
-           buffer = 0,
-           range = NULL) {
+           buffer = 0.05) {
+
     if (!is.data.frame(.data))
       stop ("`.data` should be a data frame or tibble.", call. = FALSE)
 
     prob_name <- tidyselect::vars_select(names(.data), !!!quos(...))
+
     if (length(prob_name) != 1)
       stop ("`...` should select a single column.", call. = FALSE)
 
     if (length(levels) != 2 && is.character(levels))
       stop ("`levels` must be a character vector of length 2.", call. = TRUE)
+
     if (!is.numeric(.data[[prob_name]]))
       stop ("The selected probability column should be numeric.", call. = FALSE)
 
-    if (length(range) != 2 && is.numeric(range))
-      stop ("`range` must be a numeric vector of length 2.", call. = TRUE)
+    if (length(buffer) > 2 && is.numeric(buffer))
+      stop ("`buffer` must be a numeric vector of length 1 or 2.", call. = TRUE)
 
-    if (buffer != 0 & !is.null(range)) {
-      stop("`buffer` and `range` are both specified; `range` will be used.",
-           call. = FALSE)
-      buffer <- 0
+    if (length(buffer) == 1) {
+      buffer <- c(buffer, buffer)
     }
 
     x <- ifelse(.data[[prob_name]] >= threshold, levels[1], levels[2])
     x <- factor(x, levels = levels, ordered = ordered)
 
-    if (!is.null(range)) {
-      range <- sort(range)
-      eq_ind <-
-        which(.data[[prob_name]] >= range[1] & .data[[prob_name]] <= range[2])
-    } else {
-      if (buffer != 0) {
-        eq_ind <-
-          which(
-            .data[[prob_name]] >= threshold - buffer &
-            .data[[prob_name]] <= threshold + buffer
-          )
-      } else {
-        eq_ind <- integer()
-      }
-    }
+    eq_ind <- which(
+      .data[[prob_name]] >= threshold - buffer[1] &
+      .data[[prob_name]] <= threshold + buffer[2]
+    )
+
     x <- class_pred(x, eq_ind)
     x
   }
