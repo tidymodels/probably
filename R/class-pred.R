@@ -69,7 +69,7 @@ class_pred <- function(x = factor(), which = integer()) {
 
   # which cannot go outside the range of the number of values in x
   if(length(which) > 0L && max(which) > length(x)) {
-    msg <- paste0("The largest value of which can be ", length(x))
+    msg <- paste0("The largest value of `which` can be ", length(x), ".")
     abort(msg)
   }
 
