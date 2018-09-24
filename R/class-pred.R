@@ -3,7 +3,7 @@
 # Creation
 
 #' @importFrom vctrs new_vctr
-new_class_pred <- function(x, labels, ordered, ..., subclass = NULL) {
+new_class_pred <- function(x, labels, ordered = FALSE, ..., subclass = NULL) {
 
   stopifnot(is.integer(x))
   stopifnot(is.character(labels))
