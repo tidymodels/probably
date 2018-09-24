@@ -23,7 +23,8 @@
 #'  be labeled as the first value of `levels`.
 #' @param buffer A numeric vector of length 1 or 2 for the buffer around `threshold` that
 #'  defines the equivocal zone (i.e., `threshold - buffer[1]` to
-#'  `threshold + buffer[2]`). A length 1 vector is recycled to length 2.
+#'  `threshold + buffer[2]`). A length 1 vector is recycled to length 2. The
+#'  default, `NULL`, is interpreted as no equivocal zone.
 #' @return A vector of class [`class_pred`].
 #'
 #' @examples
@@ -110,7 +111,7 @@ two_class_pred <-
            levels,
            threshold = 0.5,
            ordered = FALSE,
-           buffer = 0.05) {
+           buffer = NULL) {
 
     if (!is.data.frame(.data))
       stop ("`.data` should be a data frame or tibble.", call. = FALSE)
@@ -136,10 +137,15 @@ two_class_pred <-
     x <- ifelse(.data[[prob_name]] >= threshold, levels[1], levels[2])
     x <- factor(x, levels = levels, ordered = ordered)
 
-    eq_ind <- which(
-      .data[[prob_name]] >= threshold - buffer[1] &
-      .data[[prob_name]] <= threshold + buffer[2]
-    )
+    if(is.null(buffer)) {
+      eq_ind <- integer()
+    }
+    else {
+      eq_ind <- which(
+        .data[[prob_name]] >= threshold - buffer[1] &
+          .data[[prob_name]] <= threshold + buffer[2]
+      )
+    }
 
     x <- class_pred(x, eq_ind)
     x

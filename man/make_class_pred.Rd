@@ -9,7 +9,7 @@ make_class_pred(.data, ..., levels, ordered = FALSE,
   min_prob = 1/length(levels))
 
 two_class_pred(.data, ..., levels, threshold = 0.5, ordered = FALSE,
-  buffer = 0.05)
+  buffer = NULL)
 }
 \arguments{
 \item{.data}{A data frame or tibble.}
@@ -38,7 +38,8 @@ be labeled as the first value of \code{levels}.}
 
 \item{buffer}{A numeric vector of length 1 or 2 for the buffer around \code{threshold} that
 defines the equivocal zone (i.e., \code{threshold - buffer[1]} to
-\code{threshold + buffer[2]}). A length 1 vector is recycled to length 2.}
+\code{threshold + buffer[2]}). A length 1 vector is recycled to length 2. The
+default, \code{NULL}, is interpreted as no equivocal zone.}
 }
 \value{
 A vector of class \code{\link{class_pred}}.
