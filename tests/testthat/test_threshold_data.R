@@ -94,10 +94,10 @@ test_that('factor from numeric', {
 test_that('single group', {
   one_group_data <-
     ex_data %>%
+    group_by(group_2) %>%
     threshold_data(
       outcome,
       prob_est,
-      group_2,
       thresholds = thr
     )
 

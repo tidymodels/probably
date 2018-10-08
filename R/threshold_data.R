@@ -2,29 +2,29 @@
 #'
 #' `threshold_data` can take a set of class probability predictions
 #'  and determine performance characteristics across different values
-#'  of the probability threshold and any grouping variables.
+#'  of the probability threshold and any existing groups.
 #'
-#' @param .data A tibble or data frame.
+#' @param .data A tibble or data frame, potentially grouped.
+#'
 #' @param truth A two-level factor of the true outcome labels.
 #'  Note that that the global option `yardstick.event_first` will be
 #'  used to determine which level is the event of interest.
+#'
 #' @param estimate A numeric vector of class probabilities such
 #'  that larger values are more indicative of the event of interest.
-#' @param ... An optional set of variables or `dplyr` selectors
-#'  that capture columns that are used as grouping variables.
-#'  See [tidyselect::select_helpers()].
+#'
+#' @param ... Currently unused.
+#'
 #' @param na_rm A single logical: should missing data be removed?
+#'
 #' @param thresholds A numeric vector of values for the probability
 #'  threshold to call a sample an event. If unspecified, a series
 #'  of values between 0.5 and 1.0 are used. **Note**: if this
 #'  argument is used, it must be named.
-#' @param summarize A single logical. Should the averages of the
-#'  performance estimates be computed over all variables included
-#'  in `...`? **Note**: if this argument is used, it must be
-#'  named.
+#'
 #' @return A tibble with columns for the performance
-#'  characteristics, the threshold, and any grouping variables
-#'  specified in `...`.
+#'  characteristics, the threshold, and existing groups.
+#'
 #' @export
 threshold_data <- function(.data, ...) {
   UseMethod("threshold_data")
@@ -40,10 +40,9 @@ threshold_data <- function(.data, ...) {
 threshold_data.data.frame <- function(.data,
                                       truth,
                                       estimate,
-                                      ...,
-                                      na_rm = TRUE,
                                       thresholds = NULL,
-                                      summarize = FALSE) {
+                                      na_rm = TRUE,
+                                      ...) {
 
   if (is.null(thresholds)) {
     thresholds <- seq(0.5, 1, length = 21)
@@ -52,7 +51,7 @@ threshold_data.data.frame <- function(.data,
   nms   <- names(.data)
   obs   <- tidyselect::vars_select(nms, !!enquo(truth))
   probs <- tidyselect::vars_select(nms, !!enquo(estimate))
-  rs_ch <- tidyselect::vars_select(nms, !!!quos(...))
+  rs_ch <- dplyr::group_vars(.data)
 
   rs_ch <- unname(rs_ch)
 
@@ -113,17 +112,10 @@ threshold_data.data.frame <- function(.data,
     two_class(truth, alt_pred) %>%
     spread(.metric, .estimate) %>%
     mutate(distance = (1 - sens) ^ 2 + (1 - spec) ^ 2) %>%
-    gather(key = ".metric", ".estimate", j_index, sens, spec, distance)
+    gather(key = ".metric", ".estimate", j_index, sens, spec, distance) %>%
+    ungroup()
 
-  if (summarize) {
-
-    .data <- .data %>%
-      group_by(.threshold, .metric) %>%
-      summarise(.estimate = mean(.estimate, na.rm = TRUE))
-
-  }
-
-  ungroup(.data)
+  .data
 }
 
 #' @importFrom yardstick sens spec j_index metric_set
