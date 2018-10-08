@@ -26,119 +26,110 @@
 #'  characteristics, the threshold, and any grouping variables
 #'  specified in `...`.
 #' @export
-
-threshold_data <-
-  function (.data, ...) {
-    UseMethod("threshold_data")
-  }
+threshold_data <- function(.data, ...) {
+  UseMethod("threshold_data")
+}
 
 #' @rdname threshold_data
 #' @importFrom tidyselect vars_select
-#' @importFrom dplyr rename select mutate group_by do summarise_if
+#' @importFrom dplyr rename select mutate group_by do summarise
 #' @importFrom dplyr %>% tibble ungroup
-#' @importFrom tidyr gather
+#' @importFrom tidyr gather spread
 #' @importFrom stats na.omit
 #' @export
-threshold_data.data.frame <-
-  function(.data,
-           truth,
-           estimate,
-           ...,
-           na_rm = TRUE,
-           thresholds = NULL,
-           summarize = FALSE) {
-    if (is.null(thresholds))
-      thresholds <- seq(0.5, 1, length = 21)
+threshold_data.data.frame <- function(.data,
+                                      truth,
+                                      estimate,
+                                      ...,
+                                      na_rm = TRUE,
+                                      thresholds = NULL,
+                                      summarize = FALSE) {
 
-    obs   <- tidyselect::vars_select(names(.data),!!!enquo(truth))
-    probs <- tidyselect::vars_select(names(.data),!!!enquo(estimate))
-    rs_ch <- tidyselect::vars_select(names(.data),!!!quos(...))
-
-    rs_ch <- unname(rs_ch)
-
-    obs <- sym(obs)
-    probs <- sym(probs)
-    if (length(rs_ch) == 0) {
-      rs_ch <- NULL
-      rs_id <- NULL
-    } else {
-      if (length(rs_ch) > 1)
-        rs_id <- syms(rs_ch)
-      else
-        rs_id <- sym(rs_ch)
-    }
-
-    if (length(probs) > 1 | length(obs) > 1)
-      stop("`truth` and `estimate` should only be single columns.",
-           call. = FALSE)
-    if (!inherits(.data[[obs]], "factor"))
-      stop("`truth` should be a factor", call. = FALSE)
-    if (length(levels(.data[[obs]])) != 2)
-      stop("`truth` should be a 2 level factor", call. = FALSE)
-    if (!is.numeric(.data[[probs]]))
-      stop("`estimate` should be numericr", call. = FALSE)
-
-    .data <-
-      .data %>%
-      dplyr::rename(truth = !!obs, prob = !!probs)
-    if (!is.null(rs_id)) {
-      .data <- .data %>% dplyr::select(truth, prob,!!!rs_id)
-    } else {
-      .data <- .data %>% dplyr::select(truth, prob)
-    }
-
-    if (na_rm)
-      .data <-
-      .data %>%
-      na.omit()
-
-    .data <-
-      expand_preds(.data,
-                   threshold = thresholds,
-                   inc = c("truth", "prob", rs_ch)) %>%
-      mutate(alt_pred = recode_data(truth, prob, .threshold))
-
-    if (!is.null(rs_id)) {
-      .data <- .data %>% group_by(!!!rs_id, .threshold)
-    } else {
-      .data <- .data %>% group_by(.threshold)
-    }
-
-    .data <-
-      .data %>%
-      dplyr::do(two_class(., truth, alt_pred)) %>%
-      mutate(distance =
-               (1 - sensitivity) ^ 2 + (1 - specificity) ^ 2)
-
-    perf_names <- colnames(.data)
-    perf_names <-
-      perf_names[!(perf_names %in% c(".threshold", rs_ch))]
-    perf_names <- syms(perf_names)
-
-    if (summarize) {
-      .data <-
-        .data %>%
-        group_by(.threshold) %>%
-        summarise_if(is.numeric, mean, na.rm = na_rm) %>%
-        gather(statistic, value,-.threshold) %>%
-        dplyr::rename(threshold = .threshold)
-    } else {
-      .data <-
-        .data %>%
-        gather(statistic, value,!!!perf_names) %>%
-        dplyr::rename(threshold = .threshold)
-    }
-    ungroup(.data)
+  if (is.null(thresholds)) {
+    thresholds <- seq(0.5, 1, length = 21)
   }
 
-# replace with yardstick::metric_set
-#' @importFrom yardstick sens spec j_index
+  nms   <- names(.data)
+  obs   <- tidyselect::vars_select(nms, !!enquo(truth))
+  probs <- tidyselect::vars_select(nms, !!enquo(estimate))
+  rs_ch <- tidyselect::vars_select(nms, !!!quos(...))
+
+  rs_ch <- unname(rs_ch)
+
+  obs <- sym(obs)
+  probs <- sym(probs)
+  if (length(rs_ch) == 0) {
+
+    rs_ch <- NULL
+    rs_id <- NULL
+
+  } else {
+
+    if (length(rs_ch) > 1)
+      rs_id <- syms(rs_ch)
+    else
+      rs_id <- sym(rs_ch)
+
+  }
+
+  if (length(probs) > 1 | length(obs) > 1)
+    stop("`truth` and `estimate` should only be single columns.",
+         call. = FALSE)
+  if (!inherits(.data[[obs]], "factor"))
+    stop("`truth` should be a factor", call. = FALSE)
+  if (length(levels(.data[[obs]])) != 2)
+    stop("`truth` should be a 2 level factor", call. = FALSE)
+  if (!is.numeric(.data[[probs]]))
+    stop("`estimate` should be numericr", call. = FALSE)
+
+  .data <- dplyr::rename(.data, truth = !!obs, prob = !!probs)
+
+  if (!is.null(rs_id)) {
+    .data <- dplyr::select(.data, truth, prob, !!!rs_id)
+  } else {
+    .data <- dplyr::select(.data, truth, prob)
+  }
+
+  if (na_rm) {
+    .data <- na.omit(.data)
+  }
+
+  .data <- .data %>%
+    expand_preds(
+      threshold = thresholds,
+      inc = c("truth", "prob", rs_ch)
+    ) %>%
+    mutate(
+      alt_pred = recode_data(truth, prob, .threshold)
+    )
+
+  if (!is.null(rs_id)) {
+    .data <- .data %>% group_by(!!!rs_id, .threshold)
+  } else {
+    .data <- .data %>% group_by(.threshold)
+  }
+
+  .data <- .data %>%
+    two_class(truth, alt_pred) %>%
+    spread(.metric, .estimate) %>%
+    mutate(distance = (1 - sens) ^ 2 + (1 - spec) ^ 2) %>%
+    gather(key = ".metric", ".estimate", j_index, sens, spec, distance)
+
+  if (summarize) {
+
+    .data <- .data %>%
+      group_by(.threshold, .metric) %>%
+      summarise(.estimate = mean(.estimate, na.rm = TRUE))
+
+  }
+
+  ungroup(.data)
+}
+
+#' @importFrom yardstick sens spec j_index metric_set
 two_class <- function(...) {
-  tibble(
-    sensitivity = yardstick::sens(...),
-    specificity = yardstick::spec(...),
-    J = yardstick::j_index(...)
-  )
+  mets <- metric_set(sens, spec, j_index)
+  mets(...)
 }
 
 expand_preds <- function(.data, threshold, inc = NULL) {
@@ -158,10 +149,11 @@ utils::globalVariables(
     ".threshold",
     "alt_pred",
     "prob",
-    "sensitivity",
-    "specificity",
     "statistic",
-    "value"
+    "value",
+    ".metric",
+    ".estimate",
+    "distance"
   )
 )
 
