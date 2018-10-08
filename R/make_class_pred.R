@@ -102,7 +102,8 @@ make_class_pred <- function(...,
   # Levels check (length and type)
   if (length(levels) != length(probs) && is.character(levels)) {
     stop (
-      "`levels` must be a character vector with at least 2 levels.",
+      "`levels` must be a character vector with the ",
+      "same length as the number of vectors passed to `...`.",
       call. = FALSE
     )
   }
