@@ -2,42 +2,39 @@
 % Please edit documentation in R/make_class_pred.R
 \name{make_class_pred}
 \alias{make_class_pred}
-\alias{two_class_pred}
-\title{Create a class_pred vector from class probabilities}
+\alias{make_two_class_pred}
+\title{Create a \code{class_pred} vector from class probabilities}
 \usage{
-make_class_pred(.data, ..., levels, ordered = FALSE,
+make_class_pred(..., levels, ordered = FALSE,
   min_prob = 1/length(levels))
 
-two_class_pred(.data, ..., levels, threshold = 0.5, ordered = FALSE,
+make_two_class_pred(.prob, levels, threshold = 0.5, ordered = FALSE,
   buffer = NULL)
 }
 \arguments{
-\item{.data}{A data frame or tibble.}
+\item{...}{Numeric vectors corresponding to class probabilites. There should
+be one for each level in \code{levels}, and \emph{it is assumed that the vectors
+are in the same order as \code{levels}}.}
 
-\item{...}{One or more unquoted expressions separated by commas
-to capture the columns of \code{.data} containing the class
-probabilities. . You can treat variable names like they are
-positions, so you can use expressions like x:y to select ranges
-of variables or use selector functions to choose which columns.
-For \code{make_class_pred}, the columns for all class probabilities
-should be selected (in the same order as the \code{levels} object).
-For \code{two_class_pred}, a vector of class probabilities should be
-selected.}
-
-\item{levels}{A character vector of class levels. For \code{make_class_pred}, the
-length should be the same as the number of columns selected by \code{...}.}
+\item{levels}{A character vector of class levels. The length should be the
+same as the number of selections made through \code{...}, or length \code{2}
+for \code{make_two_class_pred()}.}
 
 \item{ordered}{A single logical to determine if the levels should be regarded
-as ordered (in the order given).}
+as ordered (in the order given). This results in a \code{class_pred} object
+that is flagged as ordered.}
 
 \item{min_prob}{A single numeric value. If any probabilities are less than
 this value (by row), the row is marked as \emph{equivocal}.}
 
+\item{.prob}{A single numeric vector corresponding to the class probabilities
+of the first level in \code{levels}.}
+
 \item{threshold}{A single numeric value for the threshold to call a row to
 be labeled as the first value of \code{levels}.}
 
-\item{buffer}{A numeric vector of length 1 or 2 for the buffer around \code{threshold} that
-defines the equivocal zone (i.e., \code{threshold - buffer[1]} to
+\item{buffer}{A numeric vector of length 1 or 2 for the buffer around
+\code{threshold} that defines the equivocal zone (i.e., \code{threshold - buffer[1]} to
 \code{threshold + buffer[2]}). A length 1 vector is recycled to length 2. The
 default, \code{NULL}, is interpreted as no equivocal zone.}
 }
@@ -49,34 +46,38 @@ These functions can be used to convert class probability estimates to
 \code{class_pred} objects with an optional equivocal zone.
 }
 \examples{
+
 library(dplyr)
 
-# threshold of .5 +/- .15
-new_factor <-
-  segment_logistic \%>\%
-  two_class_pred(
-    .pred_good,
-    levels = levels(segment_logistic[["Class"]]),
-    buffer = .15
+good <- segment_logistic$.pred_good
+lvls <- levels(segment_logistic$Class)
+
+# Equivocal zone of .5 +/- .15
+make_two_class_pred(good, lvls, buffer = 0.15)
+
+# Equivocal zone of c(.5 - .05, .5 + .15)
+make_two_class_pred(good, lvls, buffer = c(0.05, 0.15))
+
+# These functions are useful alongside dplyr::mutate()
+segment_logistic \%>\%
+  mutate(
+    .class_pred = make_two_class_pred(
+      .prob = .pred_good,
+      levels = levels(Class),
+      buffer = 0.15
+    )
   )
 
-# threshold of c(.5 - .05, .5 + .15)
-new_factor <-
-  segment_logistic \%>\%
-  two_class_pred(
-    .pred_good,
-    levels = levels(segment_logistic[["Class"]]),
-    buffer = c(0.05, 0.15)
-  )
-
+# Multi-class example
+# Note that we provide class probability columns in the same
+# order as the levels
 species_probs \%>\%
   mutate(
-    new_pred =
-      make_class_pred(
-        .,
-        starts_with(".pred_"),
-        levels = levels(Species),
-        min_prob = .5
-      )
+    .class_pred = make_class_pred(
+      .pred_bobcat, .pred_coyote, .pred_gray_fox,
+      levels = levels(Species),
+      min_prob = .5
+    )
   )
+
 }
