@@ -32,7 +32,7 @@ threshold_data <- function(.data, ...) {
 
 #' @rdname threshold_data
 #' @importFrom tidyselect vars_select
-#' @importFrom dplyr rename select mutate group_by do summarise_if
+#' @importFrom dplyr rename select mutate group_by do summarise
 #' @importFrom dplyr %>% tibble ungroup
 #' @importFrom tidyr gather spread
 #' @importFrom stats na.omit
@@ -150,7 +150,10 @@ utils::globalVariables(
     "alt_pred",
     "prob",
     "statistic",
-    "value"
+    "value",
+    ".metric",
+    ".estimate",
+    "distance"
   )
 )
 
