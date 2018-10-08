@@ -55,8 +55,8 @@ threshold_data.data.frame <- function(.data,
 
   rs_ch <- unname(rs_ch)
 
-  obs <- sym(obs)
-  probs <- sym(probs)
+  obs_sym <- sym(obs)
+  probs_sym <- sym(probs)
   if (length(rs_ch) == 0) {
 
     rs_ch <- NULL
@@ -81,7 +81,7 @@ threshold_data.data.frame <- function(.data,
   if (!is.numeric(.data[[probs]]))
     stop("`estimate` should be numericr", call. = FALSE)
 
-  .data <- dplyr::rename(.data, truth = !!obs, prob = !!probs)
+  .data <- dplyr::rename(.data, truth = !!obs_sym, prob = !!probs_sym)
 
   if (!is.null(rs_id)) {
     .data <- dplyr::select(.data, truth, prob, !!!rs_id)
