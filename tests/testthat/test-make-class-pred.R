@@ -38,6 +38,25 @@ test_that("multi class succeeds with vector interface", {
 
 })
 
+test_that("multi class succeeds with data frame helper", {
+
+  res <- append_class_pred(
+    test_data2,
+    contains(".pred_"),
+    levels = lvls2,
+    min_prob = 0.5,
+    name = "cp_test"
+  )
+
+  known <- make_class_pred(bobcat, coyote, gray_fox, levels = lvls2, min_prob = 0.5)
+
+  expect_is(res, "data.frame")
+  expect_equal(res[["cp_test"]], known)
+
+})
+
+
+
 test_that("ordered passes through to class_pred", {
 
   res <- make_class_pred(bobcat, coyote, gray_fox, levels = lvls2, ordered = TRUE)
