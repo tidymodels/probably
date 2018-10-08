@@ -49,6 +49,10 @@ vec_print_footer.class_pred <- function(x) {
 # -----------------------
 # Required casts
 
+#' Cast a `class_pred` vector to a specified type
+#'
+#' @inheritParams vctrs::vec_cast
+#'
 #' @export
 #' @method vec_cast class_pred
 #' @export vec_cast.class_pred
@@ -161,6 +165,10 @@ vec_cast.character.class_pred <- function(x, to) {
 # -----------------------
 # Required coercion
 
+#' Find the common type for a `class_pred` and another obect
+#'
+#' @inheritParams vctrs::vec_type2
+#'
 #' @export
 #' @method vec_type2 class_pred
 #' @export vec_type2.class_pred
