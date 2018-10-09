@@ -6,6 +6,9 @@
 \usage{
 reportable_rate(x)
 }
+\arguments{
+\item{x}{A \code{class_pred} object.}
+}
 \description{
 The \emph{reportable rate} is defined as the percentage of class predictions
 that are \emph{not} equivocal.

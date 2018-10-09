@@ -7,15 +7,13 @@
 \usage{
 threshold_data(.data, ...)
 
-\method{threshold_data}{data.frame}(.data, truth, estimate, ...,
-  na_rm = TRUE, thresholds = NULL, summarize = FALSE)
+\method{threshold_data}{data.frame}(.data, truth, estimate,
+  thresholds = NULL, na_rm = TRUE, ...)
 }
 \arguments{
-\item{.data}{A tibble or data frame.}
+\item{.data}{A tibble or data frame, potentially grouped.}
 
-\item{...}{An optional set of variables or \code{dplyr} selectors
-that capture columns that are used as grouping variables.
-See \code{\link[tidyselect:select_helpers]{tidyselect::select_helpers()}}.}
+\item{...}{Currently unused.}
 
 \item{truth}{A two-level factor of the true outcome labels.
 Note that that the global option \code{yardstick.event_first} will be
@@ -24,25 +22,19 @@ used to determine which level is the event of interest.}
 \item{estimate}{A numeric vector of class probabilities such
 that larger values are more indicative of the event of interest.}
 
-\item{na_rm}{A single logical: should missing data be removed?}
-
 \item{thresholds}{A numeric vector of values for the probability
 threshold to call a sample an event. If unspecified, a series
 of values between 0.5 and 1.0 are used. \strong{Note}: if this
 argument is used, it must be named.}
 
-\item{summarize}{A single logical. Should the averages of the
-performance estimates be computed over all variables included
-in \code{...}? \strong{Note}: if this argument is used, it must be
-named.}
+\item{na_rm}{A single logical: should missing data be removed?}
 }
 \value{
 A tibble with columns for the performance
-characteristics, the threshold, and any grouping variables
-specified in \code{...}.
+characteristics, the threshold, and existing groups.
 }
 \description{
 \code{threshold_data} can take a set of class probability predictions
 and determine performance characteristics across different values
-of the probability threshold and any grouping variables.
+of the probability threshold and any existing groups.
 }

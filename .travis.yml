@@ -8,6 +8,9 @@ r:
   - devel
   - release
   - oldrel
-  - 3.3
   - 3.2
   - 3.1
+
+matrix:
+  allow_failures:
+  - r: 3.1
