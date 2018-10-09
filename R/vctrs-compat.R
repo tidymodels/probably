@@ -1,9 +1,4 @@
 # ------------------------------------------------------------------------------
-# vec_cast method imports
-
-#' @importFrom vctrs vec_cast.integer
-
-# ------------------------------------------------------------------------------
 # Reexports - from `generics`
 
 # these reexports are necessary so we have as.factor() overloaded.
