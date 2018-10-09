@@ -47,7 +47,6 @@ new_class_pred <- function(x, labels, ordered = FALSE, ..., subclass = NULL) {
 #' class_pred(x, which = 3)
 #'
 #' @export
-#' @importFrom rlang abort
 #' @importFrom vctrs vec_cast
 class_pred <- function(x = factor(), which = integer()) {
 
