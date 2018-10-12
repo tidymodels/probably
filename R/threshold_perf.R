@@ -1,6 +1,6 @@
 #' Generate data for thresholding two-class data
 #'
-#' `threshold_data` can take a set of class probability predictions
+#' `threshold_perf` can take a set of class probability predictions
 #'  and determine performance characteristics across different values
 #'  of the probability threshold and any existing groups.
 #'
@@ -26,18 +26,18 @@
 #'  characteristics, the threshold, and existing groups.
 #'
 #' @export
-threshold_data <- function(.data, ...) {
-  UseMethod("threshold_data")
+threshold_perf <- function(.data, ...) {
+  UseMethod("threshold_perf")
 }
 
-#' @rdname threshold_data
+#' @rdname threshold_perf
 #' @importFrom tidyselect vars_select
 #' @importFrom dplyr rename select mutate group_by do summarise
 #' @importFrom dplyr %>% tibble ungroup
 #' @importFrom tidyr gather spread
 #' @importFrom stats na.omit
 #' @export
-threshold_data.data.frame <- function(.data,
+threshold_perf.data.frame <- function(.data,
                                       truth,
                                       estimate,
                                       thresholds = NULL,

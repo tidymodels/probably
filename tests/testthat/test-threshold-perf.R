@@ -95,7 +95,7 @@ test_that('single group', {
   one_group_data <-
     ex_data %>%
     group_by(group_2) %>%
-    threshold_data(
+    threshold_perf(
       outcome,
       prob_est,
       thresholds = thr
