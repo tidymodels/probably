@@ -25,20 +25,20 @@ vec_ptype_abbr.class_pred <- function(x) {
 }
 
 #' @export
-#' @importFrom vctrs vec_print_header
-vec_print_header.class_pred <- function(x) {
+#' @importFrom vctrs obj_print_header
+obj_print_header.class_pred <- function(x) {
   # no header
 }
 
 #' @export
-#' @importFrom vctrs vec_print_data
-vec_print_data.class_pred <- function(x) {
+#' @importFrom vctrs obj_print_data
+obj_print_data.class_pred <- function(x) {
   print(format_as_factor(x), max.levels = 0)
 }
 
 #' @export
-#' @importFrom vctrs vec_print_footer
-vec_print_footer.class_pred <- function(x) {
+#' @importFrom vctrs obj_print_footer
+obj_print_footer.class_pred <- function(x) {
   cat_levels(x)
   cat_reportable(x)
 }

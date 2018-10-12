@@ -7,7 +7,7 @@
 \method{vec_cast}{class_pred}(x, to)
 }
 \arguments{
-\item{x}{Vector to cast.}
+\item{x}{Vectors to cast.}
 
 \item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 }
