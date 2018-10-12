@@ -4,13 +4,16 @@
 \alias{class_pred}
 \title{Create a class prediction object}
 \usage{
-class_pred(x = factor(), which = integer())
+class_pred(x = factor(), which = integer(), equivocal = "[EQ]")
 }
 \arguments{
 \item{x}{A factor or ordered factor.}
 
 \item{which}{An integer vector specifying the locations of \code{x} to declare
 as equivocal.}
+
+\item{equivocal}{A single character specifying the equivocal label used
+when printing.}
 }
 \description{
 \code{class_pred()} creates a \code{class_pred} object from a factor or ordered
@@ -34,5 +37,8 @@ class_pred(x)
 # Say you aren't sure about that 2nd "Yes" value. You could mark it as
 # equivocal.
 class_pred(x, which = 3)
+
+# Maybe you want a different equivocal label
+class_pred(x, which = 3, equivocal = "eq_value")
 
 }

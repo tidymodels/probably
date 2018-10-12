@@ -4,13 +4,16 @@
 \alias{as_class_pred}
 \title{Coerce to a \code{class_pred} object}
 \usage{
-as_class_pred(x, which = integer())
+as_class_pred(x, which = integer(), equivocal = "[EQ]")
 }
 \arguments{
 \item{x}{A factor or ordered factor.}
 
 \item{which}{An integer vector specifying the locations of \code{x} to declare
 as equivocal.}
+
+\item{equivocal}{A single character specifying the equivocal label used
+when printing.}
 }
 \description{
 \code{as_class_pred()} provides coercion to \code{class_pred} from other

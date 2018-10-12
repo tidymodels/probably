@@ -36,6 +36,8 @@ new_class_pred <- function(x, labels, ordered = FALSE, equivocal = "[EQ]", ..., 
 #' @param x A factor or ordered factor.
 #' @param which An integer vector specifying the locations of `x` to declare
 #' as equivocal.
+#' @param equivocal A single character specifying the equivocal label used
+#' when printing.
 #'
 #' @examples
 #'
@@ -47,6 +49,9 @@ new_class_pred <- function(x, labels, ordered = FALSE, equivocal = "[EQ]", ..., 
 #' # Say you aren't sure about that 2nd "Yes" value. You could mark it as
 #' # equivocal.
 #' class_pred(x, which = 3)
+#'
+#' # Maybe you want a different equivocal label
+#' class_pred(x, which = 3, equivocal = "eq_value")
 #'
 #' @export
 #' @importFrom vctrs vec_cast
