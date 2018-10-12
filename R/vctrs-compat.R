@@ -66,15 +66,11 @@ vec_cast.class_pred.default <- function(x, to) {
   stop_incompatible_cast(x, to)
 }
 
-#' @method vec_cast.class_pred NULL
+#' @method vec_cast.class_pred logical
 #' @export
-vec_cast.class_pred.NULL <- function(x, to) {
-  x
-}
-
-#' @export
-vec_cast.NULL.class_pred <- function(x, to) {
-  x
+#' @importFrom vctrs vec_unspecified_cast
+vec_cast.class_pred.logical <- function(x, to) {
+  vec_unspecified_cast(x, to)
 }
 
 #' @method vec_cast.class_pred class_pred
@@ -94,15 +90,15 @@ vec_cast.class_pred.class_pred <- function(x, to) {
     lvls <- levels(x)
   }
   else {
-    lossy <- ! (as.character(x) %in% levels(to) | is_equivocal(x))
+    lvls <- levels(to)
+
+    lossy <- ! (as.character(x) %in% lvls | is_equivocal(x))
 
     if (any(lossy)) {
       where_lossy <- which(lossy)
       warn_lossy_cast(x, to, locations = where_lossy)
       new_x[where_lossy] <- NA_integer_
     }
-
-    lvls <- levels(to)
   }
 
   new_class_pred(
@@ -140,15 +136,15 @@ vec_cast.factor.class_pred <- function(x, to) {
     lvls <- levels(x)
   }
   else {
-    lossy <- ! (as.character(x) %in% levels(to) | is_equivocal(x))
+    lvls <- levels(to)
+
+    lossy <- ! (as.character(x) %in% lvls | is_equivocal(x))
 
     if (any(lossy)) {
       where_lossy <- which(lossy)
       warn_lossy_cast(x, to, locations = where_lossy)
       new_x[where_lossy] <- NA_integer_
     }
-
-    lvls <- levels(to)
   }
 
   # this is expected, not lossy
@@ -180,12 +176,37 @@ vec_cast.class_pred.ordered <- function(x, to) {
 #   as.ordered(vec_cast.factor.class_pred(x, to))
 # }
 
-# character -> class_pred, assume no equivocal values
+# character -> class_pred
 
 #' @method vec_cast.class_pred factor
 #' @export
 vec_cast.class_pred.character <- function(x, to) {
-  class_pred(factor(x), integer())
+
+  new_x <- vec_data(x)
+
+  if (length(levels(to)) == 0L) {
+    lvls <- unique(new_x)
+  }
+  else {
+    lvls <- levels(to)
+
+    lossy <- ! (x %in% lvls | is.na(x))
+
+    if (any(lossy)) {
+      where_lossy <- which(lossy)
+      warn_lossy_cast(x, to, locations = where_lossy)
+      new_x[where_lossy] <- NA_integer_
+    }
+  }
+
+  class_pred(
+    x = factor(
+      x = new_x,
+      levels = lvls,
+      ordered = is_ordered_class_pred(to)
+    ),
+    equivocal = get_equivocal_label(to)
+  )
 }
 
 # class_pred -> character, equivocals become NA
@@ -212,7 +233,7 @@ vec_cast.character.class_pred <- function(x, to) {
 #' @export vec_type2.class_pred
 #' @importFrom vctrs vec_type2
 vec_type2.class_pred <- function(x, y) {
-  UseMethod("vec_type2.class_pred")
+  UseMethod("vec_type2.class_pred", y)
 }
 
 #' @method vec_type2.class_pred default
@@ -222,43 +243,60 @@ vec_type2.class_pred.default <- function(x, y) {
   stop_incompatible_type(x, y)
 }
 
-#' @method vec_type2.class_pred NULL
+#' @method vec_type2.class_pred vctrs_unspecified
 #' @export
-vec_type2.class_pred.NULL <- function(x, y) {
-  class_pred()
-}
-
-#' @export
-vec_type2.NULL.class_pred <- function(x, y) {
-  class_pred()
+#' @importFrom vctrs stop_incompatible_type
+vec_type2.class_pred.vctrs_unspecified <- function(x, y) {
+  x
 }
 
 # -----------------------
 # Custom coercion
 
 # class_pred + class_pred = class_pred with unioned labels
+# it is ordered if either are ordered
+# the new eq label always comes from x
 
 #' @method vec_type2.class_pred class_pred
 #' @export
 vec_type2.class_pred.class_pred <- function(x, y) {
-  new_class_pred(integer(), labels = union_labels(x, y))
+  new_class_pred(
+    integer(),
+    labels = union_labels(x, y),
+    ordered = union_ordered(x, y),
+    equivocal = get_equivocal_label(x)
+  )
+}
+
+#' @method vec_type2.class_pred factor
+#' @export
+vec_type2.class_pred.factor <- function(x, y) {
+  new_class_pred(
+    x = integer(),
+    labels = union_labels(x, y),
+    ordered = is_ordered_class_pred(x),
+    equivocal = get_equivocal_label(x)
+  )
+}
+
+#' @export
+#' @importFrom vctrs vec_type2.factor
+vec_type2.factor.class_pred <- function(x, y) {
+  new_class_pred(
+    x = integer(),
+    labels = union_labels(x, y),
+    ordered = is_ordered_class_pred(y),
+    equivocal = get_equivocal_label(y)
+  )
 }
 
 union_labels <- function(x, y) {
-  x_labels <- attr(x, "labels")
-  y_labels <- attr(y, "labels")
+  x_labels <- levels(x)
+  y_labels <- levels(y)
 
-  sort(union(x_labels, y_labels))
+  union(x_labels, y_labels)
 }
 
-# # class_pred <-> factor
-# # new_factor() is not currently exported!!!?
-# vec_type2.class_pred.factor <- function(x, y) new_factor(levels = union_labels_levels(y, x))
-# vec_type2.factor.class_pred <- function(x, y) new_factor(levels = union_labels_levels(x, y))
-#
-# union_labels_levels <- function(x, y) {
-#   x_labels <- attr(x, "labels")
-#   y_labels <- attr(y, "levels")
-#
-#   sort(union(x_labels, y_labels))
-# }
+union_ordered <- function(x, y) {
+  is_ordered_class_pred(x) | is_ordered_class_pred(y)
+}
