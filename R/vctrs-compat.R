@@ -80,7 +80,38 @@ vec_cast.NULL.class_pred <- function(x, to) {
 #' @method vec_cast.class_pred class_pred
 #' @export
 vec_cast.class_pred.class_pred <- function(x, to) {
-  x
+
+  # casting a class_pred to another class_pred type
+  # `to` could have different levels and might not be ordered and could
+  # have a diff eq label
+
+  # when `to` does not have all the levels in `x`, the missing levels
+  # in `to` are converted to NA in `x`.
+
+  new_x <- vec_data(x)
+
+  if (length(levels(to)) == 0L) {
+    lvls <- levels(x)
+  }
+  else {
+    lossy <- ! (as.character(x) %in% levels(to) | is_equivocal(x))
+
+    if (any(lossy)) {
+      where_lossy <- which(lossy)
+      warn_lossy_cast(x, to, locations = where_lossy)
+      new_x[where_lossy] <- NA_integer_
+    }
+
+    lvls <- levels(to)
+  }
+
+  new_class_pred(
+    x = new_x,
+    labels = lvls,
+    ordered = is.ordered(to),
+    equivocal = get_equivocal_label(to)
+  )
+
 }
 
 # -----------------------
@@ -101,21 +132,37 @@ vec_cast.class_pred.factor <- function(x, to) {
 #' @importFrom vctrs warn_lossy_cast
 vec_cast.factor.class_pred <- function(x, to) {
 
-  x_data <- vec_data(x)
-  labs <- attr(x, "labels")
+  new_x <- vec_data(x)
 
-  x_data[is_equivocal(x)] <- NA_integer_
-
-  if(is.ordered(to)) {
-    constructor <- ordered
-  } else {
-    constructor <- factor
+  # the factor we are casting to could have levels of its own
+  # if it has some, use them and warn about lossy casts
+  if (length(levels(to)) == 0L) {
+    lvls <- levels(x)
   }
+  else {
+    lossy <- ! (as.character(x) %in% levels(to) | is_equivocal(x))
+
+    if (any(lossy)) {
+      where_lossy <- which(lossy)
+      warn_lossy_cast(x, to, locations = where_lossy)
+      new_x[where_lossy] <- NA_integer_
+    }
+
+    lvls <- levels(to)
+  }
+
+  # this is expected, not lossy
+  new_x[is_equivocal(x)] <- NA_integer_
 
   # Specify levels as full sequence along labels in case the
   # data is missing a level from equivocal masking
   # ie class_pred(factor(c(1,1,2)), which = 3)
-  constructor(x_data, levels = seq_along(labs), labels = labs)
+  factor(
+    x = new_x,
+    levels = seq_along(lvls),
+    labels = lvls,
+    ordered = is.ordered(to)
+  )
 }
 
 # ordered -> class_pred, assume no equivocal values
@@ -147,16 +194,7 @@ vec_cast.class_pred.character <- function(x, to) {
 #' @importFrom vctrs vec_data
 #' @importFrom vctrs warn_lossy_cast
 vec_cast.character.class_pred <- function(x, to) {
-
-  x_data <- vec_data(x)
-  labs <- attr(x, "labels")
-
-  x_data[is_equivocal(x)] <- NA_integer_
-
-  as.character(factor(x_data, levels = seq_along(labs), labels = labs))
-
-  # # I want to do this, but can't currently cast factor -> character?
-  # vec_cast(vec_cast(x, factor()), character())
+  vec_cast(vec_cast(x, factor()), character())
 }
 
 # ------------------------------------------------------------------------------

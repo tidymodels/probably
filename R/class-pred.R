@@ -3,16 +3,18 @@
 # Creation
 
 #' @importFrom vctrs new_vctr
-new_class_pred <- function(x, labels, ordered = FALSE, ..., subclass = NULL) {
+new_class_pred <- function(x, labels, ordered = FALSE, equivocal = "[EQ]", ..., subclass = NULL) {
 
   stopifnot(is.integer(x))
   stopifnot(is.character(labels))
   stopifnot(is.logical(ordered))
+  stopifnot(is.character(equivocal))
 
   new_vctr(
     .data = x,
     labels = labels,
     ordered = ordered,
+    equivocal = equivocal,
     ...,
     class = c(subclass, "class_pred")
   )
@@ -48,7 +50,7 @@ new_class_pred <- function(x, labels, ordered = FALSE, ..., subclass = NULL) {
 #'
 #' @export
 #' @importFrom vctrs vec_cast
-class_pred <- function(x = factor(), which = integer()) {
+class_pred <- function(x = factor(), which = integer(), equivocal = "[EQ]") {
 
   # Check invariants
   if(!is.factor(x)) {
@@ -57,6 +59,10 @@ class_pred <- function(x = factor(), which = integer()) {
 
   if(!is.numeric(which)) {
     abort("`which` must be a numeric.")
+  }
+
+  if(!rlang::is_scalar_character(equivocal)) {
+    abort("`equivocal` must be a length 1 character.")
   }
 
   # which can be double, but convert to integer and warn about
@@ -74,10 +80,13 @@ class_pred <- function(x = factor(), which = integer()) {
 
   labs <- levels(x)
 
-  # Check for `EQ` in labels. Not allowed.
-  eq <- probably.equivocal_label
-  if(eq %in% labs) {
-    msg <- paste0("`\"", eq, "\"` is reserved for equivocal values and must not already be a level.")
+  # Check for `equivocal` in labels. Not allowed.
+  if(equivocal %in% labs) {
+    msg <- paste0(
+      "`\"", equivocal, "\"`",
+      "is reserved for equivocal values",
+      "and must not already be a level."
+    )
     abort(msg)
   }
 
@@ -91,7 +100,8 @@ class_pred <- function(x = factor(), which = integer()) {
   new_class_pred(
     x = x_int,
     labels = labs,
-    ordered = is.ordered(x)
+    ordered = is.ordered(x),
+    equivocal = equivocal
   )
 }
 
@@ -116,7 +126,7 @@ format.class_pred <- function(x, ...) {
 #' @importFrom vctrs vec_data
 format_as_factor <- function(x, ...) {
 
-  lab_equivocal <- paste0("[", probably.equivocal_label, "]")
+  lab_equivocal <- get_equivocal_label(x)
   labs_known <- attr(x, "labels")
 
   if(is_ordered_class_pred(x)) {
@@ -156,18 +166,18 @@ format_as_factor <- function(x, ...) {
 #' as_class_pred(x)
 #'
 #' @export
-as_class_pred <- function(x, which = integer()) {
+as_class_pred <- function(x, which = integer(), equivocal = "[EQ]") {
   UseMethod("as_class_pred")
 }
 
 #' @export
-as_class_pred.default <- function(x, which = integer()) {
+as_class_pred.default <- function(x, which = integer(), equivocal = "[EQ]") {
   abort_default(x, "as_class_pred")
 }
 
 #' @export
-as_class_pred.factor <- function(x, which = integer()) {
-  class_pred(x, which)
+as_class_pred.factor <- function(x, which = integer(), equivocal = "[EQ]") {
+  class_pred(x, which, equivocal)
 }
 
 # ------------------------------------------------------------------------------
@@ -319,6 +329,11 @@ reportable_rate.default <- function(x) {
 #' @export
 reportable_rate.class_pred <- function(x) {
   n <- length(x)
+
+  if(n == 0L) {
+    return(NA_real_)
+  }
+
   n_eq <- sum(is_equivocal(x))
   (n - n_eq) / n
 }
