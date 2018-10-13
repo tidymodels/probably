@@ -9,8 +9,8 @@
 #' be one for each level in `levels`, and _it is assumed that the vectors
 #' are in the same order as `levels`_.
 #'
-#' @param .prob A single numeric vector corresponding to the class probabilities
-#' of the first level in `levels`.
+#' @param estimate A single numeric vector corresponding to the class
+#' probabilities of the first level in `levels`.
 #'
 #' @param levels A character vector of class levels. The length should be the
 #' same as the number of selections made through `...`, or length `2`
@@ -50,7 +50,7 @@
 #' segment_logistic %>%
 #'   mutate(
 #'     .class_pred = make_two_class_pred(
-#'       .prob = .pred_good,
+#'       estimate = .pred_good,
 #'       levels = levels(Class),
 #'       buffer = 0.15
 #'     )
@@ -137,7 +137,7 @@ make_class_pred <- function(...,
 
 #' @rdname make_class_pred
 #' @export
-make_two_class_pred <- function(.prob,
+make_two_class_pred <- function(estimate,
                                 levels,
                                 threshold = 0.5,
                                 ordered = FALSE,
@@ -146,7 +146,7 @@ make_two_class_pred <- function(.prob,
   if (length(levels) != 2 && is.character(levels))
     stop ("`levels` must be a character vector of length 2.", call. = FALSE)
 
-  if (!is.numeric(.prob))
+  if (!is.numeric(estimate))
     stop ("The selected probability vector should be numeric.", call. = FALSE)
 
   if (length(buffer) > 2 && is.numeric(buffer))
@@ -156,7 +156,7 @@ make_two_class_pred <- function(.prob,
     buffer <- c(buffer, buffer)
   }
 
-  x <- ifelse(.prob >= threshold, levels[1], levels[2])
+  x <- ifelse(estimate >= threshold, levels[1], levels[2])
   x <- factor(x, levels = levels, ordered = ordered)
 
   if (is.null(buffer)) {
@@ -164,8 +164,8 @@ make_two_class_pred <- function(.prob,
   }
   else {
     eq_ind <- which(
-      .prob >= threshold - buffer[1] &
-      .prob <= threshold + buffer[2]
+      estimate >= threshold - buffer[1] &
+      estimate <= threshold + buffer[2]
     )
   }
 

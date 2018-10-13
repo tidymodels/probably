@@ -8,7 +8,7 @@
 make_class_pred(..., levels, ordered = FALSE,
   min_prob = 1/length(levels))
 
-make_two_class_pred(.prob, levels, threshold = 0.5, ordered = FALSE,
+make_two_class_pred(estimate, levels, threshold = 0.5, ordered = FALSE,
   buffer = NULL)
 }
 \arguments{
@@ -27,8 +27,8 @@ that is flagged as ordered.}
 \item{min_prob}{A single numeric value. If any probabilities are less than
 this value (by row), the row is marked as \emph{equivocal}.}
 
-\item{.prob}{A single numeric vector corresponding to the class probabilities
-of the first level in \code{levels}.}
+\item{estimate}{A single numeric vector corresponding to the class
+probabilities of the first level in \code{levels}.}
 
 \item{threshold}{A single numeric value for the threshold to call a row to
 be labeled as the first value of \code{levels}.}
@@ -62,7 +62,7 @@ make_two_class_pred(good, lvls, buffer = c(0.05, 0.15))
 segment_logistic \%>\%
   mutate(
     .class_pred = make_two_class_pred(
-      .prob = .pred_good,
+      estimate = .pred_good,
       levels = levels(Class),
       buffer = 0.15
     )
