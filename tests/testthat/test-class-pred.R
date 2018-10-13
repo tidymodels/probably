@@ -1,5 +1,7 @@
 context("test-class-pred")
 
+library(vctrs)
+
 # ------------------------------------------------------------------------------
 # Setup
 
@@ -73,6 +75,7 @@ test_that("casting class_pred to class_pred", {
   cp1  <- class_pred(factor(c("a", "b", "b", "c")), which = 2)
   cp2  <- class_pred(factor(c("a", "b", "b", "b")), which = 3)
   cp3  <- class_pred(factor(c("a", "b", "b", "c")), which = 2, equivocal = "eq")
+  cp4  <- class_pred(factor(c("a", "b", "b", "c"), ordered = TRUE), which = 2)
 
   # lossy cast, no c level in cp2
   expect_equal(
@@ -84,12 +87,15 @@ test_that("casting class_pred to class_pred", {
 
   # casting to new class_pred preserves new eq label
   expect_equal(get_equivocal_label(vec_cast(cp1, cp3)), "eq")
+
+  expect_true(is_ordered(vec_cast(cp1, cp4)))
 })
 
 test_that("casting class_pred to factor", {
 
   cp1  <- class_pred(factor(c("a", "b", "b", "c")))
   cp2  <- class_pred(factor(c("a", "b", "b", "c")), which = 2)
+  cp3  <- class_pred(factor(c(NA, "a", "b", "c")), which = 3)
   fc1  <- factor(levels = c("a", "b"))
   fc2  <- factor(levels = c("a", "b", "c"))
   fc3  <- factor(levels = c("a", "b", "c"), ordered = TRUE)
@@ -110,6 +116,17 @@ test_that("casting class_pred to factor", {
 
   # converting to ordered factor maintains orderedness
   expect_equal(vec_cast(cp1, fc3), ordered(c("a", "b", "b", "c")))
+
+  # convert to factor with NA already present is not lossy
+  expect_warning(vec_cast(cp3, factor()), NA)
+
+  # special test for when the factor you are casting to has different
+  # levels and they are in an odd order compared to what the class_pred had
+  # (poor is between good and great here)
+  cp_special  <- class_pred(factor(c("good", "great")))
+  fc_special  <- factor(c("good", "poor", "great"), c("good", "poor", "great"))
+  res_special <- factor(c("good", "great"), levels = c("good", "poor", "great"))
+  expect_equal(vec_cast(cp_special, fc_special), res_special)
 
 })
 
@@ -187,6 +204,41 @@ test_that("combining class preds", {
   expect_equal(get_equivocal_label(c(cp1, cp3)), "[EQ]")
   expect_equal(get_equivocal_label(c(cp3, cp1)), "eq")
 
+})
+
+test_that("combining class pred with factor", {
+
+  cp1 <- class_pred(factor(c("good", "poor")), which = 2)
+  chr <- c("good", "great", NA)
+  fc1 <- factor(chr)
+
+  join1 <- class_pred(
+    factor(
+      c("good", "poor", "good", "great", NA),
+      levels = c("good", "poor", "great")
+    ),
+    which = 2
+  )
+
+  join2 <- class_pred(
+    factor(
+      c("good", "great", NA, "good", "poor"),
+      levels = c("good", "great", "poor")
+    ),
+    which = 5
+  )
+
+  join3 <- c(1, 2, NA, 1, 0)
+
+  # vec_c() joins are bidirectionally correct
+  expect_equal(vec_c(cp1, fc1), join1)
+  expect_equal(vec_c(fc1, cp1), join2)
+
+  # c() joins are correct if vctrs_vctr is first
+  expect_equal(c(cp1, fc1), join1)
+
+  # sadly this happens and cannot be overriden
+  expect_equal(c(fc1, cp1), join3)
 })
 
 test_that("common type: factor and class_pred", {
