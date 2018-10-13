@@ -77,34 +77,12 @@ vec_cast.class_pred.logical <- function(x, to) {
 #' @export
 vec_cast.class_pred.class_pred <- function(x, to) {
 
-  # casting a class_pred to another class_pred type
-  # `to` could have different levels and might not be ordered and could
-  # have a diff eq label
+  # first go class_pred -> factor
+  # then recast as class_pred with correct attributes
 
-  # when `to` does not have all the levels in `x`, the missing levels
-  # in `to` are converted to NA in `x`.
-
-  new_x <- vec_data(x)
-
-  if (length(levels(to)) == 0L) {
-    lvls <- levels(x)
-  }
-  else {
-    lvls <- levels(to)
-
-    lossy <- ! (as.character(x) %in% lvls | is_equivocal(x))
-
-    if (any(lossy)) {
-      where_lossy <- which(lossy)
-      warn_lossy_cast(x, to, locations = where_lossy)
-      new_x[where_lossy] <- NA_integer_
-    }
-  }
-
-  new_class_pred(
-    x = new_x,
-    labels = lvls,
-    ordered = is.ordered(to),
+  class_pred(
+    x = vec_cast.factor.class_pred(x, to),
+    which = which_equivocal(x),
     equivocal = get_equivocal_label(to)
   )
 
@@ -128,36 +106,33 @@ vec_cast.class_pred.factor <- function(x, to) {
 #' @importFrom vctrs warn_lossy_cast
 vec_cast.factor.class_pred <- function(x, to) {
 
-  new_x <- vec_data(x)
+  # casting a class_pred to factor type
+  # `to` could have different levels
 
-  # the factor we are casting to could have levels of its own
-  # if it has some, use them and warn about lossy casts
+  # when `to` does not have all the levels in `x`, the missing levels
+  # in `to` are converted to NA in `x` and a lossy cast warning is issued.
+
+  chr_x <- as.character(x)
+
   if (length(levels(to)) == 0L) {
     lvls <- levels(x)
   }
   else {
     lvls <- levels(to)
 
-    lossy <- ! (as.character(x) %in% lvls | is_equivocal(x))
+    lossy <- ! (chr_x %in% lvls | is.na(chr_x))
 
     if (any(lossy)) {
       where_lossy <- which(lossy)
       warn_lossy_cast(x, to, locations = where_lossy)
-      new_x[where_lossy] <- NA_integer_
+      chr_x[where_lossy] <- NA_integer_
     }
   }
 
-  # this is expected, not lossy
-  new_x[is_equivocal(x)] <- NA_integer_
-
-  # Specify levels as full sequence along labels in case the
-  # data is missing a level from equivocal masking
-  # ie class_pred(factor(c(1,1,2)), which = 3)
   factor(
-    x = new_x,
-    levels = seq_along(lvls),
-    labels = lvls,
-    ordered = is.ordered(to)
+    x = chr_x,
+    levels = lvls,
+    ordered = is_ordered(to)
   )
 }
 
@@ -181,29 +156,12 @@ vec_cast.class_pred.ordered <- function(x, to) {
 #' @method vec_cast.class_pred factor
 #' @export
 vec_cast.class_pred.character <- function(x, to) {
-
-  new_x <- vec_data(x)
-
-  if (length(levels(to)) == 0L) {
-    lvls <- unique(new_x)
-  }
-  else {
-    lvls <- levels(to)
-
-    lossy <- ! (x %in% lvls | is.na(x))
-
-    if (any(lossy)) {
-      where_lossy <- which(lossy)
-      warn_lossy_cast(x, to, locations = where_lossy)
-      new_x[where_lossy] <- NA_integer_
-    }
-  }
-
+  # first cast character -> factor
+  # then add class pred attributes
   class_pred(
-    x = factor(
-      x = new_x,
-      levels = lvls,
-      ordered = is_ordered_class_pred(to)
+    x = vec_cast.factor(
+      x = x,
+      to = factor(levels = levels(to), ordered = is_ordered(to))
     ),
     equivocal = get_equivocal_label(to)
   )
@@ -215,7 +173,10 @@ vec_cast.class_pred.character <- function(x, to) {
 #' @importFrom vctrs vec_data
 #' @importFrom vctrs warn_lossy_cast
 vec_cast.character.class_pred <- function(x, to) {
-  vec_cast(vec_cast(x, factor()), character())
+  x_data <- vec_data(x)
+  x_data[is_equivocal(x)] <- NA_integer_
+  lvls <- levels(x)
+  lvls[x_data]
 }
 
 # ------------------------------------------------------------------------------
@@ -290,6 +251,18 @@ vec_type2.factor.class_pred <- function(x, y) {
   )
 }
 
+#' @method vec_type2.class_pred character
+#' @export
+vec_type2.class_pred.character <- function(x, y) {
+  character()
+}
+
+#' @export
+#' @importFrom vctrs vec_type2.character
+vec_type2.character.class_pred <- function(x, y) {
+  character()
+}
+
 union_labels <- function(x, y) {
   x_labels <- levels(x)
   y_labels <- levels(y)
@@ -299,4 +272,27 @@ union_labels <- function(x, y) {
 
 union_ordered <- function(x, y) {
   is_ordered_class_pred(x) | is_ordered_class_pred(y)
+}
+
+# ------------------------------------------------------------------------------
+# Comparison and equality
+
+#' Equality for `class_pred`
+#'
+#' `class_pred` objects are converted to integer before equality checks
+#' are done.
+#'
+#' @export
+#' @importFrom vctrs vec_proxy_equal
+#' @keywords internal
+vec_proxy_equal.class_pred <- function(x) {
+  # allows you to compare two class_pred objects robustly
+  # converting to character would confuse NA with equivocal
+  vec_data(x)
+}
+
+#' @export
+#' @importFrom vctrs vec_proxy_compare
+vec_proxy_compare.class_pred <- function(x) {
+  abort("Comparisons with `class_pred` objects are not meaningful.")
 }

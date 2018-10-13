@@ -30,3 +30,15 @@ is_ordered_class_pred <- function(x) {
 get_equivocal_label <- function(x) {
   attr(x, "equivocal")
 }
+
+is_ordered <- function(x) {
+  UseMethod("is_ordered")
+}
+
+is_ordered.class_pred <- function(x) {
+  is_ordered_class_pred(x)
+}
+
+is_ordered.default <- function(x) {
+  is.ordered(x)
+}
