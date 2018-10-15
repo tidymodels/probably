@@ -1,3 +1,14 @@
+cat_class_pred <- function(x) {
+
+  if(length(x) == 0) {
+    cat("class_pred(0)", "\n")
+  }
+  else {
+    print(format_as_factor(x), max.levels = 0)
+  }
+
+}
+
 # Adapted from print.factor
 # Smart enough to truncate the levels if they get too long
 cat_levels <- function(x, width = getOption("width")) {

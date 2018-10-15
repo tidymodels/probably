@@ -33,7 +33,7 @@ obj_print_header.class_pred <- function(x) {
 #' @export
 #' @importFrom vctrs obj_print_data
 obj_print_data.class_pred <- function(x) {
-  print(format_as_factor(x), max.levels = 0)
+  cat_class_pred(x)
 }
 
 #' @export
