@@ -1,0 +1,32 @@
+template:
+  package: tidytemplate
+  params:
+    part_of: tidymodels
+    footer: probably is a part of the tidymodels ecosystem, a collection of modeling packages designed with common APIs and a shared philosophy.
+
+development:
+  mode: auto
+
+home:
+  strip_header: true
+
+reference:
+- title: Class predictions
+  contents:
+  - class_pred
+  - matches("_class_pred")
+  - reportable_rate
+  - threshold_perf
+  - locate-equivocal
+  - levels.class_pred
+
+- title: Vctrs compatibility
+  contents:
+  - vec_cast.class_pred
+  - vec_type2.class_pred
+
+- title: Data
+  contents:
+  - segment_naive_bayes
+  - segment_logistic
+  - species_probs
