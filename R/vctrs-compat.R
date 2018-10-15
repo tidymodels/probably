@@ -75,6 +75,7 @@ vec_cast.class_pred.logical <- function(x, to) {
 
 #' @method vec_cast.class_pred class_pred
 #' @export
+#' @importFrom vctrs vec_cast.factor
 vec_cast.class_pred.class_pred <- function(x, to) {
 
   # first go class_pred -> factor
