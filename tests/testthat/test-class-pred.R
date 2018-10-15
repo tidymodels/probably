@@ -290,3 +290,16 @@ test_that("common type: factor and class_pred", {
   )
 
 })
+
+test_that("reportable rate printing", {
+
+  report_100 <- class_pred(factor(1))
+  report_0   <- class_pred()
+  report_50  <- class_pred(factor(c(1, 2)), 2)
+  report_667 <- class_pred(factor(c(1, 2, 3)), 2)
+
+  expect_output(cat_reportable(report_100), "Reportable: 100%")
+  expect_output(cat_reportable(report_0), "Reportable: 0%")
+  expect_output(cat_reportable(report_50), "Reportable: 50%")
+  expect_output(cat_reportable(report_667), "Reportable: 66.7%")
+})

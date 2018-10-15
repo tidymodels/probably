@@ -74,14 +74,26 @@ cat_levels <- function(x, width = getOption("width")) {
 }
 
 cat_reportable <- function(x) {
-  reportable <- reportable_rate(x)
+  reportable <- 100 * reportable_rate(x)
+
+  if(rlang::is_scalar_integerish(reportable)) {
+    reportable <- rlang::as_integer(reportable)
+  }
+
+  digits <- function(x) {
+    if(is.integer(x)) {
+      0
+    } else {
+      1
+    }
+  }
 
   # length 0 class pred obj
   if(is.na(reportable)) {
     reportable <- ""
   } else {
     reportable <- paste0(
-      formatC(100 * reportable, format = "f", digits = 1),
+      formatC(reportable, format = "f", digits = digits(reportable)),
       "%"
     )
   }

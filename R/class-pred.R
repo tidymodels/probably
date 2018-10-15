@@ -336,7 +336,7 @@ reportable_rate.class_pred <- function(x) {
   n <- length(x)
 
   if(n == 0L) {
-    return(NA_real_)
+    return(0L)
   }
 
   n_eq <- sum(is_equivocal(x))
