@@ -1,3 +1,7 @@
+^docs$
+^_pkgdown\.yml$
+^codecov\.yml$
+^README\.Rmd$
 ^\.travis\.yml$
 ^probably\.Rproj$
 ^\.Rproj\.user$
