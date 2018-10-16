@@ -87,15 +87,10 @@ cat_reportable <- function(x) {
     }
   }
 
-  # length 0 class pred obj
-  if(is.na(reportable)) {
-    reportable <- ""
-  } else {
-    reportable <- paste0(
-      formatC(reportable, format = "f", digits = digits(reportable)),
-      "%"
-    )
-  }
+  reportable <- paste0(
+    formatC(reportable, format = "f", digits = digits(reportable)),
+    "%"
+  )
 
   cat_report <- "Reportable: "
   cat_report <- paste0(cat_report, reportable)
