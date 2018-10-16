@@ -1,8 +1,8 @@
 template:
   package: tidytemplate
   params:
-    part_of: tidymodels
-    footer: probably is a part of the tidymodels ecosystem, a collection of modeling packages designed with common APIs and a shared philosophy.
+    part_of: <a href="https://github.com/tidymodels">tidymodels</a>
+    footer: probably is a part of the <strong>tidymodels</strong> ecosystem, a collection of modeling packages designed with common APIs and a shared philosophy.
 
 development:
   mode: auto
