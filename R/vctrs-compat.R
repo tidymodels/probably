@@ -28,12 +28,14 @@ vec_ptype_abbr.class_pred <- function(x) {
 #' @importFrom vctrs obj_print_header
 obj_print_header.class_pred <- function(x) {
   # no header
+  invisible(x)
 }
 
 #' @export
 #' @importFrom vctrs obj_print_data
 obj_print_data.class_pred <- function(x) {
   cat_class_pred(x)
+  invisible(x)
 }
 
 #' @export
@@ -41,6 +43,7 @@ obj_print_data.class_pred <- function(x) {
 obj_print_footer.class_pred <- function(x) {
   cat_levels(x)
   cat_reportable(x)
+  invisible(x)
 }
 
 # ------------------------------------------------------------------------------
