@@ -118,40 +118,10 @@ class_pred <- function(x = factor(), which = integer(), equivocal = "[EQ]") {
 # Used by data.frame() columns and general printing
 #' @export
 format.class_pred <- function(x, ...) {
-
-  x <- format_as_factor(x)
-
-  out <- as.character.factor(x)
-
-  out
-}
-
-# This is different from as_factor()
-# This changes enough to be able to print right
-#' @importFrom vctrs vec_data
-format_as_factor <- function(x, ...) {
-
-  lab_equivocal <- get_equivocal_label(x)
-  labs_known <- attr(x, "labels")
-
-  if(is_ordered_class_pred(x)) {
-    cls <- c("ordered", "factor")
-  } else {
-    cls <- "factor"
-  }
-
-  # In this order b/c `0 = equivocal`
-  labs <- c(lab_equivocal, labs_known)
-
-  # strip attributes
-  x <- vec_data(x)
-
-  # Factors start at 1
-  x <- x + 1L
-
-  attr(x, "levels") <- labs
-  class(x) <- cls
-
+  eq_lgl <- is_equivocal(x)
+  eq_lbl <- get_equivocal_label(x)
+  x <- as.character(x)
+  x[eq_lgl] <- eq_lbl
   x
 }
 

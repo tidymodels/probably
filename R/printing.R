@@ -4,9 +4,8 @@ cat_class_pred <- function(x) {
     cat("class_pred(0)", "\n")
   }
   else {
-    print(format_as_factor(x), max.levels = 0)
+    print(format(x), quote = FALSE)
   }
-
 }
 
 # Adapted from print.factor
