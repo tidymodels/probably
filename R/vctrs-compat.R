@@ -85,7 +85,7 @@ vec_cast.class_pred.class_pred <- function(x, to) {
   # then recast as class_pred with correct attributes
 
   class_pred(
-    x = vec_cast.factor.class_pred(x, to),
+    x = factorish_to_factor(x, to),
     which = which_equivocal(x),
     equivocal = get_equivocal_label(to)
   )
@@ -100,7 +100,11 @@ vec_cast.class_pred.class_pred <- function(x, to) {
 #' @method vec_cast.class_pred factor
 #' @export
 vec_cast.class_pred.factor <- function(x, to) {
-  class_pred(x, integer())
+  class_pred(
+    x = factorish_to_factor(x, to),
+    which = integer(),
+    equivocal = get_equivocal_label(to)
+  )
 }
 
 # class_pred -> factor, equivocals become NAs
@@ -109,48 +113,17 @@ vec_cast.class_pred.factor <- function(x, to) {
 #' @importFrom vctrs vec_data
 #' @importFrom vctrs warn_lossy_cast
 vec_cast.factor.class_pred <- function(x, to) {
-
-  # casting a class_pred to factor type
-  # `to` could have different levels
-
-  # when `to` does not have all the levels in `x`, the missing levels
-  # in `to` are converted to NA in `x` and a lossy cast warning is issued.
-
-  chr_x <- as.character(x)
-
-  if (length(levels(to)) == 0L) {
-    lvls <- levels(x)
-  }
-  else {
-    lvls <- levels(to)
-
-    lossy <- ! (chr_x %in% lvls | is.na(chr_x))
-
-    if (any(lossy)) {
-      where_lossy <- which(lossy)
-      warn_lossy_cast(x, to, locations = where_lossy)
-      chr_x[where_lossy] <- NA_integer_
-    }
-  }
-
-  factor(
-    x = chr_x,
-    levels = lvls,
-    ordered = is_ordered(to)
-  )
+  factorish_to_factor(x, to)
 }
 
-# ordered -> class_pred, assume no equivocal values
+# ordered -> class_pred
 
 #' @method vec_cast.class_pred ordered
 #' @export
-vec_cast.class_pred.ordered <- function(x, to) {
-  vec_cast.class_pred.factor(x, to)
-}
+vec_cast.class_pred.ordered <- vec_cast.class_pred.factor
 
 # # fully handled by the vec_cast.factor.class_pred method
 # # no vec_cast.ordered generic will be implemented, see vctrs#96
-# # class_pred -> ordered, equivocals become NAs
 # vec_cast.ordered.class_pred <- function(x, to) {
 #   as.ordered(vec_cast.factor.class_pred(x, to))
 # }
@@ -182,6 +155,37 @@ vec_cast.character.class_pred <- function(x, to) {
   lvls <- levels(x)
   lvls[x_data]
 }
+
+# `to` could have different levels
+# when `to` does not have all the levels in `x`, the missing levels
+# in `to` are converted to NA in `x` and a lossy cast warning is issued.
+factorish_to_factor <- function(x, to) {
+
+  chr_x <- as.character(x)
+
+  if (length(levels(to)) == 0L) {
+    lvls <- levels(x)
+  }
+  else {
+    lvls <- levels(to)
+
+    lossy <- ! (chr_x %in% lvls | is.na(chr_x))
+
+    if (any(lossy)) {
+      where_lossy <- which(lossy)
+      warn_lossy_cast(x, to, locations = where_lossy)
+      chr_x[where_lossy] <- NA_integer_
+    }
+  }
+
+  factor(
+    x = chr_x,
+    levels = lvls,
+    ordered = is_ordered(to)
+  )
+
+}
+
 
 # ------------------------------------------------------------------------------
 # Coercion
