@@ -34,6 +34,10 @@ test_that("can create from helper", {
   expect_error(class_pred(1L))
 })
 
+test_that("can detect class_pred", {
+  expect_equal(is_class_pred(manual_creation_eq), TRUE)
+})
+
 test_that("equivocal label is not allowed as level", {
   expect_error(class_pred(factor("[EQ]")))
 
@@ -130,6 +134,40 @@ test_that("casting class_pred to factor", {
 
 })
 
+test_that("casting factor to class_pred", {
+
+  fc1  <- factor(c("a", "b", "b", "b"))
+  fc2  <- factor(c("a", "b", "b", "c"))
+  fc3  <- factor(c(NA, "a", "b", "c"))
+
+  cp1  <- class_pred(factor(levels = c("a", "b")))
+  cp2  <- class_pred(factor(levels = c("a", "b", "c")))
+  cp3  <- class_pred(factor(levels = c("a", "b", "c")), equivocal = "eq")
+  cp4  <- class_pred(factor(levels = c("a", "b", "c"), ordered = TRUE))
+
+  # lossy cast, no c level in cp1
+  expect_equal(
+    expect_warning(
+      vec_data(vec_cast(fc2, cp1))
+    ),
+    c(1, 2, 2, NA)
+  )
+
+  # clean conversion to class_pred
+  expect_equal(vec_cast(fc1, cp1), class_pred(factor(c("a", "b", "b", "b"))))
+
+  # converting to ordered class_pred maintains orderedness
+  expect_equal(vec_cast(fc2, cp4), class_pred(factor(c("a", "b", "b", "c"), ordered = TRUE)))
+
+  # convert to class_pred with NA already present is not lossy
+  expect_warning(vec_cast(fc3, class_pred()), NA)
+
+  # convert ordered factor to class_pred
+  # order-ness depends on class_pred type, not order factor
+  or1 <- as.ordered(fc1)
+  expect_equal(vec_cast(or1, class_pred()), class_pred(factor(c("a", "b", "b", "b"))))
+})
+
 test_that("casting character to class_pred", {
 
   chr1 <- c("a", "b", "b", "c")
@@ -184,6 +222,15 @@ test_that("unknown casts are handled correctly", {
   expect_equal(vec_cast(NULL, class_pred()), NULL)
   expect_equal(vec_cast(class_pred(), NULL), class_pred())
 
+})
+
+test_that("type2 checks are handled correctly", {
+
+  expect_error(vec_type2(manual_creation_eq, numeric()), "No common type")
+  expect_equal(vec_type2(manual_creation_eq, vctrs::unspecified()), manual_creation_eq)
+
+  expect_equal(vec_type2(character(), manual_creation_eq), character())
+  expect_equal(vec_type2(manual_creation_eq, character()), character())
 })
 
 test_that("combining class preds", {
@@ -291,7 +338,11 @@ test_that("common type: factor and class_pred", {
 
 })
 
-test_that("reportable rate printing", {
+test_that("smaller vctrs helpers", {
+  expect_equal(vec_ptype_abbr(manual_creation_eq), "clss_prd")
+})
+
+test_that("reportable rate", {
 
   report_100 <- class_pred(factor(1))
   report_0   <- class_pred()
@@ -302,4 +353,60 @@ test_that("reportable rate printing", {
   expect_output(cat_reportable(report_0), "Reportable: 0%")
   expect_output(cat_reportable(report_50), "Reportable: 50%")
   expect_output(cat_reportable(report_667), "Reportable: 66.7%")
+
+  expect_error(reportable_rate(1), "No implementation")
+})
+
+test_that("constructor aborts on bad input", {
+  expect_error(class_pred(which = "hello"))
+  expect_error(class_pred(equivocal = 1))
+  expect_error(class_pred(which = 1), "The largest value of `which` can be 0.")
+})
+
+test_that("as_class_pred() works like the constructor", {
+  expect_equal(class_pred(factor_no_eq, 1), as_class_pred(factor_no_eq, 1))
+  expect_error(as_class_pred(which = "hello"))
+  expect_error(as_class_pred(1), "No implementation")
+})
+
+test_that("locate equivocal helpers", {
+  expect_equal(is_equivocal(manual_creation_eq), c(TRUE, rep(FALSE, 4)))
+  expect_error(is_equivocal("a"), "No implementation")
+
+  expect_equal(which_equivocal(manual_creation_eq), 1L)
+  expect_error(which_equivocal("a"), "No implementation")
+
+  expect_equal(any_equivocal(manual_creation_eq), TRUE)
+  expect_error(any_equivocal("a"), "No implementation")
+})
+
+test_that("class_pred printing", {
+
+  expect_output(
+    cat_class_pred(manual_creation_eq),
+    "\\[1\\] \\[EQ\\] low  med  med  high"
+  )
+
+  expect_output(
+    cat_class_pred(class_pred()),
+    "class_pred\\(0\\)"
+  )
+
+  expect_output(cat_levels(class_pred()), "Levels:")
+  expect_output(cat_levels(manual_creation_eq), "Levels: low med high")
+
+  expect_output(
+    cat_levels(class_pred(as.ordered(factor_no_eq))),
+    "Levels: low < med < high"
+  )
+
+  # long levels
+  set.seed(123)
+  lng <- replicate(10, paste0(sample(letters, 20, replace = TRUE), collapse = ""))
+  cp <- class_pred(as.factor(lng))
+
+  expect_output(
+    cat_levels(cp),
+    "10 Levels: dkkjddgmgwbludofdtxj grkuclzxxedqirieucmn \\.\\.\\. xsqzrsophdzxruamtfig"
+  )
 })
