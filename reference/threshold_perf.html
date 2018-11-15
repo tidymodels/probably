@@ -199,8 +199,7 @@ see the Relevant level section of <code><a href='https://www.rdocumentation.org/
 <span class='no'>thresholds</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/seq'>seq</a></span>(<span class='fl'>0.5</span>, <span class='fl'>0.9</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
 
 <span class='no'>segment_logistic</span> <span class='kw'>%&gt;%</span>
-  <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>24</span>)</div><div class='output co'>#&gt; # A tibble: 20 x 4
+  <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>)</div><div class='output co'>#&gt; # A tibble: 20 x 4
 #&gt;    .threshold .estimator .metric  .estimate
 #&gt;         &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;
 #&gt;  1        0.5 binary     j_index      0.539
