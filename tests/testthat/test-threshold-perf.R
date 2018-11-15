@@ -37,7 +37,7 @@ get_res <- function(prob, obs, cut) {
   )
 
   dat %>%
-    mets(obs, cls) %>%
+    mets(obs, estimate = cls) %>%
     spread(.metric, .estimate) %>%
     mutate(distance = (1 - sens) ^ 2 + (1 - spec) ^ 2) %>%
     gather(key = ".metric", ".estimate", j_index, sens, spec, distance)

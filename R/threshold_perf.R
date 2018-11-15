@@ -109,7 +109,7 @@ threshold_perf.data.frame <- function(.data,
   }
 
   .data <- .data %>%
-    two_class(truth, alt_pred) %>%
+    two_class(truth, estimate = alt_pred) %>%
     spread(.metric, .estimate) %>%
     mutate(distance = (1 - sens) ^ 2 + (1 - spec) ^ 2) %>%
     gather(key = ".metric", ".estimate", j_index, sens, spec, distance) %>%
