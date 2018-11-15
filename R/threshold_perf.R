@@ -47,8 +47,7 @@
 #' thresholds <- seq(0.5, 0.9, by = 0.1)
 #'
 #' segment_logistic %>%
-#'   threshold_perf(Class, .pred_good, thresholds) %>%
-#'   print(n = 24)
+#'   threshold_perf(Class, .pred_good, thresholds)
 #'
 #' # ---------------------------------------------------------------------------
 #'
