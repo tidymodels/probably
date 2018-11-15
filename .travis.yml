@@ -9,6 +9,7 @@ r_github_packages:
   - tidyverse/tidytemplate
 
 matrix:
+  fast_finish: true
   include:
   - r: devel
   - r: release
