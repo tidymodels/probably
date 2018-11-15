@@ -74,7 +74,7 @@ data frame." />
       <div class="navbar-brand-container">
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info">
-          <span class="partof">part of &lt;a href=&quot;https://github.com/tidymodels&quot;&gt;tidymodels&lt;/a&gt;</span>
+          <span class="partof">part of <a href="https://github.com/tidymodels">tidymodels</a></span>
           <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
         </div>
       </div>
@@ -126,7 +126,7 @@ data frame.</p>
     </div>
 
     <pre class="usage"><span class='fu'>append_class_pred</span>(<span class='no'>.data</span>, <span class='no'>...</span>, <span class='no'>levels</span>, <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fu'>length</span>(<span class='no'>levels</span>), <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>".class_pred"</span>)</pre>
+  <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/length'>length</a></span>(<span class='no'>levels</span>), <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>".class_pred"</span>)</pre>
     
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -140,7 +140,7 @@ data frame.</p>
       <td><p>One or more unquoted expressions separated by commas
 to capture the columns of <code>.data</code> containing the class
 probabilities. You can treat variable names like they are
-positions, so you can use expressions like <code>x:y</code> to select ranges
+positions, so you can use expressions like <code><a href='https://www.rdocumentation.org/packages/base/topics/Colon'>x:y</a></code> to select ranges
 of variables or use selector functions to choose which columns.
 For <code>make_class_pred</code>, the columns for all class probabilities
 should be selected (in the same order as the <code>levels</code> object).
@@ -181,8 +181,10 @@ this value (by row), the row is marked as <em>equivocal</em>.</p></td>
 <span class='co'># The following two examples are equivalent and demonstrate</span>
 <span class='co'># the helper, append_class_pred()</span>
 
-<span class='fu'>library</span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='message'></span>
-#&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+#&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following object is masked from ‘package:testthat’:</span>
+#&gt; <span class='message'></span>
+#&gt; <span class='message'>    matches</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
 #&gt; <span class='message'></span>
@@ -191,7 +193,7 @@ this value (by row), the row is marked as <em>equivocal</em>.</p></td>
   <span class='fu'><a href='http://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
     <span class='kw'>.class_pred</span> <span class='kw'>=</span> <span class='fu'><a href='make_class_pred.html'>make_class_pred</a></span>(
       <span class='no'>.pred_bobcat</span>, <span class='no'>.pred_coyote</span>, <span class='no'>.pred_gray_fox</span>,
-      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'>levels</span>(<span class='no'>Species</span>),
+      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/levels'>levels</a></span>(<span class='no'>Species</span>),
       <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>.5</span>
     )
   )</div><div class='output co'>#&gt; # A tibble: 110 x 5
@@ -208,7 +210,7 @@ this value (by row), the row is marked as <em>equivocal</em>.</p></td>
 #&gt;  9 bobcat         0.771        0.229          0           bobcat
 #&gt; 10 bobcat         0.623        0.325          0.0517      bobcat
 #&gt; # ... with 100 more rows</div><div class='input'>
-<span class='no'>lvls</span> <span class='kw'>&lt;-</span> <span class='fu'>levels</span>(<span class='no'>species_probs</span>$<span class='no'>Species</span>)
+<span class='no'>lvls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/levels'>levels</a></span>(<span class='no'>species_probs</span>$<span class='no'>Species</span>)
 
 <span class='fu'>append_class_pred</span>(
   <span class='kw'>.data</span> <span class='kw'>=</span> <span class='no'>species_probs</span>,
@@ -246,7 +248,7 @@ this value (by row), the row is marked as <em>equivocal</em>.</p></td>
 
       <footer>
       <div class="tidyverse">
-  <p>probably is a part of the &lt;strong&gt;tidymodels&lt;/strong&gt; ecosystem, a collection of modeling packages designed with common APIs and a shared philosophy.</p>
+  <p>probably is a part of the <strong>tidymodels</strong> ecosystem, a collection of modeling packages designed with common APIs and a shared philosophy.</p>
 </div>
 
 <div class="author">

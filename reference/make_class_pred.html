@@ -72,7 +72,7 @@ class_pred objects with an optional equivocal zone." />
       <div class="navbar-brand-container">
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info">
-          <span class="partof">part of &lt;a href=&quot;https://github.com/tidymodels&quot;&gt;tidymodels&lt;/a&gt;</span>
+          <span class="partof">part of <a href="https://github.com/tidymodels">tidymodels</a></span>
           <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
         </div>
       </div>
@@ -122,7 +122,7 @@ class_pred objects with an optional equivocal zone." />
     </div>
 
     <pre class="usage"><span class='fu'>make_class_pred</span>(<span class='no'>...</span>, <span class='no'>levels</span>, <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fu'>length</span>(<span class='no'>levels</span>))
+  <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/length'>length</a></span>(<span class='no'>levels</span>))
 
 <span class='fu'>make_two_class_pred</span>(<span class='no'>estimate</span>, <span class='no'>levels</span>, <span class='kw'>threshold</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
   <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
@@ -166,8 +166,8 @@ be labeled as the first value of <code>levels</code>.</p></td>
     <tr>
       <th>buffer</th>
       <td><p>A numeric vector of length 1 or 2 for the buffer around
-<code>threshold</code> that defines the equivocal zone (i.e., <code>threshold - buffer[1]</code> to
-<code>threshold + buffer[2]</code>). A length 1 vector is recycled to length 2. The
+<code>threshold</code> that defines the equivocal zone (i.e., <code><a href='https://www.rdocumentation.org/packages/base/topics/Arithmetic'>threshold - buffer[1]</a></code> to
+<code><a href='https://www.rdocumentation.org/packages/base/topics/Arithmetic'>threshold + buffer[2]</a></code>). A length 1 vector is recycled to length 2. The
 default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
     </tr>
     </table>
@@ -179,10 +179,10 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'>library</span>(<span class='no'>dplyr</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>dplyr</span>)
 
 <span class='no'>good</span> <span class='kw'>&lt;-</span> <span class='no'>segment_logistic</span>$<span class='no'>.pred_good</span>
-<span class='no'>lvls</span> <span class='kw'>&lt;-</span> <span class='fu'>levels</span>(<span class='no'>segment_logistic</span>$<span class='no'>Class</span>)
+<span class='no'>lvls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/levels'>levels</a></span>(<span class='no'>segment_logistic</span>$<span class='no'>Class</span>)
 
 <span class='co'># Equivocal zone of .5 +/- .15</span>
 <span class='fu'>make_two_class_pred</span>(<span class='no'>good</span>, <span class='no'>lvls</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fl'>0.15</span>)</div><div class='output co'>#&gt;    [1] poor poor good good poor [EQ] poor good poor poor good poor poor good
@@ -261,7 +261,7 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
 #&gt; Levels: good poor
 #&gt; Reportable: 83.2%</div><div class='input'>
 <span class='co'># Equivocal zone of c(.5 - .05, .5 + .15)</span>
-<span class='fu'>make_two_class_pred</span>(<span class='no'>good</span>, <span class='no'>lvls</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fu'>c</span>(<span class='fl'>0.05</span>, <span class='fl'>0.15</span>))</div><div class='output co'>#&gt;    [1] poor poor good good poor poor poor good poor poor good poor poor good
+<span class='fu'>make_two_class_pred</span>(<span class='no'>good</span>, <span class='no'>lvls</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/c'>c</a></span>(<span class='fl'>0.05</span>, <span class='fl'>0.15</span>))</div><div class='output co'>#&gt;    [1] poor poor good good poor poor poor good poor poor good poor poor good
 #&gt;   [15] poor good poor poor [EQ] poor poor good poor good poor poor good poor
 #&gt;   [29] good good poor poor [EQ] good good poor poor poor poor poor [EQ] poor
 #&gt;   [43] poor poor poor poor poor good good poor [EQ] poor poor poor poor poor
@@ -341,7 +341,7 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
   <span class='fu'><a href='http://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
     <span class='kw'>.class_pred</span> <span class='kw'>=</span> <span class='fu'>make_two_class_pred</span>(
       <span class='kw'>estimate</span> <span class='kw'>=</span> <span class='no'>.pred_good</span>,
-      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'>levels</span>(<span class='no'>Class</span>),
+      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/levels'>levels</a></span>(<span class='no'>Class</span>),
       <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fl'>0.15</span>
     )
   )</div><div class='output co'>#&gt; # A tibble: 1,010 x 4
@@ -365,7 +365,7 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
   <span class='fu'><a href='http://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
     <span class='kw'>.class_pred</span> <span class='kw'>=</span> <span class='fu'>make_class_pred</span>(
       <span class='no'>.pred_bobcat</span>, <span class='no'>.pred_coyote</span>, <span class='no'>.pred_gray_fox</span>,
-      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'>levels</span>(<span class='no'>Species</span>),
+      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/levels'>levels</a></span>(<span class='no'>Species</span>),
       <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>.5</span>
     )
   )</div><div class='output co'>#&gt; # A tibble: 110 x 5
@@ -399,7 +399,7 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
 
       <footer>
       <div class="tidyverse">
-  <p>probably is a part of the &lt;strong&gt;tidymodels&lt;/strong&gt; ecosystem, a collection of modeling packages designed with common APIs and a shared philosophy.</p>
+  <p>probably is a part of the <strong>tidymodels</strong> ecosystem, a collection of modeling packages designed with common APIs and a shared philosophy.</p>
 </div>
 
 <div class="author">

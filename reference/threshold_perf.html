@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Generate data for thresholding two-class data — threshold_perf • probably</title>
+<title>Generate performance metrics across probability thresholds — threshold_perf • probably</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -29,9 +29,9 @@
 <script src="../pkgdown.js"></script>
 <link href="../tidyverse-2.css" rel="stylesheet">
 
-<meta property="og:title" content="Generate data for thresholding two-class data — threshold_perf" />
+<meta property="og:title" content="Generate performance metrics across probability thresholds — threshold_perf" />
 
-<meta property="og:description" content="threshold_perf can take a set of class probability predictions
+<meta property="og:description" content="threshold_perf() can take a set of class probability predictions
 and determine performance characteristics across different values
 of the probability threshold and any existing groups." />
 <meta name="twitter:card" content="summary" />
@@ -73,7 +73,7 @@ of the probability threshold and any existing groups." />
       <div class="navbar-brand-container">
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info">
-          <span class="partof">part of &lt;a href=&quot;https://github.com/tidymodels&quot;&gt;tidymodels&lt;/a&gt;</span>
+          <span class="partof">part of <a href="https://github.com/tidymodels">tidymodels</a></span>
           <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
         </div>
       </div>
@@ -110,14 +110,14 @@ of the probability threshold and any existing groups." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Generate data for thresholding two-class data</h1>
+    <h1>Generate performance metrics across probability thresholds</h1>
     <small class="dont-index">Source: <a href='https://github.com/topepo/probably/blob/master/R/threshold_perf.R'><code>R/threshold_perf.R</code></a></small>
     <div class="hidden name"><code>threshold_perf.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p><code>threshold_perf</code> can take a set of class probability predictions
+    <p><code>threshold_perf()</code> can take a set of class probability predictions
 and determine performance characteristics across different values
 of the probability threshold and any existing groups.</p>
     
@@ -134,7 +134,7 @@ of the probability threshold and any existing groups.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>.data</th>
-      <td><p>A tibble or data frame, potentially grouped.</p></td>
+      <td><p>A tibble, potentially grouped.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -142,19 +142,18 @@ of the probability threshold and any existing groups.</p>
     </tr>
     <tr>
       <th>truth</th>
-      <td><p>A two-level factor of the true outcome labels.
-Note that that the global option <code>yardstick.event_first</code> will be
-used to determine which level is the event of interest.</p></td>
+      <td><p>The column identifier for the true two-class results
+(that is a factor). This should be an unquoted column name.</p></td>
     </tr>
     <tr>
       <th>estimate</th>
-      <td><p>A numeric vector of class probabilities such
-that larger values are more indicative of the event of interest.</p></td>
+      <td><p>The column identifier for the predicted class probabilities
+(that is a numeric). This should be an unquoted column name.</p></td>
     </tr>
     <tr>
       <th>thresholds</th>
       <td><p>A numeric vector of values for the probability
-threshold to call a sample an event. If unspecified, a series
+threshold. If unspecified, a series
 of values between 0.5 and 1.0 are used. <strong>Note</strong>: if this
 argument is used, it must be named.</p></td>
     </tr>
@@ -166,10 +165,123 @@ argument is used, it must be named.</p></td>
     
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A tibble with columns for the performance
-characteristics, the threshold, and existing groups.</p>
+    <p>A tibble with columns: <code>.threshold</code>, <code>.estimator</code>, <code>.metric</code>,
+<code>.estimate</code> and any existing groups.</p>
+    
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Note that that the global option <code>yardstick.event_first</code> will be
+used to determine which level is the event of interest. For more details,
+see the Relevant level section of <code><a href='https://www.rdocumentation.org/packages/yardstick/topics/sens'>yardstick::sens()</a></code>.</p>
+<p>The currently calculated metrics are:</p><ul>
+<li><p><code><a href='https://www.rdocumentation.org/packages/yardstick/topics/j_index'>yardstick::j_index()</a></code></p></li>
+<li><p><code><a href='https://www.rdocumentation.org/packages/yardstick/topics/sens'>yardstick::sens()</a></code></p></li>
+<li><p><code><a href='https://www.rdocumentation.org/packages/yardstick/topics/spec'>yardstick::spec()</a></code></p></li>
+<li><p><code><a href='https://www.rdocumentation.org/packages/base/topics/assignOps'>distance = (1 - sens) ^ 2 + (1 - spec) ^ 2</a></code></p></li>
+</ul>
     
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/library'>library</a></span>(<span class='no'>dplyr</span>)
+<span class='fu'><a href='https://www.rdocumentation.org/packages/utils/topics/data'>data</a></span>(<span class='st'>"segment_logistic"</span>)
+
+<span class='co'># Set the threshold to 0.6</span>
+<span class='co'># &gt; 0.6 = good</span>
+<span class='co'># &lt; 0.6 = poor</span>
+<span class='fu'>threshold_perf</span>(<span class='no'>segment_logistic</span>, <span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='kw'>thresholds</span> <span class='kw'>=</span> <span class='fl'>0.6</span>)</div><div class='output co'>#&gt; # A tibble: 4 x 4
+#&gt;   .threshold .estimator .metric  .estimate
+#&gt;        &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;
+#&gt; 1        0.6 binary     j_index      0.508
+#&gt; 2        0.6 binary     sens         0.639
+#&gt; 3        0.6 binary     spec         0.869
+#&gt; 4        0.6 binary     distance     0.148</div><div class='input'>
+<span class='co'># Set the threshold to multiple values</span>
+<span class='no'>thresholds</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/seq'>seq</a></span>(<span class='fl'>0.5</span>, <span class='fl'>0.9</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
+
+<span class='no'>segment_logistic</span> <span class='kw'>%&gt;%</span>
+  <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/print'>print</a></span>(<span class='kw'>n</span> <span class='kw'>=</span> <span class='fl'>24</span>)</div><div class='output co'>#&gt; # A tibble: 20 x 4
+#&gt;    .threshold .estimator .metric  .estimate
+#&gt;         &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;
+#&gt;  1        0.5 binary     j_index      0.539
+#&gt;  2        0.6 binary     j_index      0.508
+#&gt;  3        0.7 binary     j_index      0.472
+#&gt;  4        0.8 binary     j_index      0.388
+#&gt;  5        0.9 binary     j_index      0.226
+#&gt;  6        0.5 binary     sens         0.714
+#&gt;  7        0.6 binary     sens         0.639
+#&gt;  8        0.7 binary     sens         0.561
+#&gt;  9        0.8 binary     sens         0.451
+#&gt; 10        0.9 binary     sens         0.249
+#&gt; 11        0.5 binary     spec         0.825
+#&gt; 12        0.6 binary     spec         0.869
+#&gt; 13        0.7 binary     spec         0.911
+#&gt; 14        0.8 binary     spec         0.937
+#&gt; 15        0.9 binary     spec         0.977
+#&gt; 16        0.5 binary     distance     0.112
+#&gt; 17        0.6 binary     distance     0.148
+#&gt; 18        0.7 binary     distance     0.201
+#&gt; 19        0.8 binary     distance     0.306
+#&gt; 20        0.9 binary     distance     0.565</div><div class='input'>
+<span class='co'># ---------------------------------------------------------------------------</span>
+
+<span class='co'># It works with grouped data frames as well</span>
+<span class='co'># Let's mock some resampled data</span>
+<span class='no'>resamples</span> <span class='kw'>&lt;-</span> <span class='fl'>5</span>
+
+<span class='no'>mock_resamples</span> <span class='kw'>&lt;-</span> <span class='no'>resamples</span> <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/lapply'>replicate</a></span>(
+    <span class='kw'>expr</span> <span class='kw'>=</span> <span class='fu'><a href='http://dplyr.tidyverse.org/reference/sample.html'>sample_n</a></span>(<span class='no'>segment_logistic</span>, <span class='fl'>100</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
+    <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
+  ) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='http://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span>(<span class='kw'>.id</span> <span class='kw'>=</span> <span class='st'>"resample"</span>)
+
+<span class='no'>resampled_threshold_perf</span> <span class='kw'>&lt;-</span> <span class='no'>mock_resamples</span> <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='http://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span>(<span class='no'>resample</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>)
+
+<span class='no'>resampled_threshold_perf</span></div><div class='output co'>#&gt; # A tibble: 100 x 5
+#&gt;    resample .threshold .estimator .metric .estimate
+#&gt;    &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;dbl&gt;
+#&gt;  1 1               0.5 binary     j_index     0.696
+#&gt;  2 1               0.6 binary     j_index     0.649
+#&gt;  3 1               0.7 binary     j_index     0.589
+#&gt;  4 1               0.8 binary     j_index     0.477
+#&gt;  5 1               0.9 binary     j_index     0.246
+#&gt;  6 2               0.5 binary     j_index     0.539
+#&gt;  7 2               0.6 binary     j_index     0.456
+#&gt;  8 2               0.7 binary     j_index     0.383
+#&gt;  9 2               0.8 binary     j_index     0.263
+#&gt; 10 2               0.9 binary     j_index     0.184
+#&gt; # ... with 90 more rows</div><div class='input'>
+<span class='co'># Average over the resamples</span>
+<span class='no'>resampled_threshold_perf</span> <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='http://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span>(<span class='no'>.metric</span>, <span class='no'>.threshold</span>) <span class='kw'>%&gt;%</span>
+  <span class='fu'><a href='http://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span>(<span class='kw'>.estimate</span> <span class='kw'>=</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/mean'>mean</a></span>(<span class='no'>.estimate</span>))</div><div class='output co'>#&gt; # A tibble: 20 x 3
+#&gt; # Groups:   .metric [?]
+#&gt;    .metric  .threshold .estimate
+#&gt;    &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;
+#&gt;  1 distance        0.5     0.115
+#&gt;  2 distance        0.6     0.164
+#&gt;  3 distance        0.7     0.234
+#&gt;  4 distance        0.8     0.392
+#&gt;  5 distance        0.9     0.637
+#&gt;  6 j_index         0.5     0.553
+#&gt;  7 j_index         0.6     0.513
+#&gt;  8 j_index         0.7     0.465
+#&gt;  9 j_index         0.8     0.351
+#&gt; 10 j_index         0.9     0.191
+#&gt; 11 sens            0.5     0.713
+#&gt; 12 sens            0.6     0.621
+#&gt; 13 sens            0.7     0.529
+#&gt; 14 sens            0.8     0.389
+#&gt; 15 sens            0.9     0.203
+#&gt; 16 spec            0.5     0.841
+#&gt; 17 spec            0.6     0.893
+#&gt; 18 spec            0.7     0.936
+#&gt; 19 spec            0.8     0.962
+#&gt; 20 spec            0.9     0.988</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -177,14 +289,18 @@ characteristics, the threshold, and existing groups.</p>
       <li><a href="#arguments">Arguments</a></li>
       
       <li><a href="#value">Value</a></li>
-          </ul>
+
+      <li><a href="#details">Details</a></li>
+      
+      <li><a href="#examples">Examples</a></li>
+    </ul>
 
   </div>
 </div>
 
       <footer>
       <div class="tidyverse">
-  <p>probably is a part of the &lt;strong&gt;tidymodels&lt;/strong&gt; ecosystem, a collection of modeling packages designed with common APIs and a shared philosophy.</p>
+  <p>probably is a part of the <strong>tidymodels</strong> ecosystem, a collection of modeling packages designed with common APIs and a shared philosophy.</p>
 </div>
 
 <div class="author">
