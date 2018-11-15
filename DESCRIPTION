@@ -28,10 +28,6 @@ Imports:
     yardstick
 Suggests: 
     testthat,
-    covr,
-    pkgdown
+    covr
 Remotes:
-    r-lib/vctrs,
-    r-lib/generics,
-    tidymodels/yardstick,
-    r-lib/pkgdown
+    r-lib/vctrs
