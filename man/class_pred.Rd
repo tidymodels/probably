@@ -23,9 +23,6 @@ as \emph{equivocal}.
 \details{
 Equivocal values are those that you feel unsure about, and would like to
 exclude from performance calculations or other metrics.
-
-By default, \code{probably} prints equivocal values as \code{EQ}. You can change this
-with the global option, \code{probably.equivocal_label}.
 }
 \examples{
 

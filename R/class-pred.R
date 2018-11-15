@@ -30,9 +30,6 @@ new_class_pred <- function(x, labels, ordered = FALSE, equivocal = "[EQ]", ..., 
 #' Equivocal values are those that you feel unsure about, and would like to
 #' exclude from performance calculations or other metrics.
 #'
-#' By default, `probably` prints equivocal values as `EQ`. You can change this
-#' with the global option, `probably.equivocal_label`.
-#'
 #' @param x A factor or ordered factor.
 #' @param which An integer vector specifying the locations of `x` to declare
 #' as equivocal.
