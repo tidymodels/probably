@@ -11,12 +11,22 @@ home:
   strip_header: true
 
 reference:
+- title: Thresholds
+  contents:
+  - threshold_perf
+
+- title: Create class predictions
+  contents:
+  - append_class_pred
+  - make_class_pred
+  - make_two_class_pred
+
 - title: Class predictions
   contents:
   - class_pred
-  - matches("_class_pred")
+  - as_class_pred
+  - is_class_pred
   - reportable_rate
-  - threshold_perf
   - locate-equivocal
   - levels.class_pred
 
