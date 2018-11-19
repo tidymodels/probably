@@ -7,8 +7,8 @@ new_class_pred <- function(x, labels, ordered = FALSE, equivocal = "[EQ]", ..., 
 
   stopifnot(is.integer(x))
   stopifnot(is.character(labels))
-  stopifnot(is.logical(ordered))
-  stopifnot(is.character(equivocal))
+  stopifnot(is.logical(ordered) && length(ordered) == 1L)
+  stopifnot(is.character(equivocal) && length(equivocal) == 1L)
 
   new_vctr(
     .data = x,
