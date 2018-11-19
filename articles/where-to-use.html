@@ -378,7 +378,7 @@
 <a class="sourceLine" id="cb11-24" data-line-number="24">    <span class="dt">title =</span> <span class="st">"Balancing performance by varying the threshold"</span>,</a>
 <a class="sourceLine" id="cb11-25" data-line-number="25">    <span class="dt">subtitle =</span> <span class="st">"Sensitivity or specificity alone might not be enough!</span><span class="ch">\n</span><span class="st">Vertical line = Max J-Index"</span></a>
 <a class="sourceLine" id="cb11-26" data-line-number="26">  )</a></code></pre></div>
-<p><img src="where-to-use_files/figure-html/unnamed-chunk-11-1.png" width="720"></p>
+<p><img src="where-to-use_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;"></p>
 <p>It’s clear from this visual that the optimal threshold is very high, exactly 0.9475. This is pretty high, so again, this optimization method won’t be useful for all cases. To wrap up, here are all of the test set metrics for that threshold value.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">threshold_data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(.threshold <span class="op">==</span><span class="st"> </span>max_j_index_threshold)</a>
