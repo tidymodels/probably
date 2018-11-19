@@ -28,6 +28,11 @@ Imports:
     yardstick
 Suggests: 
     testthat,
-    covr
+    covr,
+    knitr,
+    rmarkdown,
+    parsnip,
+    ggplot2
 Remotes:
     r-lib/vctrs
+VignetteBuilder: knitr

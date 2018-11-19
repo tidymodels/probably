@@ -1,0 +1,127 @@
+---
+title: "Equivocal Zones"
+author: "Davis Vaughan"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Equivocal Zones}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r, message=FALSE, warning=FALSE}
+library(probably)
+```
+
+## Equivocal zones
+
+In some fields, class probability predictions must meet certain standards before a firm decision can be made using them. If they fail these standards, the prediction can be marked as _equivocal_, which just means that you are unsure of the true result. You might want to further investigate these equivocal values, or rerun whatever process generated them before proceeding.
+
+For example, in a binary model, if a prediction returned probability values of 52% Yes and 48% No, are you really sure that that isn't just random noise? In this case, you could use a _buffer_ surrounding a _threshold_ of 50% to determine whether or not your model is sure of its predictions, and mark values you are unsure about as equivocal. 
+
+Another example could come from a bayesian perspective, where each prediction comes with a probability distribution. Your model might predict 80% Yes, but could have a standard deviation around that of +/- 20%. In this case, you could set a maximum allowed standard deviation as the cutoff of whether or not to mark values as equivocal. 
+
+To work with these equivocal zones, probably provides a new class for hard class predictions that is very similar to a factor, but allows you to mark certain values as equivocal.
+
+```{r}
+x <- factor(c("Yes", "No", "Yes", "Yes"))
+
+# Create a class_pred object from a factor
+class_pred(x)
+
+# Say you aren't sure about that 2nd "Yes" value. 
+# You could mark it as equivocal.
+class_pred(x, which = 3)
+```
+
+The _reportable rate_ is the fraction of values that are not equivocal, relative to the total number. Above, you can see that the reportable rate started at 100%, but as soon as a single value was marked equivocal, that value dropped to 75%. In fields where equivocal zones are used, there is often a tradeoff between marking values as equivocal and keeping a certain minimum reportable rate.
+
+Generally, you won't create these `class_pred` objects directly, but will instead create them indirectly through converting class probabilities into class predictions with `make_class_pred()` and `make_two_class_pred()`.
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+data("segment_logistic")
+segment_logistic
+
+# Convert probabilities into predictions
+# > 0.5 = good
+# < 0.5 = poor
+segment_logistic_thresh <- segment_logistic %>%
+  mutate(
+    .pred = make_two_class_pred(
+      estimate = .pred_good, 
+      levels = levels(Class), 
+      threshold = 0.5
+    )
+  )
+
+segment_logistic_thresh
+```
+
+If a `buffer` is used, an equivocal zone is created around the threshold of 
+`threshold +/- buffer` and any values inside the zone are automatically marked
+as equivocal.
+
+```{r}
+# Convert probabilities into predictions
+#        x > 0.55 = good
+#        x < 0.45 = poor
+# 0.45 < x < 0.55 = equivocal
+segment_pred <- segment_logistic %>%
+  mutate(
+    .pred = make_two_class_pred(
+      estimate = .pred_good, 
+      levels = levels(Class), 
+      threshold = 0.5,
+      buffer = 0.05
+    )
+  ) 
+
+segment_pred %>%
+  count(.pred)
+
+segment_pred %>%
+  summarise(reportable = reportable_rate(.pred))
+```
+
+Equivocal values in `class_pred` objects are converted to `NA` when the object
+is converted to a factor. It's also worth noting that the `[EQ]` label is not
+treated as a separate level.
+
+```{r}
+segment_pred %>%
+  mutate(.pred_fct = as.factor(.pred)) %>%
+  count(.pred, .pred_fct)
+
+levels(segment_pred$.pred)
+```
+
+This `NA` behavior feeds into how probably can be used with yardstick. Generally,
+equivocal values are removed completely from performance evaluation. So converting
+them to `NA` and then leaving the default `na_rm = TRUE` in any yardstick metric
+removes them from consideration.
+
+```{r}
+library(yardstick)
+
+# No equivocal zone
+segment_logistic_thresh %>%
+  mutate(.pred_fct = as.factor(.pred)) %>%
+  precision(Class, .pred_fct)
+
+# Equivocal zone
+segment_pred %>%
+  mutate(.pred_fct = as.factor(.pred)) %>%
+  precision(Class, .pred_fct)
+```
+
+As seen above, removing equivocal values using a simple threshold generally improves performance because the values your model is most unsure about are removed. But don't be fooled! You should give those cases extra consideration, and remember that your reportable rate has decreased by removing them. In production, you'll likely have to do something with those predictions!

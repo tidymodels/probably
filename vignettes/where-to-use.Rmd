@@ -1,0 +1,207 @@
+---
+title: "Where does probably fit in?"
+author: "Davis Vaughan"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Where does probably fit in?}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+An obvious question regarding probably might be: where does this fit in with the rest of the tidymodels ecosystem? Like the other pieces of the ecosystem, probably is designed to be modular, but plays well with other tidymodels packages.
+
+Regarding placement in the modeling workflow, probably best fits in as a post processing step _after_ the model has been fit, but _before_ the model performance has been calculated.
+
+## Example
+
+As an example, we'll use parsnip to fit a logistic regression on some [Lending Club](https://www.lendingclub.com/info/download-data.action) loan data, and then use probably to investigate what happens to performance when you vary the threshold of what a "good" loan is.
+
+```{r, message=FALSE, warning=FALSE}
+library(parsnip)
+library(probably)
+library(dplyr)
+data("lending_club")
+
+# I think it makes more sense to have "good" as the first level
+# By default it comes as the second level
+lending_club <- lending_club %>%
+  mutate(Class = relevel(Class, "good"))
+
+# There are a number of columns in this data set, but we will only use a few
+# for this example
+lending_club <- select(lending_club, Class, annual_inc, verification_status, sub_grade)
+
+lending_club
+```
+
+Let's split this into 70% training and 30% testing for something to predict on.
+
+```{r}
+# 70% train, 30% test
+set.seed(123)
+n <- nrow(lending_club)
+prop_train <- .7
+train_idx <- sample(seq_len(n), floor(.7 * n))
+
+lending_train <- lending_club[train_idx,]
+lending_test  <- lending_club[-train_idx,]
+```
+
+Before we do anything, let's look at the counts of what we are going to be predicting, the `Class` of the loan.
+
+```{r}
+count(lending_train, Class)
+```
+
+Clearly there is a large imbalance here with the number of good and bad loans. This is probably a good thing for the bank, but poses an interesting issue for us because we might want to ensure we are sensitive to the bad loans and are not overwhelmed by the number of good ones. One thing that we might do is _downsample_ the number of good loans so that the total number of them is more in line with the number of bad loans. We could do this before fitting the model using `recipes::step_downsample()`, but for now, let's continue with the data unchanged.
+
+We'll use parsnip's `logistic_reg()` to create a model specification for logistic regression, set the engine to be `glm` and then actually fit the model using our data and the model formula.
+
+```{r}
+logi_reg <- logistic_reg()
+logi_reg_glm <- logi_reg %>% set_engine("glm")
+
+# A small model specification that defines the type of model you are 
+# using and the engine
+logi_reg_glm
+
+# Fit the model
+logi_reg_fit <- fit(
+  logi_reg_glm, 
+  formula = Class ~ annual_inc + verification_status + sub_grade, 
+  data = lending_train
+)
+
+logi_reg_fit
+```
+
+The output of the parsnip `fit()` call is a parsnip `model_fit` object, but the underlying print method for the `glm` fit is used.
+
+Now let's predict on our testing set, and use `type = "prob"` to get _class probabilities_ back rather than hard predictions. We will use these with probably to investigate performance.
+
+```{r}
+predictions <- logi_reg_fit %>%
+  predict(new_data = lending_test, type = "prob")
+
+head(predictions, n = 2)
+
+lending_test_pred <- bind_cols(predictions, lending_test)
+
+lending_test_pred
+```
+
+With our class probabilities in hand, we can use `make_two_class_pred()` to convert these probabilities into hard predictions using a threshold. A threshold of `0.5` just says that if the predicted probability is above `0.5`, then classify this prediction as a "good" loan, otherwise, bad.
+
+```{r}
+hard_pred_0.5 <- lending_test_pred %>%
+  mutate(.pred = make_two_class_pred(.pred_good, levels(Class), threshold = .5)) %>%
+  select(Class, contains(".pred"))
+
+hard_pred_0.5 %>% 
+  count(.truth = Class, .pred)
+```
+
+Hmm, with a `0.5` threshold, all loans were predicted as "good". Perhaps this has something to do with the large class imbalance. On the other hand, the bank might want to be more stringent with what is classified as a "good" loan, and might require a probability of `0.75` as the threshold.
+
+```{r}
+hard_pred_0.75 <- lending_test_pred %>%
+  mutate(.pred = make_two_class_pred(.pred_good, levels(Class), threshold = .75)) %>%
+  select(Class, contains(".pred"))
+
+hard_pred_0.75 %>% 
+  count(.truth = Class, .pred)
+```
+
+In this case, `5` of the bad loans were correctly classified as bad, but some of the good loans were also misclassified as bad now. There is a tradeoff here, which can be somewhat captured by the metrics _sensitivity_ and _specificity_. Both metrics have a max value of `1`.
+
+- sensitivity - The proportion of predicted "good" loans out of all "good" loans
+- specificity - The proportion of predicted "bad" loans out of all "bad" loans
+
+```{r}
+library(yardstick)
+
+# Currently yardstick can't deal with the class_pred objects that come from
+# probably, but it will be able to soon!
+hard_pred_0.5 <- mutate(hard_pred_0.5, .pred = as.factor(.pred))
+hard_pred_0.75 <- mutate(hard_pred_0.75, .pred = as.factor(.pred))
+
+sens(hard_pred_0.5, Class, .pred)
+spec(hard_pred_0.5, Class, .pred)
+
+sens(hard_pred_0.75, Class, .pred)
+spec(hard_pred_0.75, Class, .pred)
+```
+
+In this example, as we increased specificity (by capturing those `5` bad loans with a higher threshold), we lowered sensitivity (by incorrectly reclassifying some of the good loans as bad). It would be nice to have some combination of these metrics to represent this tradeoff. Luckily, `j_index` is exactly that.
+
+$$ j\_index = sens + spec - 1 $$
+
+`j_index` has a maximum value of 1 when there are no false positives and no false negatives. It can be used as justification of whether or not an increase in the threshold value is worth it. If increasing the threshold results in more of an increase in the specificity than a decrease in the sensitivity, we can see that with `j_index`.
+
+```{r}
+j_index(hard_pred_0.5, Class, .pred)
+j_index(hard_pred_0.75, Class, .pred)
+```
+
+Now, this is not the only way to optimize things. If you care about low false positives, you might be more interested in keeping sensitivity high, and this wouldn't be the best way to tackle this problem. But for now, let's see how we can use probably to optimize the `j_index`.
+
+`threshold_perf()` will recalculate a number of metrics across varying thresholds. One of these is `j_index`.
+
+```{r}
+threshold_data <- lending_test_pred %>%
+  threshold_perf(Class, .pred_good, thresholds = seq(0.5, 1, by = 0.0025))
+
+threshold_data %>%
+  filter(.threshold %in% c(0.5, 0.6, 0.7))
+```
+
+With `ggplot2`, we can easily visualize this varying performance to find our optimal threshold for maximizing `j_index`.
+
+```{r, fig.width=7.5, fig.height=5}
+library(ggplot2)
+
+threshold_data <- threshold_data %>%
+  mutate(group = case_when(
+    .metric == "sens" | .metric == "spec" ~ "1",
+    TRUE ~ "2"
+  ))
+
+max_j_index_threshold <- threshold_data %>%
+  filter(.metric == "j_index") %>%
+  filter(.estimate == max(.estimate)) %>%
+  pull(.threshold)
+
+ggplot(threshold_data, aes(x = .threshold, y = .estimate, color = .metric, alpha = group)) +
+  geom_line() +
+  theme_minimal() +
+  scale_color_viridis_d(end = 0.9) +
+  scale_alpha_manual(values = c(.4, 1), guide = "none") +
+  geom_vline(xintercept = max_j_index_threshold, alpha = .6, color = "grey30") +
+  labs(
+    x = "'Good' Threshold\n(above this value is considered 'good')",
+    y = "Metric Estimate",
+    title = "Balancing performance by varying the threshold",
+    subtitle = "Sensitivity or specificity alone might not be enough!\nVertical line = Max J-Index"
+  )
+```
+
+It's clear from this visual that the optimal threshold is very high, exactly `r max_j_index_threshold`. This is pretty high, so again, this optimization method won't be useful for all cases. To wrap up, here are all of the test set metrics for that threshold value.
+
+```{r}
+threshold_data %>%
+  filter(.threshold == max_j_index_threshold)
+```
+
+
