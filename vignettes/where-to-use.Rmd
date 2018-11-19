@@ -173,6 +173,7 @@ With `ggplot2`, we can easily visualize this varying performance to find our opt
 library(ggplot2)
 
 threshold_data <- threshold_data %>%
+  filter(.metric != "distance") %>%
   mutate(group = case_when(
     .metric == "sens" | .metric == "spec" ~ "1",
     TRUE ~ "2"
