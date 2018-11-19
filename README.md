@@ -16,7 +16,7 @@ probably contains tools to facilitate activities such as:
 
   - Conversion of probabilities to discrete class predictions.
 
-  - Investigate and estimate optimal probability thresholds.
+  - Investigating and estimating optimal probability thresholds.
 
   - Inclusion of *equivocal zones* where the probabilities are too
     uncertain to report a prediction.

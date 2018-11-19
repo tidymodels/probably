@@ -1,10 +1,10 @@
 ---
-title: "Equivocal Zones"
+title: "Equivocal zones"
 author: "Davis Vaughan"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Equivocal Zones}
+  %\VignetteIndexEntry{Equivocal zones}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
