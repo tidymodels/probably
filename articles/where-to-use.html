@@ -355,39 +355,39 @@
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"></a>
 <a class="sourceLine" id="cb11-3" data-line-number="3">threshold_data &lt;-<span class="st"> </span>threshold_data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">group =</span> <span class="kw"><a href="http://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span>(</a>
-<a class="sourceLine" id="cb11-5" data-line-number="5">    .metric <span class="op">==</span><span class="st"> "sens"</span> <span class="op">|</span><span class="st"> </span>.metric <span class="op">==</span><span class="st"> "spec"</span> <span class="op">~</span><span class="st"> "1"</span>,</a>
-<a class="sourceLine" id="cb11-6" data-line-number="6">    <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> "2"</span></a>
-<a class="sourceLine" id="cb11-7" data-line-number="7">  ))</a>
-<a class="sourceLine" id="cb11-8" data-line-number="8"></a>
-<a class="sourceLine" id="cb11-9" data-line-number="9">max_j_index_threshold &lt;-<span class="st"> </span>threshold_data <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb11-10" data-line-number="10"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(.metric <span class="op">==</span><span class="st"> "j_index"</span>) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(.estimate <span class="op">==</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(.estimate)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb11-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/pull.html">pull</a></span>(.threshold)</a>
-<a class="sourceLine" id="cb11-13" data-line-number="13"></a>
-<a class="sourceLine" id="cb11-14" data-line-number="14"><span class="kw"><a href="ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(threshold_data, <span class="kw"><a href="ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> .threshold, <span class="dt">y =</span> .estimate, <span class="dt">color =</span> .metric, <span class="dt">alpha =</span> group)) <span class="op">+</span></a>
-<a class="sourceLine" id="cb11-15" data-line-number="15"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb11-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() <span class="op">+</span></a>
-<a class="sourceLine" id="cb11-17" data-line-number="17"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/scale_viridis.html">scale_color_viridis_d</a></span>(<span class="dt">end =</span> <span class="fl">0.9</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb11-18" data-line-number="18"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/scale_manual.html">scale_alpha_manual</a></span>(<span class="dt">values =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(.<span class="dv">4</span>, <span class="dv">1</span>), <span class="dt">guide =</span> <span class="st">"none"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb11-19" data-line-number="19"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>(<span class="dt">xintercept =</span> max_j_index_threshold, <span class="dt">alpha =</span> <span class="fl">.6</span>, <span class="dt">color =</span> <span class="st">"grey30"</span>) <span class="op">+</span></a>
-<a class="sourceLine" id="cb11-20" data-line-number="20"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(</a>
-<a class="sourceLine" id="cb11-21" data-line-number="21">    <span class="dt">x =</span> <span class="st">"'Good' Threshold</span><span class="ch">\n</span><span class="st">(above this value is considered 'good')"</span>,</a>
-<a class="sourceLine" id="cb11-22" data-line-number="22">    <span class="dt">y =</span> <span class="st">"Metric Estimate"</span>,</a>
-<a class="sourceLine" id="cb11-23" data-line-number="23">    <span class="dt">title =</span> <span class="st">"Balancing performance by varying the threshold"</span>,</a>
-<a class="sourceLine" id="cb11-24" data-line-number="24">    <span class="dt">subtitle =</span> <span class="st">"Sensitivity or specificity alone might not be enough!</span><span class="ch">\n</span><span class="st">Vertical line = Max J-Index"</span></a>
-<a class="sourceLine" id="cb11-25" data-line-number="25">  )</a></code></pre></div>
+<a class="sourceLine" id="cb11-4" data-line-number="4"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(.metric <span class="op">!=</span><span class="st"> "distance"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-5" data-line-number="5"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">group =</span> <span class="kw"><a href="http://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span>(</a>
+<a class="sourceLine" id="cb11-6" data-line-number="6">    .metric <span class="op">==</span><span class="st"> "sens"</span> <span class="op">|</span><span class="st"> </span>.metric <span class="op">==</span><span class="st"> "spec"</span> <span class="op">~</span><span class="st"> "1"</span>,</a>
+<a class="sourceLine" id="cb11-7" data-line-number="7">    <span class="ot">TRUE</span> <span class="op">~</span><span class="st"> "2"</span></a>
+<a class="sourceLine" id="cb11-8" data-line-number="8">  ))</a>
+<a class="sourceLine" id="cb11-9" data-line-number="9"></a>
+<a class="sourceLine" id="cb11-10" data-line-number="10">max_j_index_threshold &lt;-<span class="st"> </span>threshold_data <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-11" data-line-number="11"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(.metric <span class="op">==</span><span class="st"> "j_index"</span>) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-12" data-line-number="12"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(.estimate <span class="op">==</span><span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Extremes">max</a></span>(.estimate)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb11-13" data-line-number="13"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/pull.html">pull</a></span>(.threshold)</a>
+<a class="sourceLine" id="cb11-14" data-line-number="14"></a>
+<a class="sourceLine" id="cb11-15" data-line-number="15"><span class="kw"><a href="ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(threshold_data, <span class="kw"><a href="ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="dt">x =</span> .threshold, <span class="dt">y =</span> .estimate, <span class="dt">color =</span> .metric, <span class="dt">alpha =</span> group)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-17" data-line-number="17"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-18" data-line-number="18"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/scale_viridis.html">scale_color_viridis_d</a></span>(<span class="dt">end =</span> <span class="fl">0.9</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-19" data-line-number="19"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/scale_manual.html">scale_alpha_manual</a></span>(<span class="dt">values =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(.<span class="dv">4</span>, <span class="dv">1</span>), <span class="dt">guide =</span> <span class="st">"none"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-20" data-line-number="20"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>(<span class="dt">xintercept =</span> max_j_index_threshold, <span class="dt">alpha =</span> <span class="fl">.6</span>, <span class="dt">color =</span> <span class="st">"grey30"</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb11-21" data-line-number="21"><span class="st">  </span><span class="kw"><a href="ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(</a>
+<a class="sourceLine" id="cb11-22" data-line-number="22">    <span class="dt">x =</span> <span class="st">"'Good' Threshold</span><span class="ch">\n</span><span class="st">(above this value is considered 'good')"</span>,</a>
+<a class="sourceLine" id="cb11-23" data-line-number="23">    <span class="dt">y =</span> <span class="st">"Metric Estimate"</span>,</a>
+<a class="sourceLine" id="cb11-24" data-line-number="24">    <span class="dt">title =</span> <span class="st">"Balancing performance by varying the threshold"</span>,</a>
+<a class="sourceLine" id="cb11-25" data-line-number="25">    <span class="dt">subtitle =</span> <span class="st">"Sensitivity or specificity alone might not be enough!</span><span class="ch">\n</span><span class="st">Vertical line = Max J-Index"</span></a>
+<a class="sourceLine" id="cb11-26" data-line-number="26">  )</a></code></pre></div>
 <p><img src="where-to-use_files/figure-html/unnamed-chunk-11-1.png" width="720"></p>
 <p>It’s clear from this visual that the optimal threshold is very high, exactly 0.9475. This is pretty high, so again, this optimization method won’t be useful for all cases. To wrap up, here are all of the test set metrics for that threshold value.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">threshold_data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(.threshold <span class="op">==</span><span class="st"> </span>max_j_index_threshold)</a>
-<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt; # A tibble: 4 x 5</span></a>
-<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt;   .threshold .estimator .metric  .estimate group</span></a>
-<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt; &lt;chr&gt;</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt; 1      0.948 binary     j_index      0.365 2    </span></a>
-<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; 2      0.948 binary     sens         0.675 1    </span></a>
-<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt; 3      0.948 binary     spec         0.690 1    </span></a>
-<a class="sourceLine" id="cb12-9" data-line-number="9"><span class="co">#&gt; 4      0.948 binary     distance     0.202 2</span></a></code></pre></div>
+<a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt; # A tibble: 3 x 5</span></a>
+<a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt;   .threshold .estimator .metric .estimate group</span></a>
+<a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;</span></a>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt; 1      0.948 binary     j_index     0.365 2    </span></a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; 2      0.948 binary     sens        0.675 1    </span></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt; 3      0.948 binary     spec        0.690 1</span></a></code></pre></div>
 </div>
   </div>
 
