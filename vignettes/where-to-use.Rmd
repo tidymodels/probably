@@ -12,10 +12,7 @@ editor_options:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 6, fig.align = "center")
 ```
 
 ## Introduction
@@ -169,7 +166,7 @@ threshold_data %>%
 
 With `ggplot2`, we can easily visualize this varying performance to find our optimal threshold for maximizing `j_index`.
 
-```{r, fig.width=7.5, fig.height=5}
+```{r}
 library(ggplot2)
 
 threshold_data <- threshold_data %>%
