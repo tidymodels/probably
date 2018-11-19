@@ -7,7 +7,7 @@
 is_class_pred(x)
 }
 \arguments{
-\item{x}{A \code{class_pred} object.}
+\item{x}{An object.}
 }
 \description{
 \code{is_class_pred()} checks if an object is a \code{class_pred} object.

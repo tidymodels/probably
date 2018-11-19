@@ -256,7 +256,7 @@ any_equivocal.class_pred <- function(x) {
 #'
 #' `is_class_pred()` checks if an object is a `class_pred` object.
 #'
-#' @inheritParams is_equivocal
+#' @param x An object.
 #'
 #' @examples
 #'
