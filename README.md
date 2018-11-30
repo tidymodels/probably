@@ -4,9 +4,9 @@
 # probably
 
 [![Travis build
-status](https://travis-ci.org/topepo/probably.svg?branch=master)](https://travis-ci.org/topepo/probably)
+status](https://travis-ci.org/tidymodels/probably.svg?branch=master)](https://travis-ci.org/tidymodels/probably)
 [![Codecov test
-coverage](https://codecov.io/gh/topepo/probably/branch/master/graph/badge.svg)](https://codecov.io/gh/topepo/probably?branch=master)
+coverage](https://codecov.io/gh/tidymodels/probably/branch/master/graph/badge.svg)](https://codecov.io/gh/tidymodels/probably?branch=master)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
