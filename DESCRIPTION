@@ -21,7 +21,6 @@ Imports:
     dplyr,
     generics,
     rlang,
-    tidyr,
     tidyselect,
     vctrs,
     yardstick

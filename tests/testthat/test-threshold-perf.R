@@ -2,7 +2,6 @@ library(testthat)
 library(probably)
 library(dplyr)
 library(yardstick)
-library(tidyr)
 
 context("creating threshold statistics")
 
@@ -36,11 +35,23 @@ get_res <- function(prob, obs, cut) {
     cls = cls
   )
 
-  dat %>%
-    mets(obs, estimate = cls) %>%
-    spread(.metric, .estimate) %>%
-    mutate(distance = (1 - sens) ^ 2 + (1 - spec) ^ 2) %>%
-    gather(key = ".metric", ".estimate", j_index, sens, spec, distance)
+  .data_metrics <- dat %>%
+    mets(obs, estimate = cls)
+
+  # Create the `distance` metric data frame
+  sens_vec <- .data_metrics %>%
+    dplyr::filter(.metric == "sens") %>%
+    dplyr::pull(.estimate)
+
+  dist <- .data_metrics %>%
+    dplyr::filter(.metric == "spec") %>%
+    dplyr::mutate(
+      .metric = "distance",
+      # .estimate is spec currently
+      .estimate = (1 - sens_vec) ^ 2 + (1 - .estimate) ^ 2
+    )
+
+  bind_rows(.data_metrics, dist)
 }
 
 # ----------------------------------------------------------------
