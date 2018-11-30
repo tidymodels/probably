@@ -5,7 +5,7 @@
 #' These functions can be used to convert class probability estimates to
 #'  `class_pred` objects with an optional equivocal zone.
 #'
-#' @param ... Numeric vectors corresponding to class probabilites. There should
+#' @param ... Numeric vectors corresponding to class probabilities. There should
 #' be one for each level in `levels`, and _it is assumed that the vectors
 #' are in the same order as `levels`_.
 #'

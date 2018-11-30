@@ -28,7 +28,7 @@ In some fields, class probability predictions must meet certain standards before
 
 For example, in a binary model, if a prediction returned probability values of 52% Yes and 48% No, are you really sure that that isn't just random noise? In this case, you could use a _buffer_ surrounding a _threshold_ of 50% to determine whether or not your model is sure of its predictions, and mark values you are unsure about as equivocal. 
 
-Another example could come from a bayesian perspective, where each prediction comes with a probability distribution. Your model might predict 80% Yes, but could have a standard deviation around that of +/- 20%. In this case, you could set a maximum allowed standard deviation as the cutoff of whether or not to mark values as equivocal. 
+Another example could come from a Bayesian perspective, where each prediction comes with a probability distribution. Your model might predict 80% Yes, but could have a standard deviation around that of +/- 20%. In this case, you could set a maximum allowed standard deviation as the cutoff of whether or not to mark values as equivocal. 
 
 To work with these equivocal zones, probably provides a new class for hard class predictions that is very similar to a factor, but allows you to mark certain values as equivocal.
 

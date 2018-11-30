@@ -193,7 +193,7 @@ factorish_to_factor <- function(x, to) {
 # -----------------------
 # Required coercion
 
-#' Find the common type for a `class_pred` and another obect
+#' Find the common type for a `class_pred` and another object
 #'
 #' @inheritParams vctrs::vec_type2
 #'
