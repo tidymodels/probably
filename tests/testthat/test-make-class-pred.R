@@ -79,6 +79,18 @@ test_that("fails with different length `...`", {
 
 })
 
+test_that("fails with different type `...`", {
+
+  v1 <- c(1)
+  v2 <- c("a")
+
+  expect_error(
+    make_class_pred(v1, v2),
+    "At least one vector supplied to `...` is not numeric: 2"
+  )
+
+})
+
 test_that("fails with different length `...` VS levels", {
 
   v1 <- c(1, 2, 3)
