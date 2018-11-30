@@ -1,3 +1,3 @@
-# probably 0.0.0.9000
+# probably 0.0.1
 
-* development version
+* First release
