@@ -68,7 +68,6 @@
 #'     )
 #'   )
 #'
-#' @importFrom glue glue_collapse
 #' @importFrom tidyselect vars_select
 #' @export
 make_class_pred <- function(...,
@@ -94,7 +93,7 @@ make_class_pred <- function(...,
     not_numeric <- which(!num_cols)
     stop (
       "At least one vector supplied to `...` is not numeric: ",
-      glue::glue_collapse(not_numeric, sep = ", ", last = " and "),
+      paste(not_numeric, collapse = ", "),
       call. = FALSE
     )
   }

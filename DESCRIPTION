@@ -19,7 +19,6 @@ Depends:
     R (>= 2.10)
 Imports: 
     dplyr,
-    glue,
     generics,
     rlang,
     tidyr,
