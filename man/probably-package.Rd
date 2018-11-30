@@ -11,8 +11,8 @@ Models can be improved by post-processing class probabilities, by: recalibration
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/topepo/probably/}
-  \item Report bugs at \url{https://github.com/topepo/probably/issues}
+  \item \url{https://github.com/tidymodels/probably/}
+  \item Report bugs at \url{https://github.com/tidymodels/probably/issues}
 }
 
 }
