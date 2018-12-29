@@ -4,9 +4,9 @@
 # probably
 
 [![Travis build
-status](https://travis-ci.org/topepo/probably.svg?branch=master)](https://travis-ci.org/topepo/probably)
+status](https://travis-ci.org/tidymodels/probably.svg?branch=master)](https://travis-ci.org/tidymodels/probably)
 [![Codecov test
-coverage](https://codecov.io/gh/topepo/probably/branch/master/graph/badge.svg)](https://codecov.io/gh/topepo/probably?branch=master)
+coverage](https://codecov.io/gh/tidymodels/probably/branch/master/graph/badge.svg)](https://codecov.io/gh/tidymodels/probably?branch=master)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
@@ -23,7 +23,13 @@ probably contains tools to facilitate activities such as:
 
 ## Installation
 
-You can install probably from GitHub with:
+You can install probably from CRAN with:
+
+``` r
+install.packages("probably")
+```
+
+You can install the development version of probably from GitHub with:
 
 ``` r
 devtools::install_github("topepo/probably")
@@ -31,7 +37,7 @@ devtools::install_github("topepo/probably")
 
 ## Examples
 
-Good places to look for examples of probably are the vignettes.
+Good places to look for examples of using probably are the vignettes.
 
   - `vignette("equivocal-zones", "probably")` discusses the new
     `class_pred` class that probably provides for working with equivocal

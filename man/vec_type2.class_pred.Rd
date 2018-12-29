@@ -2,7 +2,7 @@
 % Please edit documentation in R/vctrs-compat.R
 \name{vec_type2.class_pred}
 \alias{vec_type2.class_pred}
-\title{Find the common type for a \code{class_pred} and another obect}
+\title{Find the common type for a \code{class_pred} and another object}
 \usage{
 \method{vec_type2}{class_pred}(x, y)
 }
@@ -12,5 +12,5 @@
 \item{y}{Either vector types; i.e.}
 }
 \description{
-Find the common type for a \code{class_pred} and another obect
+Find the common type for a \code{class_pred} and another object
 }

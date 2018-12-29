@@ -4,15 +4,15 @@
 \name{probably-package}
 \alias{probably}
 \alias{probably-package}
-\title{probably: Tools for post-processing class probability estimates}
+\title{probably: Tools for Post-Processing Class Probability Estimates}
 \description{
-Models can be improved by post-processing class probabilities, by: recalibration, conversion to hard probabilities, assessment of equivocal zones, and other activities. probably contains tools for conducting these operations.
+Models can be improved by post-processing class probabilities, by: recalibration, conversion to hard probabilities, assessment of equivocal zones, and other activities. 'probably' contains tools for conducting these operations.
 }
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/topepo/probably/}
-  \item Report bugs at \url{https://github.com/topepo/probably/issues}
+  \item \url{https://github.com/tidymodels/probably/}
+  \item Report bugs at \url{https://github.com/tidymodels/probably/issues}
 }
 
 }

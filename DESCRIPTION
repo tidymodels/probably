@@ -1,14 +1,14 @@
 Package: probably
-Version: 0.0.0.9000
-Title: Tools for post-processing class probability estimates
-Description: Models can be improved by post-processing class probabilities, by: recalibration, conversion to hard probabilities, assessment of equivocal zones, and other activities. probably contains tools for conducting these operations. 
+Version: 0.0.1
+Title: Tools for Post-Processing Class Probability Estimates
+Description: Models can be improved by post-processing class probabilities, by: recalibration, conversion to hard probabilities, assessment of equivocal zones, and other activities. 'probably' contains tools for conducting these operations. 
 Authors@R: c(
     person("Max", "Kuhn", , "max@rstudio.com", c("aut", "cre")),
     person("Davis", "Vaughan", , "davis@rstudio.com", c("aut")),
     person("RStudio", role = "cph"))
 Maintainer: Max Kuhn <max@rstudio.com>
-URL: https://github.com/topepo/probably/
-BugReports: https://github.com/topepo/probably/issues
+URL: https://github.com/tidymodels/probably/
+BugReports: https://github.com/tidymodels/probably/issues
 License: GPL-2
 Encoding: UTF-8
 LazyData: true
@@ -19,10 +19,8 @@ Depends:
     R (>= 2.10)
 Imports: 
     dplyr,
-    glue,
     generics,
     rlang,
-    tidyr,
     tidyselect,
     vctrs,
     yardstick
@@ -33,6 +31,4 @@ Suggests:
     rmarkdown,
     parsnip,
     ggplot2
-Remotes:
-    r-lib/vctrs
 VignetteBuilder: knitr

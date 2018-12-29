@@ -82,7 +82,6 @@ threshold_perf <- function(.data, ...) {
 #' @importFrom tidyselect vars_select
 #' @importFrom dplyr rename select mutate group_by do summarise
 #' @importFrom dplyr %>% tibble ungroup
-#' @importFrom tidyr gather spread
 #' @importFrom stats na.omit
 #' @export
 threshold_perf.data.frame <- function(.data,
@@ -156,14 +155,26 @@ threshold_perf.data.frame <- function(.data,
     .data <- .data %>% group_by(.threshold)
   }
 
-  .data <- .data %>%
-    two_class(truth, estimate = alt_pred) %>%
-    spread(.metric, .estimate) %>%
-    mutate(distance = (1 - sens) ^ 2 + (1 - spec) ^ 2) %>%
-    gather(key = ".metric", ".estimate", j_index, sens, spec, distance) %>%
-    ungroup()
+  .data_metrics <- .data %>%
+    two_class(truth, estimate = alt_pred)
 
-  .data
+  # Create the `distance` metric data frame
+  # and add it on
+  sens_vec <- .data_metrics %>%
+    dplyr::filter(.metric == "sens") %>%
+    dplyr::pull(.estimate)
+
+  dist <- .data_metrics %>%
+    dplyr::filter(.metric == "spec") %>%
+    dplyr::mutate(
+      .metric = "distance",
+      # .estimate is spec currently. this recodes as distance
+      .estimate = (1 - sens_vec) ^ 2 + (1 - .estimate) ^ 2
+    )
+
+  .data_metrics <- dplyr::bind_rows(.data_metrics, dist)
+
+  .data_metrics
 }
 
 #' @importFrom yardstick sens spec j_index metric_set

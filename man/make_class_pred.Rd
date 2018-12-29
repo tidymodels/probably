@@ -12,7 +12,7 @@ make_two_class_pred(estimate, levels, threshold = 0.5, ordered = FALSE,
   buffer = NULL)
 }
 \arguments{
-\item{...}{Numeric vectors corresponding to class probabilites. There should
+\item{...}{Numeric vectors corresponding to class probabilities. There should
 be one for each level in \code{levels}, and \emph{it is assumed that the vectors
 are in the same order as \code{levels}}.}
 
