@@ -1,6 +1,6 @@
 pandoc: '2.2'
-pkgdown: 1.1.0.9000
-pkgdown_sha: 5f28dd1e87b6dfecb5426b21fc5353e486e6deb9
+pkgdown: 1.3.0.9000
+pkgdown_sha: 45892dd5fe3c9904e09509694deede0c34d01af9
 articles:
   equivocal-zones: equivocal-zones.html
   where-to-use: where-to-use.html

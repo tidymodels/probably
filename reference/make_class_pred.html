@@ -73,7 +73,7 @@ class_pred objects with an optional equivocal zone." />
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info">
           <span class="partof">part of <a href="https://github.com/tidymodels">tidymodels</a></span>
-          <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
         </div>
       </div>
     </div>
@@ -107,7 +107,7 @@ class_pred objects with an optional equivocal zone." />
   <a href="../news/index.html">Changelog</a>
 </li>
         <li>
-  <a href="https://github.com/topepo/probably">
+  <a href="https://github.com/tidymodels/probably">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -125,7 +125,7 @@ class_pred objects with an optional equivocal zone." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Create a <code>class_pred</code> vector from class probabilities</h1>
-    <small class="dont-index">Source: <a href='https://github.com/topepo/probably/blob/master/R/make_class_pred.R'><code>R/make_class_pred.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/tidymodels/probably/blob/master/R/make_class_pred.R'><code>R/make_class_pred.R</code></a></small>
     <div class="hidden name"><code>make_class_pred.Rd</code></div>
     </div>
 
@@ -147,7 +147,7 @@ class_pred objects with an optional equivocal zone." />
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>...</th>
-      <td><p>Numeric vectors corresponding to class probabilites. There should
+      <td><p>Numeric vectors corresponding to class probabilities. There should
 be one for each level in <code>levels</code>, and <em>it is assumed that the vectors
 are in the same order as <code>levels</code></em>.</p></td>
     </tr>
@@ -181,8 +181,8 @@ be labeled as the first value of <code>levels</code>.</p></td>
     <tr>
       <th>buffer</th>
       <td><p>A numeric vector of length 1 or 2 for the buffer around
-<code>threshold</code> that defines the equivocal zone (i.e., <code><a href='https://www.rdocumentation.org/packages/base/topics/Arithmetic'>threshold - buffer[1]</a></code> to
-<code><a href='https://www.rdocumentation.org/packages/base/topics/Arithmetic'>threshold + buffer[2]</a></code>). A length 1 vector is recycled to length 2. The
+<code>threshold</code> that defines the equivocal zone (i.e., <code>threshold - buffer[1]</code> to
+<code>threshold + buffer[2]</code>). A length 1 vector is recycled to length 2. The
 default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
     </tr>
     </table>

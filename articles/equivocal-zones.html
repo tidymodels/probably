@@ -40,7 +40,7 @@
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info">
           <span class="partof">part of <a href="https://github.com/tidymodels">tidymodels</a></span>
-          <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
         </div>
       </div>
     </div>
@@ -74,7 +74,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
         <li>
-  <a href="https://github.com/topepo/probably">
+  <a href="https://github.com/tidymodels/probably">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -94,10 +94,10 @@
       <h1>Equivocal zones</h1>
                         <h4 class="author">Davis Vaughan</h4>
             
-            <h4 class="date">2018-11-19</h4>
+            <h4 class="date">2018-12-29</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/topepo/probably/blob/master/vignettes/equivocal-zones.Rmd"><code><a href="https://www.rdocumentation.org/packages/base/topics/Arithmetic">vignettes/equivocal-zones.Rmd</a></code></a></small>
-      <div class="hidden name"><code><a href="https://www.rdocumentation.org/packages/base/topics/Arithmetic">equivocal-zones.Rmd</a></code></div>
+      <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/master/vignettes/equivocal-zones.Rmd"><code>vignettes/equivocal-zones.Rmd</code></a></small>
+      <div class="hidden name"><code>equivocal-zones.Rmd</code></div>
 
     </div>
 
@@ -109,7 +109,7 @@
 <a href="#equivocal-zones" class="anchor"></a>Equivocal zones</h2>
 <p>In some fields, class probability predictions must meet certain standards before a firm decision can be made using them. If they fail these standards, the prediction can be marked as <em>equivocal</em>, which just means that you are unsure of the true result. You might want to further investigate these equivocal values, or rerun whatever process generated them before proceeding.</p>
 <p>For example, in a binary model, if a prediction returned probability values of 52% Yes and 48% No, are you really sure that that isn’t just random noise? In this case, you could use a <em>buffer</em> surrounding a <em>threshold</em> of 50% to determine whether or not your model is sure of its predictions, and mark values you are unsure about as equivocal.</p>
-<p>Another example could come from a bayesian perspective, where each prediction comes with a probability distribution. Your model might predict 80% Yes, but could have a standard deviation around that of +/- 20%. In this case, you could set a maximum allowed standard deviation as the cutoff of whether or not to mark values as equivocal.</p>
+<p>Another example could come from a Bayesian perspective, where each prediction comes with a probability distribution. Your model might predict 80% Yes, but could have a standard deviation around that of +/- 20%. In this case, you could set a maximum allowed standard deviation as the cutoff of whether or not to mark values as equivocal.</p>
 <p>To work with these equivocal zones, probably provides a new class for hard class predictions that is very similar to a factor, but allows you to mark certain values as equivocal.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/factor">factor</a></span>(<span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/c">c</a></span>(<span class="st">"Yes"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>, <span class="st">"Yes"</span>))</a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"></a>
@@ -215,7 +215,7 @@
 <a class="sourceLine" id="cb5-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb5-11" data-line-number="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(segment_pred<span class="op">$</span>.pred)</a>
 <a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; [1] "good" "poor"</span></a></code></pre></div>
-<p>This <code>NA</code> behavior feeds into how probably can be used with yardstick. Generally, equivocal values are removed completely from performance evaluation. So converting them to <code>NA</code> and then leaving the default <code><a href="https://www.rdocumentation.org/packages/base/topics/assignOps">na_rm = TRUE</a></code> in any yardstick metric removes them from consideration.</p>
+<p>This <code>NA</code> behavior feeds into how probably can be used with yardstick. Generally, equivocal values are removed completely from performance evaluation. So converting them to <code>NA</code> and then leaving the default <code>na_rm = TRUE</code> in any yardstick metric removes them from consideration.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(yardstick)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co">#&gt; For binary classification, the first factor level is assumed to be the event.</span></a>
 <a class="sourceLine" id="cb6-3" data-line-number="3"><span class="co">#&gt; Set the global option `yardstick.event_first` to `FALSE` to change this.</span></a>

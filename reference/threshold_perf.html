@@ -74,7 +74,7 @@ of the probability threshold and any existing groups." />
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info">
           <span class="partof">part of <a href="https://github.com/tidymodels">tidymodels</a></span>
-          <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9000</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.1</span>
         </div>
       </div>
     </div>
@@ -108,7 +108,7 @@ of the probability threshold and any existing groups." />
   <a href="../news/index.html">Changelog</a>
 </li>
         <li>
-  <a href="https://github.com/topepo/probably">
+  <a href="https://github.com/tidymodels/probably">
     <span class="fa fa-github fa-lg"></span>
      
   </a>
@@ -126,7 +126,7 @@ of the probability threshold and any existing groups." />
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Generate performance metrics across probability thresholds</h1>
-    <small class="dont-index">Source: <a href='https://github.com/topepo/probably/blob/master/R/threshold_perf.R'><code>R/threshold_perf.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/tidymodels/probably/blob/master/R/threshold_perf.R'><code>R/threshold_perf.R</code></a></small>
     <div class="hidden name"><code>threshold_perf.Rd</code></div>
     </div>
 
@@ -192,7 +192,7 @@ see the Relevant level section of <code><a href='https://www.rdocumentation.org/
 <li><p><code><a href='https://www.rdocumentation.org/packages/yardstick/topics/j_index'>yardstick::j_index()</a></code></p></li>
 <li><p><code><a href='https://www.rdocumentation.org/packages/yardstick/topics/sens'>yardstick::sens()</a></code></p></li>
 <li><p><code><a href='https://www.rdocumentation.org/packages/yardstick/topics/spec'>yardstick::spec()</a></code></p></li>
-<li><p><code><a href='https://www.rdocumentation.org/packages/base/topics/assignOps'>distance = (1 - sens) ^ 2 + (1 - spec) ^ 2</a></code></p></li>
+<li><p><code>distance = (1 - sens) ^ 2 + (1 - spec) ^ 2</code></p></li>
 </ul>
     
 
@@ -204,39 +204,39 @@ see the Relevant level section of <code><a href='https://www.rdocumentation.org/
 <span class='co'># &gt; 0.6 = good</span>
 <span class='co'># &lt; 0.6 = poor</span>
 <span class='fu'>threshold_perf</span>(<span class='no'>segment_logistic</span>, <span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='kw'>thresholds</span> <span class='kw'>=</span> <span class='fl'>0.6</span>)</div><div class='output co'>#&gt; # A tibble: 4 x 4
-#&gt;   .threshold .estimator .metric  .estimate
-#&gt;        &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;
-#&gt; 1        0.6 binary     j_index      0.508
-#&gt; 2        0.6 binary     sens         0.639
-#&gt; 3        0.6 binary     spec         0.869
-#&gt; 4        0.6 binary     distance     0.148</div><div class='input'>
+#&gt;   .threshold .metric  .estimator .estimate
+#&gt;        &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+#&gt; 1        0.6 sens     binary         0.639
+#&gt; 2        0.6 spec     binary         0.869
+#&gt; 3        0.6 j_index  binary         0.508
+#&gt; 4        0.6 distance binary         0.148</div><div class='input'>
 <span class='co'># Set the threshold to multiple values</span>
 <span class='no'>thresholds</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://www.rdocumentation.org/packages/base/topics/seq'>seq</a></span>(<span class='fl'>0.5</span>, <span class='fl'>0.9</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
 
 <span class='no'>segment_logistic</span> <span class='kw'>%&gt;%</span>
   <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>)</div><div class='output co'>#&gt; # A tibble: 20 x 4
-#&gt;    .threshold .estimator .metric  .estimate
-#&gt;         &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;        &lt;dbl&gt;
-#&gt;  1        0.5 binary     j_index      0.539
-#&gt;  2        0.6 binary     j_index      0.508
-#&gt;  3        0.7 binary     j_index      0.472
-#&gt;  4        0.8 binary     j_index      0.388
-#&gt;  5        0.9 binary     j_index      0.226
-#&gt;  6        0.5 binary     sens         0.714
-#&gt;  7        0.6 binary     sens         0.639
-#&gt;  8        0.7 binary     sens         0.561
-#&gt;  9        0.8 binary     sens         0.451
-#&gt; 10        0.9 binary     sens         0.249
-#&gt; 11        0.5 binary     spec         0.825
-#&gt; 12        0.6 binary     spec         0.869
-#&gt; 13        0.7 binary     spec         0.911
-#&gt; 14        0.8 binary     spec         0.937
-#&gt; 15        0.9 binary     spec         0.977
-#&gt; 16        0.5 binary     distance     0.112
-#&gt; 17        0.6 binary     distance     0.148
-#&gt; 18        0.7 binary     distance     0.201
-#&gt; 19        0.8 binary     distance     0.306
-#&gt; 20        0.9 binary     distance     0.565</div><div class='input'>
+#&gt;    .threshold .metric  .estimator .estimate
+#&gt;         &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+#&gt;  1        0.5 sens     binary         0.714
+#&gt;  2        0.6 sens     binary         0.639
+#&gt;  3        0.7 sens     binary         0.561
+#&gt;  4        0.8 sens     binary         0.451
+#&gt;  5        0.9 sens     binary         0.249
+#&gt;  6        0.5 spec     binary         0.825
+#&gt;  7        0.6 spec     binary         0.869
+#&gt;  8        0.7 spec     binary         0.911
+#&gt;  9        0.8 spec     binary         0.937
+#&gt; 10        0.9 spec     binary         0.977
+#&gt; 11        0.5 j_index  binary         0.539
+#&gt; 12        0.6 j_index  binary         0.508
+#&gt; 13        0.7 j_index  binary         0.472
+#&gt; 14        0.8 j_index  binary         0.388
+#&gt; 15        0.9 j_index  binary         0.226
+#&gt; 16        0.5 distance binary         0.112
+#&gt; 17        0.6 distance binary         0.148
+#&gt; 18        0.7 distance binary         0.201
+#&gt; 19        0.8 distance binary         0.306
+#&gt; 20        0.9 distance binary         0.565</div><div class='input'>
 <span class='co'># ---------------------------------------------------------------------------</span>
 
 <span class='co'># It works with grouped data frames as well</span>
@@ -255,18 +255,18 @@ see the Relevant level section of <code><a href='https://www.rdocumentation.org/
   <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>)
 
 <span class='no'>resampled_threshold_perf</span></div><div class='output co'>#&gt; # A tibble: 100 x 5
-#&gt;    resample .threshold .estimator .metric .estimate
-#&gt;    &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;      &lt;chr&gt;       &lt;dbl&gt;
-#&gt;  1 1               0.5 binary     j_index     0.696
-#&gt;  2 1               0.6 binary     j_index     0.649
-#&gt;  3 1               0.7 binary     j_index     0.589
-#&gt;  4 1               0.8 binary     j_index     0.477
-#&gt;  5 1               0.9 binary     j_index     0.246
-#&gt;  6 2               0.5 binary     j_index     0.539
-#&gt;  7 2               0.6 binary     j_index     0.456
-#&gt;  8 2               0.7 binary     j_index     0.383
-#&gt;  9 2               0.8 binary     j_index     0.263
-#&gt; 10 2               0.9 binary     j_index     0.184
+#&gt;    resample .threshold .metric .estimator .estimate
+#&gt;    &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+#&gt;  1 1               0.5 sens    binary         0.778
+#&gt;  2 1               0.6 sens    binary         0.704
+#&gt;  3 1               0.7 sens    binary         0.630
+#&gt;  4 1               0.8 sens    binary         0.519
+#&gt;  5 1               0.9 sens    binary         0.259
+#&gt;  6 2               0.5 sens    binary         0.684
+#&gt;  7 2               0.6 sens    binary         0.553
+#&gt;  8 2               0.7 sens    binary         0.447
+#&gt;  9 2               0.8 sens    binary         0.263
+#&gt; 10 2               0.9 sens    binary         0.184
 #&gt; # ... with 90 more rows</div><div class='input'>
 <span class='co'># Average over the resamples</span>
 <span class='no'>resampled_threshold_perf</span> <span class='kw'>%&gt;%</span>
