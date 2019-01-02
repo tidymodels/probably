@@ -24,11 +24,12 @@ Imports:
     tidyselect,
     vctrs,
     yardstick
-Suggests: 
-    testthat,
+Suggests:
     covr,
+    ggplot2,
     knitr,
-    rmarkdown,
     parsnip,
-    ggplot2
+    rmarkdown,
+    rsample,
+    testthat
 VignetteBuilder: knitr

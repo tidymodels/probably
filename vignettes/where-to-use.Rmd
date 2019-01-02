@@ -29,6 +29,7 @@ As an example, we'll use parsnip to fit a logistic regression on some [Lending C
 library(parsnip)
 library(probably)
 library(dplyr)
+library(rsample)
 data("lending_club")
 
 # I think it makes more sense to have "good" as the first level
@@ -48,12 +49,11 @@ Let's split this into 70% training and 30% testing for something to predict on.
 ```{r}
 # 70% train, 30% test
 set.seed(123)
-n <- nrow(lending_club)
-prop_train <- .7
-train_idx <- sample(seq_len(n), floor(.7 * n))
 
-lending_train <- lending_club[train_idx,]
-lending_test  <- lending_club[-train_idx,]
+split <- initial_split(lending_club, prop = 0.7)
+
+lending_train <- training(split)
+lending_test  <- testing(split)
 ```
 
 Before we do anything, let's look at the counts of what we are going to be predicting, the `Class` of the loan.
