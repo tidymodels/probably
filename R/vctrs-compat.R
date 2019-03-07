@@ -14,6 +14,15 @@ generics::as.factor
 generics::as.ordered
 
 # ------------------------------------------------------------------------------
+# R 3.1 imports
+
+# Required R 3.1 imports, otherwise it can't find them
+# through the double dispatch
+#' @importFrom vctrs vec_cast.factor
+#' @importFrom vctrs vec_cast.integer
+NULL
+
+# ------------------------------------------------------------------------------
 # Printing
 
 # Abbreviation used in tibbles and str() (through that, rstudio)
@@ -78,7 +87,6 @@ vec_cast.class_pred.logical <- function(x, to) {
 
 #' @method vec_cast.class_pred class_pred
 #' @export
-#' @importFrom vctrs vec_cast.factor
 vec_cast.class_pred.class_pred <- function(x, to) {
 
   # first go class_pred -> factor
