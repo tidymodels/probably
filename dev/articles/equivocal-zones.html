@@ -8,7 +8,7 @@
 <title>Equivocal zones • probably</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="../tidyverse.css" rel="stylesheet">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
+<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- sticky kit --><script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-kit/1.1.3/sticky-kit.min.js" integrity="sha256-c4Rlo1ZozqTPE2RLuvbusY3+SU1pQaJC0TjuhygMipw=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../tidyverse-2.css" rel="stylesheet">
 <meta property="og:title" content="Equivocal zones">
 <meta property="og:description" content="">
@@ -41,7 +41,7 @@
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info">
           <span class="partof">part of <a href="https://github.com/tidymodels">tidymodels</a></span>
-          <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.1.9000</span>
+          <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.2.9000</span>
         </div>
       </div>
     </div>
@@ -95,7 +95,7 @@
       <h1>Equivocal zones</h1>
                         <h4 class="author">Davis Vaughan</h4>
             
-            <h4 class="date">2019-01-02</h4>
+            <h4 class="date">2019-03-07</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/master/vignettes/equivocal-zones.Rmd"><code>vignettes/equivocal-zones.Rmd</code></a></small>
       <div class="hidden name"><code>equivocal-zones.Rmd</code></div>
@@ -144,13 +144,13 @@
 <a class="sourceLine" id="cb3-14" data-line-number="14"><span class="co">#&gt;  8    0.00842    0.992   good </span></a>
 <a class="sourceLine" id="cb3-15" data-line-number="15"><span class="co">#&gt;  9    0.995      0.00458 poor </span></a>
 <a class="sourceLine" id="cb3-16" data-line-number="16"><span class="co">#&gt; 10    0.765      0.235   poor </span></a>
-<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; # ... with 1,000 more rows</span></a>
+<a class="sourceLine" id="cb3-17" data-line-number="17"><span class="co">#&gt; # … with 1,000 more rows</span></a>
 <a class="sourceLine" id="cb3-18" data-line-number="18"></a>
 <a class="sourceLine" id="cb3-19" data-line-number="19"><span class="co"># Convert probabilities into predictions</span></a>
 <a class="sourceLine" id="cb3-20" data-line-number="20"><span class="co"># &gt; 0.5 = good</span></a>
 <a class="sourceLine" id="cb3-21" data-line-number="21"><span class="co"># &lt; 0.5 = poor</span></a>
 <a class="sourceLine" id="cb3-22" data-line-number="22">segment_logistic_thresh &lt;-<span class="st"> </span>segment_logistic <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(</a>
+<a class="sourceLine" id="cb3-23" data-line-number="23"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(</a>
 <a class="sourceLine" id="cb3-24" data-line-number="24">    <span class="dt">.pred =</span> <span class="kw"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span>(</a>
 <a class="sourceLine" id="cb3-25" data-line-number="25">      <span class="dt">estimate =</span> .pred_good, </a>
 <a class="sourceLine" id="cb3-26" data-line-number="26">      <span class="dt">levels =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(Class), </a>
@@ -172,14 +172,14 @@
 <a class="sourceLine" id="cb3-42" data-line-number="42"><span class="co">#&gt;  8    0.00842    0.992   good        good</span></a>
 <a class="sourceLine" id="cb3-43" data-line-number="43"><span class="co">#&gt;  9    0.995      0.00458 poor        poor</span></a>
 <a class="sourceLine" id="cb3-44" data-line-number="44"><span class="co">#&gt; 10    0.765      0.235   poor        poor</span></a>
-<a class="sourceLine" id="cb3-45" data-line-number="45"><span class="co">#&gt; # ... with 1,000 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-45" data-line-number="45"><span class="co">#&gt; # … with 1,000 more rows</span></a></code></pre></div>
 <p>If a <code>buffer</code> is used, an equivocal zone is created around the threshold of <code>threshold +/- buffer</code> and any values inside the zone are automatically marked as equivocal.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="co"># Convert probabilities into predictions</span></a>
 <a class="sourceLine" id="cb4-2" data-line-number="2"><span class="co">#        x &gt; 0.55 = good</span></a>
 <a class="sourceLine" id="cb4-3" data-line-number="3"><span class="co">#        x &lt; 0.45 = poor</span></a>
 <a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co"># 0.45 &lt; x &lt; 0.55 = equivocal</span></a>
 <a class="sourceLine" id="cb4-5" data-line-number="5">segment_pred &lt;-<span class="st"> </span>segment_logistic <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(</a>
 <a class="sourceLine" id="cb4-7" data-line-number="7">    <span class="dt">.pred =</span> <span class="kw"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span>(</a>
 <a class="sourceLine" id="cb4-8" data-line-number="8">      <span class="dt">estimate =</span> .pred_good, </a>
 <a class="sourceLine" id="cb4-9" data-line-number="9">      <span class="dt">levels =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(Class), </a>
@@ -189,7 +189,7 @@
 <a class="sourceLine" id="cb4-13" data-line-number="13">  ) </a>
 <a class="sourceLine" id="cb4-14" data-line-number="14"></a>
 <a class="sourceLine" id="cb4-15" data-line-number="15">segment_pred <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/tally.html">count</a></span>(.pred)</a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/tally.html">count</a></span>(.pred)</a>
 <a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#&gt; # A tibble: 3 x 2</span></a>
 <a class="sourceLine" id="cb4-18" data-line-number="18"><span class="co">#&gt;        .pred     n</span></a>
 <a class="sourceLine" id="cb4-19" data-line-number="19"><span class="co">#&gt;   &lt;clss_prd&gt; &lt;int&gt;</span></a>
@@ -198,24 +198,26 @@
 <a class="sourceLine" id="cb4-22" data-line-number="22"><span class="co">#&gt; 3       poor   625</span></a>
 <a class="sourceLine" id="cb4-23" data-line-number="23"></a>
 <a class="sourceLine" id="cb4-24" data-line-number="24">segment_pred <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb4-25" data-line-number="25"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="dt">reportable =</span> <span class="kw"><a href="../reference/reportable_rate.html">reportable_rate</a></span>(.pred))</a>
+<a class="sourceLine" id="cb4-25" data-line-number="25"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="dt">reportable =</span> <span class="kw"><a href="../reference/reportable_rate.html">reportable_rate</a></span>(.pred))</a>
 <a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt; # A tibble: 1 x 1</span></a>
 <a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt;   reportable</span></a>
 <a class="sourceLine" id="cb4-28" data-line-number="28"><span class="co">#&gt;        &lt;dbl&gt;</span></a>
 <a class="sourceLine" id="cb4-29" data-line-number="29"><span class="co">#&gt; 1      0.955</span></a></code></pre></div>
 <p>Equivocal values in <code>class_pred</code> objects are converted to <code>NA</code> when the object is converted to a factor. It’s also worth noting that the <code>[EQ]</code> label is not treated as a separate level.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">segment_pred <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">.pred_fct =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/generics/topics/coercion-factor">as.factor</a></span>(.pred)) <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/tally.html">count</a></span>(.pred, .pred_fct)</a>
-<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; # A tibble: 3 x 3</span></a>
-<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt;        .pred .pred_fct     n</span></a>
-<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;   &lt;clss_prd&gt; &lt;fct&gt;     &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt; 1       [EQ] &lt;NA&gt;         45</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; 2       good good        340</span></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; 3       poor poor        625</span></a>
-<a class="sourceLine" id="cb5-10" data-line-number="10"></a>
-<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(segment_pred<span class="op">$</span>.pred)</a>
-<a class="sourceLine" id="cb5-12" data-line-number="12"><span class="co">#&gt; [1] "good" "poor"</span></a></code></pre></div>
+<a class="sourceLine" id="cb5-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">.pred_fct =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/generics/topics/coercion-factor">as.factor</a></span>(.pred)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/tally.html">count</a></span>(.pred, .pred_fct)</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co">#&gt; Warning: Factor `.pred_fct` contains implicit NA, consider using</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; `forcats::fct_explicit_na`</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt; # A tibble: 3 x 3</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt;        .pred .pred_fct     n</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt;   &lt;clss_prd&gt; &lt;fct&gt;     &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; 1       [EQ] &lt;NA&gt;         45</span></a>
+<a class="sourceLine" id="cb5-10" data-line-number="10"><span class="co">#&gt; 2       good good        340</span></a>
+<a class="sourceLine" id="cb5-11" data-line-number="11"><span class="co">#&gt; 3       poor poor        625</span></a>
+<a class="sourceLine" id="cb5-12" data-line-number="12"></a>
+<a class="sourceLine" id="cb5-13" data-line-number="13"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(segment_pred<span class="op">$</span>.pred)</a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; [1] "good" "poor"</span></a></code></pre></div>
 <p>This <code>NA</code> behavior feeds into how probably can be used with yardstick. Generally, equivocal values are removed completely from performance evaluation. So converting them to <code>NA</code> and then leaving the default <code>na_rm = TRUE</code> in any yardstick metric removes them from consideration.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(yardstick)</a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="co">#&gt; For binary classification, the first factor level is assumed to be the event.</span></a>
@@ -223,7 +225,7 @@
 <a class="sourceLine" id="cb6-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co"># No equivocal zone</span></a>
 <a class="sourceLine" id="cb6-6" data-line-number="6">segment_logistic_thresh <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">.pred_fct =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/generics/topics/coercion-factor">as.factor</a></span>(.pred)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-7" data-line-number="7"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">.pred_fct =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/generics/topics/coercion-factor">as.factor</a></span>(.pred)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb6-8" data-line-number="8"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/yardstick/topics/precision">precision</a></span>(Class, .pred_fct)</a>
 <a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt; # A tibble: 1 x 3</span></a>
 <a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt;   .metric   .estimator .estimate</span></a>
@@ -232,7 +234,7 @@
 <a class="sourceLine" id="cb6-13" data-line-number="13"></a>
 <a class="sourceLine" id="cb6-14" data-line-number="14"><span class="co"># Equivocal zone</span></a>
 <a class="sourceLine" id="cb6-15" data-line-number="15">segment_pred <span class="op">%&gt;%</span></a>
-<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="http://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">.pred_fct =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/generics/topics/coercion-factor">as.factor</a></span>(.pred)) <span class="op">%&gt;%</span></a>
+<a class="sourceLine" id="cb6-16" data-line-number="16"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">.pred_fct =</span> <span class="kw"><a href="https://www.rdocumentation.org/packages/generics/topics/coercion-factor">as.factor</a></span>(.pred)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb6-17" data-line-number="17"><span class="st">  </span><span class="kw"><a href="https://www.rdocumentation.org/packages/yardstick/topics/precision">precision</a></span>(Class, .pred_fct)</a>
 <a class="sourceLine" id="cb6-18" data-line-number="18"><span class="co">#&gt; # A tibble: 1 x 3</span></a>
 <a class="sourceLine" id="cb6-19" data-line-number="19"><span class="co">#&gt;   .metric   .estimator .estimate</span></a>
