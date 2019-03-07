@@ -401,12 +401,11 @@ test_that("class_pred printing", {
   )
 
   # long levels
-  set.seed(123)
-  lng <- replicate(10, paste0(sample(letters, 20, replace = TRUE), collapse = ""))
-  cp <- class_pred(as.factor(lng))
+  fctrs <- paste0("blaaaaaaaaaaaaaaaaaaaaaaaaa", c(1,2,3,4))
+  cp <- class_pred(as.factor(fctrs))
 
   expect_output(
     cat_levels(cp),
-    "10 Levels: dkkjddgmgwbludofdtxj grkuclzxxedqirieucmn \\.\\.\\. xsqzrsophdzxruamtfig"
+    "4 Levels: blaaaaaaaaaaaaaaaaaaaaaaaaa1 ... blaaaaaaaaaaaaaaaaaaaaaaaaa4"
   )
 })
