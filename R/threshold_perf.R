@@ -104,6 +104,7 @@ threshold_perf.data.frame <- function(.data,
 
   obs_sym <- sym(obs)
   probs_sym <- sym(probs)
+
   if (length(rs_ch) == 0) {
 
     rs_ch <- NULL
@@ -111,10 +112,7 @@ threshold_perf.data.frame <- function(.data,
 
   } else {
 
-    if (length(rs_ch) > 1)
-      rs_id <- syms(rs_ch)
-    else
-      rs_id <- sym(rs_ch)
+    rs_id <- syms(rs_ch)
 
   }
 
