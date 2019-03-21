@@ -1,5 +1,5 @@
 Package: probably
-Version: 0.0.2.9000
+Version: 0.0.2
 Title: Tools for Post-Processing Class Probability Estimates
 Description: Models can be improved by post-processing class probabilities, by: recalibration, conversion to hard probabilities, assessment of equivocal zones, and other activities. 'probably' contains tools for conducting these operations. 
 Authors@R: c(

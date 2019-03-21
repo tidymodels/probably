@@ -1,5 +1,3 @@
-# Development version
-
 # probably 0.0.2
 
 ## Bug fixes
