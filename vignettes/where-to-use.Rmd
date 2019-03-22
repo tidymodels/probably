@@ -44,13 +44,13 @@ lending_club <- select(lending_club, Class, annual_inc, verification_status, sub
 lending_club
 ```
 
-Let's split this into 70% training and 30% testing for something to predict on.
+Let's split this into 75% training and 25% testing for something to predict on.
 
 ```{r}
-# 70% train, 30% test
+# 75% train, 25% test
 set.seed(123)
 
-split <- initial_split(lending_club, prop = 0.7)
+split <- initial_split(lending_club, prop = 0.75)
 
 lending_train <- training(split)
 lending_test  <- testing(split)
@@ -110,7 +110,7 @@ hard_pred_0.5 %>%
   count(.truth = Class, .pred)
 ```
 
-Hmm, with a `0.5` threshold, all loans were predicted as "good". Perhaps this has something to do with the large class imbalance. On the other hand, the bank might want to be more stringent with what is classified as a "good" loan, and might require a probability of `0.75` as the threshold.
+Hmm, with a `0.5` threshold, almost all of the loans were predicted as "good". Perhaps this has something to do with the large class imbalance. On the other hand, the bank might want to be more stringent with what is classified as a "good" loan, and might require a probability of `0.75` as the threshold.
 
 ```{r}
 hard_pred_0.75 <- lending_test_pred %>%
@@ -121,7 +121,11 @@ hard_pred_0.75 %>%
   count(.truth = Class, .pred)
 ```
 
-In this case, `5` of the bad loans were correctly classified as bad, but some of the good loans were also misclassified as bad now. There is a tradeoff here, which can be somewhat captured by the metrics _sensitivity_ and _specificity_. Both metrics have a max value of `1`.
+```{r, echo=FALSE}
+correct_bad <- nrow(filter(hard_pred_0.75, Class == "bad", .pred == "bad"))
+```
+
+In this case, `r correct_bad` of the bad loans were correctly classified as bad, but more of the good loans were also misclassified as bad now. There is a tradeoff here, which can be somewhat captured by the metrics _sensitivity_ and _specificity_. Both metrics have a max value of `1`.
 
 - sensitivity - The proportion of predicted "good" loans out of all "good" loans
 - specificity - The proportion of predicted "bad" loans out of all "bad" loans
@@ -141,7 +145,7 @@ sens(hard_pred_0.75, Class, .pred)
 spec(hard_pred_0.75, Class, .pred)
 ```
 
-In this example, as we increased specificity (by capturing those `5` bad loans with a higher threshold), we lowered sensitivity (by incorrectly reclassifying some of the good loans as bad). It would be nice to have some combination of these metrics to represent this tradeoff. Luckily, `j_index` is exactly that.
+In this example, as we increased specificity (by capturing those `r correct_bad` bad loans with a higher threshold), we lowered sensitivity (by incorrectly reclassifying some of the good loans as bad). It would be nice to have some combination of these metrics to represent this tradeoff. Luckily, `j_index` is exactly that.
 
 $$ j\_index = sens + spec - 1 $$
 
