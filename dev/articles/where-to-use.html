@@ -95,7 +95,7 @@
       <h1>Where does probably fit in?</h1>
                         <h4 class="author">Davis Vaughan</h4>
             
-            <h4 class="date">2019-03-21</h4>
+            <h4 class="date">2019-03-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/master/vignettes/where-to-use.Rmd"><code>vignettes/where-to-use.Rmd</code></a></small>
       <div class="hidden name"><code>where-to-use.Rmd</code></div>
@@ -144,11 +144,11 @@
 <a class="sourceLine" id="cb1-28" data-line-number="28"><span class="co">#&gt;  9 good       89000 Source_Verified     B3       </span></a>
 <a class="sourceLine" id="cb1-29" data-line-number="29"><span class="co">#&gt; 10 good       48000 Not_Verified        C2       </span></a>
 <a class="sourceLine" id="cb1-30" data-line-number="30"><span class="co">#&gt; # … with 9,847 more rows</span></a></code></pre></div>
-<p>Let’s split this into 70% training and 30% testing for something to predict on.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># 70% train, 30% test</span></a>
+<p>Let’s split this into 75% training and 25% testing for something to predict on.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="co"># 75% train, 25% test</span></a>
 <a class="sourceLine" id="cb2-2" data-line-number="2"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/Random">set.seed</a></span>(<span class="dv">123</span>)</a>
 <a class="sourceLine" id="cb2-3" data-line-number="3"></a>
-<a class="sourceLine" id="cb2-4" data-line-number="4">split &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rsample/topics/initial_split">initial_split</a></span>(lending_club, <span class="dt">prop =</span> <span class="fl">0.7</span>)</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">split &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rsample/topics/initial_split">initial_split</a></span>(lending_club, <span class="dt">prop =</span> <span class="fl">0.75</span>)</a>
 <a class="sourceLine" id="cb2-5" data-line-number="5"></a>
 <a class="sourceLine" id="cb2-6" data-line-number="6">lending_train &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rsample/topics/initial_split">training</a></span>(split)</a>
 <a class="sourceLine" id="cb2-7" data-line-number="7">lending_test  &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/rsample/topics/initial_split">testing</a></span>(split)</a></code></pre></div>
@@ -157,8 +157,8 @@
 <a class="sourceLine" id="cb3-2" data-line-number="2"><span class="co">#&gt; # A tibble: 2 x 2</span></a>
 <a class="sourceLine" id="cb3-3" data-line-number="3"><span class="co">#&gt;   Class     n</span></a>
 <a class="sourceLine" id="cb3-4" data-line-number="4"><span class="co">#&gt;   &lt;fct&gt; &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; 1 good   6534</span></a>
-<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; 2 bad     366</span></a></code></pre></div>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#&gt; 1 good   6999</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co">#&gt; 2 bad     394</span></a></code></pre></div>
 <p>Clearly there is a large imbalance here with the number of good and bad loans. This is probably a good thing for the bank, but poses an interesting issue for us because we might want to ensure we are sensitive to the bad loans and are not overwhelmed by the number of good ones. One thing that we might do is <em>downsample</em> the number of good loans so that the total number of them is more in line with the number of bad loans. We could do this before fitting the model using <code>recipes::step_downsample()</code>, but for now, let’s continue with the data unchanged.</p>
 <p>We’ll use parsnip’s <code><a href="https://www.rdocumentation.org/packages/parsnip/topics/logistic_reg">logistic_reg()</a></code> to create a model specification for logistic regression, set the engine to be <code>glm</code> and then actually fit the model using our data and the model formula.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">logi_reg &lt;-<span class="st"> </span><span class="kw"><a href="https://www.rdocumentation.org/packages/parsnip/topics/logistic_reg">logistic_reg</a></span>()</a>
@@ -186,47 +186,47 @@
 <a class="sourceLine" id="cb4-23" data-line-number="23"><span class="co">#&gt; </span></a>
 <a class="sourceLine" id="cb4-24" data-line-number="24"><span class="co">#&gt; Coefficients:</span></a>
 <a class="sourceLine" id="cb4-25" data-line-number="25"><span class="co">#&gt;                        (Intercept)                          annual_inc  </span></a>
-<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt;                         -5.492e+00                           9.060e-07  </span></a>
+<a class="sourceLine" id="cb4-26" data-line-number="26"><span class="co">#&gt;                         -5.527e+00                           8.423e-07  </span></a>
 <a class="sourceLine" id="cb4-27" data-line-number="27"><span class="co">#&gt; verification_statusSource_Verified         verification_statusVerified  </span></a>
-<a class="sourceLine" id="cb4-28" data-line-number="28"><span class="co">#&gt;                          6.738e-02                           3.052e-01  </span></a>
+<a class="sourceLine" id="cb4-28" data-line-number="28"><span class="co">#&gt;                          9.357e-03                           2.343e-01  </span></a>
 <a class="sourceLine" id="cb4-29" data-line-number="29"><span class="co">#&gt;                        sub_gradeA2                         sub_gradeA3  </span></a>
-<a class="sourceLine" id="cb4-30" data-line-number="30"><span class="co">#&gt;                          1.634e-01                           1.443e+00  </span></a>
+<a class="sourceLine" id="cb4-30" data-line-number="30"><span class="co">#&gt;                          1.240e-01                           1.459e+00  </span></a>
 <a class="sourceLine" id="cb4-31" data-line-number="31"><span class="co">#&gt;                        sub_gradeA4                         sub_gradeA5  </span></a>
-<a class="sourceLine" id="cb4-32" data-line-number="32"><span class="co">#&gt;                         -7.757e-02                           6.025e-01  </span></a>
+<a class="sourceLine" id="cb4-32" data-line-number="32"><span class="co">#&gt;                         -6.223e-02                           6.169e-01  </span></a>
 <a class="sourceLine" id="cb4-33" data-line-number="33"><span class="co">#&gt;                        sub_gradeB1                         sub_gradeB2  </span></a>
-<a class="sourceLine" id="cb4-34" data-line-number="34"><span class="co">#&gt;                          1.184e+00                           1.253e+00  </span></a>
+<a class="sourceLine" id="cb4-34" data-line-number="34"><span class="co">#&gt;                          1.459e+00                           1.271e+00  </span></a>
 <a class="sourceLine" id="cb4-35" data-line-number="35"><span class="co">#&gt;                        sub_gradeB3                         sub_gradeB4  </span></a>
-<a class="sourceLine" id="cb4-36" data-line-number="36"><span class="co">#&gt;                          1.956e+00                           2.077e+00  </span></a>
+<a class="sourceLine" id="cb4-36" data-line-number="36"><span class="co">#&gt;                          2.048e+00                           2.101e+00  </span></a>
 <a class="sourceLine" id="cb4-37" data-line-number="37"><span class="co">#&gt;                        sub_gradeB5                         sub_gradeC1  </span></a>
-<a class="sourceLine" id="cb4-38" data-line-number="38"><span class="co">#&gt;                          1.676e+00                           2.313e+00  </span></a>
+<a class="sourceLine" id="cb4-38" data-line-number="38"><span class="co">#&gt;                          1.853e+00                           2.354e+00  </span></a>
 <a class="sourceLine" id="cb4-39" data-line-number="39"><span class="co">#&gt;                        sub_gradeC2                         sub_gradeC3  </span></a>
-<a class="sourceLine" id="cb4-40" data-line-number="40"><span class="co">#&gt;                          2.333e+00                           2.050e+00  </span></a>
+<a class="sourceLine" id="cb4-40" data-line-number="40"><span class="co">#&gt;                          2.366e+00                           2.131e+00  </span></a>
 <a class="sourceLine" id="cb4-41" data-line-number="41"><span class="co">#&gt;                        sub_gradeC4                         sub_gradeC5  </span></a>
-<a class="sourceLine" id="cb4-42" data-line-number="42"><span class="co">#&gt;                          2.617e+00                           3.033e+00  </span></a>
+<a class="sourceLine" id="cb4-42" data-line-number="42"><span class="co">#&gt;                          2.656e+00                           3.137e+00  </span></a>
 <a class="sourceLine" id="cb4-43" data-line-number="43"><span class="co">#&gt;                        sub_gradeD1                         sub_gradeD2  </span></a>
-<a class="sourceLine" id="cb4-44" data-line-number="44"><span class="co">#&gt;                          3.012e+00                           2.788e+00  </span></a>
+<a class="sourceLine" id="cb4-44" data-line-number="44"><span class="co">#&gt;                          3.077e+00                           2.824e+00  </span></a>
 <a class="sourceLine" id="cb4-45" data-line-number="45"><span class="co">#&gt;                        sub_gradeD3                         sub_gradeD4  </span></a>
-<a class="sourceLine" id="cb4-46" data-line-number="46"><span class="co">#&gt;                          3.134e+00                           2.949e+00  </span></a>
+<a class="sourceLine" id="cb4-46" data-line-number="46"><span class="co">#&gt;                          3.155e+00                           3.027e+00  </span></a>
 <a class="sourceLine" id="cb4-47" data-line-number="47"><span class="co">#&gt;                        sub_gradeD5                         sub_gradeE1  </span></a>
-<a class="sourceLine" id="cb4-48" data-line-number="48"><span class="co">#&gt;                          3.256e+00                           3.439e+00  </span></a>
+<a class="sourceLine" id="cb4-48" data-line-number="48"><span class="co">#&gt;                          3.351e+00                           3.731e+00  </span></a>
 <a class="sourceLine" id="cb4-49" data-line-number="49"><span class="co">#&gt;                        sub_gradeE2                         sub_gradeE3  </span></a>
-<a class="sourceLine" id="cb4-50" data-line-number="50"><span class="co">#&gt;                          3.085e+00                           3.569e+00  </span></a>
+<a class="sourceLine" id="cb4-50" data-line-number="50"><span class="co">#&gt;                          3.333e+00                           3.596e+00  </span></a>
 <a class="sourceLine" id="cb4-51" data-line-number="51"><span class="co">#&gt;                        sub_gradeE4                         sub_gradeE5  </span></a>
-<a class="sourceLine" id="cb4-52" data-line-number="52"><span class="co">#&gt;                          3.310e+00                           3.685e+00  </span></a>
+<a class="sourceLine" id="cb4-52" data-line-number="52"><span class="co">#&gt;                          3.522e+00                           3.642e+00  </span></a>
 <a class="sourceLine" id="cb4-53" data-line-number="53"><span class="co">#&gt;                        sub_gradeF1                         sub_gradeF2  </span></a>
-<a class="sourceLine" id="cb4-54" data-line-number="54"><span class="co">#&gt;                          3.576e+00                           3.576e+00  </span></a>
+<a class="sourceLine" id="cb4-54" data-line-number="54"><span class="co">#&gt;                          3.686e+00                           3.594e+00  </span></a>
 <a class="sourceLine" id="cb4-55" data-line-number="55"><span class="co">#&gt;                        sub_gradeF3                         sub_gradeF4  </span></a>
-<a class="sourceLine" id="cb4-56" data-line-number="56"><span class="co">#&gt;                          3.390e+00                           4.371e+00  </span></a>
+<a class="sourceLine" id="cb4-56" data-line-number="56"><span class="co">#&gt;                          3.633e+00                           4.369e+00  </span></a>
 <a class="sourceLine" id="cb4-57" data-line-number="57"><span class="co">#&gt;                        sub_gradeF5                         sub_gradeG1  </span></a>
-<a class="sourceLine" id="cb4-58" data-line-number="58"><span class="co">#&gt;                          3.618e+00                           4.639e+00  </span></a>
+<a class="sourceLine" id="cb4-58" data-line-number="58"><span class="co">#&gt;                          3.815e+00                           4.631e+00  </span></a>
 <a class="sourceLine" id="cb4-59" data-line-number="59"><span class="co">#&gt;                        sub_gradeG2                         sub_gradeG3  </span></a>
-<a class="sourceLine" id="cb4-60" data-line-number="60"><span class="co">#&gt;                          4.000e+00                           3.839e+00  </span></a>
+<a class="sourceLine" id="cb4-60" data-line-number="60"><span class="co">#&gt;                          4.622e+00                           3.945e+00  </span></a>
 <a class="sourceLine" id="cb4-61" data-line-number="61"><span class="co">#&gt;                        sub_gradeG4                         sub_gradeG5  </span></a>
-<a class="sourceLine" id="cb4-62" data-line-number="62"><span class="co">#&gt;                          5.663e+00                          -8.380e+00  </span></a>
+<a class="sourceLine" id="cb4-62" data-line-number="62"><span class="co">#&gt;                          5.761e+00                          -8.273e+00  </span></a>
 <a class="sourceLine" id="cb4-63" data-line-number="63"><span class="co">#&gt; </span></a>
-<a class="sourceLine" id="cb4-64" data-line-number="64"><span class="co">#&gt; Degrees of Freedom: 6899 Total (i.e. Null);  6862 Residual</span></a>
-<a class="sourceLine" id="cb4-65" data-line-number="65"><span class="co">#&gt; Null Deviance:       2862 </span></a>
-<a class="sourceLine" id="cb4-66" data-line-number="66"><span class="co">#&gt; Residual Deviance: 2558  AIC: 2634</span></a></code></pre></div>
+<a class="sourceLine" id="cb4-64" data-line-number="64"><span class="co">#&gt; Degrees of Freedom: 7392 Total (i.e. Null);  7355 Residual</span></a>
+<a class="sourceLine" id="cb4-65" data-line-number="65"><span class="co">#&gt; Null Deviance:       3077 </span></a>
+<a class="sourceLine" id="cb4-66" data-line-number="66"><span class="co">#&gt; Residual Deviance: 2745  AIC: 2821</span></a></code></pre></div>
 <p>The output of the parsnip <code><a href="https://www.rdocumentation.org/packages/parsnip/topics/reexports">fit()</a></code> call is a parsnip <code>model_fit</code> object, but the underlying print method for the <code>glm</code> fit is used.</p>
 <p>Now let’s predict on our testing set, and use <code>type = "prob"</code> to get <em>class probabilities</em> back rather than hard predictions. We will use these with probably to investigate performance.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">predictions &lt;-<span class="st"> </span>logi_reg_fit <span class="op">%&gt;%</span></a>
@@ -236,26 +236,26 @@
 <a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">#&gt; # A tibble: 2 x 2</span></a>
 <a class="sourceLine" id="cb5-6" data-line-number="6"><span class="co">#&gt;   .pred_good .pred_bad</span></a>
 <a class="sourceLine" id="cb5-7" data-line-number="7"><span class="co">#&gt;        &lt;dbl&gt;     &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; 1      0.996   0.00425</span></a>
-<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; 2      0.996   0.00435</span></a>
+<a class="sourceLine" id="cb5-8" data-line-number="8"><span class="co">#&gt; 1      0.996   0.00392</span></a>
+<a class="sourceLine" id="cb5-9" data-line-number="9"><span class="co">#&gt; 2      0.996   0.00418</span></a>
 <a class="sourceLine" id="cb5-10" data-line-number="10"></a>
 <a class="sourceLine" id="cb5-11" data-line-number="11">lending_test_pred &lt;-<span class="st"> </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span>(predictions, lending_test)</a>
 <a class="sourceLine" id="cb5-12" data-line-number="12"></a>
 <a class="sourceLine" id="cb5-13" data-line-number="13">lending_test_pred</a>
-<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; # A tibble: 2,957 x 6</span></a>
+<a class="sourceLine" id="cb5-14" data-line-number="14"><span class="co">#&gt; # A tibble: 2,464 x 6</span></a>
 <a class="sourceLine" id="cb5-15" data-line-number="15"><span class="co">#&gt;    .pred_good .pred_bad Class annual_inc verification_status sub_grade</span></a>
 <a class="sourceLine" id="cb5-16" data-line-number="16"><span class="co">#&gt;         &lt;dbl&gt;     &lt;dbl&gt; &lt;fct&gt;      &lt;dbl&gt; &lt;fct&gt;               &lt;fct&gt;    </span></a>
-<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt;  1      0.996   0.00425 good       50100 Source_Verified     A4       </span></a>
-<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="co">#&gt;  2      0.996   0.00435 good       65000 Not_Verified        A1       </span></a>
-<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co">#&gt;  3      0.957   0.0425  good       48000 Not_Verified        C2       </span></a>
-<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="co">#&gt;  4      0.966   0.0343  good       40000 Source_Verified     C3       </span></a>
-<a class="sourceLine" id="cb5-21" data-line-number="21"><span class="co">#&gt;  5      0.921   0.0790  good       26000 Not_Verified        D1       </span></a>
-<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="co">#&gt;  6      0.940   0.0600  good       62000 Source_Verified     C4       </span></a>
-<a class="sourceLine" id="cb5-23" data-line-number="23"><span class="co">#&gt;  7      0.965   0.0345  good       92000 Not_Verified        B4       </span></a>
-<a class="sourceLine" id="cb5-24" data-line-number="24"><span class="co">#&gt;  8      0.941   0.0589  good       40000 Source_Verified     C4       </span></a>
-<a class="sourceLine" id="cb5-25" data-line-number="25"><span class="co">#&gt;  9      0.965   0.0352  good       70000 Source_Verified     C3       </span></a>
-<a class="sourceLine" id="cb5-26" data-line-number="26"><span class="co">#&gt; 10      0.943   0.0565  good       65000 Verified            C1       </span></a>
-<a class="sourceLine" id="cb5-27" data-line-number="27"><span class="co">#&gt; # … with 2,947 more rows</span></a></code></pre></div>
+<a class="sourceLine" id="cb5-17" data-line-number="17"><span class="co">#&gt;  1      0.996   0.00392 good       50100 Source_Verified     A4       </span></a>
+<a class="sourceLine" id="cb5-18" data-line-number="18"><span class="co">#&gt;  2      0.996   0.00418 good       65000 Not_Verified        A1       </span></a>
+<a class="sourceLine" id="cb5-19" data-line-number="19"><span class="co">#&gt;  3      0.958   0.0422  good       48000 Not_Verified        C2       </span></a>
+<a class="sourceLine" id="cb5-20" data-line-number="20"><span class="co">#&gt;  4      0.966   0.0338  good       40000 Source_Verified     C3       </span></a>
+<a class="sourceLine" id="cb5-21" data-line-number="21"><span class="co">#&gt;  5      0.919   0.0811  good       26000 Not_Verified        D1       </span></a>
+<a class="sourceLine" id="cb5-22" data-line-number="22"><span class="co">#&gt;  6      0.966   0.0339  good       92000 Not_Verified        B4       </span></a>
+<a class="sourceLine" id="cb5-23" data-line-number="23"><span class="co">#&gt;  7      0.944   0.0558  good       40000 Source_Verified     C4       </span></a>
+<a class="sourceLine" id="cb5-24" data-line-number="24"><span class="co">#&gt;  8      0.965   0.0346  good       70000 Source_Verified     C3       </span></a>
+<a class="sourceLine" id="cb5-25" data-line-number="25"><span class="co">#&gt;  9      0.947   0.0529  good       65000 Verified            C1       </span></a>
+<a class="sourceLine" id="cb5-26" data-line-number="26"><span class="co">#&gt; 10      0.966   0.0339  good       56000 Not_Verified        C3       </span></a>
+<a class="sourceLine" id="cb5-27" data-line-number="27"><span class="co">#&gt; # … with 2,454 more rows</span></a></code></pre></div>
 <p>With our class probabilities in hand, we can use <code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code> to convert these probabilities into hard predictions using a threshold. A threshold of <code>0.5</code> just says that if the predicted probability is above <code>0.5</code>, then classify this prediction as a “good” loan, otherwise, bad.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">hard_pred_<span class="fl">0.5</span> &lt;-<span class="st"> </span>lending_test_pred <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb6-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">.pred =</span> <span class="kw"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span>(.pred_good, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(Class), <span class="dt">threshold =</span> <span class="fl">.5</span>)) <span class="op">%&gt;%</span></a>
@@ -266,23 +266,24 @@
 <a class="sourceLine" id="cb6-7" data-line-number="7"><span class="co">#&gt; # A tibble: 3 x 3</span></a>
 <a class="sourceLine" id="cb6-8" data-line-number="8"><span class="co">#&gt;   .truth      .pred     n</span></a>
 <a class="sourceLine" id="cb6-9" data-line-number="9"><span class="co">#&gt;   &lt;fct&gt;  &lt;clss_prd&gt; &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; 1 good         good  2804</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10"><span class="co">#&gt; 1 good         good  2339</span></a>
 <a class="sourceLine" id="cb6-11" data-line-number="11"><span class="co">#&gt; 2 good          bad     2</span></a>
-<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; 3 bad          good   151</span></a></code></pre></div>
-<p>Hmm, with a <code>0.5</code> threshold, all loans were predicted as “good”. Perhaps this has something to do with the large class imbalance. On the other hand, the bank might want to be more stringent with what is classified as a “good” loan, and might require a probability of <code>0.75</code> as the threshold.</p>
+<a class="sourceLine" id="cb6-12" data-line-number="12"><span class="co">#&gt; 3 bad          good   123</span></a></code></pre></div>
+<p>Hmm, with a <code>0.5</code> threshold, almost all of the loans were predicted as “good”. Perhaps this has something to do with the large class imbalance. On the other hand, the bank might want to be more stringent with what is classified as a “good” loan, and might require a probability of <code>0.75</code> as the threshold.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">hard_pred_<span class="fl">0.75</span> &lt;-<span class="st"> </span>lending_test_pred <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="dt">.pred =</span> <span class="kw"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span>(.pred_good, <span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/levels">levels</a></span>(Class), <span class="dt">threshold =</span> <span class="fl">.75</span>)) <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb7-3" data-line-number="3"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(Class, <span class="kw"><a href="https://dplyr.tidyverse.org/reference/reexports.html">contains</a></span>(<span class="st">".pred"</span>))</a>
 <a class="sourceLine" id="cb7-4" data-line-number="4"></a>
 <a class="sourceLine" id="cb7-5" data-line-number="5">hard_pred_<span class="fl">0.75</span> <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb7-6" data-line-number="6"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/tally.html">count</a></span>(<span class="dt">.truth =</span> Class, .pred)</a>
-<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; # A tibble: 3 x 3</span></a>
+<a class="sourceLine" id="cb7-7" data-line-number="7"><span class="co">#&gt; # A tibble: 4 x 3</span></a>
 <a class="sourceLine" id="cb7-8" data-line-number="8"><span class="co">#&gt;   .truth      .pred     n</span></a>
 <a class="sourceLine" id="cb7-9" data-line-number="9"><span class="co">#&gt;   &lt;fct&gt;  &lt;clss_prd&gt; &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; 1 good         good  2788</span></a>
-<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; 2 good          bad    18</span></a>
-<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; 3 bad          good   151</span></a></code></pre></div>
-<p>In this case, <code>5</code> of the bad loans were correctly classified as bad, but some of the good loans were also misclassified as bad now. There is a tradeoff here, which can be somewhat captured by the metrics <em>sensitivity</em> and <em>specificity</em>. Both metrics have a max value of <code>1</code>.</p>
+<a class="sourceLine" id="cb7-10" data-line-number="10"><span class="co">#&gt; 1 good         good  2321</span></a>
+<a class="sourceLine" id="cb7-11" data-line-number="11"><span class="co">#&gt; 2 good          bad    20</span></a>
+<a class="sourceLine" id="cb7-12" data-line-number="12"><span class="co">#&gt; 3 bad          good   121</span></a>
+<a class="sourceLine" id="cb7-13" data-line-number="13"><span class="co">#&gt; 4 bad           bad     2</span></a></code></pre></div>
+<p>In this case, 2 of the bad loans were correctly classified as bad, but more of the good loans were also misclassified as bad now. There is a tradeoff here, which can be somewhat captured by the metrics <em>sensitivity</em> and <em>specificity</em>. Both metrics have a max value of <code>1</code>.</p>
 <ul>
 <li>sensitivity - The proportion of predicted “good” loans out of all “good” loans</li>
 <li>specificity - The proportion of predicted “bad” loans out of all “bad” loans</li>
@@ -311,25 +312,25 @@
 <a class="sourceLine" id="cb8-22" data-line-number="22"><span class="co">#&gt; # A tibble: 1 x 3</span></a>
 <a class="sourceLine" id="cb8-23" data-line-number="23"><span class="co">#&gt;   .metric .estimator .estimate</span></a>
 <a class="sourceLine" id="cb8-24" data-line-number="24"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb8-25" data-line-number="25"><span class="co">#&gt; 1 sens    binary         0.994</span></a>
+<a class="sourceLine" id="cb8-25" data-line-number="25"><span class="co">#&gt; 1 sens    binary         0.991</span></a>
 <a class="sourceLine" id="cb8-26" data-line-number="26"><span class="kw"><a href="https://www.rdocumentation.org/packages/yardstick/topics/spec">spec</a></span>(hard_pred_<span class="fl">0.75</span>, Class, .pred)</a>
 <a class="sourceLine" id="cb8-27" data-line-number="27"><span class="co">#&gt; # A tibble: 1 x 3</span></a>
 <a class="sourceLine" id="cb8-28" data-line-number="28"><span class="co">#&gt;   .metric .estimator .estimate</span></a>
 <a class="sourceLine" id="cb8-29" data-line-number="29"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb8-30" data-line-number="30"><span class="co">#&gt; 1 spec    binary             0</span></a></code></pre></div>
-<p>In this example, as we increased specificity (by capturing those <code>5</code> bad loans with a higher threshold), we lowered sensitivity (by incorrectly reclassifying some of the good loans as bad). It would be nice to have some combination of these metrics to represent this tradeoff. Luckily, <code>j_index</code> is exactly that.</p>
+<a class="sourceLine" id="cb8-30" data-line-number="30"><span class="co">#&gt; 1 spec    binary        0.0163</span></a></code></pre></div>
+<p>In this example, as we increased specificity (by capturing those 2 bad loans with a higher threshold), we lowered sensitivity (by incorrectly reclassifying some of the good loans as bad). It would be nice to have some combination of these metrics to represent this tradeoff. Luckily, <code>j_index</code> is exactly that.</p>
 <p><span class="math display">\[ j\_index = sens + spec - 1 \]</span></p>
 <p><code>j_index</code> has a maximum value of 1 when there are no false positives and no false negatives. It can be used as justification of whether or not an increase in the threshold value is worth it. If increasing the threshold results in more of an increase in the specificity than a decrease in the sensitivity, we can see that with <code>j_index</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/yardstick/topics/j_index">j_index</a></span>(hard_pred_<span class="fl">0.5</span>, Class, .pred)</a>
 <a class="sourceLine" id="cb9-2" data-line-number="2"><span class="co">#&gt; # A tibble: 1 x 3</span></a>
 <a class="sourceLine" id="cb9-3" data-line-number="3"><span class="co">#&gt;   .metric .estimator .estimate</span></a>
 <a class="sourceLine" id="cb9-4" data-line-number="4"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; 1 j_index binary     -0.000713</span></a>
+<a class="sourceLine" id="cb9-5" data-line-number="5"><span class="co">#&gt; 1 j_index binary     -0.000854</span></a>
 <a class="sourceLine" id="cb9-6" data-line-number="6"><span class="kw"><a href="https://www.rdocumentation.org/packages/yardstick/topics/j_index">j_index</a></span>(hard_pred_<span class="fl">0.75</span>, Class, .pred)</a>
 <a class="sourceLine" id="cb9-7" data-line-number="7"><span class="co">#&gt; # A tibble: 1 x 3</span></a>
 <a class="sourceLine" id="cb9-8" data-line-number="8"><span class="co">#&gt;   .metric .estimator .estimate</span></a>
 <a class="sourceLine" id="cb9-9" data-line-number="9"><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;</span></a>
-<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; 1 j_index binary      -0.00641</span></a></code></pre></div>
+<a class="sourceLine" id="cb9-10" data-line-number="10"><span class="co">#&gt; 1 j_index binary       0.00772</span></a></code></pre></div>
 <p>Now, this is not the only way to optimize things. If you care about low false positives, you might be more interested in keeping sensitivity high, and this wouldn’t be the best way to tackle this problem. But for now, let’s see how we can use probably to optimize the <code>j_index</code>.</p>
 <p><code><a href="../reference/threshold_perf.html">threshold_perf()</a></code> will recalculate a number of metrics across varying thresholds. One of these is <code>j_index</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">threshold_data &lt;-<span class="st"> </span>lending_test_pred <span class="op">%&gt;%</span></a>
@@ -345,13 +346,13 @@
 <a class="sourceLine" id="cb10-11" data-line-number="11"><span class="co">#&gt;  3        0.7 sens     binary      0.994   </span></a>
 <a class="sourceLine" id="cb10-12" data-line-number="12"><span class="co">#&gt;  4        0.5 spec     binary      0       </span></a>
 <a class="sourceLine" id="cb10-13" data-line-number="13"><span class="co">#&gt;  5        0.6 spec     binary      0       </span></a>
-<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt;  6        0.7 spec     binary      0       </span></a>
-<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt;  7        0.5 j_index  binary     -0.000713</span></a>
-<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt;  8        0.6 j_index  binary     -0.000713</span></a>
-<a class="sourceLine" id="cb10-17" data-line-number="17"><span class="co">#&gt;  9        0.7 j_index  binary     -0.00570 </span></a>
+<a class="sourceLine" id="cb10-14" data-line-number="14"><span class="co">#&gt;  6        0.7 spec     binary      0.00813 </span></a>
+<a class="sourceLine" id="cb10-15" data-line-number="15"><span class="co">#&gt;  7        0.5 j_index  binary     -0.000854</span></a>
+<a class="sourceLine" id="cb10-16" data-line-number="16"><span class="co">#&gt;  8        0.6 j_index  binary     -0.000854</span></a>
+<a class="sourceLine" id="cb10-17" data-line-number="17"><span class="co">#&gt;  9        0.7 j_index  binary      0.00258 </span></a>
 <a class="sourceLine" id="cb10-18" data-line-number="18"><span class="co">#&gt; 10        0.5 distance binary      1.00    </span></a>
 <a class="sourceLine" id="cb10-19" data-line-number="19"><span class="co">#&gt; 11        0.6 distance binary      1.00    </span></a>
-<a class="sourceLine" id="cb10-20" data-line-number="20"><span class="co">#&gt; 12        0.7 distance binary      1.00</span></a></code></pre></div>
+<a class="sourceLine" id="cb10-20" data-line-number="20"><span class="co">#&gt; 12        0.7 distance binary      0.984</span></a></code></pre></div>
 <p>With <code>ggplot2</code>, we can easily visualize this varying performance to find our optimal threshold for maximizing <code>j_index</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw"><a href="https://www.rdocumentation.org/packages/base/topics/library">library</a></span>(ggplot2)</a>
 <a class="sourceLine" id="cb11-2" data-line-number="2"></a>
@@ -379,16 +380,16 @@
 <a class="sourceLine" id="cb11-24" data-line-number="24">    <span class="dt">title =</span> <span class="st">"Balancing performance by varying the threshold"</span>,</a>
 <a class="sourceLine" id="cb11-25" data-line-number="25">    <span class="dt">subtitle =</span> <span class="st">"Sensitivity or specificity alone might not be enough!</span><span class="ch">\n</span><span class="st">Vertical line = Max J-Index"</span></a>
 <a class="sourceLine" id="cb11-26" data-line-number="26">  )</a></code></pre></div>
-<p><img src="where-to-use_files/figure-html/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;"></p>
-<p>It’s clear from this visual that the optimal threshold is very high, exactly 0.94. This is pretty high, so again, this optimization method won’t be useful for all cases. To wrap up, here are all of the test set metrics for that threshold value.</p>
+<p><img src="where-to-use_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;"></p>
+<p>It’s clear from this visual that the optimal threshold is very high, exactly 0.945. This is pretty high, so again, this optimization method won’t be useful for all cases. To wrap up, here are all of the test set metrics for that threshold value.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1">threshold_data <span class="op">%&gt;%</span></a>
 <a class="sourceLine" id="cb12-2" data-line-number="2"><span class="st">  </span><span class="kw"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(.threshold <span class="op">==</span><span class="st"> </span>max_j_index_threshold)</a>
 <a class="sourceLine" id="cb12-3" data-line-number="3"><span class="co">#&gt; # A tibble: 3 x 5</span></a>
 <a class="sourceLine" id="cb12-4" data-line-number="4"><span class="co">#&gt;   .threshold .metric .estimator .estimate group</span></a>
 <a class="sourceLine" id="cb12-5" data-line-number="5"><span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;</span></a>
-<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt; 1       0.94 sens    binary         0.699 1    </span></a>
-<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; 2       0.94 spec    binary         0.675 1    </span></a>
-<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt; 3       0.94 j_index binary         0.374 2</span></a></code></pre></div>
+<a class="sourceLine" id="cb12-6" data-line-number="6"><span class="co">#&gt; 1      0.945 sens    binary         0.677 1    </span></a>
+<a class="sourceLine" id="cb12-7" data-line-number="7"><span class="co">#&gt; 2      0.945 spec    binary         0.699 1    </span></a>
+<a class="sourceLine" id="cb12-8" data-line-number="8"><span class="co">#&gt; 3      0.945 j_index binary         0.376 2</span></a></code></pre></div>
 </div>
   </div>
 
