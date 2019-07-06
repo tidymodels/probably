@@ -6,7 +6,7 @@ Authors@R: c(
     person("Max", "Kuhn", , "max@rstudio.com", c("aut", "cre")),
     person("Davis", "Vaughan", , "davis@rstudio.com", c("aut")),
     person("RStudio", role = "cph"))
-Maintainer: Max Kuhn <max@rstudio.com>
+Maintainer: Davis Vaughan <davis@rstudio.com>
 URL: https://github.com/tidymodels/probably/
 BugReports: https://github.com/tidymodels/probably/issues
 License: GPL-2
