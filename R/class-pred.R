@@ -93,8 +93,8 @@ class_pred <- function(x = factor(), which = integer(), equivocal = "[EQ]") {
   }
 
   # rip out the underlying integer structure
-  # as_integer() also removes attributes
-  x_int <- rlang::as_integer(unclass(x))
+  # as.integer() also removes attributes
+  x_int <- as.integer(unclass(x))
 
   # declare equivocal
   x_int[which] <- 0L

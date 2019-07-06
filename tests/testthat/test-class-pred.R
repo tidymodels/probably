@@ -82,10 +82,11 @@ test_that("casting class_pred to class_pred", {
   cp4  <- class_pred(factor(c("a", "b", "b", "c"), ordered = TRUE), which = 2)
 
   # lossy cast, no c level in cp2
+  expect_error(vec_cast(cp1, cp2), class = "vctrs_error_cast_lossy")
+
+  # can suppress lossy cast
   expect_equal(
-    expect_warning(
-      vec_data(vec_cast(cp1, cp2))
-    ),
+    vec_data(allow_lossy_cast(vec_cast(cp1, cp2))),
     c(1, 0, 2, NA)
   )
 
@@ -105,10 +106,11 @@ test_that("casting class_pred to factor", {
   fc3  <- factor(levels = c("a", "b", "c"), ordered = TRUE)
 
   # lossy cast, no c level in fc1
+  expect_error(vec_cast(cp1, fc1), class = "vctrs_error_cast_lossy")
+
+  # can allow lossy cast to succeed
   expect_equal(
-    expect_warning(
-      vec_data(vec_cast(cp1, fc1))
-    ),
+    vec_data(allow_lossy_cast(vec_cast(cp1, fc1))),
     c(1, 2, 2, NA)
   )
 
@@ -146,10 +148,11 @@ test_that("casting factor to class_pred", {
   cp4  <- class_pred(factor(levels = c("a", "b", "c"), ordered = TRUE))
 
   # lossy cast, no c level in cp1
+  expect_error(vec_cast(fc2, cp1), class = "vctrs_error_cast_lossy")
+
+  # can allow lossy cast to succeed
   expect_equal(
-    expect_warning(
-      vec_data(vec_cast(fc2, cp1))
-    ),
+    vec_data(allow_lossy_cast(vec_cast(fc2, cp1))),
     c(1, 2, 2, NA)
   )
 
@@ -177,10 +180,11 @@ test_that("casting character to class_pred", {
   cp4  <- class_pred(factor(c("a", "b", "b", "c")), equivocal = "eq")
 
   # lossy cast, no c level in chr1
+  expect_error(vec_cast(chr1, cp2), class = "vctrs_error_cast_lossy")
+
+  # can allow lossy cast to succeed
   expect_equal(
-    expect_warning(
-      vec_data(vec_cast(chr1, cp2))
-    ),
+    vec_data(allow_lossy_cast(vec_cast(chr1, cp2))),
     c(1, 2, 2, NA)
   )
 
@@ -204,8 +208,8 @@ test_that("slicing", {
   expect_equal(reportable_rate(manual_creation_eq[1]), 0)
   expect_equal(reportable_rate(manual_creation_eq[1:2]), 0.5)
 
-  # extending past adds NAs
-  expect_equal(vec_data(manual_creation_eq[1:6]), c(0, 1, 2, 2, 3, NA))
+  # extending past is an error
+  expect_error(manual_creation_eq[1:6], "5 and you've tried to subset element 6")
 
 })
 
@@ -224,13 +228,13 @@ test_that("unknown casts are handled correctly", {
 
 })
 
-test_that("type2 checks are handled correctly", {
+test_that("ptype2 checks are handled correctly", {
 
-  expect_error(vec_type2(manual_creation_eq, numeric()), "No common type")
-  expect_equal(vec_type2(manual_creation_eq, vctrs::unspecified()), manual_creation_eq)
+  expect_error(vec_ptype2(manual_creation_eq, numeric()), class = "vctrs_error_incompatible_type")
+  expect_equal(vec_ptype2(manual_creation_eq, vctrs::unspecified()), vec_ptype(manual_creation_eq))
 
-  expect_equal(vec_type2(character(), manual_creation_eq), character())
-  expect_equal(vec_type2(manual_creation_eq, character()), character())
+  expect_equal(vec_ptype2(character(), manual_creation_eq), character())
+  expect_equal(vec_ptype2(manual_creation_eq, character()), character())
 })
 
 test_that("combining class preds", {
@@ -290,11 +294,11 @@ test_that("combining class pred with factor", {
 
 test_that("common type: factor and class_pred", {
 
-  expect_is(vec_type2(class_pred(), factor()), "class_pred")
+  expect_is(vec_ptype2(class_pred(), factor()), "class_pred")
 
   expect_equal(
     levels(
-      vec_type2(
+      vec_ptype2(
         class_pred(factor(levels = "a")),
         factor(levels = "b")
       )
@@ -304,7 +308,7 @@ test_that("common type: factor and class_pred", {
 
   expect_equal(
     get_equivocal_label(
-      vec_type2(
+      vec_ptype2(
         class_pred(factor(levels = "a"), equivocal = "eq"),
         factor(levels = "b")
       )
@@ -314,11 +318,11 @@ test_that("common type: factor and class_pred", {
 
   # reverse order
 
-  expect_is(vec_type2(factor(), class_pred()), "class_pred")
+  expect_is(vec_ptype2(factor(), class_pred()), "class_pred")
 
   expect_equal(
     levels(
-      vec_type2(
+      vec_ptype2(
         factor(levels = "b"),
         class_pred(factor(levels = "a"))
       )
@@ -328,7 +332,7 @@ test_that("common type: factor and class_pred", {
 
   expect_equal(
     get_equivocal_label(
-      vec_type2(
+      vec_ptype2(
         factor(levels = "b"),
         class_pred(factor(levels = "a"), equivocal = "eq")
       )
@@ -409,3 +413,4 @@ test_that("class_pred printing", {
     "4 Levels: blaaaaaaaaaaaaaaaaaaaaaaaaa1 ... blaaaaaaaaaaaaaaaaaaaaaaaaa4"
   )
 })
+
