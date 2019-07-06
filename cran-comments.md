@@ -1,6 +1,9 @@
 ## Comments
 
-This patch release fixes a failing test affected by the R 3.6 `sample()` change.
+This patch release is for compatibility with vctrs 0.2.0.
+
+This also changes the maintainer to Davis, as he has taken over regular 
+maintanence of the package.
 
 ## Test environments
 * local OS X install, R 3.5.2
