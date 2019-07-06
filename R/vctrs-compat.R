@@ -130,7 +130,7 @@ vec_cast.class_pred.ordered <- vec_cast.class_pred.factor
 
 # character -> class_pred
 
-#' @method vec_cast.class_pred factor
+#' @method vec_cast.class_pred character
 #' @export
 vec_cast.class_pred.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   # first cast character -> factor
