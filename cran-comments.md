@@ -6,7 +6,7 @@ This also changes the maintainer to Davis, as he has taken over regular
 maintanence of the package.
 
 ## Test environments
-* local OS X install, R 3.5.2
+* local OS X install, R 3.6.0
 * ubuntu 14.04 (on travis-ci) (devel and release)
 * win-builder (devel and release)
 
