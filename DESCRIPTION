@@ -3,10 +3,9 @@ Version: 0.0.3
 Title: Tools for Post-Processing Class Probability Estimates
 Description: Models can be improved by post-processing class probabilities, by: recalibration, conversion to hard probabilities, assessment of equivocal zones, and other activities. 'probably' contains tools for conducting these operations. 
 Authors@R: c(
-    person("Max", "Kuhn", , "max@rstudio.com", c("aut", "cre")),
-    person("Davis", "Vaughan", , "davis@rstudio.com", c("aut")),
+    person("Max", "Kuhn", , "max@rstudio.com", c("aut")),
+    person("Davis", "Vaughan", , "davis@rstudio.com", c("aut", "cre")),
     person("RStudio", role = "cph"))
-Maintainer: Davis Vaughan <davis@rstudio.com>
 URL: https://github.com/tidymodels/probably/
 BugReports: https://github.com/tidymodels/probably/issues
 License: GPL-2
