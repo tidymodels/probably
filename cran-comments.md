@@ -1,3 +1,8 @@
+## Resubmission
+
+I had an incorrectly specified Authors@R + Maintainer field combination. That
+has been fixed.
+
 ## Comments
 
 This patch release is for compatibility with vctrs 0.2.0.
