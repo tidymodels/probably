@@ -76,7 +76,7 @@ cat_reportable <- function(x) {
   reportable <- 100 * reportable_rate(x)
 
   if(rlang::is_scalar_integerish(reportable)) {
-    reportable <- rlang::as_integer(reportable)
+    reportable <- vec_cast(reportable, integer())
   }
 
   digits <- function(x) {

@@ -33,7 +33,7 @@ reference:
 - title: Vctrs compatibility
   contents:
   - vec_cast.class_pred
-  - vec_type2.class_pred
+  - vec_ptype2.class_pred
 
 - title: Data
   contents:

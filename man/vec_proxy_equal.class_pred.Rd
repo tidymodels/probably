@@ -4,7 +4,7 @@
 \alias{vec_proxy_equal.class_pred}
 \title{Equality for \code{class_pred}}
 \usage{
-\method{vec_proxy_equal}{class_pred}(x)
+\method{vec_proxy_equal}{class_pred}(x, ...)
 }
 \description{
 \code{class_pred} objects are converted to integer before equality checks

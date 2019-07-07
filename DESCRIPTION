@@ -1,12 +1,12 @@
 Package: probably
-Version: 0.0.2.9000
+Version: 0.0.2.9001
 Title: Tools for Post-Processing Class Probability Estimates
 Description: Models can be improved by post-processing class probabilities, by: recalibration, conversion to hard probabilities, assessment of equivocal zones, and other activities. 'probably' contains tools for conducting these operations. 
 Authors@R: c(
     person("Max", "Kuhn", , "max@rstudio.com", c("aut", "cre")),
     person("Davis", "Vaughan", , "davis@rstudio.com", c("aut")),
     person("RStudio", role = "cph"))
-Maintainer: Max Kuhn <max@rstudio.com>
+Maintainer: Davis Vaughan <davis@rstudio.com>
 URL: https://github.com/tidymodels/probably/
 BugReports: https://github.com/tidymodels/probably/issues
 License: GPL-2
@@ -20,9 +20,9 @@ Depends:
 Imports: 
     dplyr,
     generics,
-    rlang,
+    rlang (>= 0.4.0),
     tidyselect,
-    vctrs,
+    vctrs (>= 0.2.0),
     yardstick
 Suggests:
     covr,

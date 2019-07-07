@@ -29,27 +29,27 @@ NULL
 
 #' @export
 #' @importFrom vctrs vec_ptype_abbr
-vec_ptype_abbr.class_pred <- function(x) {
+vec_ptype_abbr.class_pred <- function(x, ...) {
   "clss_prd"
 }
 
 #' @export
 #' @importFrom vctrs obj_print_header
-obj_print_header.class_pred <- function(x) {
+obj_print_header.class_pred <- function(x, ...) {
   # no header
   invisible(x)
 }
 
 #' @export
 #' @importFrom vctrs obj_print_data
-obj_print_data.class_pred <- function(x) {
+obj_print_data.class_pred <- function(x, ...) {
   cat_class_pred(x)
   invisible(x)
 }
 
 #' @export
 #' @importFrom vctrs obj_print_footer
-obj_print_footer.class_pred <- function(x) {
+obj_print_footer.class_pred <- function(x, ...) {
   cat_levels(x)
   cat_reportable(x)
   invisible(x)
@@ -69,25 +69,18 @@ obj_print_footer.class_pred <- function(x) {
 #' @method vec_cast class_pred
 #' @export vec_cast.class_pred
 #' @importFrom vctrs vec_cast
-vec_cast.class_pred <- function(x, to) UseMethod("vec_cast.class_pred")
+vec_cast.class_pred <- function(x, to, ...) UseMethod("vec_cast.class_pred")
 
 #' @method vec_cast.class_pred default
 #' @export
-#' @importFrom vctrs stop_incompatible_cast
-vec_cast.class_pred.default <- function(x, to) {
-  stop_incompatible_cast(x, to)
-}
-
-#' @method vec_cast.class_pred logical
-#' @export
-#' @importFrom vctrs vec_unspecified_cast
-vec_cast.class_pred.logical <- function(x, to) {
-  vec_unspecified_cast(x, to)
+#' @importFrom vctrs vec_default_cast
+vec_cast.class_pred.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
 }
 
 #' @method vec_cast.class_pred class_pred
 #' @export
-vec_cast.class_pred.class_pred <- function(x, to) {
+vec_cast.class_pred.class_pred <- function(x, to, ...) {
 
   # first go class_pred -> factor
   # then recast as class_pred with correct attributes
@@ -97,7 +90,6 @@ vec_cast.class_pred.class_pred <- function(x, to) {
     which = which_equivocal(x),
     equivocal = get_equivocal_label(to)
   )
-
 }
 
 # -----------------------
@@ -107,7 +99,7 @@ vec_cast.class_pred.class_pred <- function(x, to) {
 
 #' @method vec_cast.class_pred factor
 #' @export
-vec_cast.class_pred.factor <- function(x, to) {
+vec_cast.class_pred.factor <- function(x, to, ...) {
   class_pred(
     x = factorish_to_factor(x, to),
     which = integer(),
@@ -119,8 +111,8 @@ vec_cast.class_pred.factor <- function(x, to) {
 
 #' @export
 #' @importFrom vctrs vec_data
-#' @importFrom vctrs warn_lossy_cast
-vec_cast.factor.class_pred <- function(x, to) {
+#' @importFrom vctrs maybe_lossy_cast
+vec_cast.factor.class_pred <- function(x, to, ...) {
   factorish_to_factor(x, to)
 }
 
@@ -138,16 +130,28 @@ vec_cast.class_pred.ordered <- vec_cast.class_pred.factor
 
 # character -> class_pred
 
-#' @method vec_cast.class_pred factor
+#' @method vec_cast.class_pred character
 #' @export
-vec_cast.class_pred.character <- function(x, to) {
+vec_cast.class_pred.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   # first cast character -> factor
   # then add class pred attributes
-  class_pred(
-    x = vec_cast.factor(
+
+  rethrow_lossy_cast <- function(e) {
+    # have to manually recover `lossy` because vctrs 0.2.0 doesn't pass it through (vctrs#483)
+    lossy <- !(x %in% levels(to) | is.na(x))
+    maybe_lossy_cast(e$result, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
+  }
+
+  out <- tryCatch(
+    expr = vec_cast.factor(
       x = x,
       to = factor(levels = levels(to), ordered = is_ordered(to))
     ),
+    vctrs_error_cast_lossy = rethrow_lossy_cast
+  )
+
+  class_pred(
+    x = out,
     equivocal = get_equivocal_label(to)
   )
 }
@@ -156,8 +160,7 @@ vec_cast.class_pred.character <- function(x, to) {
 
 #' @export
 #' @importFrom vctrs vec_data
-#' @importFrom vctrs warn_lossy_cast
-vec_cast.character.class_pred <- function(x, to) {
+vec_cast.character.class_pred <- function(x, to, ...) {
   x_data <- vec_data(x)
   x_data[is_equivocal(x)] <- NA_integer_
   lvls <- levels(x)
@@ -166,32 +169,32 @@ vec_cast.character.class_pred <- function(x, to) {
 
 # `to` could have different levels
 # when `to` does not have all the levels in `x`, the missing levels
-# in `to` are converted to NA in `x` and a lossy cast warning is issued.
-factorish_to_factor <- function(x, to) {
-
-  chr_x <- as.character(x)
-
+# in `to` are converted to NA in `x` and a lossy cast error is maybe issued.
+factorish_to_factor <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (length(levels(to)) == 0L) {
-    lvls <- levels(x)
+    factor(x = as.character(x), levels = levels(x), ordered = is_ordered(to))
   }
   else {
+    chr_x <- as.character(x)
     lvls <- levels(to)
 
-    lossy <- ! (chr_x %in% lvls | is.na(chr_x))
+    lossy <- ! (chr_x %in% levels(to) | is.na(chr_x))
 
-    if (any(lossy)) {
-      where_lossy <- which(lossy)
-      warn_lossy_cast(x, to, locations = where_lossy)
-      chr_x[where_lossy] <- NA_integer_
-    }
+    locations <- which(lossy)
+    chr_x[locations] <- NA_integer_
+
+    out <- factor(x = chr_x, levels = lvls, ordered = is_ordered(to))
+
+    maybe_lossy_cast(
+      result = out,
+      x = x,
+      to = to,
+      lossy = lossy,
+      locations = locations,
+      x_arg = x_arg,
+      to_arg = to_arg
+    )
   }
-
-  factor(
-    x = chr_x,
-    levels = lvls,
-    ordered = is_ordered(to)
-  )
-
 }
 
 
@@ -203,28 +206,21 @@ factorish_to_factor <- function(x, to) {
 
 #' Find the common type for a `class_pred` and another object
 #'
-#' @inheritParams vctrs::vec_type2
+#' @inheritParams vctrs::vec_ptype2
 #'
 #' @export
-#' @method vec_type2 class_pred
-#' @export vec_type2.class_pred
-#' @importFrom vctrs vec_type2
-vec_type2.class_pred <- function(x, y) {
-  UseMethod("vec_type2.class_pred", y)
+#' @method vec_ptype2 class_pred
+#' @export vec_ptype2.class_pred
+#' @importFrom vctrs vec_ptype2
+vec_ptype2.class_pred <- function(x, y, ...) {
+  UseMethod("vec_ptype2.class_pred", y)
 }
 
-#' @method vec_type2.class_pred default
+#' @method vec_ptype2.class_pred default
 #' @export
-#' @importFrom vctrs stop_incompatible_type
-vec_type2.class_pred.default <- function(x, y) {
-  stop_incompatible_type(x, y)
-}
-
-#' @method vec_type2.class_pred vctrs_unspecified
-#' @export
-#' @importFrom vctrs stop_incompatible_type
-vec_type2.class_pred.vctrs_unspecified <- function(x, y) {
-  x
+#' @importFrom vctrs vec_default_ptype2
+vec_ptype2.class_pred.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
+  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
 }
 
 # -----------------------
@@ -234,9 +230,9 @@ vec_type2.class_pred.vctrs_unspecified <- function(x, y) {
 # it is ordered if either are ordered
 # the new eq label always comes from x
 
-#' @method vec_type2.class_pred class_pred
+#' @method vec_ptype2.class_pred class_pred
 #' @export
-vec_type2.class_pred.class_pred <- function(x, y) {
+vec_ptype2.class_pred.class_pred <- function(x, y, ...) {
   new_class_pred(
     integer(),
     labels = union_labels(x, y),
@@ -245,9 +241,9 @@ vec_type2.class_pred.class_pred <- function(x, y) {
   )
 }
 
-#' @method vec_type2.class_pred factor
+#' @method vec_ptype2.class_pred factor
 #' @export
-vec_type2.class_pred.factor <- function(x, y) {
+vec_ptype2.class_pred.factor <- function(x, y, ...) {
   new_class_pred(
     x = integer(),
     labels = union_labels(x, y),
@@ -257,8 +253,8 @@ vec_type2.class_pred.factor <- function(x, y) {
 }
 
 #' @export
-#' @importFrom vctrs vec_type2.factor
-vec_type2.factor.class_pred <- function(x, y) {
+#' @importFrom vctrs vec_ptype2.factor
+vec_ptype2.factor.class_pred <- function(x, y, ...) {
   new_class_pred(
     x = integer(),
     labels = union_labels(x, y),
@@ -267,15 +263,15 @@ vec_type2.factor.class_pred <- function(x, y) {
   )
 }
 
-#' @method vec_type2.class_pred character
+#' @method vec_ptype2.class_pred character
 #' @export
-vec_type2.class_pred.character <- function(x, y) {
+vec_ptype2.class_pred.character <- function(x, y, ...) {
   character()
 }
 
 #' @export
-#' @importFrom vctrs vec_type2.character
-vec_type2.character.class_pred <- function(x, y) {
+#' @importFrom vctrs vec_ptype2.character
+vec_ptype2.character.class_pred <- function(x, y, ...) {
   character()
 }
 
@@ -301,7 +297,7 @@ union_ordered <- function(x, y) {
 #' @export
 #' @importFrom vctrs vec_proxy_equal
 #' @keywords internal
-vec_proxy_equal.class_pred <- function(x) {
+vec_proxy_equal.class_pred <- function(x, ...) {
   # allows you to compare two class_pred objects robustly
   # converting to character would confuse NA with equivocal
   vec_data(x)
@@ -309,6 +305,6 @@ vec_proxy_equal.class_pred <- function(x) {
 
 #' @export
 #' @importFrom vctrs vec_proxy_compare
-vec_proxy_compare.class_pred <- function(x) {
+vec_proxy_compare.class_pred <- function(x, ...) {
   abort("Comparisons with `class_pred` objects are not meaningful.")
 }
