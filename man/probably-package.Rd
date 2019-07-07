@@ -17,11 +17,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Max Kuhn \email{max@rstudio.com}
+\strong{Maintainer}: Davis Vaughan \email{davis@rstudio.com}
 
 Authors:
 \itemize{
-  \item Davis Vaughan \email{davis@rstudio.com}
+  \item Max Kuhn \email{max@rstudio.com}
 }
 
 Other contributors:
