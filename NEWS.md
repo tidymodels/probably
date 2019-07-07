@@ -2,7 +2,7 @@
 
 * probably has been brought up to date with vctrs 0.2.0. This vctrs update had many function name changes, and required internal refactoring, but there should be minimal external changes.
 
-* The one user facing change comes with casting from one `class_pred` object to another `class_pred`, or to a `factor`. Where previously a warning would be thrown if `x` had more levels than `to`, an error is now generated. This is consistent with the vctrs behavior when converting from one factor to another.
+* The one user facing change comes with casting from one `class_pred` object to another `class_pred`, or to a `factor`. Where previously a warning would be thrown if `x` had levels that did not exist in `to`, an error is now generated. This is consistent with the vctrs behavior when converting from one factor to another.
 
   ```
   x  <- class_pred(factor("a"))
