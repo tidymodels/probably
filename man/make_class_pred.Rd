@@ -5,11 +5,15 @@
 \alias{make_two_class_pred}
 \title{Create a \code{class_pred} vector from class probabilities}
 \usage{
-make_class_pred(..., levels, ordered = FALSE,
-  min_prob = 1/length(levels))
+make_class_pred(..., levels, ordered = FALSE, min_prob = 1/length(levels))
 
-make_two_class_pred(estimate, levels, threshold = 0.5, ordered = FALSE,
-  buffer = NULL)
+make_two_class_pred(
+  estimate,
+  levels,
+  threshold = 0.5,
+  ordered = FALSE,
+  buffer = NULL
+)
 }
 \arguments{
 \item{...}{Numeric vectors corresponding to class probabilities. There should

@@ -7,8 +7,7 @@
 \usage{
 threshold_perf(.data, ...)
 
-\method{threshold_perf}{data.frame}(.data, truth, estimate,
-  thresholds = NULL, na_rm = TRUE, ...)
+\method{threshold_perf}{data.frame}(.data, truth, estimate, thresholds = NULL, na_rm = TRUE, ...)
 }
 \arguments{
 \item{.data}{A tibble, potentially grouped.}

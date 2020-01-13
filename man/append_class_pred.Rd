@@ -4,8 +4,14 @@
 \alias{append_class_pred}
 \title{Add a \code{class_pred} column}
 \usage{
-append_class_pred(.data, ..., levels, ordered = FALSE,
-  min_prob = 1/length(levels), name = ".class_pred")
+append_class_pred(
+  .data,
+  ...,
+  levels,
+  ordered = FALSE,
+  min_prob = 1/length(levels),
+  name = ".class_pred"
+)
 }
 \arguments{
 \item{.data}{A data frame or tibble.}
