@@ -1,0 +1,4 @@
+> manual_creation_eq[1:6]
+Error: Can't index beyond the end of a vector.
+The vector has length 5 and you've tried to subset element 6.
+

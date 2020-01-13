@@ -209,8 +209,12 @@ test_that("slicing", {
   expect_equal(reportable_rate(manual_creation_eq[1:2]), 0.5)
 
   # extending past is an error
-  expect_error(manual_creation_eq[1:6], "5 and you've tried to subset element 6")
-
+  # use verify_output() so CRAN doesn't error if the output changes.
+  # we don't own the error message (vctrs does) so this is more robust.
+  verify_output(
+    test_path("output/test-error-subset.txt"),
+    manual_creation_eq[1:6]
+    )
 })
 
 test_that("unknown casts are handled correctly", {
