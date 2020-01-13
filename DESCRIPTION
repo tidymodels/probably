@@ -27,6 +27,7 @@ Suggests:
     covr,
     ggplot2,
     knitr,
+    modeldata,
     parsnip,
     rmarkdown,
     rsample,

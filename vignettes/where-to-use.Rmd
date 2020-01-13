@@ -30,6 +30,7 @@ library(parsnip)
 library(probably)
 library(dplyr)
 library(rsample)
+library(modeldata)
 data("lending_club")
 
 # I think it makes more sense to have "good" as the first level
