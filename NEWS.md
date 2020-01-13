@@ -1,5 +1,9 @@
 # probably (development version)
 
+* Suggest the modeldata package, which is where the `lending_club` dataset has been moved after being removed from recipes.
+
+* Use `testthat::verify_output()` on a test expecting a specific vctrs error to avoid failure on CRAN if that error changes in the future.
+
 # probably 0.0.3
 
 * probably has been brought up to date with vctrs 0.2.0. This vctrs update had many function name changes, and required internal refactoring, but there should be minimal external changes.
