@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Test if an object inherits from <code>class_pred</code> — is_class_pred • probably</title>
+<title>Find the common type for a <code>class_pred</code> and another object — vec_ptype2.class_pred • probably</title>
 
 
 <!-- jquery -->
@@ -34,8 +34,8 @@
 
 
 
-<meta property="og:title" content="Test if an object inherits from <code>class_pred</code> — is_class_pred" />
-<meta property="og:description" content="is_class_pred() checks if an object is a class_pred object." />
+<meta property="og:title" content="Find the common type for a <code>class_pred</code> and another object — vec_ptype2.class_pred" />
+<meta property="og:description" content="Find the common type for a class_pred and another object" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -131,39 +131,41 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Test if an object inherits from <code>class_pred</code></h1>
-    <small class="dont-index">Source: <a href='https://github.com/tidymodels/probably/blob/master/R/class-pred.R'><code>R/class-pred.R</code></a></small>
-    <div class="hidden name"><code>is_class_pred.Rd</code></div>
+    <h1>Find the common type for a <code>class_pred</code> and another object</h1>
+    <small class="dont-index">Source: <a href='https://github.com/tidymodels/probably/blob/master/R/vctrs-compat.R'><code>R/vctrs-compat.R</code></a></small>
+    <div class="hidden name"><code>vec_ptype2.class_pred.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><code>is_class_pred()</code> checks if an object is a <code>class_pred</code> object.</p>
+    <p>Find the common type for a <code>class_pred</code> and another object</p>
     </div>
 
-    <pre class="usage"><span class='fu'>is_class_pred</span>(<span class='no'>x</span>)</pre>
+    <pre class="usage"><span class='co'># S3 method for class_pred</span>
+<span class='fu'>vec_ptype2</span>(<span class='no'>x</span>, <span class='no'>y</span>, <span class='no'>...</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>x</th>
-      <td><p>An object.</p></td>
+      <td><p>Vector types.</p></td>
+    </tr>
+    <tr>
+      <th>y</th>
+      <td><p>Vector types.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>These dots are for future extensions and must be empty.</p></td>
     </tr>
     </table>
 
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='class_pred.html'>class_pred</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fl'>1</span>:<span class='fl'>5</span>))
-
-<span class='fu'>is_class_pred</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
