@@ -12,8 +12,8 @@
 \item{to}{Type to cast to. If \code{NULL}, \code{x} will be returned as is.}
 
 \item{...}{For \code{vec_cast_common()}, vectors to cast. For
-\code{vec_cast()} and \code{vec_restore()}, these dots are only for future
-extensions and should be empty.}
+\code{vec_cast()}, \code{vec_cast_default()}, and \code{vec_restore()}, these
+dots are only for future extensions and should be empty.}
 }
 \description{
 Cast a \code{class_pred} vector to a specified type

@@ -13,7 +13,7 @@ Encoding: UTF-8
 LazyData: true
 ByteCompile: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Depends:
     R (>= 2.10)
 Imports: 
@@ -21,7 +21,7 @@ Imports:
     generics,
     rlang (>= 0.4.0),
     tidyselect,
-    vctrs (>= 0.2.0),
+    vctrs (>= 0.2.99.9011),
     yardstick
 Suggests:
     covr,
@@ -33,3 +33,5 @@ Suggests:
     rsample,
     testthat
 VignetteBuilder: knitr
+Remotes:
+    r-lib/vctrs
