@@ -146,12 +146,13 @@ vec_cast.class_pred.character <- function(x, to, ..., x_arg = "x", to_arg = "to"
   }
 
   out <- tryCatch(
-    expr = vec_cast.factor(
-      x = x,
-      to = factor(levels = levels(to), ordered = is_ordered(to))
-    ),
+    expr = vec_cast.factor(x = x, to = factor(levels = levels(to))),
     vctrs_error_cast_lossy = rethrow_lossy_cast
   )
+
+  if (is_ordered(to)) {
+    out <- as.ordered(out)
+  }
 
   class_pred(
     x = out,
