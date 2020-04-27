@@ -19,6 +19,7 @@ generics::as.ordered
 # Required R 3.1 imports, otherwise it can't find them
 # through the double dispatch
 #' @importFrom vctrs vec_cast.factor
+#' @importFrom vctrs vec_cast.ordered
 #' @importFrom vctrs vec_cast.integer
 NULL
 
@@ -122,11 +123,13 @@ vec_cast.factor.class_pred <- function(x, to, ...) {
 #' @export
 vec_cast.class_pred.ordered <- vec_cast.class_pred.factor
 
-# # fully handled by the vec_cast.factor.class_pred method
-# # no vec_cast.ordered generic will be implemented, see vctrs#96
-# vec_cast.ordered.class_pred <- function(x, to) {
-#   as.ordered(vec_cast.factor.class_pred(x, to))
-# }
+# class_pred -> ordered, equivocals become NAs
+
+#' @method vec_cast.ordered class_pred
+#' @export
+vec_cast.ordered.class_pred <- function(x, to, ...) {
+  factorish_to_factor(x, to)
+}
 
 # character -> class_pred
 
