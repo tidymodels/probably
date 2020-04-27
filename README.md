@@ -3,12 +3,15 @@
 
 # probably
 
-[![Travis build
-status](https://travis-ci.org/tidymodels/probably.svg?branch=master)](https://travis-ci.org/tidymodels/probably)
+<!-- badges: start -->
+
 [![Codecov test
 coverage](https://codecov.io/gh/tidymodels/probably/branch/master/graph/badge.svg)](https://codecov.io/gh/tidymodels/probably?branch=master)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R build
+status](https://github.com/tidymodels/probably/workflows/R-CMD-check/badge.svg)](https://github.com/tidymodels/probably/actions)
+<!-- badges: end -->
 
 ## Introduction
 
