@@ -10,22 +10,26 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
 <!-- Bootstrap -->
 <link href="../tidyverse.css" rel="stylesheet">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -64,7 +68,7 @@ of the probability threshold and any existing groups." />
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -79,7 +83,7 @@ of the probability threshold and any existing groups." />
 
       <div class="navbar-brand-container">
         <a class="navbar-brand" href="../index.html">probably</a>
-        <div class="info">
+        <div class="info hidden-xs hidden-sm">
           <span class="partof">part of <a href="https://github.com/tidymodels">tidymodels</a></span>
           <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.4.9000</span>
         </div>
@@ -115,7 +119,7 @@ of the probability threshold and any existing groups." />
   <a href="../news/index.html">Changelog</a>
 </li>
         <li>
-  <a href="https://github.com/tidymodels/probably">
+  <a href="https://github.com/tidymodels/probably/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -207,40 +211,40 @@ see the Relevant level section of <code><a href='https://rdrr.io/pkg/yardstick/m
 <span class='co'># Set the threshold to 0.6</span>
 <span class='co'># &gt; 0.6 = good</span>
 <span class='co'># &lt; 0.6 = poor</span>
-<span class='fu'>threshold_perf</span>(<span class='no'>segment_logistic</span>, <span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='kw'>thresholds</span> <span class='kw'>=</span> <span class='fl'>0.6</span>)</div><div class='output co'>#&gt; # A tibble: 4 x 4
+<span class='fu'>threshold_perf</span>(<span class='no'>segment_logistic</span>, <span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='kw'>thresholds</span> <span class='kw'>=</span> <span class='fl'>0.6</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 4 x 4</span><span>
 #&gt;   .threshold .metric  .estimator .estimate
-#&gt;        &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
-#&gt; 1        0.6 sens     binary         0.639
-#&gt; 2        0.6 spec     binary         0.869
-#&gt; 3        0.6 j_index  binary         0.508
-#&gt; 4        0.6 distance binary         0.148</div><div class='input'>
+#&gt;        </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'>1</span><span>        0.6 sens     binary         0.639
+#&gt; </span><span style='color: #555555;'>2</span><span>        0.6 spec     binary         0.869
+#&gt; </span><span style='color: #555555;'>3</span><span>        0.6 j_index  binary         0.508
+#&gt; </span><span style='color: #555555;'>4</span><span>        0.6 distance binary         0.148</div><div class='input'>
 <span class='co'># Set the threshold to multiple values</span>
 <span class='no'>thresholds</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>0.5</span>, <span class='fl'>0.9</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
 
 <span class='no'>segment_logistic</span> <span class='kw'>%&gt;%</span>
-  <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>)</div><div class='output co'>#&gt; # A tibble: 20 x 4
+  <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 20 x 4</span><span>
 #&gt;    .threshold .metric  .estimator .estimate
-#&gt;         &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
-#&gt;  1        0.5 sens     binary         0.714
-#&gt;  2        0.6 sens     binary         0.639
-#&gt;  3        0.7 sens     binary         0.561
-#&gt;  4        0.8 sens     binary         0.451
-#&gt;  5        0.9 sens     binary         0.249
-#&gt;  6        0.5 spec     binary         0.825
-#&gt;  7        0.6 spec     binary         0.869
-#&gt;  8        0.7 spec     binary         0.911
-#&gt;  9        0.8 spec     binary         0.937
-#&gt; 10        0.9 spec     binary         0.977
-#&gt; 11        0.5 j_index  binary         0.539
-#&gt; 12        0.6 j_index  binary         0.508
-#&gt; 13        0.7 j_index  binary         0.472
-#&gt; 14        0.8 j_index  binary         0.388
-#&gt; 15        0.9 j_index  binary         0.226
-#&gt; 16        0.5 distance binary         0.112
-#&gt; 17        0.6 distance binary         0.148
-#&gt; 18        0.7 distance binary         0.201
-#&gt; 19        0.8 distance binary         0.306
-#&gt; 20        0.9 distance binary         0.565</div><div class='input'>
+#&gt;         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span>        0.5 sens     binary         0.714
+#&gt; </span><span style='color: #555555;'> 2</span><span>        0.6 sens     binary         0.639
+#&gt; </span><span style='color: #555555;'> 3</span><span>        0.7 sens     binary         0.561
+#&gt; </span><span style='color: #555555;'> 4</span><span>        0.8 sens     binary         0.451
+#&gt; </span><span style='color: #555555;'> 5</span><span>        0.9 sens     binary         0.249
+#&gt; </span><span style='color: #555555;'> 6</span><span>        0.5 spec     binary         0.825
+#&gt; </span><span style='color: #555555;'> 7</span><span>        0.6 spec     binary         0.869
+#&gt; </span><span style='color: #555555;'> 8</span><span>        0.7 spec     binary         0.911
+#&gt; </span><span style='color: #555555;'> 9</span><span>        0.8 spec     binary         0.937
+#&gt; </span><span style='color: #555555;'>10</span><span>        0.9 spec     binary         0.977
+#&gt; </span><span style='color: #555555;'>11</span><span>        0.5 j_index  binary         0.539
+#&gt; </span><span style='color: #555555;'>12</span><span>        0.6 j_index  binary         0.508
+#&gt; </span><span style='color: #555555;'>13</span><span>        0.7 j_index  binary         0.472
+#&gt; </span><span style='color: #555555;'>14</span><span>        0.8 j_index  binary         0.388
+#&gt; </span><span style='color: #555555;'>15</span><span>        0.9 j_index  binary         0.226
+#&gt; </span><span style='color: #555555;'>16</span><span>        0.5 distance binary         0.112
+#&gt; </span><span style='color: #555555;'>17</span><span>        0.6 distance binary         0.148
+#&gt; </span><span style='color: #555555;'>18</span><span>        0.7 distance binary         0.201
+#&gt; </span><span style='color: #555555;'>19</span><span>        0.8 distance binary         0.306
+#&gt; </span><span style='color: #555555;'>20</span><span>        0.9 distance binary         0.565</div><div class='input'>
 <span class='co'># ---------------------------------------------------------------------------</span>
 
 <span class='co'># It works with grouped data frames as well</span>
@@ -258,58 +262,53 @@ see the Relevant level section of <code><a href='https://rdrr.io/pkg/yardstick/m
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span>(<span class='no'>resample</span>) <span class='kw'>%&gt;%</span>
   <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>)
 
-<span class='no'>resampled_threshold_perf</span></div><div class='output co'>#&gt; # A tibble: 100 x 5
+<span class='no'>resampled_threshold_perf</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 100 x 5</span><span>
 #&gt;    resample .threshold .metric .estimator .estimate
-#&gt;    &lt;chr&gt;         &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-#&gt;  1 1               0.5 sens    binary         0.655
-#&gt;  2 1               0.6 sens    binary         0.586
-#&gt;  3 1               0.7 sens    binary         0.448
-#&gt;  4 1               0.8 sens    binary         0.379
-#&gt;  5 1               0.9 sens    binary         0.207
-#&gt;  6 2               0.5 sens    binary         0.852
-#&gt;  7 2               0.6 sens    binary         0.778
-#&gt;  8 2               0.7 sens    binary         0.704
-#&gt;  9 2               0.8 sens    binary         0.519
-#&gt; 10 2               0.9 sens    binary         0.222
-#&gt; # … with 90 more rows</div><div class='input'>
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> 1               0.5 sens    binary         0.655
+#&gt; </span><span style='color: #555555;'> 2</span><span> 1               0.6 sens    binary         0.586
+#&gt; </span><span style='color: #555555;'> 3</span><span> 1               0.7 sens    binary         0.448
+#&gt; </span><span style='color: #555555;'> 4</span><span> 1               0.8 sens    binary         0.379
+#&gt; </span><span style='color: #555555;'> 5</span><span> 1               0.9 sens    binary         0.207
+#&gt; </span><span style='color: #555555;'> 6</span><span> 2               0.5 sens    binary         0.852
+#&gt; </span><span style='color: #555555;'> 7</span><span> 2               0.6 sens    binary         0.778
+#&gt; </span><span style='color: #555555;'> 8</span><span> 2               0.7 sens    binary         0.704
+#&gt; </span><span style='color: #555555;'> 9</span><span> 2               0.8 sens    binary         0.519
+#&gt; </span><span style='color: #555555;'>10</span><span> 2               0.9 sens    binary         0.222
+#&gt; </span><span style='color: #555555;'># … with 90 more rows</span><span></div><div class='input'>
 <span class='co'># Average over the resamples</span>
 <span class='no'>resampled_threshold_perf</span> <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span>(<span class='no'>.metric</span>, <span class='no'>.threshold</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span>(<span class='kw'>.estimate</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>.estimate</span>))</div><div class='output co'>#&gt; # A tibble: 20 x 3
-#&gt; # Groups:   .metric [4]
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span>(<span class='kw'>.estimate</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>.estimate</span>))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 20 x 3</span><span>
+#&gt; </span><span style='color: #555555;'># Groups:   .metric [4]</span><span>
 #&gt;    .metric  .threshold .estimate
-#&gt;    &lt;chr&gt;         &lt;dbl&gt;     &lt;dbl&gt;
-#&gt;  1 distance        0.5     0.113
-#&gt;  2 distance        0.6     0.135
-#&gt;  3 distance        0.7     0.188
-#&gt;  4 distance        0.8     0.278
-#&gt;  5 distance        0.9     0.530
-#&gt;  6 j_index         0.5     0.551
-#&gt;  7 j_index         0.6     0.537
-#&gt;  8 j_index         0.7     0.506
-#&gt;  9 j_index         0.8     0.425
-#&gt; 10 j_index         0.9     0.259
-#&gt; 11 sens            0.5     0.731
-#&gt; 12 sens            0.6     0.664
-#&gt; 13 sens            0.7     0.583
-#&gt; 14 sens            0.8     0.479
-#&gt; 15 sens            0.9     0.275
-#&gt; 16 spec            0.5     0.820
-#&gt; 17 spec            0.6     0.872
-#&gt; 18 spec            0.7     0.923
-#&gt; 19 spec            0.8     0.946
-#&gt; 20 spec            0.9     0.985</div><div class='input'>
-</div></pre>
+#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #555555;'> 1</span><span> distance        0.5     0.113
+#&gt; </span><span style='color: #555555;'> 2</span><span> distance        0.6     0.135
+#&gt; </span><span style='color: #555555;'> 3</span><span> distance        0.7     0.188
+#&gt; </span><span style='color: #555555;'> 4</span><span> distance        0.8     0.278
+#&gt; </span><span style='color: #555555;'> 5</span><span> distance        0.9     0.530
+#&gt; </span><span style='color: #555555;'> 6</span><span> j_index         0.5     0.551
+#&gt; </span><span style='color: #555555;'> 7</span><span> j_index         0.6     0.537
+#&gt; </span><span style='color: #555555;'> 8</span><span> j_index         0.7     0.506
+#&gt; </span><span style='color: #555555;'> 9</span><span> j_index         0.8     0.425
+#&gt; </span><span style='color: #555555;'>10</span><span> j_index         0.9     0.259
+#&gt; </span><span style='color: #555555;'>11</span><span> sens            0.5     0.731
+#&gt; </span><span style='color: #555555;'>12</span><span> sens            0.6     0.664
+#&gt; </span><span style='color: #555555;'>13</span><span> sens            0.7     0.583
+#&gt; </span><span style='color: #555555;'>14</span><span> sens            0.8     0.479
+#&gt; </span><span style='color: #555555;'>15</span><span> sens            0.9     0.275
+#&gt; </span><span style='color: #555555;'>16</span><span> spec            0.5     0.820
+#&gt; </span><span style='color: #555555;'>17</span><span> spec            0.6     0.872
+#&gt; </span><span style='color: #555555;'>18</span><span> spec            0.7     0.923
+#&gt; </span><span style='color: #555555;'>19</span><span> spec            0.8     0.946
+#&gt; </span><span style='color: #555555;'>20</span><span> spec            0.9     0.985</div><div class='input'>
+</div></span></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#value">Value</a></li>
-      <li><a href="#details">Details</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
