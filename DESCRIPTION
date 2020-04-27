@@ -21,7 +21,7 @@ Imports:
     generics,
     rlang (>= 0.4.0),
     tidyselect,
-    vctrs (>= 0.2.0),
+    vctrs (>= 0.2.99.9011),
     yardstick
 Suggests:
     covr,
@@ -33,3 +33,5 @@ Suggests:
     rsample,
     testthat
 VignetteBuilder: knitr
+Remotes:
+    r-lib/vctrs
