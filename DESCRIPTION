@@ -6,7 +6,7 @@ Authors@R: c(
     person("Max", "Kuhn", , "max@rstudio.com", c("aut")),
     person("Davis", "Vaughan", , "davis@rstudio.com", c("aut", "cre")),
     person("RStudio", role = "cph"))
-URL: https://github.com/tidymodels/probably/
+URL: https://github.com/tidymodels/probably/, https://probably.tidymodels.org
 BugReports: https://github.com/tidymodels/probably/issues
 License: GPL-2
 Encoding: UTF-8
