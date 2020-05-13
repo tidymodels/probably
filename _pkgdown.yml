@@ -3,7 +3,7 @@ url: https://probably.tidymodels.org
 template:
   package: tidytemplate
   params:
-    part_of: <a href="url: https://tidymodels.org/">tidymodels</a>
+    part_of: <a href="https://tidymodels.org/">tidymodels</a>
     footer: probably is a part of the <strong>tidymodels</strong> ecosystem, a collection of modeling packages designed with common APIs and a shared philosophy.
 
 development:
