@@ -91,6 +91,7 @@ vec_cast.class_pred.character <- function(x, to, ..., x_arg = "x", to_arg = "to"
   rethrow_lossy_cast <- function(e) {
     # have to manually recover `lossy` because vctrs 0.2.0 doesn't pass it through (vctrs#483)
     lossy <- !(x %in% levels(to) | is.na(x))
+    # switch to `stop_lossy_cast()` after vctrs#978
     maybe_lossy_cast(e$result, x, to, lossy, x_arg = x_arg, to_arg = to_arg)
   }
 
