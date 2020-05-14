@@ -200,7 +200,7 @@ is_equivocal.default <- function(x) {
 
 #' @export
 is_equivocal.class_pred <- function(x) {
-  is_0 <- vec_data(x) == 0L
+  is_0 <- unclass(x) == 0L
 
   # NA values are also FALSE
   is_0[is.na(is_0)] <- FALSE

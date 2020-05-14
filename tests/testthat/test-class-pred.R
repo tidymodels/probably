@@ -75,7 +75,6 @@ test_that("class_pred can be coerced to ordered factor", {
 })
 
 test_that("casting class_pred to class_pred", {
-
   cp1  <- class_pred(factor(c("a", "b", "b", "c")), which = 2)
   cp2  <- class_pred(factor(c("a", "b", "b", "b")), which = 3)
   cp3  <- class_pred(factor(c("a", "b", "b", "c")), which = 2, equivocal = "eq")
@@ -86,8 +85,8 @@ test_that("casting class_pred to class_pred", {
 
   # can suppress lossy cast
   expect_equal(
-    vec_data(allow_lossy_cast(vec_cast(cp1, cp2))),
-    c(1, 0, 2, NA)
+    allow_lossy_cast(vec_cast(cp1, cp2)),
+    class_pred(factor(c("a", "b", "b", NA)), which = 2L)
   )
 
   # casting to new class_pred preserves new eq label
@@ -97,7 +96,6 @@ test_that("casting class_pred to class_pred", {
 })
 
 test_that("casting class_pred to factor", {
-
   cp1  <- class_pred(factor(c("a", "b", "b", "c")))
   cp2  <- class_pred(factor(c("a", "b", "b", "c")), which = 2)
   cp3  <- class_pred(factor(c(NA, "a", "b", "c")), which = 3)
@@ -110,8 +108,8 @@ test_that("casting class_pred to factor", {
 
   # can allow lossy cast to succeed
   expect_equal(
-    vec_data(allow_lossy_cast(vec_cast(cp1, fc1))),
-    c(1, 2, 2, NA)
+    allow_lossy_cast(vec_cast(cp1, fc1)),
+    factor(c("a", "b", "b", NA))
   )
 
   # clean conversion to factor
@@ -137,23 +135,22 @@ test_that("casting class_pred to factor", {
 })
 
 test_that("casting factor to class_pred", {
+  fc1 <- factor(c("a", "b", "b", "b"))
+  fc2 <- factor(c("a", "b", "b", "c"))
+  fc3 <- factor(c(NA, "a", "b", "c"))
 
-  fc1  <- factor(c("a", "b", "b", "b"))
-  fc2  <- factor(c("a", "b", "b", "c"))
-  fc3  <- factor(c(NA, "a", "b", "c"))
-
-  cp1  <- class_pred(factor(levels = c("a", "b")))
-  cp2  <- class_pred(factor(levels = c("a", "b", "c")))
-  cp3  <- class_pred(factor(levels = c("a", "b", "c")), equivocal = "eq")
-  cp4  <- class_pred(factor(levels = c("a", "b", "c"), ordered = TRUE))
+  cp1 <- class_pred(factor(levels = c("a", "b")))
+  cp2 <- class_pred(factor(levels = c("a", "b", "c")))
+  cp3 <- class_pred(factor(levels = c("a", "b", "c")), equivocal = "eq")
+  cp4 <- class_pred(factor(levels = c("a", "b", "c"), ordered = TRUE))
 
   # lossy cast, no c level in cp1
   expect_error(vec_cast(fc2, cp1), class = "vctrs_error_cast_lossy")
 
   # can allow lossy cast to succeed
   expect_equal(
-    vec_data(allow_lossy_cast(vec_cast(fc2, cp1))),
-    c(1, 2, 2, NA)
+    allow_lossy_cast(vec_cast(fc2, cp1)),
+    class_pred(factor(c("a", "b", "b", NA)))
   )
 
   # clean conversion to class_pred
@@ -172,7 +169,6 @@ test_that("casting factor to class_pred", {
 })
 
 test_that("casting character to class_pred", {
-
   chr1 <- c("a", "b", "b", "c")
   cp1  <- class_pred(factor(c("a", "b", "b", "c")))
   cp2  <- class_pred(factor(c("a", "b", "b", "b")))
@@ -184,8 +180,8 @@ test_that("casting character to class_pred", {
 
   # can allow lossy cast to succeed
   expect_equal(
-    vec_data(allow_lossy_cast(vec_cast(chr1, cp2))),
-    c(1, 2, 2, NA)
+    allow_lossy_cast(vec_cast(chr1, cp2)),
+    class_pred(factor(c("a", "b", "b", NA)))
   )
 
   # equivocal label is maintained
@@ -223,8 +219,8 @@ test_that("unknown casts are handled correctly", {
   expect_error(vec_cast(numeric(), class_pred()))
 
   # logical vec -> class pred = depends on if only NA or has TRUE/FALSE
-  expect_equal(vec_data(vec_cast(NA, class_pred())), NA_real_)
-  expect_error(vec_data(vec_cast(TRUE, class_pred())))
+  expect_equal(vec_cast(NA, class_pred()), class_pred(factor(NA)))
+  expect_error(vec_cast(TRUE, class_pred()))
 
   # NULL second = x, NULL first = NULL
   expect_equal(vec_cast(NULL, class_pred()), NULL)

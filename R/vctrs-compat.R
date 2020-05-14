@@ -111,7 +111,7 @@ vec_cast.class_pred.character <- function(x, to, ..., x_arg = "x", to_arg = "to"
 
 #' @export
 vec_cast.character.class_pred <- function(x, to, ...) {
-  x_data <- vec_data(x)
+  x_data <- unclass(x)
   x_data[is_equivocal(x)] <- NA_integer_
   lvls <- levels(x)
   lvls[x_data]
@@ -213,7 +213,7 @@ union_ordered <- function(x, y) {
 vec_proxy_equal.class_pred <- function(x, ...) {
   # allows you to compare two class_pred objects robustly
   # converting to character would confuse NA with equivocal
-  vec_data(x)
+  unclass(x)
 }
 
 #' @export
