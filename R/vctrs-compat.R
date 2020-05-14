@@ -46,28 +46,8 @@ obj_print_footer.class_pred <- function(x, ...) {
 # ------------------------------------------------------------------------------
 # Casting
 
-# -----------------------
-# Required casts
-
-#' Cast a `class_pred` vector to a specified type
-#'
-#' @inheritParams vctrs::vec_cast
-#'
-#' @export
-#' @method vec_cast class_pred
-#' @export vec_cast.class_pred
-vec_cast.class_pred <- function(x, to, ...) UseMethod("vec_cast.class_pred")
-
-#' @method vec_cast.class_pred default
-#' @export
-vec_cast.class_pred.default <- function(x, to, ..., x_arg = "x", to_arg = "to") {
-  vec_default_cast(x, to, x_arg = x_arg, to_arg = to_arg)
-}
-
-#' @method vec_cast.class_pred class_pred
 #' @export
 vec_cast.class_pred.class_pred <- function(x, to, ...) {
-
   # first go class_pred -> factor
   # then recast as class_pred with correct attributes
 
@@ -78,14 +58,9 @@ vec_cast.class_pred.class_pred <- function(x, to, ...) {
   )
 }
 
-# -----------------------
-# Custom casts
-
-# factor -> class_pred, assume no equivocal values
-
-#' @method vec_cast.class_pred factor
 #' @export
 vec_cast.class_pred.factor <- function(x, to, ...) {
+  # Assume no equivocals
   class_pred(
     x = factorish_to_factor(x, to),
     which = integer(),
@@ -93,30 +68,21 @@ vec_cast.class_pred.factor <- function(x, to, ...) {
   )
 }
 
-# class_pred -> factor, equivocals become NAs
-
 #' @export
 vec_cast.factor.class_pred <- function(x, to, ...) {
   factorish_to_factor(x, to)
 }
 
-# ordered -> class_pred
-
-#' @method vec_cast.class_pred ordered
 #' @export
-vec_cast.class_pred.ordered <- vec_cast.class_pred.factor
+vec_cast.class_pred.ordered <- function(x, to, ...) {
+  vec_cast.class_pred.factor(x, to, ...)
+}
 
-# class_pred -> ordered, equivocals become NAs
-
-#' @method vec_cast.ordered class_pred
 #' @export
 vec_cast.ordered.class_pred <- function(x, to, ...) {
   factorish_to_factor(x, to)
 }
 
-# character -> class_pred
-
-#' @method vec_cast.class_pred character
 #' @export
 vec_cast.class_pred.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
   # first cast character -> factor
@@ -142,8 +108,6 @@ vec_cast.class_pred.character <- function(x, to, ..., x_arg = "x", to_arg = "to"
     equivocal = get_equivocal_label(to)
   )
 }
-
-# class_pred -> character, equivocals become NA
 
 #' @export
 vec_cast.character.class_pred <- function(x, to, ...) {
@@ -187,34 +151,10 @@ factorish_to_factor <- function(x, to, ..., x_arg = "", to_arg = "") {
 # ------------------------------------------------------------------------------
 # Coercion
 
-# -----------------------
-# Required coercion
-
-#' Find the common type for a `class_pred` and another object
-#'
-#' @inheritParams vctrs::vec_ptype2
-#'
-#' @export
-#' @method vec_ptype2 class_pred
-#' @export vec_ptype2.class_pred
-vec_ptype2.class_pred <- function(x, y, ...) {
-  UseMethod("vec_ptype2.class_pred", y)
-}
-
-#' @method vec_ptype2.class_pred default
-#' @export
-vec_ptype2.class_pred.default <- function(x, y, ..., x_arg = "x", y_arg = "y") {
-  vec_default_ptype2(x, y, x_arg = x_arg, y_arg = y_arg)
-}
-
-# -----------------------
-# Custom coercion
-
 # class_pred + class_pred = class_pred with unioned labels
 # it is ordered if either are ordered
 # the new eq label always comes from x
 
-#' @method vec_ptype2.class_pred class_pred
 #' @export
 vec_ptype2.class_pred.class_pred <- function(x, y, ...) {
   new_class_pred(
@@ -225,7 +165,6 @@ vec_ptype2.class_pred.class_pred <- function(x, y, ...) {
   )
 }
 
-#' @method vec_ptype2.class_pred factor
 #' @export
 vec_ptype2.class_pred.factor <- function(x, y, ...) {
   new_class_pred(
@@ -246,7 +185,6 @@ vec_ptype2.factor.class_pred <- function(x, y, ...) {
   )
 }
 
-#' @method vec_ptype2.class_pred character
 #' @export
 vec_ptype2.class_pred.character <- function(x, y, ...) {
   character()
@@ -271,13 +209,7 @@ union_ordered <- function(x, y) {
 # ------------------------------------------------------------------------------
 # Comparison and equality
 
-#' Equality for `class_pred`
-#'
-#' `class_pred` objects are converted to integer before equality checks
-#' are done.
-#'
 #' @export
-#' @keywords internal
 vec_proxy_equal.class_pred <- function(x, ...) {
   # allows you to compare two class_pred objects robustly
   # converting to character would confuse NA with equivocal
