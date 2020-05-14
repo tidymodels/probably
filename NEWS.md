@@ -1,4 +1,4 @@
-# probably (development version)
+# probably 0.0.5
 
 * Internal cleanup to be more compatible with vctrs 0.3.0.
 
