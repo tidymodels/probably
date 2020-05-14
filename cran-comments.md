@@ -7,6 +7,10 @@
 
 0 errors | 0 warnings | 0 notes
 
+## 0.0.5 Submission
+
+This patch release is to stay compatible with vctrs 0.3.0.
+
 ## 0.0.4 Submission
 
 This patch release fixes the warnings on the CRAN check page due to the `lending_club` dataset being moved from rsample to modeldata.
