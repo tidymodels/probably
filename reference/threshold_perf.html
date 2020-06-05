@@ -36,6 +36,10 @@
 <script src="../pkgdown.js"></script>
 <link href="../tidyverse-2.css" rel="stylesheet">
 
+<!--optional theme-->
+<link href="../.css" rel="stylesheet">
+
+
 
 
 <meta property="og:title" content="Generate performance metrics across probability thresholds — threshold_perf" />
@@ -85,7 +89,7 @@ of the probability threshold and any existing groups." />
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info hidden-xs hidden-sm">
           <span class="partof">part of <a href="https://tidymodels.org/">tidymodels</a></span>
-          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.5</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6</span>
         </div>
       </div>
     </div>
@@ -253,7 +257,7 @@ see the Relevant level section of <code><a href='https://rdrr.io/pkg/yardstick/m
 
 <span class='no'>mock_resamples</span> <span class='kw'>&lt;-</span> <span class='no'>resamples</span> <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span>(
-    <span class='kw'>expr</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/sample.html'>sample_n</a></span>(<span class='no'>segment_logistic</span>, <span class='fl'>100</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
+    <span class='kw'>expr</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/sample_n.html'>sample_n</a></span>(<span class='no'>segment_logistic</span>, <span class='fl'>100</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
     <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
   ) <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span>(<span class='kw'>.id</span> <span class='kw'>=</span> <span class='st'>"resample"</span>)
@@ -265,43 +269,43 @@ see the Relevant level section of <code><a href='https://rdrr.io/pkg/yardstick/m
 <span class='no'>resampled_threshold_perf</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 100 x 5</span><span>
 #&gt;    resample .threshold .metric .estimator .estimate
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 1               0.5 sens    binary         0.655
-#&gt; </span><span style='color: #555555;'> 2</span><span> 1               0.6 sens    binary         0.586
-#&gt; </span><span style='color: #555555;'> 3</span><span> 1               0.7 sens    binary         0.448
-#&gt; </span><span style='color: #555555;'> 4</span><span> 1               0.8 sens    binary         0.379
-#&gt; </span><span style='color: #555555;'> 5</span><span> 1               0.9 sens    binary         0.207
-#&gt; </span><span style='color: #555555;'> 6</span><span> 2               0.5 sens    binary         0.852
-#&gt; </span><span style='color: #555555;'> 7</span><span> 2               0.6 sens    binary         0.778
-#&gt; </span><span style='color: #555555;'> 8</span><span> 2               0.7 sens    binary         0.704
-#&gt; </span><span style='color: #555555;'> 9</span><span> 2               0.8 sens    binary         0.519
-#&gt; </span><span style='color: #555555;'>10</span><span> 2               0.9 sens    binary         0.222
+#&gt; </span><span style='color: #555555;'> 1</span><span> 1               0.5 sens    binary         0.667
+#&gt; </span><span style='color: #555555;'> 2</span><span> 1               0.6 sens    binary         0.593
+#&gt; </span><span style='color: #555555;'> 3</span><span> 1               0.7 sens    binary         0.444
+#&gt; </span><span style='color: #555555;'> 4</span><span> 1               0.8 sens    binary         0.333
+#&gt; </span><span style='color: #555555;'> 5</span><span> 1               0.9 sens    binary         0.185
+#&gt; </span><span style='color: #555555;'> 6</span><span> 2               0.5 sens    binary         0.821
+#&gt; </span><span style='color: #555555;'> 7</span><span> 2               0.6 sens    binary         0.75 
+#&gt; </span><span style='color: #555555;'> 8</span><span> 2               0.7 sens    binary         0.679
+#&gt; </span><span style='color: #555555;'> 9</span><span> 2               0.8 sens    binary         0.5  
+#&gt; </span><span style='color: #555555;'>10</span><span> 2               0.9 sens    binary         0.214
 #&gt; </span><span style='color: #555555;'># … with 90 more rows</span><span></div><div class='input'>
 <span class='co'># Average over the resamples</span>
 <span class='no'>resampled_threshold_perf</span> <span class='kw'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span>(<span class='no'>.metric</span>, <span class='no'>.threshold</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span>(<span class='kw'>.estimate</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>.estimate</span>))</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 20 x 3</span><span>
+  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span>(<span class='kw'>.estimate</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>.estimate</span>))</div><div class='output co'>#&gt; <span class='message'>`summarise()` regrouping output by '.metric' (override with `.groups` argument)</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 20 x 3</span><span>
 #&gt; </span><span style='color: #555555;'># Groups:   .metric [4]</span><span>
 #&gt;    .metric  .threshold .estimate
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> distance        0.5     0.113
-#&gt; </span><span style='color: #555555;'> 2</span><span> distance        0.6     0.135
-#&gt; </span><span style='color: #555555;'> 3</span><span> distance        0.7     0.188
-#&gt; </span><span style='color: #555555;'> 4</span><span> distance        0.8     0.278
-#&gt; </span><span style='color: #555555;'> 5</span><span> distance        0.9     0.530
-#&gt; </span><span style='color: #555555;'> 6</span><span> j_index         0.5     0.551
-#&gt; </span><span style='color: #555555;'> 7</span><span> j_index         0.6     0.537
-#&gt; </span><span style='color: #555555;'> 8</span><span> j_index         0.7     0.506
-#&gt; </span><span style='color: #555555;'> 9</span><span> j_index         0.8     0.425
-#&gt; </span><span style='color: #555555;'>10</span><span> j_index         0.9     0.259
-#&gt; </span><span style='color: #555555;'>11</span><span> sens            0.5     0.731
-#&gt; </span><span style='color: #555555;'>12</span><span> sens            0.6     0.664
-#&gt; </span><span style='color: #555555;'>13</span><span> sens            0.7     0.583
-#&gt; </span><span style='color: #555555;'>14</span><span> sens            0.8     0.479
-#&gt; </span><span style='color: #555555;'>15</span><span> sens            0.9     0.275
-#&gt; </span><span style='color: #555555;'>16</span><span> spec            0.5     0.820
-#&gt; </span><span style='color: #555555;'>17</span><span> spec            0.6     0.872
-#&gt; </span><span style='color: #555555;'>18</span><span> spec            0.7     0.923
-#&gt; </span><span style='color: #555555;'>19</span><span> spec            0.8     0.946
+#&gt; </span><span style='color: #555555;'> 1</span><span> distance        0.5     0.117
+#&gt; </span><span style='color: #555555;'> 2</span><span> distance        0.6     0.139
+#&gt; </span><span style='color: #555555;'> 3</span><span> distance        0.7     0.194
+#&gt; </span><span style='color: #555555;'> 4</span><span> distance        0.8     0.292
+#&gt; </span><span style='color: #555555;'> 5</span><span> distance        0.9     0.538
+#&gt; </span><span style='color: #555555;'> 6</span><span> j_index         0.5     0.541
+#&gt; </span><span style='color: #555555;'> 7</span><span> j_index         0.6     0.529
+#&gt; </span><span style='color: #555555;'> 8</span><span> j_index         0.7     0.499
+#&gt; </span><span style='color: #555555;'> 9</span><span> j_index         0.8     0.415
+#&gt; </span><span style='color: #555555;'>10</span><span> j_index         0.9     0.254
+#&gt; </span><span style='color: #555555;'>11</span><span> sens            0.5     0.723
+#&gt; </span><span style='color: #555555;'>12</span><span> sens            0.6     0.656
+#&gt; </span><span style='color: #555555;'>13</span><span> sens            0.7     0.575
+#&gt; </span><span style='color: #555555;'>14</span><span> sens            0.8     0.468
+#&gt; </span><span style='color: #555555;'>15</span><span> sens            0.9     0.270
+#&gt; </span><span style='color: #555555;'>16</span><span> spec            0.5     0.819
+#&gt; </span><span style='color: #555555;'>17</span><span> spec            0.6     0.874
+#&gt; </span><span style='color: #555555;'>18</span><span> spec            0.7     0.924
+#&gt; </span><span style='color: #555555;'>19</span><span> spec            0.8     0.947
 #&gt; </span><span style='color: #555555;'>20</span><span> spec            0.9     0.985</div><div class='input'>
 </div></span></pre>
   </div>

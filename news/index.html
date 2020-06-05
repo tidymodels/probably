@@ -36,6 +36,10 @@
 <script src="../pkgdown.js"></script>
 <link href="../tidyverse-2.css" rel="stylesheet">
 
+<!--optional theme-->
+<link href="../.css" rel="stylesheet">
+
+
 
 
 <meta property="og:title" content="Changelog" />
@@ -81,7 +85,7 @@
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info hidden-xs hidden-sm">
           <span class="partof">part of <a href="https://tidymodels.org/">tidymodels</a></span>
-          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.5</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6</span>
         </div>
       </div>
     </div>
@@ -137,9 +141,18 @@
       <small>Source: <a href='https://github.com/tidymodels/probably/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="probably-006" class="section level1">
+<h1 class="page-header" data-toc-text="0.0.6">
+<a href="#probably-006" class="anchor"></a>probably 0.0.6<small> Unreleased </small>
+</h1>
+<ul>
+<li>
+<code>class_pred</code> objects are now comparable and will be ordered by their levels. Equivocal values are generally considered to be the smallest value when ordering. <code>NA</code> values can be considered smaller if <code>vec_order(na_value = "smallest")</code> is used.</li>
+</ul>
+</div>
     <div id="probably-005" class="section level1">
 <h1 class="page-header" data-toc-text="0.0.5">
-<a href="#probably-005" class="anchor"></a>probably 0.0.5<small> Unreleased </small>
+<a href="#probably-005" class="anchor"></a>probably 0.0.5<small> 2020-05-14 </small>
 </h1>
 <ul>
 <li>Internal cleanup to be more compatible with vctrs 0.3.0.</li>
