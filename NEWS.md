@@ -1,5 +1,10 @@
 # probably (development version)
 
+* `class_pred` objects are now comparable and will be ordered by their levels.
+  Equivocal values are generally considered to be the smallest value when
+  ordering. `NA` values can be considered smaller if
+  `vec_order(na_value = "smallest")` is used.
+
 # probably 0.0.5
 
 * Internal cleanup to be more compatible with vctrs 0.3.0.
