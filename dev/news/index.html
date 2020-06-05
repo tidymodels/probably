@@ -36,6 +36,10 @@
 <script src="../pkgdown.js"></script>
 <link href="../tidyverse-2.css" rel="stylesheet">
 
+<!--optional theme-->
+<link href="../.css" rel="stylesheet">
+
+
 
 
 <meta property="og:title" content="Changelog" />
@@ -141,10 +145,14 @@
 <h1 class="page-header" data-toc-text="development version">
 <a href="#probably-development-version" class="anchor"></a>probably (development version)<small> Unreleased </small>
 </h1>
+<ul>
+<li>
+<code>class_pred</code> objects are now comparable and will be ordered by their levels. Equivocal values are generally considered to be the smallest value when ordering. <code>NA</code> values can be considered smaller if <code>vec_order(na_value = "smallest")</code> is used.</li>
+</ul>
 </div>
     <div id="probably-005" class="section level1">
 <h1 class="page-header" data-toc-text="0.0.5">
-<a href="#probably-005" class="anchor"></a>probably 0.0.5<small> Unreleased </small>
+<a href="#probably-005" class="anchor"></a>probably 0.0.5<small> 2020-05-14 </small>
 </h1>
 <ul>
 <li>Internal cleanup to be more compatible with vctrs 0.3.0.</li>

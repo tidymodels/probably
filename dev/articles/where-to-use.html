@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../tidyverse-2.css" rel="stylesheet">
+<!--optional theme--><link href="../.css" rel="stylesheet">
 <meta property="og:title" content="Where does probably fit in?">
 <meta property="og:description" content="probably">
 <meta name="twitter:card" content="summary">
@@ -98,7 +99,7 @@
       <h1 data-toc-skip>Where does probably fit in?</h1>
                         <h4 class="author">Davis Vaughan</h4>
             
-            <h4 class="date">2020-05-14</h4>
+            <h4 class="date">2020-06-05</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/master/vignettes/where-to-use.Rmd"><code>vignettes/where-to-use.Rmd</code></a></small>
       <div class="hidden name"><code>where-to-use.Rmd</code></div>
@@ -157,16 +158,16 @@
 <span class="no">lending_train</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">training</a></span>(<span class="no">split</span>)
 <span class="no">lending_test</span>  <span class="kw">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">testing</a></span>(<span class="no">split</span>)</pre></body></html></div>
 <p>Before we do anything, let’s look at the counts of what we are going to be predicting, the <code>Class</code> of the loan.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://dplyr.tidyverse.org/reference/tally.html">count</a></span>(<span class="no">lending_train</span>, <span class="no">Class</span>)
+<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>(<span class="no">lending_train</span>, <span class="no">Class</span>)
 <span class="co">#&gt; # A tibble: 2 x 2</span>
 <span class="co">#&gt;   Class     n</span>
 <span class="co">#&gt;   &lt;fct&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1 good   7003</span>
 <span class="co">#&gt; 2 bad     390</span></pre></body></html></div>
 <p>Clearly there is a large imbalance here with the number of good and bad loans. This is probably a good thing for the bank, but poses an interesting issue for us because we might want to ensure we are sensitive to the bad loans and are not overwhelmed by the number of good ones. One thing that we might do is <em>downsample</em> the number of good loans so that the total number of them is more in line with the number of bad loans. We could do this before fitting the model using <code>recipes::step_downsample()</code>, but for now, let’s continue with the data unchanged.</p>
-<p>We’ll use parsnip’s <code><a href="https://parsnip.tidymodels.org/reference/logistic_reg.html">logistic_reg()</a></code> to create a model specification for logistic regression, set the engine to be <code>glm</code> and then actually fit the model using our data and the model formula.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">logi_reg</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://parsnip.tidymodels.org/reference/logistic_reg.html">logistic_reg</a></span>()
-<span class="no">logi_reg_glm</span> <span class="kw">&lt;-</span> <span class="no">logi_reg</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html">set_engine</a></span>(<span class="st">"glm"</span>)
+<p>We’ll use parsnip’s <code><a href="https://rdrr.io/pkg/parsnip/man/logistic_reg.html">logistic_reg()</a></code> to create a model specification for logistic regression, set the engine to be <code>glm</code> and then actually fit the model using our data and the model formula.</p>
+<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">logi_reg</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/parsnip/man/logistic_reg.html">logistic_reg</a></span>()
+<span class="no">logi_reg_glm</span> <span class="kw">&lt;-</span> <span class="no">logi_reg</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/parsnip/man/set_engine.html">set_engine</a></span>(<span class="st">"glm"</span>)
 
 <span class="co"># A small model specification that defines the type of model you are </span>
 <span class="co"># using and the engine</span>
@@ -176,7 +177,7 @@
 <span class="co">#&gt; Computational engine: glm</span>
 
 <span class="co"># Fit the model</span>
-<span class="no">logi_reg_fit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://parsnip.tidymodels.org/reference/reexports.html">fit</a></span>(
+<span class="no">logi_reg_fit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/parsnip/man/reexports.html">fit</a></span>(
   <span class="no">logi_reg_glm</span>,
   <span class="kw">formula</span> <span class="kw">=</span> <span class="no">Class</span> ~ <span class="no">annual_inc</span> + <span class="no">verification_status</span> + <span class="no">sub_grade</span>,
   <span class="kw">data</span> <span class="kw">=</span> <span class="no">lending_train</span>
@@ -185,7 +186,7 @@
 <span class="no">logi_reg_fit</span>
 <span class="co">#&gt; parsnip model object</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Fit time:  303ms </span>
+<span class="co">#&gt; Fit time:  280ms </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Call:  stats::glm(formula = formula, family = stats::binomial, data = data)</span>
 <span class="co">#&gt; </span>
@@ -232,7 +233,7 @@
 <span class="co">#&gt; Degrees of Freedom: 7392 Total (i.e. Null);  7355 Residual</span>
 <span class="co">#&gt; Null Deviance:       3054 </span>
 <span class="co">#&gt; Residual Deviance: 2735  AIC: 2811</span></pre></body></html></div>
-<p>The output of the parsnip <code><a href="https://parsnip.tidymodels.org/reference/reexports.html">fit()</a></code> call is a parsnip <code>model_fit</code> object, but the underlying print method for the <code>glm</code> fit is used.</p>
+<p>The output of the parsnip <code><a href="https://rdrr.io/pkg/parsnip/man/reexports.html">fit()</a></code> call is a parsnip <code>model_fit</code> object, but the underlying print method for the <code>glm</code> fit is used.</p>
 <p>Now let’s predict on our testing set, and use <code>type = "prob"</code> to get <em>class probabilities</em> back rather than hard predictions. We will use these with probably to investigate performance.</p>
 <div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">predictions</span> <span class="kw">&lt;-</span> <span class="no">logi_reg_fit</span> <span class="kw">%&gt;%</span>
   <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="kw">new_data</span> <span class="kw">=</span> <span class="no">lending_test</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"prob"</span>)
@@ -267,7 +268,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">Class</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">contains</a></span>(<span class="st">".pred"</span>))
 
 <span class="no">hard_pred_0.5</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tally.html">count</a></span>(<span class="kw">.truth</span> <span class="kw">=</span> <span class="no">Class</span>, <span class="no">.pred</span>)
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>(<span class="kw">.truth</span> <span class="kw">=</span> <span class="no">Class</span>, <span class="no">.pred</span>)
 <span class="co">#&gt; # A tibble: 2 x 3</span>
 <span class="co">#&gt;   .truth      .pred     n</span>
 <span class="co">#&gt;   &lt;fct&gt;  &lt;clss_prd&gt; &lt;int&gt;</span>
@@ -279,7 +280,7 @@
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">Class</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">contains</a></span>(<span class="st">".pred"</span>))
 
 <span class="no">hard_pred_0.75</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/tally.html">count</a></span>(<span class="kw">.truth</span> <span class="kw">=</span> <span class="no">Class</span>, <span class="no">.pred</span>)
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>(<span class="kw">.truth</span> <span class="kw">=</span> <span class="no">Class</span>, <span class="no">.pred</span>)
 <span class="co">#&gt; # A tibble: 4 x 3</span>
 <span class="co">#&gt;   .truth      .pred     n</span>
 <span class="co">#&gt;   &lt;fct&gt;  &lt;clss_prd&gt; &lt;int&gt;</span>
