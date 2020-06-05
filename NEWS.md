@@ -1,4 +1,4 @@
-# probably (development version)
+# probably 0.0.6
 
 * `class_pred` objects are now comparable and will be ordered by their levels.
   Equivocal values are generally considered to be the smallest value when

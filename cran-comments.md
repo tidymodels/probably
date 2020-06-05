@@ -7,6 +7,10 @@
 
 0 errors | 0 warnings | 0 notes
 
+## 0.0.6 Submission
+
+This patch release makes class_pred objects comparable and orderable by their levels. This adds compatibility with dplyr 1.0.0.
+
 ## 0.0.5 Submission
 
 This patch release is to stay compatible with vctrs 0.3.0.
