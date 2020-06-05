@@ -219,5 +219,5 @@ vec_proxy_equal.class_pred <- function(x, ...) {
 
 #' @export
 vec_proxy_compare.class_pred <- function(x, ...) {
-  abort("Comparisons with `class_pred` objects are not meaningful.")
+  unclass(x)
 }
