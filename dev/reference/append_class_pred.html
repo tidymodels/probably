@@ -148,19 +148,19 @@ data frame." />
     </div>
 
     <div class="ref-description">
-    <p>This function is similar to <code><a href='make_class_pred.html'>make_class_pred()</a></code>, but is useful when you have
+    <p>This function is similar to <code>make_class_pred()</code>, but is useful when you have
 a large number of class probability columns and want to use <code>tidyselect</code>
 helpers. It appends the new <code>class_pred</code> vector as a column on the original
 data frame.</p>
     </div>
 
     <pre class="usage"><span class='fu'>append_class_pred</span>(
-  <span class='no'>.data</span>,
-  <span class='no'>...</span>,
-  <span class='no'>levels</span>,
-  <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>levels</span>),
-  <span class='kw'>name</span> <span class='kw'>=</span> <span class='st'>".class_pred"</span>
+  <span class='kw'>.data</span>,
+  <span class='kw'>...</span>,
+  <span class='kw'>levels</span>,
+  ordered = <span class='fl'>FALSE</span>,
+  min_prob = <span class='fl'>1</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>levels</span>),
+  name = <span class='st'>".class_pred"</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -186,7 +186,7 @@ selected.</p></td>
       <th>levels</th>
       <td><p>A character vector of class levels. The length should be the
 same as the number of selections made through <code>...</code>, or length <code>2</code>
-for <code><a href='make_class_pred.html'>make_two_class_pred()</a></code>.</p></td>
+for <code>make_two_class_pred()</code>.</p></td>
     </tr>
     <tr>
       <th>ordered</th>
@@ -215,18 +215,18 @@ this value (by row), the row is marked as <em>equivocal</em>.</p></td>
 <span class='co'># The following two examples are equivalent and demonstrate</span>
 <span class='co'># the helper, append_class_pred()</span>
 
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>dplyr</span>)</div><div class='output co'>#&gt; <span class='message'></span>
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>)</div><div class='output co'>#&gt; <span class='message'></span>
 #&gt; <span class='message'>Attaching package: ‘dplyr’</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:stats’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    filter, lag</span></div><div class='output co'>#&gt; <span class='message'>The following objects are masked from ‘package:base’:</span>
 #&gt; <span class='message'></span>
 #&gt; <span class='message'>    intersect, setdiff, setequal, union</span></div><div class='input'>
-<span class='no'>species_probs</span> <span class='kw'>%&gt;%</span>
+<span class='kw'>species_probs</span> <span class='op'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
-    <span class='kw'>.class_pred</span> <span class='kw'>=</span> <span class='fu'><a href='make_class_pred.html'>make_class_pred</a></span>(
-      <span class='no'>.pred_bobcat</span>, <span class='no'>.pred_coyote</span>, <span class='no'>.pred_gray_fox</span>,
-      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='no'>Species</span>),
-      <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>.5</span>
+    .class_pred = <span class='fu'>make_class_pred</span>(
+      <span class='kw'>.pred_bobcat</span>, <span class='kw'>.pred_coyote</span>, <span class='kw'>.pred_gray_fox</span>,
+      levels = <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='kw'>Species</span>),
+      min_prob = <span class='fl'>.5</span>
     )
   )</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 110 x 5</span><span>
 #&gt;    Species  .pred_bobcat .pred_coyote .pred_gray_fox .class_pred
@@ -242,13 +242,13 @@ this value (by row), the row is marked as <em>equivocal</em>.</p></td>
 #&gt; </span><span style='color: #555555;'> 9</span><span> bobcat         0.771        0.229          0           bobcat
 #&gt; </span><span style='color: #555555;'>10</span><span> bobcat         0.623        0.325          0.051</span><span style='text-decoration: underline;'>7</span><span>      bobcat
 #&gt; </span><span style='color: #555555;'># … with 100 more rows</span><span></div><div class='input'>
-<span class='no'>lvls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='no'>species_probs</span>$<span class='no'>Species</span>)
+<span class='kw'>lvls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='kw'>species_probs</span><span class='op'>$</span><span class='kw'>Species</span>)
 
 <span class='fu'>append_class_pred</span>(
-  <span class='kw'>.data</span> <span class='kw'>=</span> <span class='no'>species_probs</span>,
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/reexports.html'>contains</a></span>(<span class='st'>".pred_"</span>),
-  <span class='kw'>levels</span> <span class='kw'>=</span> <span class='no'>lvls</span>,
-  <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>.5</span>
+  .data = <span class='kw'>species_probs</span>,
+  <span class='fu'><a href='https://tidyselect.r-lib.org/reference/starts_with.html'>contains</a></span>(<span class='st'>".pred_"</span>),
+  levels = <span class='kw'>lvls</span>,
+  min_prob = <span class='fl'>.5</span>
 )</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 110 x 5</span><span>
 #&gt;    Species  .pred_bobcat .pred_coyote .pred_gray_fox .class_pred
 #&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span>           </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;clss_prd&gt;</span><span>
@@ -262,8 +262,7 @@ this value (by row), the row is marked as <em>equivocal</em>.</p></td>
 #&gt; </span><span style='color: #555555;'> 8</span><span> bobcat         0.898        0.051</span><span style='text-decoration: underline;'>7</span><span>         0.050</span><span style='text-decoration: underline;'>0</span><span>      bobcat
 #&gt; </span><span style='color: #555555;'> 9</span><span> bobcat         0.771        0.229          0           bobcat
 #&gt; </span><span style='color: #555555;'>10</span><span> bobcat         0.623        0.325          0.051</span><span style='text-decoration: underline;'>7</span><span>      bobcat
-#&gt; </span><span style='color: #555555;'># … with 100 more rows</span><span></div><div class='input'>
-</div></span></pre>
+#&gt; </span><span style='color: #555555;'># … with 100 more rows</span><span></div><div class='input'></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

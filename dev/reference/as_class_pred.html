@@ -150,7 +150,7 @@ existing objects." />
 existing objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>as_class_pred</span>(<span class='no'>x</span>, <span class='kw'>which</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(), <span class='kw'>equivocal</span> <span class='kw'>=</span> <span class='st'>"[EQ]"</span>)</pre>
+    <pre class="usage"><span class='fu'>as_class_pred</span>(<span class='kw'>x</span>, which = <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(), equivocal = <span class='st'>"[EQ]"</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -174,11 +174,10 @@ when printing.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Yes"</span>, <span class='st'>"No"</span>, <span class='st'>"Yes"</span>, <span class='st'>"Yes"</span>))
-<span class='fu'>as_class_pred</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] Yes No  Yes Yes
+<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Yes"</span>, <span class='st'>"No"</span>, <span class='st'>"Yes"</span>, <span class='st'>"Yes"</span>))
+<span class='fu'>as_class_pred</span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; [1] Yes No  Yes Yes
 #&gt; Levels: No Yes
-#&gt; Reportable: 100%</div><div class='input'>
-</div></pre>
+#&gt; Reportable: 100%</div><div class='input'></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

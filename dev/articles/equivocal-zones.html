@@ -93,13 +93,13 @@
 
       
 
-      </header><div class="row">
+      </header><script src="equivocal-zones_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Equivocal zones</h1>
                         <h4 class="author">Davis Vaughan</h4>
             
-            <h4 class="date">2020-06-05</h4>
+            <h4 class="date">2020-06-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/master/vignettes/equivocal-zones.Rmd"><code>vignettes/equivocal-zones.Rmd</code></a></small>
       <div class="hidden name"><code>equivocal-zones.Rmd</code></div>
@@ -108,7 +108,9 @@
 
     
     
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">probably</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/tidymodels/probably">probably</a></span>)
+</pre></div>
 <div id="equivocal-zones" class="section level2">
 <h2 class="hasAnchor">
 <a href="#equivocal-zones" class="anchor"></a>Equivocal zones</h2>
@@ -116,25 +118,28 @@
 <p>For example, in a binary model, if a prediction returned probability values of 52% Yes and 48% No, are you really sure that that isn’t just random noise? In this case, you could use a <em>buffer</em> surrounding a <em>threshold</em> of 50% to determine whether or not your model is sure of its predictions, and mark values you are unsure about as equivocal.</p>
 <p>Another example could come from a Bayesian perspective, where each prediction comes with a probability distribution. Your model might predict 80% Yes, but could have a standard deviation around that of +/- 20%. In this case, you could set a maximum allowed standard deviation as the cutoff of whether or not to mark values as equivocal.</p>
 <p>To work with these equivocal zones, probably provides a new class for hard class predictions that is very similar to a factor, but allows you to mark certain values as equivocal.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="no">x</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Yes"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>, <span class="st">"Yes"</span>))
+<div class="sourceCode" id="cb2"><pre class="downlit">
+<span class="kw">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Yes"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>, <span class="st">"Yes"</span>))
 
 <span class="co"># Create a class_pred object from a factor</span>
-<span class="fu"><a href="../reference/class_pred.html">class_pred</a></span>(<span class="no">x</span>)
+<span class="fu"><a href="../reference/class_pred.html">class_pred</a></span>(<span class="kw">x</span>)
 <span class="co">#&gt; [1] Yes No  Yes Yes</span>
 <span class="co">#&gt; Levels: No Yes</span>
 <span class="co">#&gt; Reportable: 100%</span>
 
 <span class="co"># Say you aren't sure about that 2nd "Yes" value. </span>
 <span class="co"># You could mark it as equivocal.</span>
-<span class="fu"><a href="../reference/class_pred.html">class_pred</a></span>(<span class="no">x</span>, <span class="kw">which</span> <span class="kw">=</span> <span class="fl">3</span>)
+<span class="fu"><a href="../reference/class_pred.html">class_pred</a></span>(<span class="kw">x</span>, which = <span class="fl">3</span>)
 <span class="co">#&gt; [1] Yes  No   [EQ] Yes </span>
 <span class="co">#&gt; Levels: No Yes</span>
-<span class="co">#&gt; Reportable: 75%</span></pre></body></html></div>
+<span class="co">#&gt; Reportable: 75%</span>
+</pre></div>
 <p>The <em>reportable rate</em> is the fraction of values that are not equivocal, relative to the total number. Above, you can see that the reportable rate started at 100%, but as soon as a single value was marked equivocal, that value dropped to 75%. In fields where equivocal zones are used, there is often a tradeoff between marking values as equivocal and keeping a certain minimum reportable rate.</p>
 <p>Generally, you won’t create these <code>class_pred</code> objects directly, but will instead create them indirectly through converting class probabilities into class predictions with <code><a href="../reference/make_class_pred.html">make_class_pred()</a></code> and <code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code>.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://dplyr.tidyverse.org">dplyr</a></span>)
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"segment_logistic"</span>)
-<span class="no">segment_logistic</span>
+<span class="kw">segment_logistic</span>
 <span class="co">#&gt; # A tibble: 1,010 x 3</span>
 <span class="co">#&gt;    .pred_poor .pred_good Class</span>
 <span class="co">#&gt;  *      &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;</span>
@@ -153,16 +158,16 @@
 <span class="co"># Convert probabilities into predictions</span>
 <span class="co"># &gt; 0.5 = good</span>
 <span class="co"># &lt; 0.5 = poor</span>
-<span class="no">segment_logistic_thresh</span> <span class="kw">&lt;-</span> <span class="no">segment_logistic</span> <span class="kw">%&gt;%</span>
+<span class="kw">segment_logistic_thresh</span> <span class="op">&lt;-</span> <span class="kw">segment_logistic</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-    <span class="kw">.pred</span> <span class="kw">=</span> <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span>(
-      <span class="kw">estimate</span> <span class="kw">=</span> <span class="no">.pred_good</span>,
-      <span class="kw">levels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="no">Class</span>),
-      <span class="kw">threshold</span> <span class="kw">=</span> <span class="fl">0.5</span>
+    .pred = <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span>(
+      estimate = <span class="kw">.pred_good</span>, 
+      levels = <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="kw">Class</span>), 
+      threshold = <span class="fl">0.5</span>
     )
   )
 
-<span class="no">segment_logistic_thresh</span>
+<span class="kw">segment_logistic_thresh</span>
 <span class="co">#&gt; # A tibble: 1,010 x 4</span>
 <span class="co">#&gt;    .pred_poor .pred_good Class      .pred</span>
 <span class="co">#&gt;         &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt; &lt;clss_prd&gt;</span>
@@ -176,24 +181,26 @@
 <span class="co">#&gt;  8    0.00842    0.992   good        good</span>
 <span class="co">#&gt;  9    0.995      0.00458 poor        poor</span>
 <span class="co">#&gt; 10    0.765      0.235   poor        poor</span>
-<span class="co">#&gt; # … with 1,000 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 1,000 more rows</span>
+</pre></div>
 <p>If a <code>buffer</code> is used, an equivocal zone is created around the threshold of <code>threshold +/- buffer</code> and any values inside the zone are automatically marked as equivocal.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="co"># Convert probabilities into predictions</span>
+<div class="sourceCode" id="cb4"><pre class="downlit">
+<span class="co"># Convert probabilities into predictions</span>
 <span class="co">#        x &gt; 0.55 = good</span>
 <span class="co">#        x &lt; 0.45 = poor</span>
 <span class="co"># 0.45 &lt; x &lt; 0.55 = equivocal</span>
-<span class="no">segment_pred</span> <span class="kw">&lt;-</span> <span class="no">segment_logistic</span> <span class="kw">%&gt;%</span>
+<span class="kw">segment_pred</span> <span class="op">&lt;-</span> <span class="kw">segment_logistic</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(
-    <span class="kw">.pred</span> <span class="kw">=</span> <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span>(
-      <span class="kw">estimate</span> <span class="kw">=</span> <span class="no">.pred_good</span>,
-      <span class="kw">levels</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="no">Class</span>),
-      <span class="kw">threshold</span> <span class="kw">=</span> <span class="fl">0.5</span>,
-      <span class="kw">buffer</span> <span class="kw">=</span> <span class="fl">0.05</span>
+    .pred = <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span>(
+      estimate = <span class="kw">.pred_good</span>, 
+      levels = <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="kw">Class</span>), 
+      threshold = <span class="fl">0.5</span>,
+      buffer = <span class="fl">0.05</span>
     )
-  )
+  ) 
 
-<span class="no">segment_pred</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>(<span class="no">.pred</span>)
+<span class="kw">segment_pred</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>(<span class="kw">.pred</span>)
 <span class="co">#&gt; # A tibble: 3 x 2</span>
 <span class="co">#&gt;        .pred     n</span>
 <span class="co">#&gt;   &lt;clss_prd&gt; &lt;int&gt;</span>
@@ -201,16 +208,18 @@
 <span class="co">#&gt; 2       good   340</span>
 <span class="co">#&gt; 3       poor   625</span>
 
-<span class="no">segment_pred</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(<span class="kw">reportable</span> <span class="kw">=</span> <span class="fu"><a href="../reference/reportable_rate.html">reportable_rate</a></span>(<span class="no">.pred</span>))
+<span class="kw">segment_pred</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span>(reportable = <span class="fu"><a href="../reference/reportable_rate.html">reportable_rate</a></span>(<span class="kw">.pred</span>))
 <span class="co">#&gt; # A tibble: 1 x 1</span>
 <span class="co">#&gt;   reportable</span>
 <span class="co">#&gt;        &lt;dbl&gt;</span>
-<span class="co">#&gt; 1      0.955</span></pre></body></html></div>
+<span class="co">#&gt; 1      0.955</span>
+</pre></div>
 <p>Equivocal values in <code>class_pred</code> objects are converted to <code>NA</code> when the object is converted to a factor. It’s also worth noting that the <code>[EQ]</code> label is not treated as a separate level.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">segment_pred</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">.pred_fct</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/generics/man/coercion-factor.html">as.factor</a></span>(<span class="no">.pred</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>(<span class="no">.pred</span>, <span class="no">.pred_fct</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit">
+<span class="kw">segment_pred</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(.pred_fct = <span class="fu"><a href="https://rdrr.io/pkg/generics/man/coercion-factor.html">as.factor</a></span>(<span class="kw">.pred</span>)) <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>(<span class="kw">.pred</span>, <span class="kw">.pred_fct</span>)
 <span class="co">#&gt; # A tibble: 3 x 3</span>
 <span class="co">#&gt;        .pred .pred_fct     n</span>
 <span class="co">#&gt;   &lt;clss_prd&gt; &lt;fct&gt;     &lt;int&gt;</span>
@@ -218,30 +227,33 @@
 <span class="co">#&gt; 2       good good        340</span>
 <span class="co">#&gt; 3       poor poor        625</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="no">segment_pred</span>$<span class="no">.pred</span>)
-<span class="co">#&gt; [1] "good" "poor"</span></pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="kw">segment_pred</span><span class="op">$</span><span class="kw">.pred</span>)
+<span class="co">#&gt; [1] "good" "poor"</span>
+</pre></div>
 <p>This <code>NA</code> behavior feeds into how probably can be used with yardstick. Generally, equivocal values are removed completely from performance evaluation. So converting them to <code>NA</code> and then leaving the default <code>na_rm = TRUE</code> in any yardstick metric removes them from consideration.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">yardstick</span>)
+<div class="sourceCode" id="cb6"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="https://github.com/tidymodels/yardstick">yardstick</a></span>)
 <span class="co">#&gt; For binary classification, the first factor level is assumed to be the event.</span>
 <span class="co">#&gt; Set the global option `yardstick.event_first` to `FALSE` to change this.</span>
 
 <span class="co"># No equivocal zone</span>
-<span class="no">segment_logistic_thresh</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">.pred_fct</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/generics/man/coercion-factor.html">as.factor</a></span>(<span class="no">.pred</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/yardstick/man/precision.html">precision</a></span>(<span class="no">Class</span>, <span class="no">.pred_fct</span>)
+<span class="kw">segment_logistic_thresh</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(.pred_fct = <span class="fu"><a href="https://rdrr.io/pkg/generics/man/coercion-factor.html">as.factor</a></span>(<span class="kw">.pred</span>)) <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/yardstick/man/precision.html">precision</a></span>(<span class="kw">Class</span>, <span class="kw">.pred_fct</span>)
 <span class="co">#&gt; # A tibble: 1 x 3</span>
 <span class="co">#&gt;   .metric   .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 precision binary         0.680</span>
 
 <span class="co"># Equivocal zone</span>
-<span class="no">segment_pred</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">.pred_fct</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/generics/man/coercion-factor.html">as.factor</a></span>(<span class="no">.pred</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/pkg/yardstick/man/precision.html">precision</a></span>(<span class="no">Class</span>, <span class="no">.pred_fct</span>)
+<span class="kw">segment_pred</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(.pred_fct = <span class="fu"><a href="https://rdrr.io/pkg/generics/man/coercion-factor.html">as.factor</a></span>(<span class="kw">.pred</span>)) <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://rdrr.io/pkg/yardstick/man/precision.html">precision</a></span>(<span class="kw">Class</span>, <span class="kw">.pred_fct</span>)
 <span class="co">#&gt; # A tibble: 1 x 3</span>
 <span class="co">#&gt;   .metric   .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 precision binary         0.694</span></pre></body></html></div>
+<span class="co">#&gt; 1 precision binary         0.694</span>
+</pre></div>
 <p>As seen above, removing equivocal values using a simple threshold generally improves performance because the values your model is most unsure about are removed. But don’t be fooled! You should give those cases extra consideration, and remember that your reportable rate has decreased by removing them. In production, you’ll likely have to do something with those predictions!</p>
 </div>
   </div>

@@ -150,14 +150,14 @@ class_pred objects with an optional equivocal zone." />
 <code>class_pred</code> objects with an optional equivocal zone.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>make_class_pred</span>(<span class='no'>...</span>, <span class='no'>levels</span>, <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>levels</span>))
+    <pre class="usage"><span class='fu'>make_class_pred</span>(<span class='kw'>...</span>, <span class='kw'>levels</span>, ordered = <span class='fl'>FALSE</span>, min_prob = <span class='fl'>1</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='kw'>levels</span>))
 
 <span class='fu'>make_two_class_pred</span>(
-  <span class='no'>estimate</span>,
-  <span class='no'>levels</span>,
-  <span class='kw'>threshold</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
+  <span class='kw'>estimate</span>,
+  <span class='kw'>levels</span>,
+  threshold = <span class='fl'>0.5</span>,
+  ordered = <span class='fl'>FALSE</span>,
+  buffer = <span class='kw'>NULL</span>
 )</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -207,17 +207,17 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A vector of class <code><a href='class_pred.html'>class_pred</a></code>.</p>
+    <p>A vector of class <code>class_pred</code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>dplyr</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='kw'><a href='https://dplyr.tidyverse.org'>dplyr</a></span>)
 
-<span class='no'>good</span> <span class='kw'>&lt;-</span> <span class='no'>segment_logistic</span>$<span class='no'>.pred_good</span>
-<span class='no'>lvls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='no'>segment_logistic</span>$<span class='no'>Class</span>)
+<span class='kw'>good</span> <span class='op'>&lt;-</span> <span class='kw'>segment_logistic</span><span class='op'>$</span><span class='kw'>.pred_good</span>
+<span class='kw'>lvls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='kw'>segment_logistic</span><span class='op'>$</span><span class='kw'>Class</span>)
 
 <span class='co'># Equivocal zone of .5 +/- .15</span>
-<span class='fu'>make_two_class_pred</span>(<span class='no'>good</span>, <span class='no'>lvls</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fl'>0.15</span>)</div><div class='output co'>#&gt;    [1] poor poor good good poor [EQ] poor good poor poor good poor poor good
+<span class='fu'>make_two_class_pred</span>(<span class='kw'>good</span>, <span class='kw'>lvls</span>, buffer = <span class='fl'>0.15</span>)</div><div class='output co'>#&gt;    [1] poor poor good good poor [EQ] poor good poor poor good poor poor good
 #&gt;   [15] poor good poor poor [EQ] poor poor good poor good poor poor good [EQ]
 #&gt;   [29] good good poor poor [EQ] good good poor poor poor poor poor [EQ] [EQ]
 #&gt;   [43] poor poor poor poor poor good good poor [EQ] poor poor [EQ] poor [EQ]
@@ -293,7 +293,7 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
 #&gt; Levels: good poor
 #&gt; Reportable: 83.2%</div><div class='input'>
 <span class='co'># Equivocal zone of c(.5 - .05, .5 + .15)</span>
-<span class='fu'>make_two_class_pred</span>(<span class='no'>good</span>, <span class='no'>lvls</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.05</span>, <span class='fl'>0.15</span>))</div><div class='output co'>#&gt;    [1] poor poor good good poor poor poor good poor poor good poor poor good
+<span class='fu'>make_two_class_pred</span>(<span class='kw'>good</span>, <span class='kw'>lvls</span>, buffer = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.05</span>, <span class='fl'>0.15</span>))</div><div class='output co'>#&gt;    [1] poor poor good good poor poor poor good poor poor good poor poor good
 #&gt;   [15] poor good poor poor [EQ] poor poor good poor good poor poor good poor
 #&gt;   [29] good good poor poor [EQ] good good poor poor poor poor poor [EQ] poor
 #&gt;   [43] poor poor poor poor poor good good poor [EQ] poor poor poor poor poor
@@ -369,12 +369,12 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
 #&gt; Levels: good poor
 #&gt; Reportable: 89.8%</div><div class='input'>
 <span class='co'># These functions are useful alongside dplyr::mutate()</span>
-<span class='no'>segment_logistic</span> <span class='kw'>%&gt;%</span>
+<span class='kw'>segment_logistic</span> <span class='op'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
-    <span class='kw'>.class_pred</span> <span class='kw'>=</span> <span class='fu'>make_two_class_pred</span>(
-      <span class='kw'>estimate</span> <span class='kw'>=</span> <span class='no'>.pred_good</span>,
-      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='no'>Class</span>),
-      <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fl'>0.15</span>
+    .class_pred = <span class='fu'>make_two_class_pred</span>(
+      estimate = <span class='kw'>.pred_good</span>,
+      levels = <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='kw'>Class</span>),
+      buffer = <span class='fl'>0.15</span>
     )
   )</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,010 x 4</span><span>
 #&gt;    .pred_poor .pred_good Class .class_pred
@@ -393,12 +393,12 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
 <span class='co'># Multi-class example</span>
 <span class='co'># Note that we provide class probability columns in the same</span>
 <span class='co'># order as the levels</span>
-<span class='no'>species_probs</span> <span class='kw'>%&gt;%</span>
+<span class='kw'>species_probs</span> <span class='op'>%&gt;%</span>
   <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
-    <span class='kw'>.class_pred</span> <span class='kw'>=</span> <span class='fu'>make_class_pred</span>(
-      <span class='no'>.pred_bobcat</span>, <span class='no'>.pred_coyote</span>, <span class='no'>.pred_gray_fox</span>,
-      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='no'>Species</span>),
-      <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>.5</span>
+    .class_pred = <span class='fu'>make_class_pred</span>(
+      <span class='kw'>.pred_bobcat</span>, <span class='kw'>.pred_coyote</span>, <span class='kw'>.pred_gray_fox</span>,
+      levels = <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='kw'>Species</span>),
+      min_prob = <span class='fl'>.5</span>
     )
   )</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 110 x 5</span><span>
 #&gt;    Species  .pred_bobcat .pred_coyote .pred_gray_fox .class_pred
@@ -413,8 +413,7 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
 #&gt; </span><span style='color: #555555;'> 8</span><span> bobcat         0.898        0.051</span><span style='text-decoration: underline;'>7</span><span>         0.050</span><span style='text-decoration: underline;'>0</span><span>      bobcat
 #&gt; </span><span style='color: #555555;'> 9</span><span> bobcat         0.771        0.229          0           bobcat
 #&gt; </span><span style='color: #555555;'>10</span><span> bobcat         0.623        0.325          0.051</span><span style='text-decoration: underline;'>7</span><span>      bobcat
-#&gt; </span><span style='color: #555555;'># … with 100 more rows</span><span></div><div class='input'>
-</div></span></pre>
+#&gt; </span><span style='color: #555555;'># … with 100 more rows</span><span></div><div class='input'></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
