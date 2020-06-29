@@ -12,6 +12,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{generics}{\code{\link[generics]{as.factor}}, \code{\link[generics]{as.ordered}}}
+  \item{generics}{\code{\link[generics:coercion-factor]{as.factor}}, \code{\link[generics:coercion-factor]{as.ordered}}}
 }}
 
