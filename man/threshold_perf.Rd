@@ -7,7 +7,15 @@
 \usage{
 threshold_perf(.data, ...)
 
-\method{threshold_perf}{data.frame}(.data, truth, estimate, thresholds = NULL, na_rm = TRUE, ...)
+\method{threshold_perf}{data.frame}(
+  .data,
+  truth,
+  estimate,
+  thresholds = NULL,
+  na_rm = TRUE,
+  ...,
+  metrics = NULL
+)
 }
 \arguments{
 \item{.data}{A tibble, potentially grouped.}
@@ -26,6 +34,8 @@ of values between 0.5 and 1.0 are used. \strong{Note}: if this
 argument is used, it must be named.}
 
 \item{na_rm}{A single logical: should missing data be removed?}
+
+\item{metrics}{A \code{\link[yardstick:metric_set]{yardstick::metric_set()}} of class metrics or \code{NULL}.}
 }
 \value{
 A tibble with columns: \code{.threshold}, \code{.estimator}, \code{.metric},
@@ -41,7 +51,7 @@ Note that that the global option \code{yardstick.event_first} will be
 used to determine which level is the event of interest. For more details,
 see the Relevant level section of \code{\link[yardstick:sens]{yardstick::sens()}}.
 
-The currently calculated metrics are:
+By default (when \code{metrics = NULL}) the calculated metrics are:
 \itemize{
 \item \code{\link[yardstick:j_index]{yardstick::j_index()}}
 \item \code{\link[yardstick:sens]{yardstick::sens()}}

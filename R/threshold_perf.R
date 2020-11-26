@@ -8,7 +8,7 @@
 #' used to determine which level is the event of interest. For more details,
 #' see the Relevant level section of [yardstick::sens()].
 #'
-#' The currently calculated metrics are:
+#' By default (when `metrics = NULL`) the calculated metrics are:
 #' - [yardstick::j_index()]
 #' - [yardstick::sens()]
 #' - [yardstick::spec()]
@@ -30,6 +30,8 @@
 #' threshold. If unspecified, a series
 #' of values between 0.5 and 1.0 are used. **Note**: if this
 #' argument is used, it must be named.
+#'
+#' @param metrics A [yardstick::metric_set()] of class metrics or `NULL`.
 #'
 #' @return A tibble with columns: `.threshold`, `.estimator`, `.metric`,
 #' `.estimate` and any existing groups.
@@ -89,10 +91,32 @@ threshold_perf.data.frame <- function(.data,
                                       estimate,
                                       thresholds = NULL,
                                       na_rm = TRUE,
-                                      ...) {
+                                      ...,
+                                      metrics = NULL) {
 
   if (is.null(thresholds)) {
     thresholds <- seq(0.5, 1, length = 21)
+  }
+
+  if (is.null(metrics)) {
+    metrics <- two_class
+    compute_distance_metric <- TRUE
+  } else {
+    # Verify that `metrics` is an appropriate metric set
+    is_numeric_metric_set <- inherits(metrics, "numeric_metric_set")
+    is_class_prob_metric_set <- inherits(metrics, "class_prob_metric_set")
+
+    if (!is_numeric_metric_set && !is_class_prob_metric_set) {
+      rlang::abort("The `metrics` argument should be the results of [yardstick::metric_set()].")
+    }
+
+    is_class_metric_set <- all(sapply(attr(metrics, "metrics"), inherits, "class_metric"))
+
+    if (!is_class_metric_set) {
+      rlang::abort("The `metrics` argument must be a set of class metrics.")
+    }
+
+    compute_distance_metric <- FALSE
   }
 
   nms   <- names(.data)
@@ -154,23 +178,25 @@ threshold_perf.data.frame <- function(.data,
   }
 
   .data_metrics <- .data %>%
-    two_class(truth, estimate = alt_pred)
+    metrics(truth, estimate = alt_pred)
 
-  # Create the `distance` metric data frame
-  # and add it on
-  sens_vec <- .data_metrics %>%
-    dplyr::filter(.metric == "sens") %>%
-    dplyr::pull(.estimate)
+  if(compute_distance_metric == TRUE) {
+    # Create the `distance` metric data frame
+    # and add it on
+    sens_vec <- .data_metrics %>%
+      dplyr::filter(.metric == "sens") %>%
+      dplyr::pull(.estimate)
 
-  dist <- .data_metrics %>%
-    dplyr::filter(.metric == "spec") %>%
-    dplyr::mutate(
-      .metric = "distance",
-      # .estimate is spec currently. this recodes as distance
-      .estimate = (1 - sens_vec) ^ 2 + (1 - .estimate) ^ 2
-    )
+    dist <- .data_metrics %>%
+      dplyr::filter(.metric == "spec") %>%
+      dplyr::mutate(
+        .metric = "distance",
+        # .estimate is spec currently. this recodes as distance
+        .estimate = (1 - sens_vec) ^ 2 + (1 - .estimate) ^ 2
+      )
 
-  .data_metrics <- dplyr::bind_rows(.data_metrics, dist)
+    .data_metrics <- dplyr::bind_rows(.data_metrics, dist)
+  }
 
   .data_metrics
 }
