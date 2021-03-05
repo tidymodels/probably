@@ -69,9 +69,15 @@ and finding their locations." />
   gtag('config', 'UA-115082821-1');
 </script>
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -95,12 +101,6 @@ and finding their locations." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -123,7 +123,7 @@ and finding their locations." />
 </li>
         <li>
   <a href="https://github.com/tidymodels/probably/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -150,11 +150,11 @@ and finding their locations." />
 and finding their locations.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>is_equivocal</span>(<span class='kw'>x</span>)
+    <pre class="usage"><span class='fu'>is_equivocal</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>which_equivocal</span>(<span class='kw'>x</span>)
+<span class='fu'>which_equivocal</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
 
-<span class='fu'>any_equivocal</span>(<span class='kw'>x</span>)</pre>
+<span class='fu'>any_equivocal</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -175,11 +175,15 @@ of the equivocal values.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'>class_pred</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>), which = <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>2</span>, <span class='fl'>5</span>))
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='class_pred.html'>class_pred</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>)</span>, which <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>2</span>, <span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'>is_equivocal</span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt;  [1] FALSE  TRUE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE</div><div class='input'>
-<span class='fu'>which_equivocal</span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; [1] 2 5</div><div class='input'>
-<span class='fu'>any_equivocal</span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'></div></pre>
+<span class='fu'>is_equivocal</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt;  [1] FALSE  TRUE FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE</div><div class='input'>
+<span class='fu'>which_equivocal</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] 2 5</div><div class='input'>
+<span class='fu'>any_equivocal</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -206,6 +210,8 @@ of the equivocal values.</p>
 
   
 
+
+  
 
   </body>
 </html>

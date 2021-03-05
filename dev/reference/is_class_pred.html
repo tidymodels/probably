@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Test if an object inherits from <code>class_pred</code> — is_class_pred • probably</title>
+<title>Test if an object inherits from class_pred — is_class_pred • probably</title>
 
 
 <!-- jquery -->
@@ -42,7 +42,7 @@
 
 
 
-<meta property="og:title" content="Test if an object inherits from <code>class_pred</code> — is_class_pred" />
+<meta property="og:title" content="Test if an object inherits from class_pred — is_class_pred" />
 <meta property="og:description" content="is_class_pred() checks if an object is a class_pred object." />
 <meta name="twitter:card" content="summary" />
 
@@ -68,9 +68,15 @@
   gtag('config', 'UA-115082821-1');
 </script>
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -94,12 +100,6 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -122,7 +122,7 @@
 </li>
         <li>
   <a href="https://github.com/tidymodels/probably/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -148,7 +148,7 @@
     <p><code>is_class_pred()</code> checks if an object is a <code>class_pred</code> object.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>is_class_pred</span>(<span class='kw'>x</span>)</pre>
+    <pre class="usage"><span class='fu'>is_class_pred</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -162,9 +162,11 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='kw'>x</span> <span class='op'>&lt;-</span> <span class='fu'>class_pred</span>(<span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>))
+<span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='class_pred.html'>class_pred</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'>is_class_pred</span>(<span class='kw'>x</span>)</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'></div></pre>
+<span class='fu'>is_class_pred</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] TRUE</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -191,6 +193,8 @@
 
   
 
+
+  
 
   </body>
 </html>
