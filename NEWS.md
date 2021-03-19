@@ -1,5 +1,7 @@
 # probably (development version)
 
+* Re-licensed package from GPL-2 to MIT. All copyright holders are RStudio employees and give consent.
+
 # probably 0.0.6
 
 * `class_pred` objects are now comparable and will be ordered by their levels.
