@@ -8,7 +8,7 @@ Authors@R: c(
     person("RStudio", role = "cph"))
 URL: https://github.com/tidymodels/probably/, https://probably.tidymodels.org
 BugReports: https://github.com/tidymodels/probably/issues
-License: GPL-2
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
