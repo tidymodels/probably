@@ -6,19 +6,19 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Changelog • probably</title>
+<title>License • probably</title>
 
 
 <!-- jquery -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 
 <!-- Bootstrap -->
-<link href="../tidyverse.css" rel="stylesheet">
+<link href="tidyverse.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
-<link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script>
+<link rel="stylesheet" href="bootstrap-toc.css">
+<script src="bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
@@ -32,17 +32,17 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
-<link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script>
-<link href="../tidyverse-2.css" rel="stylesheet">
+<link href="pkgdown.css" rel="stylesheet">
+<script src="pkgdown.js"></script>
+<link href="tidyverse-2.css" rel="stylesheet">
 
 <!--optional theme-->
-<link href="../.css" rel="stylesheet">
+<link href=".css" rel="stylesheet">
 
 
 
 
-<meta property="og:title" content="Changelog" />
+<meta property="og:title" content="License" />
 
 
 <meta name="robots" content="noindex">
@@ -75,7 +75,7 @@
   <body data-spy="scroll" data-target="#toc">
     
 
-    <div class="container template-news">
+    <div class="container template-title-body">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -88,7 +88,7 @@
       </button>
 
       <div class="navbar-brand-container">
-        <a class="navbar-brand" href="../index.html">probably</a>
+        <a class="navbar-brand" href="index.html">probably</a>
         <div class="info hidden-xs hidden-sm">
           <span class="partof">part of <a href="https://tidymodels.org/">tidymodels</a></span>
           <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.6.9000</span>
@@ -98,7 +98,7 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -108,15 +108,15 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/equivocal-zones.html">Equivocal zones</a>
+      <a href="articles/equivocal-zones.html">Equivocal zones</a>
     </li>
     <li>
-      <a href="../articles/where-to-use.html">Where does probably fit in?</a>
+      <a href="articles/where-to-use.html">Where does probably fit in?</a>
     </li>
   </ul>
 </li>
 <li>
-  <a href="../news/index.html">Changelog</a>
+  <a href="news/index.html">Changelog</a>
 </li>
         <li>
   <a href="https://github.com/tidymodels/probably/">
@@ -135,84 +135,15 @@
       </header>
 
 <div class="row">
-  <div class="col-md-9 contents">
+  <div class="contents col-md-9">
     <div class="page-header">
-      <h1 data-toc-skip>Changelog <small></small></h1>
-      <small>Source: <a href='https://github.com/tidymodels/probably/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
+      <h1>License</h1>
     </div>
 
-    <div id="probably-development-version" class="section level1">
-<h1 class="page-header" data-toc-text="development version">
-<a href="#probably-development-version" class="anchor"></a>probably (development version)<small> Unreleased </small>
-</h1>
-<ul>
-<li>Re-licensed package from GPL-2 to MIT. All copyright holders are RStudio employees and give consent.</li>
-</ul>
-</div>
-    <div id="probably-006" class="section level1">
-<h1 class="page-header" data-toc-text="0.0.6">
-<a href="#probably-006" class="anchor"></a>probably 0.0.6<small> 2020-06-05 </small>
-</h1>
-<ul>
-<li>
-<code>class_pred</code> objects are now comparable and will be ordered by their levels. Equivocal values are generally considered to be the smallest value when ordering. <code>NA</code> values can be considered smaller if <code>vec_order(na_value = "smallest")</code> is used.</li>
-</ul>
-</div>
-    <div id="probably-005" class="section level1">
-<h1 class="page-header" data-toc-text="0.0.5">
-<a href="#probably-005" class="anchor"></a>probably 0.0.5<small> 2020-05-14 </small>
-</h1>
-<ul>
-<li>Internal cleanup to be more compatible with vctrs 0.3.0.</li>
-</ul>
-</div>
-    <div id="probably-004" class="section level1">
-<h1 class="page-header" data-toc-text="0.0.4">
-<a href="#probably-004" class="anchor"></a>probably 0.0.4<small> 2020-01-13 </small>
-</h1>
-<ul>
-<li><p>Suggest the modeldata package, which is where the <code>lending_club</code> dataset has been moved after being removed from recipes.</p></li>
-<li><p>Use <code><a href="https://testthat.r-lib.org/reference/verify_output.html" class="external-link">testthat::verify_output()</a></code> on a test expecting a specific vctrs error to avoid failure on CRAN if that error changes in the future.</p></li>
-</ul>
-</div>
-    <div id="probably-003" class="section level1">
-<h1 class="page-header" data-toc-text="0.0.3">
-<a href="#probably-003" class="anchor"></a>probably 0.0.3<small> 2019-07-07 </small>
-</h1>
-<ul>
-<li><p>probably has been brought up to date with vctrs 0.2.0. This vctrs update had many function name changes, and required internal refactoring, but there should be minimal external changes.</p></li>
-<li>
-<p>The one user facing change comes with casting from one <code>class_pred</code> object to another <code>class_pred</code>, or to a <code>factor</code>. Where previously a warning would be thrown if <code>x</code> had levels that did not exist in <code>to</code>, an error is now generated. This is consistent with the vctrs behavior when converting from one factor to another.</p>
-<pre><code>x  &lt;- class_pred(factor("a"))
-to &lt;- class_pred(factor("to"))
-vec_cast(x, to)
-#&gt; Error: Lossy cast from &lt;class_pred&gt; to &lt;class_pred&gt;.
-#&gt; Locations: 1</code></pre>
-</li>
-</ul>
-</div>
-    <div id="probably-002" class="section level1">
-<h1 class="page-header" data-toc-text="0.0.2">
-<a href="#probably-002" class="anchor"></a>probably 0.0.2<small> 2019-03-07 </small>
-</h1>
-<div id="bug-fixes" class="section level2">
-<h2 class="hasAnchor">
-<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
-<ul>
-<li><p>A failing test relying on the R 3.6 change to <code><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample()</a></code> has been corrected.</p></li>
-<li><p>An rlang warning in <code><a href="../reference/threshold_perf.html">threshold_perf()</a></code> has been fixed.</p></li>
-<li><p>A small R 3.1 issue with vctrs has been fixed.</p></li>
-</ul>
-</div>
-</div>
-    <div id="probably-001" class="section level1">
-<h1 class="page-header" data-toc-text="0.0.1">
-<a href="#probably-001" class="anchor"></a>probably 0.0.1<small> 2018-12-18 </small>
-</h1>
-<ul>
-<li>First release</li>
-</ul>
-</div>
+<pre>YEAR: 2021
+COPYRIGHT HOLDER: probably authors
+</pre>
+
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -222,6 +153,7 @@ vec_cast(x, to)
   </div>
 
 </div>
+
 
 
       <footer>
