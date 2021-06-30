@@ -37,7 +37,7 @@
 <link href="../tidyverse-2.css" rel="stylesheet">
 
 <!--optional theme-->
-<link href="../.css" rel="stylesheet">
+<link href="../tidymodels.css" rel="stylesheet">
 
 
 
@@ -70,9 +70,15 @@ of the probability threshold and any existing groups." />
   gtag('config', 'UA-115082821-1');
 </script>
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -89,19 +95,13 @@ of the probability threshold and any existing groups." />
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info hidden-xs hidden-sm">
           <span class="partof">part of <a href="https://tidymodels.org/">tidymodels</a></span>
-          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6.9000</span>
         </div>
       </div>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -124,7 +124,7 @@ of the probability threshold and any existing groups." />
 </li>
         <li>
   <a href="https://github.com/tidymodels/probably/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -152,10 +152,10 @@ and determine performance characteristics across different values
 of the probability threshold and any existing groups.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>threshold_perf</span>(<span class='no'>.data</span>, <span class='no'>...</span>)
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>threshold_perf</span><span class='op'>(</span><span class='va'>.data</span>, <span class='va'>...</span><span class='op'>)</span>
 
 <span class='co'># S3 method for data.frame</span>
-<span class='fu'>threshold_perf</span>(<span class='no'>.data</span>, <span class='no'>truth</span>, <span class='no'>estimate</span>, <span class='kw'>thresholds</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>na_rm</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='no'>...</span>)</pre>
+<span class='fu'>threshold_perf</span><span class='op'>(</span><span class='va'>.data</span>, <span class='va'>truth</span>, <span class='va'>estimate</span>, thresholds <span class='op'>=</span> <span class='cn'>NULL</span>, na_rm <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -199,115 +199,124 @@ argument is used, it must be named.</p></td>
 
     <p>Note that that the global option <code>yardstick.event_first</code> will be
 used to determine which level is the event of interest. For more details,
-see the Relevant level section of <code><a href='https://rdrr.io/pkg/yardstick/man/sens.html'>yardstick::sens()</a></code>.</p>
+see the Relevant level section of <code><a href='https://yardstick.tidymodels.org/reference/sens.html'>yardstick::sens()</a></code>.</p>
 <p>The currently calculated metrics are:</p><ul>
-<li><p><code><a href='https://rdrr.io/pkg/yardstick/man/j_index.html'>yardstick::j_index()</a></code></p></li>
-<li><p><code><a href='https://rdrr.io/pkg/yardstick/man/sens.html'>yardstick::sens()</a></code></p></li>
-<li><p><code><a href='https://rdrr.io/pkg/yardstick/man/spec.html'>yardstick::spec()</a></code></p></li>
+<li><p><code><a href='https://yardstick.tidymodels.org/reference/j_index.html'>yardstick::j_index()</a></code></p></li>
+<li><p><code><a href='https://yardstick.tidymodels.org/reference/sens.html'>yardstick::sens()</a></code></p></li>
+<li><p><code><a href='https://yardstick.tidymodels.org/reference/spec.html'>yardstick::spec()</a></code></p></li>
 <li><p><code>distance = (1 - sens) ^ 2 + (1 - spec) ^ 2</code></p></li>
 </ul>
 
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>dplyr</span>)
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"segment_logistic"</span>)
-
-<span class='co'># Set the threshold to 0.6</span>
-<span class='co'># &gt; 0.6 = good</span>
-<span class='co'># &lt; 0.6 = poor</span>
-<span class='fu'>threshold_perf</span>(<span class='no'>segment_logistic</span>, <span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='kw'>thresholds</span> <span class='kw'>=</span> <span class='fl'>0.6</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 4 x 4</span><span>
-#&gt;   .threshold .metric  .estimator .estimate
-#&gt;        </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span>        0.6 sens     binary         0.639
-#&gt; </span><span style='color: #555555;'>2</span><span>        0.6 spec     binary         0.869
-#&gt; </span><span style='color: #555555;'>3</span><span>        0.6 j_index  binary         0.508
-#&gt; </span><span style='color: #555555;'>4</span><span>        0.6 distance binary         0.148</div><div class='input'>
-<span class='co'># Set the threshold to multiple values</span>
-<span class='no'>thresholds</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span>(<span class='fl'>0.5</span>, <span class='fl'>0.9</span>, <span class='kw'>by</span> <span class='kw'>=</span> <span class='fl'>0.1</span>)
-
-<span class='no'>segment_logistic</span> <span class='kw'>%&gt;%</span>
-  <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 20 x 4</span><span>
-#&gt;    .threshold .metric  .estimator .estimate
-#&gt;         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>        0.5 sens     binary         0.714
-#&gt; </span><span style='color: #555555;'> 2</span><span>        0.6 sens     binary         0.639
-#&gt; </span><span style='color: #555555;'> 3</span><span>        0.7 sens     binary         0.561
-#&gt; </span><span style='color: #555555;'> 4</span><span>        0.8 sens     binary         0.451
-#&gt; </span><span style='color: #555555;'> 5</span><span>        0.9 sens     binary         0.249
-#&gt; </span><span style='color: #555555;'> 6</span><span>        0.5 spec     binary         0.825
-#&gt; </span><span style='color: #555555;'> 7</span><span>        0.6 spec     binary         0.869
-#&gt; </span><span style='color: #555555;'> 8</span><span>        0.7 spec     binary         0.911
-#&gt; </span><span style='color: #555555;'> 9</span><span>        0.8 spec     binary         0.937
-#&gt; </span><span style='color: #555555;'>10</span><span>        0.9 spec     binary         0.977
-#&gt; </span><span style='color: #555555;'>11</span><span>        0.5 j_index  binary         0.539
-#&gt; </span><span style='color: #555555;'>12</span><span>        0.6 j_index  binary         0.508
-#&gt; </span><span style='color: #555555;'>13</span><span>        0.7 j_index  binary         0.472
-#&gt; </span><span style='color: #555555;'>14</span><span>        0.8 j_index  binary         0.388
-#&gt; </span><span style='color: #555555;'>15</span><span>        0.9 j_index  binary         0.226
-#&gt; </span><span style='color: #555555;'>16</span><span>        0.5 distance binary         0.112
-#&gt; </span><span style='color: #555555;'>17</span><span>        0.6 distance binary         0.148
-#&gt; </span><span style='color: #555555;'>18</span><span>        0.7 distance binary         0.201
-#&gt; </span><span style='color: #555555;'>19</span><span>        0.8 distance binary         0.306
-#&gt; </span><span style='color: #555555;'>20</span><span>        0.9 distance binary         0.565</div><div class='input'>
-<span class='co'># ---------------------------------------------------------------------------</span>
-
-<span class='co'># It works with grouped data frames as well</span>
-<span class='co'># Let's mock some resampled data</span>
-<span class='no'>resamples</span> <span class='kw'>&lt;-</span> <span class='fl'>5</span>
-
-<span class='no'>mock_resamples</span> <span class='kw'>&lt;-</span> <span class='no'>resamples</span> <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span>(
-    <span class='kw'>expr</span> <span class='kw'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/sample_n.html'>sample_n</a></span>(<span class='no'>segment_logistic</span>, <span class='fl'>100</span>, <span class='kw'>replace</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>),
-    <span class='kw'>simplify</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>
-  ) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span>(<span class='kw'>.id</span> <span class='kw'>=</span> <span class='st'>"resample"</span>)
-
-<span class='no'>resampled_threshold_perf</span> <span class='kw'>&lt;-</span> <span class='no'>mock_resamples</span> <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span>(<span class='no'>resample</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'>threshold_perf</span>(<span class='no'>Class</span>, <span class='no'>.pred_good</span>, <span class='no'>thresholds</span>)
-
-<span class='no'>resampled_threshold_perf</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 100 x 5</span><span>
-#&gt;    resample .threshold .metric .estimator .estimate
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> 1               0.5 sens    binary         0.667
-#&gt; </span><span style='color: #555555;'> 2</span><span> 1               0.6 sens    binary         0.593
-#&gt; </span><span style='color: #555555;'> 3</span><span> 1               0.7 sens    binary         0.444
-#&gt; </span><span style='color: #555555;'> 4</span><span> 1               0.8 sens    binary         0.333
-#&gt; </span><span style='color: #555555;'> 5</span><span> 1               0.9 sens    binary         0.185
-#&gt; </span><span style='color: #555555;'> 6</span><span> 2               0.5 sens    binary         0.821
-#&gt; </span><span style='color: #555555;'> 7</span><span> 2               0.6 sens    binary         0.75 
-#&gt; </span><span style='color: #555555;'> 8</span><span> 2               0.7 sens    binary         0.679
-#&gt; </span><span style='color: #555555;'> 9</span><span> 2               0.8 sens    binary         0.5  
-#&gt; </span><span style='color: #555555;'>10</span><span> 2               0.9 sens    binary         0.214
-#&gt; </span><span style='color: #555555;'># … with 90 more rows</span><span></div><div class='input'>
-<span class='co'># Average over the resamples</span>
-<span class='no'>resampled_threshold_perf</span> <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span>(<span class='no'>.metric</span>, <span class='no'>.threshold</span>) <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span>(<span class='kw'>.estimate</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>.estimate</span>))</div><div class='output co'>#&gt; <span class='message'>`summarise()` regrouping output by '.metric' (override with `.groups` argument)</span></div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 20 x 3</span><span>
-#&gt; </span><span style='color: #555555;'># Groups:   .metric [4]</span><span>
-#&gt;    .metric  .threshold .estimate
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> distance        0.5     0.117
-#&gt; </span><span style='color: #555555;'> 2</span><span> distance        0.6     0.139
-#&gt; </span><span style='color: #555555;'> 3</span><span> distance        0.7     0.194
-#&gt; </span><span style='color: #555555;'> 4</span><span> distance        0.8     0.292
-#&gt; </span><span style='color: #555555;'> 5</span><span> distance        0.9     0.538
-#&gt; </span><span style='color: #555555;'> 6</span><span> j_index         0.5     0.541
-#&gt; </span><span style='color: #555555;'> 7</span><span> j_index         0.6     0.529
-#&gt; </span><span style='color: #555555;'> 8</span><span> j_index         0.7     0.499
-#&gt; </span><span style='color: #555555;'> 9</span><span> j_index         0.8     0.415
-#&gt; </span><span style='color: #555555;'>10</span><span> j_index         0.9     0.254
-#&gt; </span><span style='color: #555555;'>11</span><span> sens            0.5     0.723
-#&gt; </span><span style='color: #555555;'>12</span><span> sens            0.6     0.656
-#&gt; </span><span style='color: #555555;'>13</span><span> sens            0.7     0.575
-#&gt; </span><span style='color: #555555;'>14</span><span> sens            0.8     0.468
-#&gt; </span><span style='color: #555555;'>15</span><span> sens            0.9     0.270
-#&gt; </span><span style='color: #555555;'>16</span><span> spec            0.5     0.819
-#&gt; </span><span style='color: #555555;'>17</span><span> spec            0.6     0.874
-#&gt; </span><span style='color: #555555;'>18</span><span> spec            0.7     0.924
-#&gt; </span><span style='color: #555555;'>19</span><span> spec            0.8     0.947
-#&gt; </span><span style='color: #555555;'>20</span><span> spec            0.9     0.985</div><div class='input'>
-</div></span></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"segment_logistic"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Set the threshold to 0.6</span></span>
+<span class='r-in'><span class='co'># &gt; 0.6 = good</span></span>
+<span class='r-in'><span class='co'># &lt; 0.6 = poor</span></span>
+<span class='r-in'><span class='fu'>threshold_perf</span><span class='op'>(</span><span class='va'>segment_logistic</span>, <span class='va'>Class</span>, <span class='va'>.pred_good</span>, thresholds <span class='op'>=</span> <span class='fl'>0.6</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 4 x 4</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   .threshold .metric  .estimator .estimate</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>1</span>        0.6 sens     binary         0.639</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>2</span>        0.6 spec     binary         0.869</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>3</span>        0.6 j_index  binary         0.508</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>4</span>        0.6 distance binary         0.148</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Set the threshold to multiple values</span></span>
+<span class='r-in'><span class='va'>thresholds</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/seq.html'>seq</a></span><span class='op'>(</span><span class='fl'>0.5</span>, <span class='fl'>0.9</span>, by <span class='op'>=</span> <span class='fl'>0.1</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>segment_logistic</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'>threshold_perf</span><span class='op'>(</span><span class='va'>Class</span>, <span class='va'>.pred_good</span>, <span class='va'>thresholds</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 20 x 4</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    .threshold .metric  .estimator .estimate</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span>        0.5 sens     binary         0.714</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span>        0.6 sens     binary         0.639</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span>        0.7 sens     binary         0.561</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span>        0.8 sens     binary         0.451</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span>        0.9 sens     binary         0.249</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span>        0.5 spec     binary         0.825</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span>        0.6 spec     binary         0.869</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span>        0.7 spec     binary         0.911</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span>        0.8 spec     binary         0.937</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span>        0.9 spec     binary         0.977</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>11</span>        0.5 j_index  binary         0.539</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>12</span>        0.6 j_index  binary         0.508</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>13</span>        0.7 j_index  binary         0.472</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>14</span>        0.8 j_index  binary         0.388</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>15</span>        0.9 j_index  binary         0.226</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>16</span>        0.5 distance binary         0.112</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>17</span>        0.6 distance binary         0.148</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>18</span>        0.7 distance binary         0.201</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>19</span>        0.8 distance binary         0.306</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>20</span>        0.9 distance binary         0.565</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># ---------------------------------------------------------------------------</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># It works with grouped data frames as well</span></span>
+<span class='r-in'><span class='co'># Let's mock some resampled data</span></span>
+<span class='r-in'><span class='va'>resamples</span> <span class='op'>&lt;-</span> <span class='fl'>5</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>mock_resamples</span> <span class='op'>&lt;-</span> <span class='va'>resamples</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>replicate</a></span><span class='op'>(</span></span>
+<span class='r-in'>    expr <span class='op'>=</span> <span class='fu'><a href='https://dplyr.tidyverse.org/reference/sample_n.html'>sample_n</a></span><span class='op'>(</span><span class='va'>segment_logistic</span>, <span class='fl'>100</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>,</span>
+<span class='r-in'>    simplify <span class='op'>=</span> <span class='cn'>FALSE</span></span>
+<span class='r-in'>  <span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span><span class='op'>(</span>.id <span class='op'>=</span> <span class='st'>"resample"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>resampled_threshold_perf</span> <span class='op'>&lt;-</span> <span class='va'>mock_resamples</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>resample</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'>threshold_perf</span><span class='op'>(</span><span class='va'>Class</span>, <span class='va'>.pred_good</span>, <span class='va'>thresholds</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>resampled_threshold_perf</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 100 x 5</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    resample .threshold .metric .estimator .estimate</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> 1               0.5 sens    binary         0.655</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> 1               0.6 sens    binary         0.586</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> 1               0.7 sens    binary         0.448</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> 1               0.8 sens    binary         0.379</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> 1               0.9 sens    binary         0.207</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> 2               0.5 sens    binary         0.852</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> 2               0.6 sens    binary         0.778</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> 2               0.7 sens    binary         0.704</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> 2               0.8 sens    binary         0.519</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> 2               0.9 sens    binary         0.222</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 90 more rows</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Average over the resamples</span></span>
+<span class='r-in'><span class='va'>resampled_threshold_perf</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/group_by.html'>group_by</a></span><span class='op'>(</span><span class='va'>.metric</span>, <span class='va'>.threshold</span><span class='op'>)</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/summarise.html'>summarise</a></span><span class='op'>(</span>.estimate <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span><span class='op'>(</span><span class='va'>.estimate</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> `summarise()` has grouped output by '.metric'. You can override using the `.groups` argument.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 20 x 3</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># Groups:   .metric [4]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    .metric  .threshold .estimate</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> distance        0.5     0.113</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> distance        0.6     0.135</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> distance        0.7     0.188</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> distance        0.8     0.278</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> distance        0.9     0.530</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> j_index         0.5     0.551</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> j_index         0.6     0.537</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> j_index         0.7     0.506</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> j_index         0.8     0.425</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> j_index         0.9     0.259</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>11</span> sens            0.5     0.731</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>12</span> sens            0.6     0.664</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>13</span> sens            0.7     0.583</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>14</span> sens            0.8     0.479</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>15</span> sens            0.9     0.275</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>16</span> spec            0.5     0.820</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>17</span> spec            0.6     0.872</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>18</span> spec            0.7     0.923</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>19</span> spec            0.8     0.946</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>20</span> spec            0.9     0.985</span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -334,6 +343,8 @@ see the Relevant level section of <code><a href='https://rdrr.io/pkg/yardstick/m
 
   
 
+
+  
 
   </body>
 </html>

@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://probably.tidymodels.org/404.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/CODE_OF_CONDUCT.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/articles/equivocal-zones.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/articles/where-to-use.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/authors.html</loc>
+  </url>
+  <url>
     <loc>https://probably.tidymodels.org/index.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/news/index.html</loc>
   </url>
   <url>
     <loc>https://probably.tidymodels.org/reference/append_class_pred.html</loc>
@@ -11,6 +38,9 @@
   </url>
   <url>
     <loc>https://probably.tidymodels.org/reference/class_pred.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/reference/index.html</loc>
   </url>
   <url>
     <loc>https://probably.tidymodels.org/reference/is_class_pred.html</loc>
@@ -41,11 +71,5 @@
   </url>
   <url>
     <loc>https://probably.tidymodels.org/reference/threshold_perf.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/articles/equivocal-zones.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/articles/where-to-use.html</loc>
   </url>
 </urlset>

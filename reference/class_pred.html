@@ -37,7 +37,7 @@
 <link href="../tidyverse-2.css" rel="stylesheet">
 
 <!--optional theme-->
-<link href="../.css" rel="stylesheet">
+<link href="../tidymodels.css" rel="stylesheet">
 
 
 
@@ -70,9 +70,15 @@ as equivocal." />
   gtag('config', 'UA-115082821-1');
 </script>
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -89,19 +95,13 @@ as equivocal." />
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info hidden-xs hidden-sm">
           <span class="partof">part of <a href="https://tidymodels.org/">tidymodels</a></span>
-          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6.9000</span>
         </div>
       </div>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -124,7 +124,7 @@ as equivocal." />
 </li>
         <li>
   <a href="https://github.com/tidymodels/probably/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -152,7 +152,7 @@ factor. You can optionally specify values of the factor to be set
 as <em>equivocal</em>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>class_pred</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(), <span class='kw'>which</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span>(), <span class='kw'>equivocal</span> <span class='kw'>=</span> <span class='st'>"[EQ]"</span>)</pre>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>class_pred</span><span class='op'>(</span>x <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='op'>)</span>, which <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/integer.html'>integer</a></span><span class='op'>(</span><span class='op'>)</span>, equivocal <span class='op'>=</span> <span class='st'>"[EQ]"</span><span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,23 +179,29 @@ when printing.</p></td>
 exclude from performance calculations or other metrics.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='no'>x</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span>(<span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Yes"</span>, <span class='st'>"No"</span>, <span class='st'>"Yes"</span>, <span class='st'>"Yes"</span>))
-
-<span class='co'># Create a class_pred object from a factor</span>
-<span class='fu'>class_pred</span>(<span class='no'>x</span>)</div><div class='output co'>#&gt; [1] Yes No  Yes Yes
-#&gt; Levels: No Yes
-#&gt; Reportable: 100%</div><div class='input'>
-<span class='co'># Say you aren't sure about that 2nd "Yes" value. You could mark it as</span>
-<span class='co'># equivocal.</span>
-<span class='fu'>class_pred</span>(<span class='no'>x</span>, <span class='kw'>which</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div><div class='output co'>#&gt; [1] Yes  No   [EQ] Yes 
-#&gt; Levels: No Yes
-#&gt; Reportable: 75%</div><div class='input'>
-<span class='co'># Maybe you want a different equivocal label</span>
-<span class='fu'>class_pred</span>(<span class='no'>x</span>, <span class='kw'>which</span> <span class='kw'>=</span> <span class='fl'>3</span>, <span class='kw'>equivocal</span> <span class='kw'>=</span> <span class='st'>"eq_value"</span>)</div><div class='output co'>#&gt; [1] Yes      No       eq_value Yes     
-#&gt; Levels: No Yes
-#&gt; Reportable: 75%</div><div class='input'>
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/factor.html'>factor</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Yes"</span>, <span class='st'>"No"</span>, <span class='st'>"Yes"</span>, <span class='st'>"Yes"</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Create a class_pred object from a factor</span></span>
+<span class='r-in'><span class='fu'>class_pred</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] Yes No  Yes Yes</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: No Yes</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Reportable: 100%</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Say you aren't sure about that 2nd "Yes" value. You could mark it as</span></span>
+<span class='r-in'><span class='co'># equivocal.</span></span>
+<span class='r-in'><span class='fu'>class_pred</span><span class='op'>(</span><span class='va'>x</span>, which <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] Yes  No   [EQ] Yes </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: No Yes</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Reportable: 75%</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Maybe you want a different equivocal label</span></span>
+<span class='r-in'><span class='fu'>class_pred</span><span class='op'>(</span><span class='va'>x</span>, which <span class='op'>=</span> <span class='fl'>3</span>, equivocal <span class='op'>=</span> <span class='st'>"eq_value"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] Yes      No       eq_value Yes     </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: No Yes</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Reportable: 75%</span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -222,6 +228,8 @@ exclude from performance calculations or other metrics.</p>
 
   
 
+
+  
 
   </body>
 </html>

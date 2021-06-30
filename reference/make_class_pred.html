@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create a <code>class_pred</code> vector from class probabilities — make_class_pred • probably</title>
+<title>Create a class_pred vector from class probabilities — make_class_pred • probably</title>
 
 
 <!-- jquery -->
@@ -37,12 +37,12 @@
 <link href="../tidyverse-2.css" rel="stylesheet">
 
 <!--optional theme-->
-<link href="../.css" rel="stylesheet">
+<link href="../tidymodels.css" rel="stylesheet">
 
 
 
 
-<meta property="og:title" content="Create a <code>class_pred</code> vector from class probabilities — make_class_pred" />
+<meta property="og:title" content="Create a class_pred vector from class probabilities — make_class_pred" />
 <meta property="og:description" content="These functions can be used to convert class probability estimates to
 class_pred objects with an optional equivocal zone." />
 <meta name="twitter:card" content="summary" />
@@ -69,9 +69,15 @@ class_pred objects with an optional equivocal zone." />
   gtag('config', 'UA-115082821-1');
 </script>
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -88,19 +94,13 @@ class_pred objects with an optional equivocal zone." />
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info hidden-xs hidden-sm">
           <span class="partof">part of <a href="https://tidymodels.org/">tidymodels</a></span>
-          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6</span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6.9000</span>
         </div>
       </div>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -123,7 +123,7 @@ class_pred objects with an optional equivocal zone." />
 </li>
         <li>
   <a href="https://github.com/tidymodels/probably/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -150,15 +150,15 @@ class_pred objects with an optional equivocal zone." />
 <code>class_pred</code> objects with an optional equivocal zone.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>make_class_pred</span>(<span class='no'>...</span>, <span class='no'>levels</span>, <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>1</span>/<span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span>(<span class='no'>levels</span>))
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>make_class_pred</span><span class='op'>(</span><span class='va'>...</span>, <span class='va'>levels</span>, ordered <span class='op'>=</span> <span class='cn'>FALSE</span>, min_prob <span class='op'>=</span> <span class='fl'>1</span><span class='op'>/</span><span class='fu'><a href='https://rdrr.io/r/base/length.html'>length</a></span><span class='op'>(</span><span class='va'>levels</span><span class='op'>)</span><span class='op'>)</span>
 
-<span class='fu'>make_two_class_pred</span>(
-  <span class='no'>estimate</span>,
-  <span class='no'>levels</span>,
-  <span class='kw'>threshold</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>ordered</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)</pre>
+<span class='fu'>make_two_class_pred</span><span class='op'>(</span>
+  <span class='va'>estimate</span>,
+  <span class='va'>levels</span>,
+  threshold <span class='op'>=</span> <span class='fl'>0.5</span>,
+  ordered <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  buffer <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -210,211 +210,219 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
     <p>A vector of class <code><a href='class_pred.html'>class_pred</a></code>.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>dplyr</span>)
-
-<span class='no'>good</span> <span class='kw'>&lt;-</span> <span class='no'>segment_logistic</span>$<span class='no'>.pred_good</span>
-<span class='no'>lvls</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='no'>segment_logistic</span>$<span class='no'>Class</span>)
-
-<span class='co'># Equivocal zone of .5 +/- .15</span>
-<span class='fu'>make_two_class_pred</span>(<span class='no'>good</span>, <span class='no'>lvls</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fl'>0.15</span>)</div><div class='output co'>#&gt;    [1] poor poor good good poor [EQ] poor good poor poor good poor poor good
-#&gt;   [15] poor good poor poor [EQ] poor poor good poor good poor poor good [EQ]
-#&gt;   [29] good good poor poor [EQ] good good poor poor poor poor poor [EQ] [EQ]
-#&gt;   [43] poor poor poor poor poor good good poor [EQ] poor poor [EQ] poor [EQ]
-#&gt;   [57] poor poor [EQ] poor poor good good poor poor [EQ] good poor [EQ] poor
-#&gt;   [71] good poor [EQ] poor good poor good [EQ] poor [EQ] good poor poor poor
-#&gt;   [85] good good poor good poor poor poor poor [EQ] good poor [EQ] good [EQ]
-#&gt;   [99] [EQ] poor good [EQ] poor poor good good good [EQ] good poor poor poor
-#&gt;  [113] good poor [EQ] poor [EQ] poor good good poor good poor [EQ] poor poor
-#&gt;  [127] good good poor poor [EQ] [EQ] poor good good poor [EQ] poor [EQ] [EQ]
-#&gt;  [141] poor [EQ] [EQ] poor [EQ] poor good [EQ] poor poor poor good good poor
-#&gt;  [155] poor [EQ] good poor poor [EQ] good poor good good poor poor poor [EQ]
-#&gt;  [169] [EQ] poor good good poor poor [EQ] good poor poor poor poor [EQ] good
-#&gt;  [183] poor poor poor [EQ] poor good good poor good [EQ] poor good poor poor
-#&gt;  [197] good poor poor poor good good [EQ] poor poor poor poor poor [EQ] poor
-#&gt;  [211] good good poor [EQ] poor poor poor good poor good [EQ] poor good good
-#&gt;  [225] good poor [EQ] poor poor good poor poor poor good good good poor poor
-#&gt;  [239] poor [EQ] [EQ] poor poor poor [EQ] poor [EQ] good poor poor poor good
-#&gt;  [253] poor poor good [EQ] good good poor [EQ] poor good good [EQ] [EQ] good
-#&gt;  [267] poor poor poor poor [EQ] poor poor poor poor [EQ] good poor [EQ] [EQ]
-#&gt;  [281] poor poor poor good [EQ] poor [EQ] good poor [EQ] poor good [EQ] good
-#&gt;  [295] poor poor poor good poor good [EQ] poor poor poor good poor poor poor
-#&gt;  [309] [EQ] good poor poor good poor good poor [EQ] poor poor [EQ] [EQ] poor
-#&gt;  [323] poor poor poor good [EQ] poor poor [EQ] poor poor poor poor poor [EQ]
-#&gt;  [337] good [EQ] poor good poor good [EQ] good poor [EQ] poor poor poor poor
-#&gt;  [351] poor good good [EQ] [EQ] poor good poor good poor poor poor poor good
-#&gt;  [365] poor poor poor poor poor poor poor [EQ] poor poor poor poor poor poor
-#&gt;  [379] poor good poor poor poor poor poor poor [EQ] good poor poor poor [EQ]
-#&gt;  [393] [EQ] good poor poor poor poor poor poor good [EQ] [EQ] poor poor poor
-#&gt;  [407] poor poor poor poor good good poor poor poor poor poor [EQ] poor poor
-#&gt;  [421] poor good [EQ] good good poor poor poor good good good good poor good
-#&gt;  [435] poor poor poor poor poor poor good [EQ] [EQ] poor good good [EQ] [EQ]
-#&gt;  [449] poor poor good poor poor good poor good poor poor poor good poor poor
-#&gt;  [463] poor poor good poor poor good poor good good good poor good poor good
-#&gt;  [477] good good poor poor good poor poor poor poor poor poor good [EQ] poor
-#&gt;  [491] [EQ] poor poor poor good poor [EQ] poor [EQ] poor poor poor poor poor
-#&gt;  [505] poor good good poor [EQ] [EQ] [EQ] poor poor poor poor good [EQ] good
-#&gt;  [519] poor poor good good poor [EQ] poor poor [EQ] poor good poor poor good
-#&gt;  [533] poor poor poor poor poor good [EQ] poor good good poor poor good poor
-#&gt;  [547] good good poor poor good poor good poor [EQ] poor poor poor poor [EQ]
-#&gt;  [561] good poor good good poor poor poor good good poor poor good [EQ] [EQ]
-#&gt;  [575] poor [EQ] poor poor poor [EQ] poor good poor good good poor poor poor
-#&gt;  [589] poor good [EQ] good poor good [EQ] [EQ] poor poor [EQ] [EQ] poor good
-#&gt;  [603] good good [EQ] good poor poor poor [EQ] poor good poor good [EQ] poor
-#&gt;  [617] poor poor good good poor good poor poor poor poor poor good poor [EQ]
-#&gt;  [631] good [EQ] good poor good poor good poor poor [EQ] [EQ] poor poor poor
-#&gt;  [645] poor poor good good poor poor poor poor poor poor good good poor good
-#&gt;  [659] poor good poor good poor poor poor [EQ] poor poor good poor poor good
-#&gt;  [673] good good poor poor poor [EQ] poor good good [EQ] good poor good poor
-#&gt;  [687] poor poor [EQ] poor poor [EQ] [EQ] good [EQ] poor good poor poor good
-#&gt;  [701] good poor [EQ] poor good poor poor [EQ] [EQ] [EQ] poor good poor good
-#&gt;  [715] good good good poor poor poor good poor good poor poor [EQ] poor poor
-#&gt;  [729] poor poor poor poor [EQ] good good good poor [EQ] poor poor poor good
-#&gt;  [743] poor good good [EQ] poor good poor [EQ] poor poor poor [EQ] good good
-#&gt;  [757] poor poor poor good poor good poor good [EQ] poor good [EQ] poor [EQ]
-#&gt;  [771] good poor good [EQ] poor good poor poor good poor poor good good good
-#&gt;  [785] poor poor poor poor poor good poor [EQ] poor poor poor good [EQ] poor
-#&gt;  [799] good [EQ] [EQ] good poor good poor poor poor poor poor poor poor [EQ]
-#&gt;  [813] poor good poor poor poor poor good poor good good poor poor poor poor
-#&gt;  [827] poor good [EQ] poor good poor poor poor poor poor poor poor [EQ] poor
-#&gt;  [841] poor poor poor poor good good good poor poor poor poor poor poor poor
-#&gt;  [855] poor good [EQ] [EQ] [EQ] poor good [EQ] poor poor poor [EQ] good poor
-#&gt;  [869] good good poor good poor poor good [EQ] [EQ] [EQ] poor poor poor poor
-#&gt;  [883] [EQ] good poor good poor good poor poor poor poor good poor poor poor
-#&gt;  [897] poor poor poor poor poor [EQ] poor poor [EQ] good [EQ] good poor poor
-#&gt;  [911] poor good [EQ] poor good poor poor poor poor good poor poor good good
-#&gt;  [925] poor poor good poor [EQ] poor good poor good good good poor poor good
-#&gt;  [939] good poor poor [EQ] [EQ] poor good poor poor good [EQ] [EQ] poor [EQ]
-#&gt;  [953] poor good [EQ] [EQ] poor good poor poor poor good poor poor poor poor
-#&gt;  [967] good poor poor [EQ] poor poor poor good good poor [EQ] poor poor poor
-#&gt;  [981] good poor poor good poor [EQ] good good good good poor [EQ] poor good
-#&gt;  [995] poor poor poor poor good good good good good poor good [EQ] good poor
-#&gt; [1009] poor good
-#&gt; Levels: good poor
-#&gt; Reportable: 83.2%</div><div class='input'>
-<span class='co'># Equivocal zone of c(.5 - .05, .5 + .15)</span>
-<span class='fu'>make_two_class_pred</span>(<span class='no'>good</span>, <span class='no'>lvls</span>, <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='fl'>0.05</span>, <span class='fl'>0.15</span>))</div><div class='output co'>#&gt;    [1] poor poor good good poor poor poor good poor poor good poor poor good
-#&gt;   [15] poor good poor poor [EQ] poor poor good poor good poor poor good poor
-#&gt;   [29] good good poor poor [EQ] good good poor poor poor poor poor [EQ] poor
-#&gt;   [43] poor poor poor poor poor good good poor [EQ] poor poor poor poor poor
-#&gt;   [57] poor poor [EQ] poor poor good good poor poor poor good poor [EQ] poor
-#&gt;   [71] good poor [EQ] poor good poor good poor poor [EQ] good poor poor poor
-#&gt;   [85] good good poor good poor poor poor poor [EQ] good poor [EQ] good [EQ]
-#&gt;   [99] poor poor good [EQ] poor poor good good good poor good poor poor poor
-#&gt;  [113] good poor poor poor [EQ] poor good good poor good poor [EQ] poor poor
-#&gt;  [127] good good poor poor [EQ] poor poor good good poor [EQ] poor [EQ] [EQ]
-#&gt;  [141] poor poor [EQ] poor [EQ] poor good poor poor poor poor good good poor
-#&gt;  [155] poor poor good poor poor [EQ] good poor good good poor poor poor [EQ]
-#&gt;  [169] poor poor good good poor poor [EQ] good poor poor poor poor [EQ] good
-#&gt;  [183] poor poor poor [EQ] poor good good poor good poor poor good poor poor
-#&gt;  [197] good poor poor poor good good poor poor poor poor poor poor poor poor
-#&gt;  [211] good good poor [EQ] poor poor poor good poor good [EQ] poor good good
-#&gt;  [225] good poor [EQ] poor poor good poor poor poor good good good poor poor
-#&gt;  [239] poor [EQ] poor poor poor poor [EQ] poor poor good poor poor poor good
-#&gt;  [253] poor poor good [EQ] good good poor [EQ] poor good good [EQ] poor good
-#&gt;  [267] poor poor poor poor [EQ] poor poor poor poor [EQ] good poor poor [EQ]
-#&gt;  [281] poor poor poor good [EQ] poor [EQ] good poor poor poor good [EQ] good
-#&gt;  [295] poor poor poor good poor good [EQ] poor poor poor good poor poor poor
-#&gt;  [309] [EQ] good poor poor good poor good poor poor poor poor [EQ] [EQ] poor
-#&gt;  [323] poor poor poor good poor poor poor [EQ] poor poor poor poor poor [EQ]
-#&gt;  [337] good [EQ] poor good poor good poor good poor [EQ] poor poor poor poor
-#&gt;  [351] poor good good poor [EQ] poor good poor good poor poor poor poor good
-#&gt;  [365] poor poor poor poor poor poor poor poor poor poor poor poor poor poor
-#&gt;  [379] poor good poor poor poor poor poor poor [EQ] good poor poor poor [EQ]
-#&gt;  [393] [EQ] good poor poor poor poor poor poor good [EQ] [EQ] poor poor poor
-#&gt;  [407] poor poor poor poor good good poor poor poor poor poor [EQ] poor poor
-#&gt;  [421] poor good [EQ] good good poor poor poor good good good good poor good
-#&gt;  [435] poor poor poor poor poor poor good [EQ] poor poor good good [EQ] [EQ]
-#&gt;  [449] poor poor good poor poor good poor good poor poor poor good poor poor
-#&gt;  [463] poor poor good poor poor good poor good good good poor good poor good
-#&gt;  [477] good good poor poor good poor poor poor poor poor poor good poor poor
-#&gt;  [491] [EQ] poor poor poor good poor poor poor [EQ] poor poor poor poor poor
-#&gt;  [505] poor good good poor [EQ] [EQ] [EQ] poor poor poor poor good poor good
-#&gt;  [519] poor poor good good poor poor poor poor [EQ] poor good poor poor good
-#&gt;  [533] poor poor poor poor poor good poor poor good good poor poor good poor
-#&gt;  [547] good good poor poor good poor good poor poor poor poor poor poor poor
-#&gt;  [561] good poor good good poor poor poor good good poor poor good [EQ] poor
-#&gt;  [575] poor poor poor poor poor poor poor good poor good good poor poor poor
-#&gt;  [589] poor good [EQ] good poor good poor [EQ] poor poor poor [EQ] poor good
-#&gt;  [603] good good [EQ] good poor poor poor poor poor good poor good poor poor
-#&gt;  [617] poor poor good good poor good poor poor poor poor poor good poor poor
-#&gt;  [631] good poor good poor good poor good poor poor [EQ] [EQ] poor poor poor
-#&gt;  [645] poor poor good good poor poor poor poor poor poor good good poor good
-#&gt;  [659] poor good poor good poor poor poor [EQ] poor poor good poor poor good
-#&gt;  [673] good good poor poor poor [EQ] poor good good [EQ] good poor good poor
-#&gt;  [687] poor poor poor poor poor poor [EQ] good [EQ] poor good poor poor good
-#&gt;  [701] good poor poor poor good poor poor [EQ] [EQ] poor poor good poor good
-#&gt;  [715] good good good poor poor poor good poor good poor poor [EQ] poor poor
-#&gt;  [729] poor poor poor poor [EQ] good good good poor poor poor poor poor good
-#&gt;  [743] poor good good poor poor good poor [EQ] poor poor poor [EQ] good good
-#&gt;  [757] poor poor poor good poor good poor good [EQ] poor good [EQ] poor [EQ]
-#&gt;  [771] good poor good [EQ] poor good poor poor good poor poor good good good
-#&gt;  [785] poor poor poor poor poor good poor [EQ] poor poor poor good [EQ] poor
-#&gt;  [799] good poor poor good poor good poor poor poor poor poor poor poor poor
-#&gt;  [813] poor good poor poor poor poor good poor good good poor poor poor poor
-#&gt;  [827] poor good [EQ] poor good poor poor poor poor poor poor poor poor poor
-#&gt;  [841] poor poor poor poor good good good poor poor poor poor poor poor poor
-#&gt;  [855] poor good [EQ] poor [EQ] poor good poor poor poor poor [EQ] good poor
-#&gt;  [869] good good poor good poor poor good [EQ] poor [EQ] poor poor poor poor
-#&gt;  [883] [EQ] good poor good poor good poor poor poor poor good poor poor poor
-#&gt;  [897] poor poor poor poor poor poor poor poor poor good poor good poor poor
-#&gt;  [911] poor good [EQ] poor good poor poor poor poor good poor poor good good
-#&gt;  [925] poor poor good poor [EQ] poor good poor good good good poor poor good
-#&gt;  [939] good poor poor poor poor poor good poor poor good [EQ] poor poor [EQ]
-#&gt;  [953] poor good [EQ] poor poor good poor poor poor good poor poor poor poor
-#&gt;  [967] good poor poor [EQ] poor poor poor good good poor poor poor poor poor
-#&gt;  [981] good poor poor good poor poor good good good good poor [EQ] poor good
-#&gt;  [995] poor poor poor poor good good good good good poor good [EQ] good poor
-#&gt; [1009] poor good
-#&gt; Levels: good poor
-#&gt; Reportable: 89.8%</div><div class='input'>
-<span class='co'># These functions are useful alongside dplyr::mutate()</span>
-<span class='no'>segment_logistic</span> <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
-    <span class='kw'>.class_pred</span> <span class='kw'>=</span> <span class='fu'>make_two_class_pred</span>(
-      <span class='kw'>estimate</span> <span class='kw'>=</span> <span class='no'>.pred_good</span>,
-      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='no'>Class</span>),
-      <span class='kw'>buffer</span> <span class='kw'>=</span> <span class='fl'>0.15</span>
-    )
-  )</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 1,010 x 4</span><span>
-#&gt;    .pred_poor .pred_good Class .class_pred
-#&gt;         </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>      </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;clss_prd&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span>    0.986      0.014</span><span style='text-decoration: underline;'>2</span><span>  poor         poor
-#&gt; </span><span style='color: #555555;'> 2</span><span>    0.897      0.103   poor         poor
-#&gt; </span><span style='color: #555555;'> 3</span><span>    0.118      0.882   good         good
-#&gt; </span><span style='color: #555555;'> 4</span><span>    0.102      0.898   good         good
-#&gt; </span><span style='color: #555555;'> 5</span><span>    0.991      0.009</span><span style='text-decoration: underline;'>14</span><span> poor         poor
-#&gt; </span><span style='color: #555555;'> 6</span><span>    0.633      0.367   good         [EQ]
-#&gt; </span><span style='color: #555555;'> 7</span><span>    0.770      0.230   good         poor
-#&gt; </span><span style='color: #555555;'> 8</span><span>    0.008</span><span style='text-decoration: underline;'>42</span><span>    0.992   good         good
-#&gt; </span><span style='color: #555555;'> 9</span><span>    0.995      0.004</span><span style='text-decoration: underline;'>58</span><span> poor         poor
-#&gt; </span><span style='color: #555555;'>10</span><span>    0.765      0.235   poor         poor
-#&gt; </span><span style='color: #555555;'># … with 1,000 more rows</span><span></div><div class='input'>
-<span class='co'># Multi-class example</span>
-<span class='co'># Note that we provide class probability columns in the same</span>
-<span class='co'># order as the levels</span>
-<span class='no'>species_probs</span> <span class='kw'>%&gt;%</span>
-  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span>(
-    <span class='kw'>.class_pred</span> <span class='kw'>=</span> <span class='fu'>make_class_pred</span>(
-      <span class='no'>.pred_bobcat</span>, <span class='no'>.pred_coyote</span>, <span class='no'>.pred_gray_fox</span>,
-      <span class='kw'>levels</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span>(<span class='no'>Species</span>),
-      <span class='kw'>min_prob</span> <span class='kw'>=</span> <span class='fl'>.5</span>
-    )
-  )</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 110 x 5</span><span>
-#&gt;    Species  .pred_bobcat .pred_coyote .pred_gray_fox .class_pred
-#&gt;    </span><span style='color: #555555;font-style: italic;'>&lt;fct&gt;</span><span>           </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>        </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;clss_prd&gt;</span><span>
-#&gt; </span><span style='color: #555555;'> 1</span><span> gray_fox       0.097</span><span style='text-decoration: underline;'>6</span><span>       0.053</span><span style='text-decoration: underline;'>0</span><span>         0.849     gray_fox
-#&gt; </span><span style='color: #555555;'> 2</span><span> gray_fox       0.155        0.139          0.706     gray_fox
-#&gt; </span><span style='color: #555555;'> 3</span><span> bobcat         0.501        0.088</span><span style='text-decoration: underline;'>0</span><span>         0.411       bobcat
-#&gt; </span><span style='color: #555555;'> 4</span><span> gray_fox       0.256        0              0.744     gray_fox
-#&gt; </span><span style='color: #555555;'> 5</span><span> gray_fox       0.463        0.287          0.250         [EQ]
-#&gt; </span><span style='color: #555555;'> 6</span><span> bobcat         0.811        0              0.189       bobcat
-#&gt; </span><span style='color: #555555;'> 7</span><span> bobcat         0.911        0.088</span><span style='text-decoration: underline;'>8</span><span>         0           bobcat
-#&gt; </span><span style='color: #555555;'> 8</span><span> bobcat         0.898        0.051</span><span style='text-decoration: underline;'>7</span><span>         0.050</span><span style='text-decoration: underline;'>0</span><span>      bobcat
-#&gt; </span><span style='color: #555555;'> 9</span><span> bobcat         0.771        0.229          0           bobcat
-#&gt; </span><span style='color: #555555;'>10</span><span> bobcat         0.623        0.325          0.051</span><span style='text-decoration: underline;'>7</span><span>      bobcat
-#&gt; </span><span style='color: #555555;'># … with 100 more rows</span><span></div><div class='input'>
-</div></span></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://dplyr.tidyverse.org'>dplyr</a></span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='va'>good</span> <span class='op'>&lt;-</span> <span class='va'>segment_logistic</span><span class='op'>$</span><span class='va'>.pred_good</span></span>
+<span class='r-in'><span class='va'>lvls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>segment_logistic</span><span class='op'>$</span><span class='va'>Class</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Equivocal zone of .5 +/- .15</span></span>
+<span class='r-in'><span class='fu'>make_two_class_pred</span><span class='op'>(</span><span class='va'>good</span>, <span class='va'>lvls</span>, buffer <span class='op'>=</span> <span class='fl'>0.15</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [1] poor poor good good poor [EQ] poor good poor poor good poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [15] poor good poor poor [EQ] poor poor good poor good poor poor good [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [29] good good poor poor [EQ] good good poor poor poor poor poor [EQ] [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [43] poor poor poor poor poor good good poor [EQ] poor poor [EQ] poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [57] poor poor [EQ] poor poor good good poor poor [EQ] good poor [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [71] good poor [EQ] poor good poor good [EQ] poor [EQ] good poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [85] good good poor good poor poor poor poor [EQ] good poor [EQ] good [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [99] [EQ] poor good [EQ] poor poor good good good [EQ] good poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [113] good poor [EQ] poor [EQ] poor good good poor good poor [EQ] poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [127] good good poor poor [EQ] [EQ] poor good good poor [EQ] poor [EQ] [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [141] poor [EQ] [EQ] poor [EQ] poor good [EQ] poor poor poor good good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [155] poor [EQ] good poor poor [EQ] good poor good good poor poor poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [169] [EQ] poor good good poor poor [EQ] good poor poor poor poor [EQ] good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [183] poor poor poor [EQ] poor good good poor good [EQ] poor good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [197] good poor poor poor good good [EQ] poor poor poor poor poor [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [211] good good poor [EQ] poor poor poor good poor good [EQ] poor good good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [225] good poor [EQ] poor poor good poor poor poor good good good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [239] poor [EQ] [EQ] poor poor poor [EQ] poor [EQ] good poor poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [253] poor poor good [EQ] good good poor [EQ] poor good good [EQ] [EQ] good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [267] poor poor poor poor [EQ] poor poor poor poor [EQ] good poor [EQ] [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [281] poor poor poor good [EQ] poor [EQ] good poor [EQ] poor good [EQ] good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [295] poor poor poor good poor good [EQ] poor poor poor good poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [309] [EQ] good poor poor good poor good poor [EQ] poor poor [EQ] [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [323] poor poor poor good [EQ] poor poor [EQ] poor poor poor poor poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [337] good [EQ] poor good poor good [EQ] good poor [EQ] poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [351] poor good good [EQ] [EQ] poor good poor good poor poor poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [365] poor poor poor poor poor poor poor [EQ] poor poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [379] poor good poor poor poor poor poor poor [EQ] good poor poor poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [393] [EQ] good poor poor poor poor poor poor good [EQ] [EQ] poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [407] poor poor poor poor good good poor poor poor poor poor [EQ] poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [421] poor good [EQ] good good poor poor poor good good good good poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [435] poor poor poor poor poor poor good [EQ] [EQ] poor good good [EQ] [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [449] poor poor good poor poor good poor good poor poor poor good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [463] poor poor good poor poor good poor good good good poor good poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [477] good good poor poor good poor poor poor poor poor poor good [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [491] [EQ] poor poor poor good poor [EQ] poor [EQ] poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [505] poor good good poor [EQ] [EQ] [EQ] poor poor poor poor good [EQ] good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [519] poor poor good good poor [EQ] poor poor [EQ] poor good poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [533] poor poor poor poor poor good [EQ] poor good good poor poor good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [547] good good poor poor good poor good poor [EQ] poor poor poor poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [561] good poor good good poor poor poor good good poor poor good [EQ] [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [575] poor [EQ] poor poor poor [EQ] poor good poor good good poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [589] poor good [EQ] good poor good [EQ] [EQ] poor poor [EQ] [EQ] poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [603] good good [EQ] good poor poor poor [EQ] poor good poor good [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [617] poor poor good good poor good poor poor poor poor poor good poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [631] good [EQ] good poor good poor good poor poor [EQ] [EQ] poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [645] poor poor good good poor poor poor poor poor poor good good poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [659] poor good poor good poor poor poor [EQ] poor poor good poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [673] good good poor poor poor [EQ] poor good good [EQ] good poor good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [687] poor poor [EQ] poor poor [EQ] [EQ] good [EQ] poor good poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [701] good poor [EQ] poor good poor poor [EQ] [EQ] [EQ] poor good poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [715] good good good poor poor poor good poor good poor poor [EQ] poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [729] poor poor poor poor [EQ] good good good poor [EQ] poor poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [743] poor good good [EQ] poor good poor [EQ] poor poor poor [EQ] good good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [757] poor poor poor good poor good poor good [EQ] poor good [EQ] poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [771] good poor good [EQ] poor good poor poor good poor poor good good good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [785] poor poor poor poor poor good poor [EQ] poor poor poor good [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [799] good [EQ] [EQ] good poor good poor poor poor poor poor poor poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [813] poor good poor poor poor poor good poor good good poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [827] poor good [EQ] poor good poor poor poor poor poor poor poor [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [841] poor poor poor poor good good good poor poor poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [855] poor good [EQ] [EQ] [EQ] poor good [EQ] poor poor poor [EQ] good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [869] good good poor good poor poor good [EQ] [EQ] [EQ] poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [883] [EQ] good poor good poor good poor poor poor poor good poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [897] poor poor poor poor poor [EQ] poor poor [EQ] good [EQ] good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [911] poor good [EQ] poor good poor poor poor poor good poor poor good good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [925] poor poor good poor [EQ] poor good poor good good good poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [939] good poor poor [EQ] [EQ] poor good poor poor good [EQ] [EQ] poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [953] poor good [EQ] [EQ] poor good poor poor poor good poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [967] good poor poor [EQ] poor poor poor good good poor [EQ] poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [981] good poor poor good poor [EQ] good good good good poor [EQ] poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [995] poor poor poor poor good good good good good poor good [EQ] good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1009] poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Reportable: 83.2%</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Equivocal zone of c(.5 - .05, .5 + .15)</span></span>
+<span class='r-in'><span class='fu'>make_two_class_pred</span><span class='op'>(</span><span class='va'>good</span>, <span class='va'>lvls</span>, buffer <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0.05</span>, <span class='fl'>0.15</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    [1] poor poor good good poor poor poor good poor poor good poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [15] poor good poor poor [EQ] poor poor good poor good poor poor good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [29] good good poor poor [EQ] good good poor poor poor poor poor [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [43] poor poor poor poor poor good good poor [EQ] poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [57] poor poor [EQ] poor poor good good poor poor poor good poor [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [71] good poor [EQ] poor good poor good poor poor [EQ] good poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [85] good good poor good poor poor poor poor [EQ] good poor [EQ] good [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   [99] poor poor good [EQ] poor poor good good good poor good poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [113] good poor poor poor [EQ] poor good good poor good poor [EQ] poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [127] good good poor poor [EQ] poor poor good good poor [EQ] poor [EQ] [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [141] poor poor [EQ] poor [EQ] poor good poor poor poor poor good good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [155] poor poor good poor poor [EQ] good poor good good poor poor poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [169] poor poor good good poor poor [EQ] good poor poor poor poor [EQ] good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [183] poor poor poor [EQ] poor good good poor good poor poor good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [197] good poor poor poor good good poor poor poor poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [211] good good poor [EQ] poor poor poor good poor good [EQ] poor good good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [225] good poor [EQ] poor poor good poor poor poor good good good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [239] poor [EQ] poor poor poor poor [EQ] poor poor good poor poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [253] poor poor good [EQ] good good poor [EQ] poor good good [EQ] poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [267] poor poor poor poor [EQ] poor poor poor poor [EQ] good poor poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [281] poor poor poor good [EQ] poor [EQ] good poor poor poor good [EQ] good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [295] poor poor poor good poor good [EQ] poor poor poor good poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [309] [EQ] good poor poor good poor good poor poor poor poor [EQ] [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [323] poor poor poor good poor poor poor [EQ] poor poor poor poor poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [337] good [EQ] poor good poor good poor good poor [EQ] poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [351] poor good good poor [EQ] poor good poor good poor poor poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [365] poor poor poor poor poor poor poor poor poor poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [379] poor good poor poor poor poor poor poor [EQ] good poor poor poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [393] [EQ] good poor poor poor poor poor poor good [EQ] [EQ] poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [407] poor poor poor poor good good poor poor poor poor poor [EQ] poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [421] poor good [EQ] good good poor poor poor good good good good poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [435] poor poor poor poor poor poor good [EQ] poor poor good good [EQ] [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [449] poor poor good poor poor good poor good poor poor poor good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [463] poor poor good poor poor good poor good good good poor good poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [477] good good poor poor good poor poor poor poor poor poor good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [491] [EQ] poor poor poor good poor poor poor [EQ] poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [505] poor good good poor [EQ] [EQ] [EQ] poor poor poor poor good poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [519] poor poor good good poor poor poor poor [EQ] poor good poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [533] poor poor poor poor poor good poor poor good good poor poor good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [547] good good poor poor good poor good poor poor poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [561] good poor good good poor poor poor good good poor poor good [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [575] poor poor poor poor poor poor poor good poor good good poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [589] poor good [EQ] good poor good poor [EQ] poor poor poor [EQ] poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [603] good good [EQ] good poor poor poor poor poor good poor good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [617] poor poor good good poor good poor poor poor poor poor good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [631] good poor good poor good poor good poor poor [EQ] [EQ] poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [645] poor poor good good poor poor poor poor poor poor good good poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [659] poor good poor good poor poor poor [EQ] poor poor good poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [673] good good poor poor poor [EQ] poor good good [EQ] good poor good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [687] poor poor poor poor poor poor [EQ] good [EQ] poor good poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [701] good poor poor poor good poor poor [EQ] [EQ] poor poor good poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [715] good good good poor poor poor good poor good poor poor [EQ] poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [729] poor poor poor poor [EQ] good good good poor poor poor poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [743] poor good good poor poor good poor [EQ] poor poor poor [EQ] good good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [757] poor poor poor good poor good poor good [EQ] poor good [EQ] poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [771] good poor good [EQ] poor good poor poor good poor poor good good good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [785] poor poor poor poor poor good poor [EQ] poor poor poor good [EQ] poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [799] good poor poor good poor good poor poor poor poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [813] poor good poor poor poor poor good poor good good poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [827] poor good [EQ] poor good poor poor poor poor poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [841] poor poor poor poor good good good poor poor poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [855] poor good [EQ] poor [EQ] poor good poor poor poor poor [EQ] good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [869] good good poor good poor poor good [EQ] poor [EQ] poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [883] [EQ] good poor good poor good poor poor poor poor good poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [897] poor poor poor poor poor poor poor poor poor good poor good poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [911] poor good [EQ] poor good poor poor poor poor good poor poor good good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [925] poor poor good poor [EQ] poor good poor good good good poor poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [939] good poor poor poor poor poor good poor poor good [EQ] poor poor [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [953] poor good [EQ] poor poor good poor poor poor good poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [967] good poor poor [EQ] poor poor poor good good poor poor poor poor poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [981] good poor poor good poor poor good good good good poor [EQ] poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [995] poor poor poor poor good good good good good poor good [EQ] good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1009] poor good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Levels: good poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Reportable: 89.8%</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># These functions are useful alongside dplyr::mutate()</span></span>
+<span class='r-in'><span class='va'>segment_logistic</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span></span>
+<span class='r-in'>    .class_pred <span class='op'>=</span> <span class='fu'>make_two_class_pred</span><span class='op'>(</span></span>
+<span class='r-in'>      estimate <span class='op'>=</span> <span class='va'>.pred_good</span>,</span>
+<span class='r-in'>      levels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>Class</span><span class='op'>)</span>,</span>
+<span class='r-in'>      buffer <span class='op'>=</span> <span class='fl'>0.15</span></span>
+<span class='r-in'>    <span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 1,010 x 4</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    .pred_poor .pred_good Class .class_pred</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  <span style='color: #BCBCBC;'>*</span>      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;clss_prd&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span>    0.986      0.014<span style='text-decoration: underline;'>2</span>  poor         poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span>    0.897      0.103   poor         poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span>    0.118      0.882   good         good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span>    0.102      0.898   good         good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span>    0.991      0.009<span style='text-decoration: underline;'>14</span> poor         poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span>    0.633      0.367   good         [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span>    0.770      0.230   good         poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span>    0.008<span style='text-decoration: underline;'>42</span>    0.992   good         good</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span>    0.995      0.004<span style='text-decoration: underline;'>58</span> poor         poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span>    0.765      0.235   poor         poor</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 1,000 more rows</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># Multi-class example</span></span>
+<span class='r-in'><span class='co'># Note that we provide class probability columns in the same</span></span>
+<span class='r-in'><span class='co'># order as the levels</span></span>
+<span class='r-in'><span class='va'>species_probs</span> <span class='op'><a href='https://magrittr.tidyverse.org/reference/pipe.html'>%&gt;%</a></span></span>
+<span class='r-in'>  <span class='fu'><a href='https://dplyr.tidyverse.org/reference/mutate.html'>mutate</a></span><span class='op'>(</span></span>
+<span class='r-in'>    .class_pred <span class='op'>=</span> <span class='fu'>make_class_pred</span><span class='op'>(</span></span>
+<span class='r-in'>      <span class='va'>.pred_bobcat</span>, <span class='va'>.pred_coyote</span>, <span class='va'>.pred_gray_fox</span>,</span>
+<span class='r-in'>      levels <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>Species</span><span class='op'>)</span>,</span>
+<span class='r-in'>      min_prob <span class='op'>=</span> <span class='fl'>.5</span></span>
+<span class='r-in'>    <span class='op'>)</span></span>
+<span class='r-in'>  <span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 110 x 5</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    Species  .pred_bobcat .pred_coyote .pred_gray_fox .class_pred</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;clss_prd&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span> gray_fox       0.097<span style='text-decoration: underline;'>6</span>       0.053<span style='text-decoration: underline;'>0</span>         0.849     gray_fox</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span> gray_fox       0.155        0.139          0.706     gray_fox</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span> bobcat         0.501        0.088<span style='text-decoration: underline;'>0</span>         0.411       bobcat</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span> gray_fox       0.256        0              0.744     gray_fox</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span> gray_fox       0.463        0.287          0.250         [EQ]</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span> bobcat         0.811        0              0.189       bobcat</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span> bobcat         0.911        0.088<span style='text-decoration: underline;'>8</span>         0           bobcat</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span> bobcat         0.898        0.051<span style='text-decoration: underline;'>7</span>         0.050<span style='text-decoration: underline;'>0</span>      bobcat</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span> bobcat         0.771        0.229          0           bobcat</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span> bobcat         0.623        0.325          0.051<span style='text-decoration: underline;'>7</span>      bobcat</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 100 more rows</span></span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -441,6 +449,8 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></td>
 
   
 
+
+  
 
   </body>
 </html>

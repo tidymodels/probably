@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../tidyverse-2.css" rel="stylesheet">
-<!--optional theme--><link href="../.css" rel="stylesheet">
+<!--optional theme--><link href="../tidymodels.css" rel="stylesheet">
 <meta property="og:title" content="Where does probably fit in?">
 <meta property="og:description" content="probably">
 <meta name="twitter:card" content="summary">
@@ -28,6 +28,8 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -42,19 +44,13 @@
       <div class="navbar-brand-container">
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info hidden-xs hidden-sm">
-          <span class="partof">part of <a href="https://tidymodels.org/">tidymodels</a></span>
-          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6</span>
+          <span class="partof">part of <a href="https://tidymodels.org/" class="external-link">tidymodels</a></span>
+          <span class="version version-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.0.6.9000</span>
         </div>
       </div>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -77,8 +73,8 @@
   <a href="../news/index.html">Changelog</a>
 </li>
         <li>
-  <a href="https://github.com/tidymodels/probably/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+  <a href="https://github.com/tidymodels/probably/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -92,15 +88,15 @@
 
       
 
-      </header><div class="row">
+      </header><script src="where-to-use_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Where does probably fit in?</h1>
-                        <h4 class="author">Davis Vaughan</h4>
+                        <h4 data-toc-skip class="author">Davis Vaughan</h4>
             
-            <h4 class="date">2020-06-05</h4>
+            <h4 data-toc-skip class="date">2021-06-30</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/master/vignettes/where-to-use.Rmd"><code>vignettes/where-to-use.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/master/vignettes/where-to-use.Rmd" class="external-link"><code>vignettes/where-to-use.Rmd</code></a></small>
       <div class="hidden name"><code>where-to-use.Rmd</code></div>
 
     </div>
@@ -109,31 +105,32 @@
     
 <div id="introduction" class="section level2">
 <h2 class="hasAnchor">
-<a href="#introduction" class="anchor"></a>Introduction</h2>
+<a href="#introduction" class="anchor" aria-hidden="true"></a>Introduction</h2>
 <p>An obvious question regarding probably might be: where does this fit in with the rest of the tidymodels ecosystem? Like the other pieces of the ecosystem, probably is designed to be modular, but plays well with other tidymodels packages.</p>
 <p>Regarding placement in the modeling workflow, probably best fits in as a post processing step <em>after</em> the model has been fit, but <em>before</em> the model performance has been calculated.</p>
 </div>
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
-<a href="#example" class="anchor"></a>Example</h2>
-<p>As an example, we’ll use parsnip to fit a logistic regression on some <a href="https://www.lendingclub.com/info/download-data.action">Lending Club</a> loan data, and then use probably to investigate what happens to performance when you vary the threshold of what a “good” loan is.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">parsnip</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">probably</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">rsample</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">modeldata</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span>(<span class="st">"lending_club"</span>)
+<a href="#example" class="anchor" aria-hidden="true"></a>Example</h2>
+<p>As an example, we’ll use parsnip to fit a logistic regression on some <a href="https://www.lendingclub.com/info/download-data.action" class="external-link">Lending Club</a> loan data, and then use probably to investigate what happens to performance when you vary the threshold of what a “good” loan is.</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://parsnip.tidymodels.org" class="external-link">parsnip</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/probably/" class="external-link">probably</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://rsample.tidymodels.org" class="external-link">rsample</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://modeldata.tidymodels.org" class="external-link">modeldata</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"lending_club"</span><span class="op">)</span>
 
 <span class="co"># I think it makes more sense to have "good" as the first level</span>
 <span class="co"># By default it comes as the second level</span>
-<span class="no">lending_club</span> <span class="kw">&lt;-</span> <span class="no">lending_club</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">Class</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html">relevel</a></span>(<span class="no">Class</span>, <span class="st">"good"</span>))
+<span class="va">lending_club</span> <span class="op">&lt;-</span> <span class="va">lending_club</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>Class <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/relevel.html" class="external-link">relevel</a></span><span class="op">(</span><span class="va">Class</span>, <span class="st">"good"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># There are a number of columns in this data set, but we will only use a few</span>
 <span class="co"># for this example</span>
-<span class="no">lending_club</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">lending_club</span>, <span class="no">Class</span>, <span class="no">annual_inc</span>, <span class="no">verification_status</span>, <span class="no">sub_grade</span>)
+<span class="va">lending_club</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">lending_club</span>, <span class="va">Class</span>, <span class="va">annual_inc</span>, <span class="va">verification_status</span>, <span class="va">sub_grade</span><span class="op">)</span>
 
-<span class="no">lending_club</span>
+<span class="va">lending_club</span>
 <span class="co">#&gt; # A tibble: 9,857 x 4</span>
 <span class="co">#&gt;    Class annual_inc verification_status sub_grade</span>
 <span class="co">#&gt;    &lt;fct&gt;      &lt;dbl&gt; &lt;fct&gt;               &lt;fct&gt;    </span>
@@ -147,253 +144,265 @@
 <span class="co">#&gt;  8 good      188000 Not_Verified        B2       </span>
 <span class="co">#&gt;  9 good       89000 Source_Verified     B3       </span>
 <span class="co">#&gt; 10 good       48000 Not_Verified        C2       </span>
-<span class="co">#&gt; # … with 9,847 more rows</span></pre></body></html></div>
+<span class="co">#&gt; # … with 9,847 more rows</span></code></pre></div>
 <p>Let’s split this into 75% training and 25% testing for something to predict on.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="co"># 75% train, 25% test</span>
-<span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span>(<span class="fl">123</span>)
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># 75% train, 25% test</span>
+<span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 
-<span class="no">split</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">initial_split</a></span>(<span class="no">lending_club</span>, <span class="kw">prop</span> <span class="kw">=</span> <span class="fl">0.75</span>)
+<span class="va">split</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html" class="external-link">initial_split</a></span><span class="op">(</span><span class="va">lending_club</span>, prop <span class="op">=</span> <span class="fl">0.75</span><span class="op">)</span>
 
-<span class="no">lending_train</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">training</a></span>(<span class="no">split</span>)
-<span class="no">lending_test</span>  <span class="kw">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html">testing</a></span>(<span class="no">split</span>)</pre></body></html></div>
+<span class="va">lending_train</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html" class="external-link">training</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span>
+<span class="va">lending_test</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html" class="external-link">testing</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span></code></pre></div>
 <p>Before we do anything, let’s look at the counts of what we are going to be predicting, the <code>Class</code> of the loan.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>(<span class="no">lending_train</span>, <span class="no">Class</span>)
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">lending_train</span>, <span class="va">Class</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 2 x 2</span>
 <span class="co">#&gt;   Class     n</span>
 <span class="co">#&gt;   &lt;fct&gt; &lt;int&gt;</span>
-<span class="co">#&gt; 1 good   7003</span>
-<span class="co">#&gt; 2 bad     390</span></pre></body></html></div>
+<span class="co">#&gt; 1 good   7008</span>
+<span class="co">#&gt; 2 bad     384</span></code></pre></div>
 <p>Clearly there is a large imbalance here with the number of good and bad loans. This is probably a good thing for the bank, but poses an interesting issue for us because we might want to ensure we are sensitive to the bad loans and are not overwhelmed by the number of good ones. One thing that we might do is <em>downsample</em> the number of good loans so that the total number of them is more in line with the number of bad loans. We could do this before fitting the model using <code>recipes::step_downsample()</code>, but for now, let’s continue with the data unchanged.</p>
-<p>We’ll use parsnip’s <code><a href="https://rdrr.io/pkg/parsnip/man/logistic_reg.html">logistic_reg()</a></code> to create a model specification for logistic regression, set the engine to be <code>glm</code> and then actually fit the model using our data and the model formula.</p>
-<div class="sourceCode" id="cb4"><html><body><pre class="r"><span class="no">logi_reg</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/parsnip/man/logistic_reg.html">logistic_reg</a></span>()
-<span class="no">logi_reg_glm</span> <span class="kw">&lt;-</span> <span class="no">logi_reg</span> <span class="kw">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/pkg/parsnip/man/set_engine.html">set_engine</a></span>(<span class="st">"glm"</span>)
+<p>We’ll use parsnip’s <code><a href="https://parsnip.tidymodels.org/reference/logistic_reg.html" class="external-link">logistic_reg()</a></code> to create a model specification for logistic regression, set the engine to be <code>glm</code> and then actually fit the model using our data and the model formula.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">logi_reg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://parsnip.tidymodels.org/reference/logistic_reg.html" class="external-link">logistic_reg</a></span><span class="op">(</span><span class="op">)</span>
+<span class="va">logi_reg_glm</span> <span class="op">&lt;-</span> <span class="va">logi_reg</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html" class="external-link">set_engine</a></span><span class="op">(</span><span class="st">"glm"</span><span class="op">)</span>
 
 <span class="co"># A small model specification that defines the type of model you are </span>
 <span class="co"># using and the engine</span>
-<span class="no">logi_reg_glm</span>
+<span class="va">logi_reg_glm</span>
 <span class="co">#&gt; Logistic Regression Model Specification (classification)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Computational engine: glm</span>
 
 <span class="co"># Fit the model</span>
-<span class="no">logi_reg_fit</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/parsnip/man/reexports.html">fit</a></span>(
-  <span class="no">logi_reg_glm</span>,
-  <span class="kw">formula</span> <span class="kw">=</span> <span class="no">Class</span> ~ <span class="no">annual_inc</span> + <span class="no">verification_status</span> + <span class="no">sub_grade</span>,
-  <span class="kw">data</span> <span class="kw">=</span> <span class="no">lending_train</span>
-)
+<span class="va">logi_reg_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span>
+  <span class="va">logi_reg_glm</span>, 
+  formula <span class="op">=</span> <span class="va">Class</span> <span class="op">~</span> <span class="va">annual_inc</span> <span class="op">+</span> <span class="va">verification_status</span> <span class="op">+</span> <span class="va">sub_grade</span>, 
+  data <span class="op">=</span> <span class="va">lending_train</span>
+<span class="op">)</span>
 
-<span class="no">logi_reg_fit</span>
+<span class="va">logi_reg_fit</span>
 <span class="co">#&gt; parsnip model object</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Fit time:  282ms </span>
+<span class="co">#&gt; Fit time:  242ms </span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Call:  stats::glm(formula = formula, family = stats::binomial, data = data)</span>
+<span class="co">#&gt; Call:  stats::glm(formula = Class ~ annual_inc + verification_status + </span>
+<span class="co">#&gt;     sub_grade, family = stats::binomial, data = data)</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Coefficients:</span>
 <span class="co">#&gt;                        (Intercept)                          annual_inc  </span>
-<span class="co">#&gt;                         -5.651e+00                           1.583e-06  </span>
+<span class="co">#&gt;                         -5.670e+00                           1.915e-06  </span>
 <span class="co">#&gt; verification_statusSource_Verified         verification_statusVerified  </span>
-<span class="co">#&gt;                          2.655e-02                           1.838e-01  </span>
+<span class="co">#&gt;                          4.324e-02                           3.364e-01  </span>
 <span class="co">#&gt;                        sub_gradeA2                         sub_gradeA3  </span>
-<span class="co">#&gt;                          1.725e-01                           1.192e+00  </span>
+<span class="co">#&gt;                          9.508e-02                           1.149e+00  </span>
 <span class="co">#&gt;                        sub_gradeA4                         sub_gradeA5  </span>
-<span class="co">#&gt;                         -1.211e+01                           1.221e+00  </span>
+<span class="co">#&gt;                         -5.591e-02                           1.510e+00  </span>
 <span class="co">#&gt;                        sub_gradeB1                         sub_gradeB2  </span>
-<span class="co">#&gt;                          1.743e+00                           1.015e+00  </span>
+<span class="co">#&gt;                          1.637e+00                           1.177e+00  </span>
 <span class="co">#&gt;                        sub_gradeB3                         sub_gradeB4  </span>
-<span class="co">#&gt;                          1.934e+00                           1.814e+00  </span>
+<span class="co">#&gt;                          1.467e+00                           1.975e+00  </span>
 <span class="co">#&gt;                        sub_gradeB5                         sub_gradeC1  </span>
-<span class="co">#&gt;                          2.119e+00                           2.341e+00  </span>
+<span class="co">#&gt;                          2.125e+00                           2.234e+00  </span>
 <span class="co">#&gt;                        sub_gradeC2                         sub_gradeC3  </span>
-<span class="co">#&gt;                          2.311e+00                           2.392e+00  </span>
+<span class="co">#&gt;                          2.176e+00                           2.380e+00  </span>
 <span class="co">#&gt;                        sub_gradeC4                         sub_gradeC5  </span>
-<span class="co">#&gt;                          2.916e+00                           3.364e+00  </span>
+<span class="co">#&gt;                          2.724e+00                           3.084e+00  </span>
 <span class="co">#&gt;                        sub_gradeD1                         sub_gradeD2  </span>
-<span class="co">#&gt;                          3.211e+00                           3.171e+00  </span>
+<span class="co">#&gt;                          3.105e+00                           2.816e+00  </span>
 <span class="co">#&gt;                        sub_gradeD3                         sub_gradeD4  </span>
-<span class="co">#&gt;                          3.381e+00                           3.179e+00  </span>
+<span class="co">#&gt;                          3.165e+00                           3.125e+00  </span>
 <span class="co">#&gt;                        sub_gradeD5                         sub_gradeE1  </span>
-<span class="co">#&gt;                          3.289e+00                           3.401e+00  </span>
+<span class="co">#&gt;                          3.507e+00                           3.621e+00  </span>
 <span class="co">#&gt;                        sub_gradeE2                         sub_gradeE3  </span>
-<span class="co">#&gt;                          3.413e+00                           3.490e+00  </span>
+<span class="co">#&gt;                          3.272e+00                           3.542e+00  </span>
 <span class="co">#&gt;                        sub_gradeE4                         sub_gradeE5  </span>
-<span class="co">#&gt;                          3.537e+00                           3.756e+00  </span>
+<span class="co">#&gt;                          3.428e+00                           3.468e+00  </span>
 <span class="co">#&gt;                        sub_gradeF1                         sub_gradeF2  </span>
-<span class="co">#&gt;                          3.226e+00                           4.172e+00  </span>
+<span class="co">#&gt;                          3.717e+00                           4.096e+00  </span>
 <span class="co">#&gt;                        sub_gradeF3                         sub_gradeF4  </span>
-<span class="co">#&gt;                          4.161e+00                           4.369e+00  </span>
+<span class="co">#&gt;                          3.681e+00                           3.662e+00  </span>
 <span class="co">#&gt;                        sub_gradeF5                         sub_gradeG1  </span>
-<span class="co">#&gt;                          3.890e+00                           4.123e+00  </span>
+<span class="co">#&gt;                          3.586e+00                           4.168e+00  </span>
 <span class="co">#&gt;                        sub_gradeG2                         sub_gradeG3  </span>
-<span class="co">#&gt;                          4.225e+00                           3.234e+00  </span>
+<span class="co">#&gt;                          4.162e+00                           4.422e+00  </span>
 <span class="co">#&gt;                        sub_gradeG4                         sub_gradeG5  </span>
-<span class="co">#&gt;                          5.207e+00                           3.483e+00  </span>
+<span class="co">#&gt;                          5.102e+00                          -8.226e+00  </span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Degrees of Freedom: 7392 Total (i.e. Null);  7355 Residual</span>
-<span class="co">#&gt; Null Deviance:       3054 </span>
-<span class="co">#&gt; Residual Deviance: 2735  AIC: 2811</span></pre></body></html></div>
-<p>The output of the parsnip <code><a href="https://rdrr.io/pkg/parsnip/man/reexports.html">fit()</a></code> call is a parsnip <code>model_fit</code> object, but the underlying print method for the <code>glm</code> fit is used.</p>
+<span class="co">#&gt; Degrees of Freedom: 7391 Total (i.e. Null);  7354 Residual</span>
+<span class="co">#&gt; Null Deviance:       3019 </span>
+<span class="co">#&gt; Residual Deviance: 2716  AIC: 2792</span></code></pre></div>
+<p>The output of the parsnip <code><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit()</a></code> call is a parsnip <code>model_fit</code> object, but the underlying print method for the <code>glm</code> fit is used.</p>
 <p>Now let’s predict on our testing set, and use <code>type = "prob"</code> to get <em>class probabilities</em> back rather than hard predictions. We will use these with probably to investigate performance.</p>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="no">predictions</span> <span class="kw">&lt;-</span> <span class="no">logi_reg_fit</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/predict.html">predict</a></span>(<span class="kw">new_data</span> <span class="kw">=</span> <span class="no">lending_test</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"prob"</span>)
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">predictions</span> <span class="op">&lt;-</span> <span class="va">logi_reg_fit</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span>new_data <span class="op">=</span> <span class="va">lending_test</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">predictions</span>, <span class="kw">n</span> <span class="kw">=</span> <span class="fl">2</span>)
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">predictions</span>, n <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 2 x 2</span>
 <span class="co">#&gt;   .pred_good .pred_bad</span>
 <span class="co">#&gt;        &lt;dbl&gt;     &lt;dbl&gt;</span>
-<span class="co">#&gt; 1      0.936    0.0642</span>
-<span class="co">#&gt; 2      0.972    0.0283</span>
+<span class="co">#&gt; 1      0.969    0.0311</span>
+<span class="co">#&gt; 2      0.965    0.0353</span>
 
-<span class="no">lending_test_pred</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html">bind_cols</a></span>(<span class="no">predictions</span>, <span class="no">lending_test</span>)
+<span class="va">lending_test_pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_cols</a></span><span class="op">(</span><span class="va">predictions</span>, <span class="va">lending_test</span><span class="op">)</span>
 
-<span class="no">lending_test_pred</span>
-<span class="co">#&gt; # A tibble: 2,464 x 6</span>
+<span class="va">lending_test_pred</span>
+<span class="co">#&gt; # A tibble: 2,465 x 6</span>
 <span class="co">#&gt;    .pred_good .pred_bad Class annual_inc verification_status sub_grade</span>
 <span class="co">#&gt;         &lt;dbl&gt;     &lt;dbl&gt; &lt;fct&gt;      &lt;dbl&gt; &lt;fct&gt;               &lt;fct&gt;    </span>
-<span class="co">#&gt;  1      0.936   0.0642  good      35000  Not_Verified        C4       </span>
-<span class="co">#&gt;  2      0.972   0.0283  good      75000  Verified            B4       </span>
-<span class="co">#&gt;  3      0.967   0.0334  good      89000  Source_Verified     B5       </span>
-<span class="co">#&gt;  4      0.976   0.0239  good     108000  Source_Verified     B1       </span>
-<span class="co">#&gt;  5      0.932   0.0685  good      62000  Source_Verified     C4       </span>
-<span class="co">#&gt;  6      0.957   0.0429  good      80662. Source_Verified     C3       </span>
-<span class="co">#&gt;  7      0.996   0.00444 good      42000  Not_Verified        A2       </span>
-<span class="co">#&gt;  8      0.889   0.111   good      81000  Source_Verified     E2       </span>
-<span class="co">#&gt;  9      0.960   0.0403  good      56000  Not_Verified        C3       </span>
-<span class="co">#&gt; 10      0.989   0.0111  good      74880  Source_Verified     B2       </span>
-<span class="co">#&gt; # … with 2,454 more rows</span></pre></body></html></div>
+<span class="co">#&gt;  1      0.969   0.0311  good       32000 Source_Verified     B5       </span>
+<span class="co">#&gt;  2      0.965   0.0353  good       73400 Source_Verified     C2       </span>
+<span class="co">#&gt;  3      0.960   0.0405  good      175000 Source_Verified     B5       </span>
+<span class="co">#&gt;  4      0.972   0.0276  good       70000 Not_Verified        B4       </span>
+<span class="co">#&gt;  5      0.874   0.126   good       36000 Source_Verified     E1       </span>
+<span class="co">#&gt;  6      0.944   0.0560  good       40000 Source_Verified     C4       </span>
+<span class="co">#&gt;  7      0.996   0.00385 good       60000 Not_Verified        A1       </span>
+<span class="co">#&gt;  8      0.951   0.0486  good       65000 Verified            C1       </span>
+<span class="co">#&gt;  9      0.963   0.0370  good       52000 Verified            B4       </span>
+<span class="co">#&gt; 10      0.983   0.0173  good       61000 Verified            B2       </span>
+<span class="co">#&gt; # … with 2,455 more rows</span></code></pre></div>
 <p>With our class probabilities in hand, we can use <code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code> to convert these probabilities into hard predictions using a threshold. A threshold of <code>0.5</code> just says that if the predicted probability is above <code>0.5</code>, then classify this prediction as a “good” loan, otherwise, bad.</p>
-<div class="sourceCode" id="cb6"><html><body><pre class="r"><span class="no">hard_pred_0.5</span> <span class="kw">&lt;-</span> <span class="no">lending_test_pred</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">.pred</span> <span class="kw">=</span> <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span>(<span class="no">.pred_good</span>, <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="no">Class</span>), <span class="kw">threshold</span> <span class="kw">=</span> <span class="fl">.5</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">Class</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">contains</a></span>(<span class="st">".pred"</span>))
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hard_pred_0.5</span> <span class="op">&lt;-</span> <span class="va">lending_test_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>.pred <span class="op">=</span> <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span><span class="op">(</span><span class="va">.pred_good</span>, <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">Class</span><span class="op">)</span>, threshold <span class="op">=</span> <span class="fl">.5</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Class</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">contains</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span><span class="op">)</span>
 
-<span class="no">hard_pred_0.5</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>(<span class="kw">.truth</span> <span class="kw">=</span> <span class="no">Class</span>, <span class="no">.pred</span>)
+<span class="va">hard_pred_0.5</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span>.truth <span class="op">=</span> <span class="va">Class</span>, <span class="va">.pred</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 2 x 3</span>
 <span class="co">#&gt;   .truth      .pred     n</span>
 <span class="co">#&gt;   &lt;fct&gt;  &lt;clss_prd&gt; &lt;int&gt;</span>
-<span class="co">#&gt; 1 good         good  2337</span>
-<span class="co">#&gt; 2 bad          good   127</span></pre></body></html></div>
+<span class="co">#&gt; 1 good         good  2332</span>
+<span class="co">#&gt; 2 bad          good   133</span></code></pre></div>
 <p>Hmm, with a <code>0.5</code> threshold, almost all of the loans were predicted as “good”. Perhaps this has something to do with the large class imbalance. On the other hand, the bank might want to be more stringent with what is classified as a “good” loan, and might require a probability of <code>0.75</code> as the threshold.</p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="no">hard_pred_0.75</span> <span class="kw">&lt;-</span> <span class="no">lending_test_pred</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">.pred</span> <span class="kw">=</span> <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span>(<span class="no">.pred_good</span>, <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span>(<span class="no">Class</span>), <span class="kw">threshold</span> <span class="kw">=</span> <span class="fl">.75</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span>(<span class="no">Class</span>, <span class="fu"><a href="https://dplyr.tidyverse.org/reference/reexports.html">contains</a></span>(<span class="st">".pred"</span>))
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hard_pred_0.75</span> <span class="op">&lt;-</span> <span class="va">lending_test_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>.pred <span class="op">=</span> <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span><span class="op">(</span><span class="va">.pred_good</span>, <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">Class</span><span class="op">)</span>, threshold <span class="op">=</span> <span class="fl">.75</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">Class</span>, <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">contains</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span><span class="op">)</span>
 
-<span class="no">hard_pred_0.75</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span>(<span class="kw">.truth</span> <span class="kw">=</span> <span class="no">Class</span>, <span class="no">.pred</span>)
+<span class="va">hard_pred_0.75</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> 
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span>.truth <span class="op">=</span> <span class="va">Class</span>, <span class="va">.pred</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 4 x 3</span>
 <span class="co">#&gt;   .truth      .pred     n</span>
 <span class="co">#&gt;   &lt;fct&gt;  &lt;clss_prd&gt; &lt;int&gt;</span>
-<span class="co">#&gt; 1 good         good  2333</span>
-<span class="co">#&gt; 2 good          bad     4</span>
-<span class="co">#&gt; 3 bad          good   124</span>
-<span class="co">#&gt; 4 bad           bad     3</span></pre></body></html></div>
-<p>In this case, 3 of the bad loans were correctly classified as bad, but more of the good loans were also misclassified as bad now. There is a tradeoff here, which can be somewhat captured by the metrics <em>sensitivity</em> and <em>specificity</em>. Both metrics have a max value of <code>1</code>.</p>
+<span class="co">#&gt; 1 good         good  2320</span>
+<span class="co">#&gt; 2 good          bad    12</span>
+<span class="co">#&gt; 3 bad          good   129</span>
+<span class="co">#&gt; 4 bad           bad     4</span></code></pre></div>
+<p>In this case, 4 of the bad loans were correctly classified as bad, but more of the good loans were also misclassified as bad now. There is a tradeoff here, which can be somewhat captured by the metrics <em>sensitivity</em> and <em>specificity</em>. Both metrics have a max value of <code>1</code>.</p>
 <ul>
 <li>sensitivity - The proportion of predicted “good” loans out of all “good” loans</li>
 <li>specificity - The proportion of predicted “bad” loans out of all “bad” loans</li>
 </ul>
-<div class="sourceCode" id="cb8"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">yardstick</span>)
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/yardstick" class="external-link">yardstick</a></span><span class="op">)</span>
 <span class="co">#&gt; For binary classification, the first factor level is assumed to be the event.</span>
-<span class="co">#&gt; Set the global option `yardstick.event_first` to `FALSE` to change this.</span>
+<span class="co">#&gt; Use the argument `event_level = "second"` to alter this as needed.</span>
 
 <span class="co"># Currently yardstick can't deal with the class_pred objects that come from</span>
 <span class="co"># probably, but it will be able to soon!</span>
-<span class="no">hard_pred_0.5</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="no">hard_pred_0.5</span>, <span class="kw">.pred</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/generics/man/coercion-factor.html">as.factor</a></span>(<span class="no">.pred</span>))
-<span class="no">hard_pred_0.75</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="no">hard_pred_0.75</span>, <span class="kw">.pred</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/pkg/generics/man/coercion-factor.html">as.factor</a></span>(<span class="no">.pred</span>))
+<span class="va">hard_pred_0.5</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">hard_pred_0.5</span>, .pred <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span>
+<span class="va">hard_pred_0.75</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">hard_pred_0.75</span>, .pred <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/yardstick/man/sens.html">sens</a></span>(<span class="no">hard_pred_0.5</span>, <span class="no">Class</span>, <span class="no">.pred</span>)
+<span class="fu"><a href="https://yardstick.tidymodels.org/reference/sens.html" class="external-link">sens</a></span><span class="op">(</span><span class="va">hard_pred_0.5</span>, <span class="va">Class</span>, <span class="va">.pred</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 3</span>
 <span class="co">#&gt;   .metric .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 sens    binary             1</span>
-<span class="fu"><a href="https://rdrr.io/pkg/yardstick/man/spec.html">spec</a></span>(<span class="no">hard_pred_0.5</span>, <span class="no">Class</span>, <span class="no">.pred</span>)
+<span class="fu"><a href="https://yardstick.tidymodels.org/reference/spec.html" class="external-link">spec</a></span><span class="op">(</span><span class="va">hard_pred_0.5</span>, <span class="va">Class</span>, <span class="va">.pred</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 3</span>
 <span class="co">#&gt;   .metric .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 spec    binary             0</span>
 
-<span class="fu"><a href="https://rdrr.io/pkg/yardstick/man/sens.html">sens</a></span>(<span class="no">hard_pred_0.75</span>, <span class="no">Class</span>, <span class="no">.pred</span>)
+<span class="fu"><a href="https://yardstick.tidymodels.org/reference/sens.html" class="external-link">sens</a></span><span class="op">(</span><span class="va">hard_pred_0.75</span>, <span class="va">Class</span>, <span class="va">.pred</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 3</span>
 <span class="co">#&gt;   .metric .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 sens    binary         0.998</span>
-<span class="fu"><a href="https://rdrr.io/pkg/yardstick/man/spec.html">spec</a></span>(<span class="no">hard_pred_0.75</span>, <span class="no">Class</span>, <span class="no">.pred</span>)
+<span class="co">#&gt; 1 sens    binary         0.995</span>
+<span class="fu"><a href="https://yardstick.tidymodels.org/reference/spec.html" class="external-link">spec</a></span><span class="op">(</span><span class="va">hard_pred_0.75</span>, <span class="va">Class</span>, <span class="va">.pred</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 3</span>
 <span class="co">#&gt;   .metric .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 spec    binary        0.0236</span></pre></body></html></div>
-<p>In this example, as we increased specificity (by capturing those 3 bad loans with a higher threshold), we lowered sensitivity (by incorrectly reclassifying some of the good loans as bad). It would be nice to have some combination of these metrics to represent this tradeoff. Luckily, <code>j_index</code> is exactly that.</p>
+<span class="co">#&gt; 1 spec    binary        0.0301</span></code></pre></div>
+<p>In this example, as we increased specificity (by capturing those 4 bad loans with a higher threshold), we lowered sensitivity (by incorrectly reclassifying some of the good loans as bad). It would be nice to have some combination of these metrics to represent this tradeoff. Luckily, <code>j_index</code> is exactly that.</p>
 <p><span class="math display">\[ j\_index = sens + spec - 1 \]</span></p>
 <p><code>j_index</code> has a maximum value of 1 when there are no false positives and no false negatives. It can be used as justification of whether or not an increase in the threshold value is worth it. If increasing the threshold results in more of an increase in the specificity than a decrease in the sensitivity, we can see that with <code>j_index</code>.</p>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/pkg/yardstick/man/j_index.html">j_index</a></span>(<span class="no">hard_pred_0.5</span>, <span class="no">Class</span>, <span class="no">.pred</span>)
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://yardstick.tidymodels.org/reference/j_index.html" class="external-link">j_index</a></span><span class="op">(</span><span class="va">hard_pred_0.5</span>, <span class="va">Class</span>, <span class="va">.pred</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 3</span>
 <span class="co">#&gt;   .metric .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 j_index binary             0</span>
-<span class="fu"><a href="https://rdrr.io/pkg/yardstick/man/j_index.html">j_index</a></span>(<span class="no">hard_pred_0.75</span>, <span class="no">Class</span>, <span class="no">.pred</span>)
+<span class="fu"><a href="https://yardstick.tidymodels.org/reference/j_index.html" class="external-link">j_index</a></span><span class="op">(</span><span class="va">hard_pred_0.75</span>, <span class="va">Class</span>, <span class="va">.pred</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 3</span>
 <span class="co">#&gt;   .metric .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 j_index binary        0.0219</span></pre></body></html></div>
+<span class="co">#&gt; 1 j_index binary        0.0249</span></code></pre></div>
 <p>Now, this is not the only way to optimize things. If you care about low false positives, you might be more interested in keeping sensitivity high, and this wouldn’t be the best way to tackle this problem. But for now, let’s see how we can use probably to optimize the <code>j_index</code>.</p>
 <p><code><a href="../reference/threshold_perf.html">threshold_perf()</a></code> will recalculate a number of metrics across varying thresholds. One of these is <code>j_index</code>.</p>
-<div class="sourceCode" id="cb10"><html><body><pre class="r"><span class="no">threshold_data</span> <span class="kw">&lt;-</span> <span class="no">lending_test_pred</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="../reference/threshold_perf.html">threshold_perf</a></span>(<span class="no">Class</span>, <span class="no">.pred_good</span>, <span class="kw">thresholds</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span>(<span class="fl">0.5</span>, <span class="fl">1</span>, <span class="kw">by</span> <span class="kw">=</span> <span class="fl">0.0025</span>))
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">threshold_data</span> <span class="op">&lt;-</span> <span class="va">lending_test_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="../reference/threshold_perf.html">threshold_perf</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_good</span>, thresholds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span>, by <span class="op">=</span> <span class="fl">0.0025</span><span class="op">)</span><span class="op">)</span>
 
-<span class="no">threshold_data</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.threshold</span> <span class="kw">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span>))
+<span class="va">threshold_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.threshold</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 12 x 4</span>
 <span class="co">#&gt;    .threshold .metric  .estimator .estimate</span>
 <span class="co">#&gt;         &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;</span>
 <span class="co">#&gt;  1        0.5 sens     binary        1     </span>
-<span class="co">#&gt;  2        0.6 sens     binary        1.00  </span>
-<span class="co">#&gt;  3        0.7 sens     binary        1.00  </span>
+<span class="co">#&gt;  2        0.6 sens     binary        0.999 </span>
+<span class="co">#&gt;  3        0.7 sens     binary        0.998 </span>
 <span class="co">#&gt;  4        0.5 spec     binary        0     </span>
-<span class="co">#&gt;  5        0.6 spec     binary        0.0157</span>
-<span class="co">#&gt;  6        0.7 spec     binary        0.0157</span>
+<span class="co">#&gt;  5        0.6 spec     binary        0.0226</span>
+<span class="co">#&gt;  6        0.7 spec     binary        0.0226</span>
 <span class="co">#&gt;  7        0.5 j_index  binary        0     </span>
-<span class="co">#&gt;  8        0.6 j_index  binary        0.0153</span>
-<span class="co">#&gt;  9        0.7 j_index  binary        0.0153</span>
+<span class="co">#&gt;  8        0.6 j_index  binary        0.0217</span>
+<span class="co">#&gt;  9        0.7 j_index  binary        0.0208</span>
 <span class="co">#&gt; 10        0.5 distance binary        1     </span>
-<span class="co">#&gt; 11        0.6 distance binary        0.969 </span>
-<span class="co">#&gt; 12        0.7 distance binary        0.969</span></pre></body></html></div>
+<span class="co">#&gt; 11        0.6 distance binary        0.955 </span>
+<span class="co">#&gt; 12        0.7 distance binary        0.955</span></code></pre></div>
 <p>With <code>ggplot2</code>, we can easily visualize this varying performance to find our optimal threshold for maximizing <code>j_index</code>.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">ggplot2</span>)
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
 
-<span class="no">threshold_data</span> <span class="kw">&lt;-</span> <span class="no">threshold_data</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.metric</span> <span class="kw">!=</span> <span class="st">"distance"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(<span class="kw">group</span> <span class="kw">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html">case_when</a></span>(
-    <span class="no">.metric</span> <span class="kw">==</span> <span class="st">"sens"</span> <span class="kw">|</span> <span class="no">.metric</span> <span class="kw">==</span> <span class="st">"spec"</span> ~ <span class="st">"1"</span>,
-    <span class="fl">TRUE</span> ~ <span class="st">"2"</span>
-  ))
+<span class="va">threshold_data</span> <span class="op">&lt;-</span> <span class="va">threshold_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.metric</span> <span class="op">!=</span> <span class="st">"distance"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>group <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span>
+    <span class="va">.metric</span> <span class="op">==</span> <span class="st">"sens"</span> <span class="op">|</span> <span class="va">.metric</span> <span class="op">==</span> <span class="st">"spec"</span> <span class="op">~</span> <span class="st">"1"</span>,
+    <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"2"</span>
+  <span class="op">)</span><span class="op">)</span>
 
-<span class="no">max_j_index_threshold</span> <span class="kw">&lt;-</span> <span class="no">threshold_data</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.metric</span> <span class="kw">==</span> <span class="st">"j_index"</span>) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.estimate</span> <span class="kw">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span>(<span class="no">.estimate</span>)) <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html">pull</a></span>(<span class="no">.threshold</span>)
+<span class="va">max_j_index_threshold</span> <span class="op">&lt;-</span> <span class="va">threshold_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.metric</span> <span class="op">==</span> <span class="st">"j_index"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.estimate</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">.estimate</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">.threshold</span><span class="op">)</span>
 
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="no">threshold_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(<span class="kw">x</span> <span class="kw">=</span> <span class="no">.threshold</span>, <span class="kw">y</span> <span class="kw">=</span> <span class="no">.estimate</span>, <span class="kw">color</span> <span class="kw">=</span> <span class="no">.metric</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="no">group</span>)) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span>() +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html">scale_color_viridis_d</a></span>(<span class="kw">end</span> <span class="kw">=</span> <span class="fl">0.9</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_alpha_manual</a></span>(<span class="kw">values</span> <span class="kw">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">.4</span>, <span class="fl">1</span>), <span class="kw">guide</span> <span class="kw">=</span> <span class="st">"none"</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>(<span class="kw">xintercept</span> <span class="kw">=</span> <span class="no">max_j_index_threshold</span>, <span class="kw">alpha</span> <span class="kw">=</span> <span class="fl">.6</span>, <span class="kw">color</span> <span class="kw">=</span> <span class="st">"grey30"</span>) +
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">labs</a></span>(
-    <span class="kw">x</span> <span class="kw">=</span> <span class="st">"'Good' Threshold\n(above this value is considered 'good')"</span>,
-    <span class="kw">y</span> <span class="kw">=</span> <span class="st">"Metric Estimate"</span>,
-    <span class="kw">title</span> <span class="kw">=</span> <span class="st">"Balancing performance by varying the threshold"</span>,
-    <span class="kw">subtitle</span> <span class="kw">=</span> <span class="st">"Sensitivity or specificity alone might not be enough!\nVertical line = Max J-Index"</span>
-  )</pre></body></html></div>
+<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">threshold_data</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">.threshold</span>, y <span class="op">=</span> <span class="va">.estimate</span>, color <span class="op">=</span> <span class="va">.metric</span>, alpha <span class="op">=</span> <span class="va">group</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_minimal</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_viridis_d</a></span><span class="op">(</span>end <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_alpha_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">.4</span>, <span class="fl">1</span><span class="op">)</span>, guide <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="va">max_j_index_threshold</span>, alpha <span class="op">=</span> <span class="fl">.6</span>, color <span class="op">=</span> <span class="st">"grey30"</span><span class="op">)</span> <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>
+    x <span class="op">=</span> <span class="st">"'Good' Threshold\n(above this value is considered 'good')"</span>,
+    y <span class="op">=</span> <span class="st">"Metric Estimate"</span>,
+    title <span class="op">=</span> <span class="st">"Balancing performance by varying the threshold"</span>,
+    subtitle <span class="op">=</span> <span class="st">"Sensitivity or specificity alone might not be enough!\nVertical line = Max J-Index"</span>
+  <span class="op">)</span></code></pre></div>
 <p><img src="where-to-use_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;"></p>
-<p>It’s clear from this visual that the optimal threshold is very high, exactly 0.9575. This is pretty high, so again, this optimization method won’t be useful for all cases. To wrap up, here are all of the test set metrics for that threshold value.</p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="no">threshold_data</span> <span class="kw">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span>(<span class="no">.threshold</span> <span class="kw">==</span> <span class="no">max_j_index_threshold</span>)
+<p>It’s clear from this visual that the optimal threshold is very high, exactly 0.945. This is pretty high, so again, this optimization method won’t be useful for all cases. To wrap up, here are all of the test set metrics for that threshold value.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">threshold_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.threshold</span> <span class="op">==</span> <span class="va">max_j_index_threshold</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 3 x 5</span>
 <span class="co">#&gt;   .threshold .metric .estimator .estimate group</span>
 <span class="co">#&gt;        &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;</span>
-<span class="co">#&gt; 1      0.958 sens    binary         0.619 1    </span>
-<span class="co">#&gt; 2      0.958 spec    binary         0.756 1    </span>
-<span class="co">#&gt; 3      0.958 j_index binary         0.375 2</span></pre></body></html></div>
+<span class="co">#&gt; 1      0.945 sens    binary         0.687 1    </span>
+<span class="co">#&gt; 2      0.945 spec    binary         0.692 1    </span>
+<span class="co">#&gt; 3      0.945 j_index binary         0.379 2</span></code></pre></div>
 </div>
   </div>
 
@@ -414,7 +423,7 @@
 <div class="author">
   <p>
     Developed by Max Kuhn, Davis Vaughan.
-    Site built by <a href="https://pkgdown.r-lib.org">pkgdown</a>.
+    Site built by <a href="https://pkgdown.r-lib.org" class="external-link">pkgdown</a>.
   </p>
 </div>
 
@@ -423,6 +432,8 @@
 
   
 
+
+  
 
   </body>
 </html>
