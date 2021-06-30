@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><link href="../tidyverse-2.css" rel="stylesheet">
-<!--optional theme--><link href="../.css" rel="stylesheet">
+<!--optional theme--><link href="../tidymodels.css" rel="stylesheet">
 <meta property="og:title" content="Equivocal zones">
 <meta property="og:description" content="probably">
 <meta name="twitter:card" content="summary">
@@ -29,8 +29,6 @@
 </script>
 </head>
 <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -45,13 +43,19 @@
       <div class="navbar-brand-container">
         <a class="navbar-brand" href="../index.html">probably</a>
         <div class="info hidden-xs hidden-sm">
-          <span class="partof">part of <a href="https://tidymodels.org/" class="external-link">tidymodels</a></span>
+          <span class="partof">part of <a href="https://tidymodels.org/">tidymodels</a></span>
           <span class="version version-danger" data-toggle="tooltip" data-placement="bottom" title="In-development version">0.0.6.9000</span>
         </div>
       </div>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -74,7 +78,7 @@
   <a href="../news/index.html">Changelog</a>
 </li>
         <li>
-  <a href="https://github.com/tidymodels/probably/" class="external-link">
+  <a href="https://github.com/tidymodels/probably/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -93,11 +97,11 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Equivocal zones</h1>
-                        <h4 data-toc-skip class="author">Davis Vaughan</h4>
+                        <h4 class="author">Davis Vaughan</h4>
             
-            <h4 data-toc-skip class="date">2021-03-19</h4>
+            <h4 class="date">2021-06-30</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/master/vignettes/equivocal-zones.Rmd" class="external-link"><code>vignettes/equivocal-zones.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/master/vignettes/equivocal-zones.Rmd"><code>vignettes/equivocal-zones.Rmd</code></a></small>
       <div class="hidden name"><code>equivocal-zones.Rmd</code></div>
 
     </div>
@@ -105,7 +109,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/probably/" class="external-link">probably</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/probably/">probably</a></span><span class="op">)</span></code></pre></div>
 <div id="equivocal-zones" class="section level2">
 <h2 class="hasAnchor">
 <a href="#equivocal-zones" class="anchor"></a>Equivocal zones</h2>
@@ -114,7 +118,7 @@
 <p>Another example could come from a Bayesian perspective, where each prediction comes with a probability distribution. Your model might predict 80% Yes, but could have a standard deviation around that of +/- 20%. In this case, you could set a maximum allowed standard deviation as the cutoff of whether or not to mark values as equivocal.</p>
 <p>To work with these equivocal zones, probably provides a new class for hard class predictions that is very similar to a factor, but allows you to mark certain values as equivocal.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Yes"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>, <span class="st">"Yes"</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Yes"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>, <span class="st">"Yes"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="co"># Create a class_pred object from a factor</span>
 <span class="fu"><a href="../reference/class_pred.html">class_pred</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>
@@ -131,8 +135,8 @@
 <p>The <em>reportable rate</em> is the fraction of values that are not equivocal, relative to the total number. Above, you can see that the reportable rate started at 100%, but as soon as a single value was marked equivocal, that value dropped to 75%. In fields where equivocal zones are used, there is often a tradeoff between marking values as equivocal and keeping a certain minimum reportable rate.</p>
 <p>Generally, you won’t create these <code>class_pred</code> objects directly, but will instead create them indirectly through converting class probabilities into class predictions with <code><a href="../reference/make_class_pred.html">make_class_pred()</a></code> and <code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"segment_logistic"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"segment_logistic"</span><span class="op">)</span>
 <span class="va">segment_logistic</span>
 <span class="co">#&gt; # A tibble: 1,010 x 3</span>
 <span class="co">#&gt;    .pred_poor .pred_good Class</span>
@@ -153,10 +157,10 @@
 <span class="co"># &gt; 0.5 = good</span>
 <span class="co"># &lt; 0.5 = poor</span>
 <span class="va">segment_logistic_thresh</span> <span class="op">&lt;-</span> <span class="va">segment_logistic</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
     .pred <span class="op">=</span> <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span><span class="op">(</span>
       estimate <span class="op">=</span> <span class="va">.pred_good</span>, 
-      levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">Class</span><span class="op">)</span>, 
+      levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">Class</span><span class="op">)</span>, 
       threshold <span class="op">=</span> <span class="fl">0.5</span>
     <span class="op">)</span>
   <span class="op">)</span>
@@ -183,17 +187,17 @@
 <span class="co">#        x &lt; 0.45 = poor</span>
 <span class="co"># 0.45 &lt; x &lt; 0.55 = equivocal</span>
 <span class="va">segment_pred</span> <span class="op">&lt;-</span> <span class="va">segment_logistic</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
     .pred <span class="op">=</span> <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span><span class="op">(</span>
       estimate <span class="op">=</span> <span class="va">.pred_good</span>, 
-      levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">Class</span><span class="op">)</span>, 
+      levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">Class</span><span class="op">)</span>, 
       threshold <span class="op">=</span> <span class="fl">0.5</span>,
       buffer <span class="op">=</span> <span class="fl">0.05</span>
     <span class="op">)</span>
   <span class="op">)</span> 
 
 <span class="va">segment_pred</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 3 x 2</span>
 <span class="co">#&gt;        .pred     n</span>
 <span class="co">#&gt;   &lt;clss_prd&gt; &lt;int&gt;</span>
@@ -202,7 +206,7 @@
 <span class="co">#&gt; 3       poor   625</span>
 
 <span class="va">segment_pred</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>reportable <span class="op">=</span> <span class="fu"><a href="../reference/reportable_rate.html">reportable_rate</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>reportable <span class="op">=</span> <span class="fu"><a href="../reference/reportable_rate.html">reportable_rate</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 1</span>
 <span class="co">#&gt;   reportable</span>
 <span class="co">#&gt;        &lt;dbl&gt;</span>
@@ -210,8 +214,8 @@
 <p>Equivocal values in <code>class_pred</code> objects are converted to <code>NA</code> when the object is converted to a factor. It’s also worth noting that the <code>[EQ]</code> label is not treated as a separate level.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">segment_pred</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">.pred</span>, <span class="va">.pred_fct</span><span class="op">)</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">.pred</span>, <span class="va">.pred_fct</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 3 x 3</span>
 <span class="co">#&gt;        .pred .pred_fct     n</span>
 <span class="co">#&gt;   &lt;clss_prd&gt; &lt;fct&gt;     &lt;int&gt;</span>
@@ -219,18 +223,18 @@
 <span class="co">#&gt; 2       good good        340</span>
 <span class="co">#&gt; 3       poor poor        625</span>
 
-<span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">segment_pred</span><span class="op">$</span><span class="va">.pred</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/levels.html">levels</a></span><span class="op">(</span><span class="va">segment_pred</span><span class="op">$</span><span class="va">.pred</span><span class="op">)</span>
 <span class="co">#&gt; [1] "good" "poor"</span></code></pre></div>
 <p>This <code>NA</code> behavior feeds into how probably can be used with yardstick. Generally, equivocal values are removed completely from performance evaluation. So converting them to <code>NA</code> and then leaving the default <code>na_rm = TRUE</code> in any yardstick metric removes them from consideration.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/yardstick" class="external-link">yardstick</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/yardstick">yardstick</a></span><span class="op">)</span>
 <span class="co">#&gt; For binary classification, the first factor level is assumed to be the event.</span>
 <span class="co">#&gt; Use the argument `event_level = "second"` to alter this as needed.</span>
 
 <span class="co"># No equivocal zone</span>
 <span class="va">segment_logistic_thresh</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://yardstick.tidymodels.org/reference/precision.html" class="external-link">precision</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_fct</span><span class="op">)</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://yardstick.tidymodels.org/reference/precision.html">precision</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_fct</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 3</span>
 <span class="co">#&gt;   .metric   .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;</span>
@@ -238,8 +242,8 @@
 
 <span class="co"># Equivocal zone</span>
 <span class="va">segment_pred</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://yardstick.tidymodels.org/reference/precision.html" class="external-link">precision</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_fct</span><span class="op">)</span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+  <span class="fu"><a href="https://yardstick.tidymodels.org/reference/precision.html">precision</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_fct</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 3</span>
 <span class="co">#&gt;   .metric   .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;</span>
@@ -265,7 +269,7 @@
 <div class="author">
   <p>
     Developed by Max Kuhn, Davis Vaughan.
-    Site built by <a href="https://pkgdown.r-lib.org" class="external-link">pkgdown</a>.
+    Site built by <a href="https://pkgdown.r-lib.org">pkgdown</a>.
   </p>
 </div>
 
@@ -274,8 +278,6 @@
 
   
 
-
-  
 
   </body>
 </html>

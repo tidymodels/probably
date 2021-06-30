@@ -37,7 +37,7 @@
 <link href="../tidyverse-2.css" rel="stylesheet">
 
 <!--optional theme-->
-<link href="../.css" rel="stylesheet">
+<link href="../tidymodels.css" rel="stylesheet">
 
 
 
@@ -71,15 +71,9 @@ data frame." />
   gtag('config', 'UA-115082821-1');
 </script>
 
-  
-
-  
-
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    
-
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -103,6 +97,12 @@ data frame." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav navbar-right">
         <li>
+  <a href="../index.html">
+    <span class="fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -230,20 +230,20 @@ this value (by row), the row is marked as <em>equivocal</em>.</p></td>
       min_prob <span class='op'>=</span> <span class='fl'>.5</span>
     <span class='op'>)</span>
   <span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 110 x 5</span><span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 110 x 5</span>
 #&gt;    Species  .pred_bobcat .pred_coyote .pred_gray_fox .class_pred
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>           </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;clss_prd&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> gray_fox       0.097</span><span style='text-decoration: underline;'>6</span><span>       0.053</span><span style='text-decoration: underline;'>0</span><span>         0.849     gray_fox
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> gray_fox       0.155        0.139          0.706     gray_fox
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> bobcat         0.501        0.088</span><span style='text-decoration: underline;'>0</span><span>         0.411       bobcat
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> gray_fox       0.256        0              0.744     gray_fox
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> gray_fox       0.463        0.287          0.250         [EQ]
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> bobcat         0.811        0              0.189       bobcat
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> bobcat         0.911        0.088</span><span style='text-decoration: underline;'>8</span><span>         0           bobcat
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> bobcat         0.898        0.051</span><span style='text-decoration: underline;'>7</span><span>         0.050</span><span style='text-decoration: underline;'>0</span><span>      bobcat
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> bobcat         0.771        0.229          0           bobcat
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> bobcat         0.623        0.325          0.051</span><span style='text-decoration: underline;'>7</span><span>      bobcat
-#&gt; </span><span style='color: #949494;'># … with 100 more rows</span><span></div><div class='input'>
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;clss_prd&gt;</span>
+#&gt; <span style='color: #BCBCBC;'> 1</span> gray_fox       0.097<span style='text-decoration: underline;'>6</span>       0.053<span style='text-decoration: underline;'>0</span>         0.849     gray_fox
+#&gt; <span style='color: #BCBCBC;'> 2</span> gray_fox       0.155        0.139          0.706     gray_fox
+#&gt; <span style='color: #BCBCBC;'> 3</span> bobcat         0.501        0.088<span style='text-decoration: underline;'>0</span>         0.411       bobcat
+#&gt; <span style='color: #BCBCBC;'> 4</span> gray_fox       0.256        0              0.744     gray_fox
+#&gt; <span style='color: #BCBCBC;'> 5</span> gray_fox       0.463        0.287          0.250         [EQ]
+#&gt; <span style='color: #BCBCBC;'> 6</span> bobcat         0.811        0              0.189       bobcat
+#&gt; <span style='color: #BCBCBC;'> 7</span> bobcat         0.911        0.088<span style='text-decoration: underline;'>8</span>         0           bobcat
+#&gt; <span style='color: #BCBCBC;'> 8</span> bobcat         0.898        0.051<span style='text-decoration: underline;'>7</span>         0.050<span style='text-decoration: underline;'>0</span>      bobcat
+#&gt; <span style='color: #BCBCBC;'> 9</span> bobcat         0.771        0.229          0           bobcat
+#&gt; <span style='color: #BCBCBC;'>10</span> bobcat         0.623        0.325          0.051<span style='text-decoration: underline;'>7</span>      bobcat
+#&gt; <span style='color: #949494;'># … with 100 more rows</span></div><div class='input'>
 <span class='va'>lvls</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/levels.html'>levels</a></span><span class='op'>(</span><span class='va'>species_probs</span><span class='op'>$</span><span class='va'>Species</span><span class='op'>)</span>
 
 <span class='fu'>append_class_pred</span><span class='op'>(</span>
@@ -252,21 +252,21 @@ this value (by row), the row is marked as <em>equivocal</em>.</p></td>
   levels <span class='op'>=</span> <span class='va'>lvls</span>,
   min_prob <span class='op'>=</span> <span class='fl'>.5</span>
 <span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 110 x 5</span><span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 110 x 5</span>
 #&gt;    Species  .pred_bobcat .pred_coyote .pred_gray_fox .class_pred
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;fct&gt;</span><span>           </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;clss_prd&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> gray_fox       0.097</span><span style='text-decoration: underline;'>6</span><span>       0.053</span><span style='text-decoration: underline;'>0</span><span>         0.849     gray_fox
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> gray_fox       0.155        0.139          0.706     gray_fox
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> bobcat         0.501        0.088</span><span style='text-decoration: underline;'>0</span><span>         0.411       bobcat
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> gray_fox       0.256        0              0.744     gray_fox
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> gray_fox       0.463        0.287          0.250         [EQ]
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> bobcat         0.811        0              0.189       bobcat
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> bobcat         0.911        0.088</span><span style='text-decoration: underline;'>8</span><span>         0           bobcat
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> bobcat         0.898        0.051</span><span style='text-decoration: underline;'>7</span><span>         0.050</span><span style='text-decoration: underline;'>0</span><span>      bobcat
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> bobcat         0.771        0.229          0           bobcat
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> bobcat         0.623        0.325          0.051</span><span style='text-decoration: underline;'>7</span><span>      bobcat
-#&gt; </span><span style='color: #949494;'># … with 100 more rows</span><span></div><div class='input'>
-</div></span></pre>
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>           <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>          <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;clss_prd&gt;</span>
+#&gt; <span style='color: #BCBCBC;'> 1</span> gray_fox       0.097<span style='text-decoration: underline;'>6</span>       0.053<span style='text-decoration: underline;'>0</span>         0.849     gray_fox
+#&gt; <span style='color: #BCBCBC;'> 2</span> gray_fox       0.155        0.139          0.706     gray_fox
+#&gt; <span style='color: #BCBCBC;'> 3</span> bobcat         0.501        0.088<span style='text-decoration: underline;'>0</span>         0.411       bobcat
+#&gt; <span style='color: #BCBCBC;'> 4</span> gray_fox       0.256        0              0.744     gray_fox
+#&gt; <span style='color: #BCBCBC;'> 5</span> gray_fox       0.463        0.287          0.250         [EQ]
+#&gt; <span style='color: #BCBCBC;'> 6</span> bobcat         0.811        0              0.189       bobcat
+#&gt; <span style='color: #BCBCBC;'> 7</span> bobcat         0.911        0.088<span style='text-decoration: underline;'>8</span>         0           bobcat
+#&gt; <span style='color: #BCBCBC;'> 8</span> bobcat         0.898        0.051<span style='text-decoration: underline;'>7</span>         0.050<span style='text-decoration: underline;'>0</span>      bobcat
+#&gt; <span style='color: #BCBCBC;'> 9</span> bobcat         0.771        0.229          0           bobcat
+#&gt; <span style='color: #BCBCBC;'>10</span> bobcat         0.623        0.325          0.051<span style='text-decoration: underline;'>7</span>      bobcat
+#&gt; <span style='color: #949494;'># … with 100 more rows</span></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -293,8 +293,6 @@ this value (by row), the row is marked as <em>equivocal</em>.</p></td>
 
   
 
-
-  
 
   </body>
 </html>
