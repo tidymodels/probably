@@ -99,7 +99,7 @@
       <h1 data-toc-skip>Equivocal zones</h1>
                         <h4 class="author">Davis Vaughan</h4>
             
-            <h4 class="date">2021-06-30</h4>
+            <h4 class="date">2021-11-01</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/master/vignettes/equivocal-zones.Rmd"><code>vignettes/equivocal-zones.Rmd</code></a></small>
       <div class="hidden name"><code>equivocal-zones.Rmd</code></div>
@@ -138,7 +138,7 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"segment_logistic"</span><span class="op">)</span>
 <span class="va">segment_logistic</span>
-<span class="co">#&gt; # A tibble: 1,010 x 3</span>
+<span class="co">#&gt; # A tibble: 1,010 × 3</span>
 <span class="co">#&gt;    .pred_poor .pred_good Class</span>
 <span class="co">#&gt;  *      &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt;</span>
 <span class="co">#&gt;  1    0.986      0.0142  poor </span>
@@ -156,7 +156,7 @@
 <span class="co"># Convert probabilities into predictions</span>
 <span class="co"># &gt; 0.5 = good</span>
 <span class="co"># &lt; 0.5 = poor</span>
-<span class="va">segment_logistic_thresh</span> <span class="op">&lt;-</span> <span class="va">segment_logistic</span> <span class="op">%&gt;%</span>
+<span class="va">segment_logistic_thresh</span> <span class="op">&lt;-</span> <span class="va">segment_logistic</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
     .pred <span class="op">=</span> <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span><span class="op">(</span>
       estimate <span class="op">=</span> <span class="va">.pred_good</span>, 
@@ -166,7 +166,7 @@
   <span class="op">)</span>
 
 <span class="va">segment_logistic_thresh</span>
-<span class="co">#&gt; # A tibble: 1,010 x 4</span>
+<span class="co">#&gt; # A tibble: 1,010 × 4</span>
 <span class="co">#&gt;    .pred_poor .pred_good Class      .pred</span>
 <span class="co">#&gt;  *      &lt;dbl&gt;      &lt;dbl&gt; &lt;fct&gt; &lt;clss_prd&gt;</span>
 <span class="co">#&gt;  1    0.986      0.0142  poor        poor</span>
@@ -186,7 +186,7 @@
 <span class="co">#        x &gt; 0.55 = good</span>
 <span class="co">#        x &lt; 0.45 = poor</span>
 <span class="co"># 0.45 &lt; x &lt; 0.55 = equivocal</span>
-<span class="va">segment_pred</span> <span class="op">&lt;-</span> <span class="va">segment_logistic</span> <span class="op">%&gt;%</span>
+<span class="va">segment_pred</span> <span class="op">&lt;-</span> <span class="va">segment_logistic</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
     .pred <span class="op">=</span> <span class="fu"><a href="../reference/make_class_pred.html">make_two_class_pred</a></span><span class="op">(</span>
       estimate <span class="op">=</span> <span class="va">.pred_good</span>, 
@@ -196,27 +196,27 @@
     <span class="op">)</span>
   <span class="op">)</span> 
 
-<span class="va">segment_pred</span> <span class="op">%&gt;%</span>
+<span class="va">segment_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 3 x 2</span>
+<span class="co">#&gt; # A tibble: 3 × 2</span>
 <span class="co">#&gt;        .pred     n</span>
 <span class="co">#&gt;   &lt;clss_prd&gt; &lt;int&gt;</span>
 <span class="co">#&gt; 1       [EQ]    45</span>
 <span class="co">#&gt; 2       good   340</span>
 <span class="co">#&gt; 3       poor   625</span>
 
-<span class="va">segment_pred</span> <span class="op">%&gt;%</span>
+<span class="va">segment_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>reportable <span class="op">=</span> <span class="fu"><a href="../reference/reportable_rate.html">reportable_rate</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 1 x 1</span>
+<span class="co">#&gt; # A tibble: 1 × 1</span>
 <span class="co">#&gt;   reportable</span>
 <span class="co">#&gt;        &lt;dbl&gt;</span>
 <span class="co">#&gt; 1      0.955</span></code></pre></div>
 <p>Equivocal values in <code>class_pred</code> objects are converted to <code>NA</code> when the object is converted to a factor. It’s also worth noting that the <code>[EQ]</code> label is not treated as a separate level.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">segment_pred</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<code class="sourceCode R"><span class="va">segment_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">.pred</span>, <span class="va">.pred_fct</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 3 x 3</span>
+<span class="co">#&gt; # A tibble: 3 × 3</span>
 <span class="co">#&gt;        .pred .pred_fct     n</span>
 <span class="co">#&gt;   &lt;clss_prd&gt; &lt;fct&gt;     &lt;int&gt;</span>
 <span class="co">#&gt; 1       [EQ] &lt;NA&gt;         45</span>
@@ -232,19 +232,19 @@
 <span class="co">#&gt; Use the argument `event_level = "second"` to alter this as needed.</span>
 
 <span class="co"># No equivocal zone</span>
-<span class="va">segment_logistic_thresh</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="va">segment_logistic_thresh</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://yardstick.tidymodels.org/reference/precision.html">precision</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_fct</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 1 x 3</span>
+<span class="co">#&gt; # A tibble: 1 × 3</span>
 <span class="co">#&gt;   .metric   .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 precision binary         0.680</span>
 
 <span class="co"># Equivocal zone</span>
-<span class="va">segment_pred</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+<span class="va">segment_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://yardstick.tidymodels.org/reference/precision.html">precision</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_fct</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 1 x 3</span>
+<span class="co">#&gt; # A tibble: 1 × 3</span>
 <span class="co">#&gt;   .metric   .estimator .estimate</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;          &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 precision binary         0.694</span></code></pre></div>
