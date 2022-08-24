@@ -245,7 +245,12 @@ append_class_pred <- function(.data,
     stop("`name` must be a single character value.", call. = FALSE)
   }
 
-  prob_names <- tidyselect::vars_select(names(.data), !!!quos(...))
+  sel <- tidyselect::eval_select(
+    expr = expr(c(...)),
+    data = .data
+  )
+
+  prob_names <- names(sel)
 
   if (length(prob_names) < 2) {
     stop ("`...` should select at least 2 columns.", call. = FALSE)

@@ -95,11 +95,19 @@ threshold_perf.data.frame <- function(.data,
     thresholds <- seq(0.5, 1, length = 21)
   }
 
-  nms   <- names(.data)
-  obs   <- tidyselect::vars_select(nms, !!enquo(truth))
-  probs <- tidyselect::vars_select(nms, !!enquo(estimate))
-  rs_ch <- dplyr::group_vars(.data)
+  obs_sel <- tidyselect::eval_select(
+    expr = enquo(truth),
+    data = .data
+  )
+  probs_sel <- tidyselect::eval_select(
+    expr = enquo(estimate),
+    data = .data
+  )
 
+  obs   <- names(obs_sel)
+  probs <- names(probs_sel)
+
+  rs_ch <- dplyr::group_vars(.data)
   rs_ch <- unname(rs_ch)
 
   obs_sym <- sym(obs)
