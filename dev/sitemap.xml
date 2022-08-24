@@ -1,51 +1,72 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://probably.tidymodels.org/index.html</loc>
+    <loc>https://probably.tidymodels.org/dev/CODE_OF_CONDUCT.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/append_class_pred.html</loc>
+    <loc>https://probably.tidymodels.org/dev/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/as_class_pred.html</loc>
+    <loc>https://probably.tidymodels.org/dev/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/class_pred.html</loc>
+    <loc>https://probably.tidymodels.org/dev/articles/equivocal-zones.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/is_class_pred.html</loc>
+    <loc>https://probably.tidymodels.org/dev/articles/index.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/levels.class_pred.html</loc>
+    <loc>https://probably.tidymodels.org/dev/articles/where-to-use.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/locate-equivocal.html</loc>
+    <loc>https://probably.tidymodels.org/dev/authors.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/make_class_pred.html</loc>
+    <loc>https://probably.tidymodels.org/dev/index.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/probably-package.html</loc>
+    <loc>https://probably.tidymodels.org/dev/news/index.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/reexports.html</loc>
+    <loc>https://probably.tidymodels.org/dev/reference/append_class_pred.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/reportable_rate.html</loc>
+    <loc>https://probably.tidymodels.org/dev/reference/as_class_pred.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/segment_naive_bayes.html</loc>
+    <loc>https://probably.tidymodels.org/dev/reference/class_pred.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/species_probs.html</loc>
+    <loc>https://probably.tidymodels.org/dev/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/threshold_perf.html</loc>
+    <loc>https://probably.tidymodels.org/dev/reference/is_class_pred.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/articles/equivocal-zones.html</loc>
+    <loc>https://probably.tidymodels.org/dev/reference/levels.class_pred.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/articles/where-to-use.html</loc>
+    <loc>https://probably.tidymodels.org/dev/reference/locate-equivocal.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/make_class_pred.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/probably-package.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/reexports.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/reportable_rate.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/segment_naive_bayes.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/species_probs.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/threshold_perf.html</loc>
   </url>
 </urlset>
