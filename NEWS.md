@@ -1,5 +1,8 @@
 # probably (development version)
 
+* Bumped the minimum required R version to >=3.4.0 to align with the rest of the
+  tidyverse.
+
 * Re-licensed package from GPL-2 to MIT. All copyright holders are RStudio employees and give consent.
 
 # probably 0.0.6
