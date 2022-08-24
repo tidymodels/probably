@@ -32,11 +32,6 @@ reference:
   - locate-equivocal
   - levels.class_pred
 
-- title: Vctrs compatibility
-  contents:
-  - vec_cast.class_pred
-  - vec_ptype2.class_pred
-
 - title: Data
   contents:
   - segment_naive_bayes
