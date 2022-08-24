@@ -68,7 +68,6 @@
 #'     )
 #'   )
 #'
-#' @importFrom tidyselect vars_select
 #' @export
 make_class_pred <- function(...,
                             levels,

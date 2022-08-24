@@ -79,10 +79,6 @@ threshold_perf <- function(.data, ...) {
 }
 
 #' @rdname threshold_perf
-#' @importFrom tidyselect vars_select
-#' @importFrom dplyr rename select mutate group_by do summarise
-#' @importFrom dplyr %>% tibble ungroup
-#' @importFrom stats na.omit
 #' @export
 threshold_perf.data.frame <- function(.data,
                                       truth,
@@ -135,7 +131,7 @@ threshold_perf.data.frame <- function(.data,
   }
 
   if (na_rm) {
-    .data <- na.omit(.data)
+    .data <- stats::na.omit(.data)
   }
 
   .data <- .data %>%
@@ -143,14 +139,14 @@ threshold_perf.data.frame <- function(.data,
       threshold = thresholds,
       inc = c("truth", "prob", rs_ch)
     ) %>%
-    mutate(
+    dplyr::mutate(
       alt_pred = recode_data(truth, prob, .threshold)
     )
 
   if (!is.null(rs_id)) {
-    .data <- .data %>% group_by(!!!rs_id, .threshold)
+    .data <- .data %>% dplyr::group_by(!!!rs_id, .threshold)
   } else {
-    .data <- .data %>% group_by(.threshold)
+    .data <- .data %>% dplyr::group_by(.threshold)
   }
 
   .data_metrics <- .data %>%
@@ -175,9 +171,8 @@ threshold_perf.data.frame <- function(.data,
   .data_metrics
 }
 
-#' @importFrom yardstick sens spec j_index metric_set
 two_class <- function(...) {
-  mets <- metric_set(sens, spec, j_index)
+  mets <- yardstick::metric_set(sens, spec, j_index)
   mets(...)
 }
 

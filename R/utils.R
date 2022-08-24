@@ -1,5 +1,3 @@
-#' @import rlang
-#' @importFrom utils globalVariables
 
 # is there a forcats for this?
 recode_data <- function(obs, prob, threshold) {

@@ -26,10 +26,10 @@ ex_data_miss$outcome[c(49, 85, 57, 110)] <- NA
 
 thr <- c(0, .5, .78, 1)
 
-mets <- metric_set(sens, spec, j_index)
+mets <- yardstick::metric_set(sens, spec, j_index)
 
 get_res <- function(prob, obs, cut) {
-  cls <- probably:::recode_data(obs, prob, cut)
+  cls <- recode_data(obs, prob, cut)
   dat <- data.frame(
     obs = obs,
     cls = cls
@@ -58,7 +58,7 @@ get_res <- function(prob, obs, cut) {
 
 test_that('factor from numeric', {
   new_fac_1 <-
-    probably:::recode_data(
+    recode_data(
       obs = ex_data$outcome,
       prob = ex_data$prob_est,
       threshold = ex_data$prob_est[1]
@@ -71,7 +71,7 @@ test_that('factor from numeric', {
 
   # missing data
   new_fac_2 <-
-    probably:::recode_data(
+    recode_data(
       obs = ex_data_miss$outcome,
       prob = ex_data_miss$prob_est,
       threshold = ex_data_miss$prob_est[1]
@@ -88,7 +88,7 @@ test_that('factor from numeric', {
   options(yardstick.event_first = FALSE)
 
   new_fac_3 <-
-    probably:::recode_data(
+    recode_data(
       obs = ex_data$outcome,
       prob = ex_data$prob_est,
       threshold = ex_data$prob_est[1]
@@ -105,7 +105,7 @@ test_that('factor from numeric', {
 test_that('single group', {
   one_group_data <-
     ex_data %>%
-    group_by(group_2) %>%
+    dplyr::group_by(group_2) %>%
     threshold_perf(
       outcome,
       prob_est,
