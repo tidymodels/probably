@@ -1,5 +1,7 @@
 # probably (development version)
 
+* Max Kuhn is now the maintainer (#49).
+
 * Updated to testthat 3e (#44).
 
 * Fixed a bug with how `make_class_pred()` and `make_two_class_pred()` validate
