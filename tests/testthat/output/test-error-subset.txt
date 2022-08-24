@@ -1,5 +1,0 @@
-> manual_creation_eq[1:6]
-Error in vec_slice(x, i): Can't subset elements past the end.
-i Location 6 doesn't exist.
-i There are only 5 elements.
-

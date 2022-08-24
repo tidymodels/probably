@@ -1,8 +1,3 @@
-library(testthat)
-library(dplyr)
-
-context("test-make-class-pred")
-
 test_data <- segment_logistic[1:5,]
 good <- test_data$.pred_good
 poor <- test_data$.pred_poor
@@ -21,7 +16,7 @@ test_that("two class succeeds with vector interface", {
   fct <- factor(c("poor", "poor", "good", "good", "poor"))
   known <- class_pred(fct, which = c(2,3,4))
 
-  expect_is(res, "class_pred")
+  expect_s3_class(res, "class_pred")
   expect_equal(res, known)
 
 })
@@ -33,7 +28,7 @@ test_that("multi class succeeds with vector interface", {
   fct <- factor(c("gray_fox", "gray_fox", "bobcat", "gray_fox", "coyote"))
   known <- class_pred(fct, which = 5)
 
-  expect_is(res, "class_pred")
+  expect_s3_class(res, "class_pred")
   expect_equal(res, known)
 
 })
@@ -50,7 +45,7 @@ test_that("multi class succeeds with data frame helper", {
 
   known <- make_class_pred(bobcat, coyote, gray_fox, levels = lvls2, min_prob = 0.5)
 
-  expect_is(res, "data.frame")
+  expect_s3_class(res, "data.frame")
   expect_equal(res[["cp_test"]], known)
 
 })
