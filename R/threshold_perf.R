@@ -31,6 +31,9 @@
 #' of values between 0.5 and 1.0 are used. **Note**: if this
 #' argument is used, it must be named.
 #'
+#' @param event_level A single string. Either `"first"` or `"second"` to specify
+#' which level of `truth` to consider as the "event".
+#'
 #' @return A tibble with columns: `.threshold`, `.estimator`, `.metric`,
 #' `.estimate` and any existing groups.
 #'
@@ -85,6 +88,7 @@ threshold_perf.data.frame <- function(.data,
                                       estimate,
                                       thresholds = NULL,
                                       na_rm = TRUE,
+                                      event_level = "first",
                                       ...) {
 
   if (is.null(thresholds)) {
@@ -140,7 +144,12 @@ threshold_perf.data.frame <- function(.data,
       inc = c("truth", "prob", rs_ch)
     ) %>%
     dplyr::mutate(
-      alt_pred = recode_data(truth, prob, .threshold)
+      alt_pred = recode_data(
+        obs = truth,
+        prob = prob,
+        threshold = .threshold,
+        event_level = event_level
+      )
     )
 
   if (!is.null(rs_id)) {
@@ -149,8 +158,14 @@ threshold_perf.data.frame <- function(.data,
     .data <- .data %>% dplyr::group_by(.threshold)
   }
 
-  .data_metrics <- .data %>%
-    two_class(truth, estimate = alt_pred)
+  two_class <- yardstick::metric_set(sens, spec, j_index)
+
+  .data_metrics <- two_class(
+    .data,
+    truth = truth,
+    estimate = alt_pred,
+    event_level = event_level
+  )
 
   # Create the `distance` metric data frame
   # and add it on
@@ -169,11 +184,6 @@ threshold_perf.data.frame <- function(.data,
   .data_metrics <- dplyr::bind_rows(.data_metrics, dist)
 
   .data_metrics
-}
-
-two_class <- function(...) {
-  mets <- yardstick::metric_set(sens, spec, j_index)
-  mets(...)
 }
 
 expand_preds <- function(.data, threshold, inc = NULL) {

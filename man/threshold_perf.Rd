@@ -7,7 +7,15 @@
 \usage{
 threshold_perf(.data, ...)
 
-\method{threshold_perf}{data.frame}(.data, truth, estimate, thresholds = NULL, na_rm = TRUE, ...)
+\method{threshold_perf}{data.frame}(
+  .data,
+  truth,
+  estimate,
+  thresholds = NULL,
+  na_rm = TRUE,
+  event_level = "first",
+  ...
+)
 }
 \arguments{
 \item{.data}{A tibble, potentially grouped.}
@@ -26,6 +34,9 @@ of values between 0.5 and 1.0 are used. \strong{Note}: if this
 argument is used, it must be named.}
 
 \item{na_rm}{A single logical: should missing data be removed?}
+
+\item{event_level}{A single string. Either \code{"first"} or \code{"second"} to specify
+which level of \code{truth} to consider as the "event".}
 }
 \value{
 A tibble with columns: \code{.threshold}, \code{.estimator}, \code{.metric},
