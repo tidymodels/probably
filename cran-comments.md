@@ -1,12 +1,3 @@
-## Test environments
-* local OS X install, R 3.6.0
-* ubuntu 14.04 (on travis-ci) (devel and release)
-* win-builder (devel and release)
-
-## R CMD check results
-
-0 errors | 0 warnings | 0 notes
-
 ## 0.0.6 Submission
 
 This patch release makes class_pred objects comparable and orderable by their levels. This adds compatibility with dplyr 1.0.0.
