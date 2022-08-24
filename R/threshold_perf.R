@@ -199,7 +199,7 @@ expand_preds <- function(.data, threshold, inc = NULL) {
   nth <- length(threshold)
   n_data <- nrow(.data)
   if (!is.null(inc))
-    .data <- dplyr::select(.data, inc)
+    .data <- dplyr::select(.data, tidyselect::all_of(inc))
   .data <- .data[rep(1:nrow(.data), times = nth), ]
   .data$.threshold <- rep(threshold, each = n_data)
   .data
