@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 [![Codecov test coverage](https://codecov.io/gh/tidymodels/probably/branch/main/graph/badge.svg)](https://codecov.io/gh/tidymodels/probably?branch=main)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-[![R build status](https://github.com/tidymodels/probably/workflows/R-CMD-check/badge.svg)](https://github.com/tidymodels/probably/actions)
+[![R-CMD-check](https://github.com/tidymodels/probably/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/tidymodels/probably/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 ## Introduction
