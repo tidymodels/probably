@@ -33,10 +33,14 @@ is_ordered <- function(x) {
   UseMethod("is_ordered")
 }
 
+# Must export internal methods for testing
+#' @export
 is_ordered.class_pred <- function(x) {
   is_ordered_class_pred(x)
 }
 
+# Must export internal methods for testing
+#' @export
 is_ordered.default <- function(x) {
   is.ordered(x)
 }

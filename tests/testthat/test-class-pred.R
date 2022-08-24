@@ -1,7 +1,3 @@
-context("test-class-pred")
-
-library(vctrs)
-
 # ------------------------------------------------------------------------------
 # Setup
 
@@ -71,7 +67,7 @@ test_that("coercing class_pred to factor retains all levels", {
 })
 
 test_that("class_pred can be coerced to ordered factor", {
-  expect_is(as.ordered(manual_creation_eq), "ordered")
+  expect_s3_class(as.ordered(manual_creation_eq), "ordered")
 })
 
 test_that("casting class_pred to class_pred", {
@@ -205,12 +201,9 @@ test_that("slicing", {
   expect_equal(reportable_rate(manual_creation_eq[1:2]), 0.5)
 
   # extending past is an error
-  # use verify_output() so CRAN doesn't error if the output changes.
-  # we don't own the error message (vctrs does) so this is more robust.
-  verify_output(
-    test_path("output/test-error-subset.txt"),
+  expect_snapshot(error = TRUE, {
     manual_creation_eq[1:6]
-    )
+  })
 })
 
 test_that("unknown casts are handled correctly", {
@@ -294,7 +287,7 @@ test_that("combining class pred with factor", {
 
 test_that("common type: factor and class_pred", {
 
-  expect_is(vec_ptype2(class_pred(), factor()), "class_pred")
+  expect_s3_class(vec_ptype2(class_pred(), factor()), "class_pred")
 
   expect_equal(
     levels(
@@ -318,7 +311,7 @@ test_that("common type: factor and class_pred", {
 
   # reverse order
 
-  expect_is(vec_ptype2(factor(), class_pred()), "class_pred")
+  expect_s3_class(vec_ptype2(factor(), class_pred()), "class_pred")
 
   expect_equal(
     levels(
