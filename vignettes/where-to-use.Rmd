@@ -12,7 +12,13 @@ editor_options:
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7, fig.height = 6, fig.align = "center")
+knitr::opts_chunk$set(
+  collapse = TRUE, 
+  comment = "#>", 
+  fig.width = 7, 
+  fig.height = 6, 
+  fig.align = "center"
+)
 ```
 
 ## Introduction
@@ -63,7 +69,7 @@ Before we do anything, let's look at the counts of what we are going to be predi
 count(lending_train, Class)
 ```
 
-Clearly there is a large imbalance here with the number of good and bad loans. This is probably a good thing for the bank, but poses an interesting issue for us because we might want to ensure we are sensitive to the bad loans and are not overwhelmed by the number of good ones. One thing that we might do is _downsample_ the number of good loans so that the total number of them is more in line with the number of bad loans. We could do this before fitting the model using `recipes::step_downsample()`, but for now, let's continue with the data unchanged.
+Clearly there is a large imbalance here with the number of good and bad loans. This is probably a good thing for the bank, but poses an interesting issue for us because we might want to ensure we are sensitive to the bad loans and are not overwhelmed by the number of good ones. One thing that we might do is _downsample_ the number of good loans so that the total number of them is more in line with the number of bad loans. We could do this before fitting the model using `themis::step_downsample()`, but for now, let's continue with the data unchanged.
 
 We'll use parsnip's `logistic_reg()` to create a model specification for logistic regression, set the engine to be `glm` and then actually fit the model using our data and the model formula.
 
@@ -104,7 +110,13 @@ With our class probabilities in hand, we can use `make_two_class_pred()` to conv
 
 ```{r}
 hard_pred_0.5 <- lending_test_pred %>%
-  mutate(.pred = make_two_class_pred(.pred_good, levels(Class), threshold = .5)) %>%
+  mutate(
+    .pred = make_two_class_pred(
+      estimate = .pred_good, 
+      levels = levels(Class), 
+      threshold = .5
+    )
+  ) %>%
   select(Class, contains(".pred"))
 
 hard_pred_0.5 %>% 
@@ -115,7 +127,13 @@ Hmm, with a `0.5` threshold, almost all of the loans were predicted as "good". P
 
 ```{r}
 hard_pred_0.75 <- lending_test_pred %>%
-  mutate(.pred = make_two_class_pred(.pred_good, levels(Class), threshold = .75)) %>%
+  mutate(
+    .pred = make_two_class_pred(
+      estimate = .pred_good, 
+      levels = levels(Class), 
+      threshold = .75
+    )
+  ) %>%
   select(Class, contains(".pred"))
 
 hard_pred_0.75 %>% 
@@ -133,11 +151,6 @@ In this case, `r correct_bad` of the bad loans were correctly classified as bad,
 
 ```{r}
 library(yardstick)
-
-# Currently yardstick can't deal with the class_pred objects that come from
-# probably, but it will be able to soon!
-hard_pred_0.5 <- mutate(hard_pred_0.5, .pred = as.factor(.pred))
-hard_pred_0.75 <- mutate(hard_pred_0.75, .pred = as.factor(.pred))
 
 sens(hard_pred_0.5, Class, .pred)
 spec(hard_pred_0.5, Class, .pred)
