@@ -1,5 +1,8 @@
 # probably (development version)
 
+* `threshold_perf()` now has an explicit `event_level` argument rather than
+  respecting the now deprecated `yardstick.event_first` global option (#45).
+
 * Bumped the minimum required R version to >=3.4.0 to align with the rest of the
   tidyverse.
 
