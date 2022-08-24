@@ -102,3 +102,14 @@ test_that("fails with different length `...` VS levels", {
   )
 
 })
+
+test_that("validates type of `levels` (#42)", {
+  expect_error(
+    make_two_class_pred(1, levels = NULL),
+    "`levels` must be a character vector of length 2."
+  )
+  expect_error(
+    make_class_pred(1, 2, levels = c(0L, 4L)),
+    "`levels` must be a character vector"
+  )
+})

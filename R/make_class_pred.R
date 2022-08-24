@@ -98,7 +98,7 @@ make_class_pred <- function(...,
   }
 
   # Levels check (length and type)
-  if (length(levels) != length(probs) && is.character(levels)) {
+  if (length(levels) != length(probs) || !is.character(levels)) {
     stop (
       "`levels` must be a character vector with the ",
       "same length as the number of vectors passed to `...`.",
@@ -141,7 +141,7 @@ make_two_class_pred <- function(estimate,
                                 ordered = FALSE,
                                 buffer = NULL) {
 
-  if (length(levels) != 2 && is.character(levels))
+  if (length(levels) != 2 || !is.character(levels))
     stop ("`levels` must be a character vector of length 2.", call. = FALSE)
 
   if (!is.numeric(estimate))

@@ -1,5 +1,8 @@
 # probably (development version)
 
+* Fixed a bug with how `make_class_pred()` and `make_two_class_pred()` validate
+  the `levels` argument (#42).
+
 * `threshold_perf()` now has an explicit `event_level` argument rather than
   respecting the now deprecated `yardstick.event_first` global option (#45).
 
