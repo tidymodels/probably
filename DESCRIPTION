@@ -4,7 +4,7 @@ Version: 0.0.6.9000
 Authors@R: c(
     person("Max", "Kuhn", , "max@rstudio.com", role = "aut"),
     person("Davis", "Vaughan", , "davis@rstudio.com", role = c("aut", "cre")),
-    person("RStudio", role = "cph")
+    person("RStudio", role = c("cph", "fnd"))
   )
 Description: Models can be improved by post-processing class
     probabilities, by: recalibration, conversion to hard probabilities,
