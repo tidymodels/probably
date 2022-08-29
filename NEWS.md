@@ -1,4 +1,4 @@
-# probably (development version)
+# probably 0.1.0
 
 * Max Kuhn is now the maintainer (#49).
 
