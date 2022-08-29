@@ -1,10 +1,10 @@
-pandoc: 2.7.3
-pkgdown: 1.6.1.9001
-pkgdown_sha: 51268b0d9cb0588d7a6404a2b8ef4ee19c435e89
+pandoc: 2.14.2
+pkgdown: 2.0.6
+pkgdown_sha: ~
 articles:
   equivocal-zones: equivocal-zones.html
   where-to-use: where-to-use.html
-last_built: 2021-06-30T23:21Z
+last_built: 2022-08-29T17:08Z
 urls:
   reference: https://probably.tidymodels.org/reference
   article: https://probably.tidymodels.org/articles
