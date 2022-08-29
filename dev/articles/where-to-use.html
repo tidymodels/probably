@@ -78,7 +78,7 @@
       <img src="" class="logo" alt=""><h1>Where does probably fit in?</h1>
                         <h4 data-toc-skip class="author">Davis Vaughan</h4>
             
-            <h4 data-toc-skip class="date">2022-08-24</h4>
+            <h4 data-toc-skip class="date">2022-08-29</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/vignettes/where-to-use.Rmd" class="external-link"><code>vignettes/where-to-use.Rmd</code></a></small>
       <div class="d-none name"><code>where-to-use.Rmd</code></div>
@@ -127,8 +127,7 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> good      <span style="text-decoration: underline;">188</span>000 Not_Verified        B2       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> good       <span style="text-decoration: underline;">89</span>000 Source_Verified     B3       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> good       <span style="text-decoration: underline;">48</span>000 Not_Verified        C2       </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 9,847 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 9,847 more rows</span></span></span></code></pre></div>
 <p>Let’s split this into 75% training and 25% testing for something to predict on.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 75% train, 25% test</span></span>
@@ -245,8 +244,7 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>      0.951   0.048<span style="text-decoration: underline;">6</span>  good       <span style="text-decoration: underline;">65</span>000 Verified            C1       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>      0.963   0.037<span style="text-decoration: underline;">0</span>  good       <span style="text-decoration: underline;">52</span>000 Verified            B4       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>      0.983   0.017<span style="text-decoration: underline;">3</span>  good       <span style="text-decoration: underline;">61</span>000 Verified            B2       </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 2,455 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ Use `print(n = ...)` to see more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># … with 2,455 more rows</span></span></span></code></pre></div>
 <p>With our class probabilities in hand, we can use <code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code> to convert these probabilities into hard predictions using a threshold. A threshold of <code>0.5</code> just says that if the predicted probability is above <code>0.5</code>, then classify this prediction as a “good” loan, otherwise, bad.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hard_pred_0.5</span> <span class="op">&lt;-</span> <span class="va">lending_test_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
