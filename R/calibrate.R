@@ -1,4 +1,37 @@
-probability_bins <- function(.data, truth, truth_val = 1, estimate, no_bins = 10) {
+
+cal_object <- function(estimates_table, additional_classes = NULL) {
+  structure(
+    list(
+      estimates_table = estimates_table
+    ),
+    class = c("cal_object", additional_classes)
+  )
+}
+
+cal_glm_dataframe <- function(.data, truth, estimate, truth_val = 1) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  val_data <- dplyr::mutate(
+    .data,
+    .is_val = ifelse(!! truth == truth_val, 1, 0),
+    .estimate = !! estimate,
+  )
+
+  model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial")
+
+  new_estimates <- seq_len(1000) * 0.001
+  pred <- predict(model, newdata = data.frame(.estimate = new_estimates), type = "response")
+
+  tbl_estimates <- tibble(
+    estimate = new_estimates,
+    adj_estimate = pred
+  )
+
+  cal_object(tbl_estimates, c("cal_glm", "cal_binary"))
+}
+
+probability_bins <- function(.data, truth, estimate, truth_val = 1, no_bins = 10) {
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -21,10 +54,8 @@ probability_bins <- function(.data, truth, truth_val = 1, estimate, no_bins = 10
 
   bin_summary <- dplyr::summarise(
     bin_group,
-    fraction_positives = sum(.is_val) / n(),
     mean_predicted = mean(!! estimate),
-    total_positives = sum(.is_val) ,
-    bin_count  = n()
+    fraction_positives = sum(.is_val) / n()
     )
 
   # Runs collect() to work with remote connections (ie Spark)
