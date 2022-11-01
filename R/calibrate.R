@@ -1,16 +1,44 @@
+#' @export
+calibrate <- function(.data, truth, estimate, models = c("glm")) {
+  UseMethod("calibrate")
+}
 
-cal_add_adj <- function(.data, cal_object) {
-  estimates <- cal_get_estimates(cal_object)
-  col_names <- colnames(estimates)
-  match_col <- col_names[[1]]
+#' @export
+calibrate <- function(.data, truth, estimate, models = c("glm")) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+  res <- NULL
+  if("glm" %in% models) {
+    glm_cal <- cal_glm_dataframe(
+      .data = .data,
+      truth = !! truth,
+      estimate = !! estimate
+      )
+    glm_predict <- cal_glm_add(glm_cal, !! estimate, .data = .data)
+    glm_probs <- probability_bins(glm_predict, !! truth, .adj_estimate)
+    glm_object <- list(
+      calibration = glm_cal,
+      performance = glm_probs
+    )
+    res <- list(
+      models = list(
+        glm = glm_object
+      )
+    )
+  }
+  res
+}
+
+cal_glm_add<- function(estimates_table, estimate, .data) {
+  estimate <- enquo(estimate)
   round_data <- mutate(
     .data,
-    .rounded = round(!! parse_expr(match_col), digits = 3)
+    .rounded = round(!! estimate, digits = 3)
   )
   matched_data <- dplyr::left_join(
     round_data,
-    estimates,
-    by = c(".rounded" = match_col)
+    estimates_table,
+    by = c(".rounded" = ".estimate")
   )
   dplyr::select(matched_data, - .rounded)
 }
@@ -28,37 +56,25 @@ cal_object <- function(estimates_table, truth, truth_val,
   )
 }
 
-cal_get_estimates <- function(x) {
-  x$estimates_table
-}
-
 cal_glm_dataframe <- function(.data, truth, estimate, truth_val = 1) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  adj_name <- parse_expr(paste0(as_name(estimate), "_adj_glm"))
-
   val_data <- dplyr::mutate(
     .data,
-    .is_val = ifelse(!! truth == truth_val, 1, 0),
+    .is_val = ifelse(!! truth == !! truth_val, 1, 0),
     .estimate = !! estimate,
   )
 
   model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial")
 
   new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
+
   pred <- predict(model, newdata = data.frame(.estimate = new_estimates), type = "response")
 
-  tbl_estimates <- tibble(
-    !! estimate := new_estimates,
-    !! adj_name := pred
-  )
-
-  cal_object(
-    estimates_table = tbl_estimates,
-    truth = truth,
-    truth_val = truth_val,
-    additional_classes = c("cal_glm", "cal_binary")
+  tibble(
+    .estimate = new_estimates,
+    .adj_estimate = pred
     )
 }
 
