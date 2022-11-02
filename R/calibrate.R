@@ -52,8 +52,11 @@ cal_single <- function(.data, truth, estimate, models) {
       list(
         title = title,
         calibration = cal,
-        performance = probs,
-        brier_score = bs
+        performance = list(
+          probability_bins = probs,
+          brier_score = bs
+        )
+
       )
     }
   )
@@ -62,24 +65,29 @@ cal_single <- function(.data, truth, estimate, models) {
 
   list(
     original = list(
-      performance = probability_bins(.data, !!truth, !!estimate),
-      brier_score = brier_score(.data, !!truth, !!estimate)
+      performance = list(
+        probability_bins = probability_bins(.data, !!truth, !!estimate),
+        brier_score = brier_score(.data, !!truth, !!estimate)
+        )
       ),
-    models = model_named
+    calibration = model_named
   )
 }
 
 #' @export
-plot.cal_object <- function(x, ...) {
+plot.cal_binary <- function(x, ...) {
   model_merge <- map(
-    x$models,
-    ~ dplyr::mutate(.x$performance, group = .x$title)
+    x$estimates[[1]]$calibration,
+    ~ dplyr::mutate(.x$performance$probability_bins, group = .x$title)
   )
 
   model_perf <- bind_rows(model_merge)
 
   merged_data <- dplyr::bind_rows(
-    dplyr::mutate(x$original$performance, group = "Original"),
+    dplyr::mutate(
+      x$estimates[[1]]$original$performance$probability_bins,
+      group = "Original"
+      ),
     model_perf
   )
   ggplot(
