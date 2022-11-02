@@ -21,12 +21,49 @@ calibrate.data.frame <- function(.data, truth, estimate,
     stop("Multiclass not supported...yet :)")
   }
 
-  ret <- list(
-    type = type,
-    estimates = estimates
+  structure(
+    list(
+      type = type,
+      estimates = estimates
+    ),
+    class = c("cal_object", paste0("cal_", type))
   )
-  class(ret) <- c("cal_object", paste0("cal_", type))
-  ret
+}
+
+#' @export
+print.cal_binary <- function(x, ...) {
+  bins <- cal_get_bins_binary(x)
+  cat("Binary Probability Calibration\n")
+  cat(" Estimate:", names(x$estimates), "\n")
+  cat("  Brier Scores:\n")
+  map(
+    bins,
+    ~ {
+      title <- paste0(.x$title, ":")
+      cat("   |--", title, .x$brier, "\n")
+    }
+  )
+}
+
+cal_get_bins_binary <- function(x) {
+  cals <- map(
+    x$estimates[[1]]$calibration,
+    ~{
+      list(
+        title = .x$title,
+        bins = .x$performance$probability_bins,
+        brier = .x$performance$brier_score
+      )
+    })
+
+  orig <- x$estimates[[1]]$original
+  original <- list(
+    title = "Original",
+    bins = orig$performance$probability_bins,
+    brier = orig$performance$brier_score
+  )
+
+  c(list(original = original), cals)
 }
 
 cal_single <- function(.data, truth, estimate, models) {
@@ -76,30 +113,32 @@ cal_single <- function(.data, truth, estimate, models) {
 
 #' @export
 plot.cal_binary <- function(x, ...) {
+
+  bins <- cal_get_bins_binary(x)
+
   model_merge <- map(
-    x$estimates[[1]]$calibration,
-    ~ dplyr::mutate(.x$performance$probability_bins, group = .x$title)
+    bins,
+    ~ {
+      .x$bins$Source <- .x$title
+      .x$bins
+    }
   )
 
-  model_perf <- bind_rows(model_merge)
+  model_bind <- dplyr::bind_rows(model_merge)
 
-  merged_data <- dplyr::bind_rows(
-    dplyr::mutate(
-      x$estimates[[1]]$original$performance$probability_bins,
-      group = "Original"
-      ),
-    model_perf
-  )
+  plot_title <- paste(names(x$estimates), "estimate")
+
   ggplot(
-    data = merged_data,
-    aes(mean_predicted, fraction_positives, color = group, group = group)
-  ) +
+    data = model_bind,
+    aes(mean_predicted, fraction_positives, color = Source, group = Source)
+    ) +
     geom_line() +
     geom_point() +
     geom_segment(x = 0, y = 0, xend = 1, yend = 1, linetype = 2, color = "gray") +
     theme_minimal() +
     labs(
-      title = "Calibration Plot",
+      title = plot_title,
+      subtitle = "Calibration Plot",
       x = "Mean Predicted",
       y = "Fraction of Positives"
     )
@@ -162,13 +201,9 @@ cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
 
 cal_add_interval <- function(estimates_table, estimate, .data) {
   estimate <- enquo(estimate)
-
   nd <- dplyr::pull(.data, !!estimate)
-
   x <- dplyr::pull(estimates_table, .estimate)
-
   y <- dplyr::pull(estimates_table, .adj_estimate)
-
   dplyr::mutate(
     .data,
     .adj_estimate = y[findInterval(nd, x)]
@@ -178,13 +213,9 @@ cal_add_interval <- function(estimates_table, estimate, .data) {
 brier_score <- function(.data, truth, estimate) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
-
   subs <- expr(!! truth - !! estimate)
-
   bs <- dplyr::mutate(.data, subs = !! subs * !! subs)
-
   bs_sum <- dplyr::summarise(bs, x = sum(subs) / n())
-
   pull(bs_sum, x)
 }
 
