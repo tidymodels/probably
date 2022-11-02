@@ -22,11 +22,13 @@ calibrate.data.frame <- function(.data, truth, estimate,
         cal <- cal_isoreg_dataframe(.data, !!truth, !!estimate)
         preds <- cal_add_interval(cal, !!estimate, .data = .data)
       }
+      bs <- brier_score(preds, !!truth, .adj_estimate)
       probs <- probability_bins(preds, !!truth, .adj_estimate)
       list(
         title = title,
         calibration = cal,
-        performance = probs
+        performance = probs,
+        brier_score = bs
       )
     }
   )
@@ -35,7 +37,8 @@ calibrate.data.frame <- function(.data, truth, estimate,
 
   res <- list(
     original = list(
-      performance = probability_bins(.data, !!truth, !!estimate)
+      performance = probability_bins(.data, !!truth, !!estimate),
+      brier_score = brier_score(.data, !!truth, !!estimate)
     ),
     models = model_named
   )
@@ -139,6 +142,19 @@ cal_add_interval <- function(estimates_table, estimate, .data) {
     .data,
     .adj_estimate = y[findInterval(nd, x)]
   )
+}
+
+brier_score <- function(.data, truth, estimate) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  subs <- expr(!! truth - !! estimate)
+
+  bs <- dplyr::mutate(.data, subs = !! subs * !! subs)
+
+  bs_sum <- dplyr::summarise(bs, x = sum(subs) / n())
+
+  pull(bs_sum, x)
 }
 
 probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins = 10) {
