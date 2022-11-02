@@ -7,7 +7,7 @@ calibrate <- function(.data, truth, estimate, models = c("glm")) {
 calibrate.data.frame <- function(.data, truth, estimate, models = c("glm")) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
-  res <- NULL
+  model_objs <- NULL
   glm_object <- NULL
   if("glm" %in% models) {
     glm_cal <- cal_glm_dataframe(
@@ -17,29 +17,36 @@ calibrate.data.frame <- function(.data, truth, estimate, models = c("glm")) {
       )
     glm_predict <- cal_add_join(glm_cal, !! estimate, .data = .data)
     glm_probs <- probability_bins(glm_predict, !! truth, .adj_estimate)
-    glm_object <- list(
-      calibration = glm_cal,
-      performance = glm_probs
-    )
-    res <- list(
-      original = list(
-        performance = probability_bins(.data, !! truth, !! estimate)
-      ),
-      models = list(
+    model_objs <- list(
+      glm = list(
         title = "GLM",
-        glm = glm_object
+        calibration = glm_cal,
+        performance = glm_probs
       )
     )
   }
+  res <- list(
+    original = list(
+      performance = probability_bins(.data, !! truth, !! estimate)
+    ),
+    models = model_objs
+  )
   class(res) <- "cal_object"
   res
 }
 
 #' @export
 plot.cal_object <- function(x, ...) {
+  model_merge <-  map(
+    x$models,
+    ~ dplyr::mutate(.x$performance, group = .x$title)
+    )
+
+  model_perf <- bind_rows(model_merge)
+
   merged_data <- dplyr::bind_rows(
     dplyr::mutate(x$original$performance, group = "Original"),
-    dplyr::mutate(x$models$glm$performance, group = x$models$title)
+    model_perf
   )
   ggplot(data = merged_data,
          aes(mean_predicted, fraction_positives, color = group, group = group)
