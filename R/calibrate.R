@@ -10,23 +10,23 @@ calibrate.data.frame <- function(.data, truth, estimate,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  estimates <- list()
   if(length(estimate) == 2) {
     type <- "binary"
-    cs <- cal_single(.data, !! truth, !! estimate, models)
-    estimates$cs <- cs
-    estimates <- set_names(estimates, as_name(estimate))
+    estimates <- cal_single(.data, !! truth, !! estimate, models)
   } else {
     type <- "multiclass"
     stop("Multiclass not supported...yet :)")
   }
+  as_cal_object(estimates, type, "cal_multiple")
+}
 
+as_cal_object <- function(estimates, type = NULL, additional_class = NULL) {
   structure(
     list(
       type = type,
       estimates = estimates
     ),
-    class = c("cal_object", paste0("cal_", type))
+    class = c("cal_object", additional_class, paste0("cal_", type))
   )
 }
 
@@ -66,6 +66,26 @@ cal_get_bins_binary <- function(x) {
   c(list(original = original), cals)
 }
 
+#' @export
+cal_glm <- function(.data, truth = NULL, estimate = NULL) {
+  UseMethod("cal_glm")
+}
+
+#' @export
+cal_glm.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  cal <- cal_single(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
+    models = "glm"
+  )
+  as_cal_object(cal, type = "binary", "cal_glm")
+}
+
+
 cal_single <- function(.data, truth, estimate, models) {
 
   truth <- enquo(truth)
@@ -100,7 +120,9 @@ cal_single <- function(.data, truth, estimate, models) {
 
   model_named <- set_names(model_obj, models)
 
-  list(
+  res <- list()
+
+  cal <- list(
     original = list(
       performance = list(
         probability_bins = probability_bins(.data, !!truth, !!estimate),
@@ -109,6 +131,8 @@ cal_single <- function(.data, truth, estimate, models) {
       ),
     calibration = model_named
   )
+  res$cs <- cal
+  set_names(res, as_name(estimate))
 }
 
 #' @export
