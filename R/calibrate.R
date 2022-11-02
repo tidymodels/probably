@@ -4,32 +4,58 @@ calibrate <- function(.data, truth, estimate, models = c("glm")) {
 }
 
 #' @export
-calibrate <- function(.data, truth, estimate, models = c("glm")) {
+calibrate.data.frame <- function(.data, truth, estimate, models = c("glm")) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   res <- NULL
+  glm_object <- NULL
   if("glm" %in% models) {
     glm_cal <- cal_glm_dataframe(
       .data = .data,
       truth = !! truth,
       estimate = !! estimate
       )
-    glm_predict <- cal_glm_add(glm_cal, !! estimate, .data = .data)
+    glm_predict <- cal_add_join(glm_cal, !! estimate, .data = .data)
     glm_probs <- probability_bins(glm_predict, !! truth, .adj_estimate)
     glm_object <- list(
       calibration = glm_cal,
       performance = glm_probs
     )
     res <- list(
+      original = list(
+        performance = probability_bins(.data, !! truth, !! estimate)
+      ),
       models = list(
+        title = "GLM",
         glm = glm_object
       )
     )
   }
+  class(res) <- "cal_object"
   res
 }
 
-cal_glm_add<- function(estimates_table, estimate, .data) {
+#' @export
+plot.cal_object <- function(x, ...) {
+  merged_data <- dplyr::bind_rows(
+    dplyr::mutate(x$original$performance, group = "Original"),
+    dplyr::mutate(x$models$glm$performance, group = x$models$title)
+  )
+  ggplot(data = merged_data,
+         aes(mean_predicted, fraction_positives, color = group, group = group)
+         ) +
+    geom_line() +
+    geom_point() +
+    geom_segment(x = 0, y = 0, xend = 1, yend = 1, linetype = 2, color = "gray") +
+    theme_minimal() +
+    labs(
+      title = "Calibration Plot",
+      x = "Mean Predicted",
+      y = "Fraction of Positives"
+      )
+}
+
+cal_add_join <- function(estimates_table, estimate, .data) {
   estimate <- enquo(estimate)
   round_data <- mutate(
     .data,
@@ -41,19 +67,6 @@ cal_glm_add<- function(estimates_table, estimate, .data) {
     by = c(".rounded" = ".estimate")
   )
   dplyr::select(matched_data, - .rounded)
-}
-
-cal_object <- function(estimates_table, truth, truth_val,
-                       additional_classes = NULL
-                       ) {
-  structure(
-    list(
-      truth = truth,
-      truth_val = truth_val,
-      estimates_table = estimates_table
-    ),
-    class = c("cal_object", additional_classes)
-  )
 }
 
 cal_glm_dataframe <- function(.data, truth, estimate, truth_val = 1) {
