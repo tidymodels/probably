@@ -4,20 +4,20 @@ calibrate <- function(.data, truth, estimate, models = c("glm")) {
 }
 
 #' @export
-calibrate.data.frame <- function(.data, truth, estimate, models = c("glm")) {
+calibrate.data.frame <- function(.data, truth, estimate,
+                                 models = c("glm", "isotonic")
+                                 ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
-  model_objs <- NULL
+
   glm_object <- NULL
+  iso_object <- NULL
+
   if("glm" %in% models) {
-    glm_cal <- cal_glm_dataframe(
-      .data = .data,
-      truth = !! truth,
-      estimate = !! estimate
-      )
+    glm_cal <- cal_glm_dataframe(.data, !! truth, !! estimate)
     glm_predict <- cal_add_join(glm_cal, !! estimate, .data = .data)
     glm_probs <- probability_bins(glm_predict, !! truth, .adj_estimate)
-    model_objs <- list(
+    glm_object <- list(
       glm = list(
         title = "GLM",
         calibration = glm_cal,
@@ -25,11 +25,25 @@ calibrate.data.frame <- function(.data, truth, estimate, models = c("glm")) {
       )
     )
   }
+
+  if("isotonic" %in% models) {
+    iso_cal <- cal_isoreg_dataframe(.data, !! truth, !! estimate)
+    iso_predict <- cal_add_interval(iso_cal, !! estimate, .data = .data)
+    iso_probs <- probability_bins(iso_predict, !! truth, .adj_estimate)
+    iso_object <- list(
+      isotonic = list(
+        title = "Isotonic",
+        calibration = iso_cal,
+        performance = iso_probs
+      )
+    )
+  }
+
   res <- list(
     original = list(
       performance = probability_bins(.data, !! truth, !! estimate)
     ),
-    models = model_objs
+    models = c(glm_object, iso_object)
   )
   class(res) <- "cal_object"
   res
@@ -76,21 +90,21 @@ cal_add_join <- function(estimates_table, estimate, .data) {
   dplyr::select(matched_data, - .rounded)
 }
 
-cal_glm_dataframe <- function(.data, truth, estimate, truth_val = 1) {
+cal_glm_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  val_data <- dplyr::mutate(
-    .data,
-    .is_val = ifelse(!! truth == !! truth_val, 1, 0),
-    .estimate = !! estimate,
-  )
+  truth_data <- add_is_val(.data, truth, truth_val)
+
+  val_data <- dplyr::mutate(truth_data, .estimate = !! estimate)
 
   model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial")
 
   new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
 
-  pred <- predict(model, newdata = data.frame(.estimate = new_estimates), type = "response")
+  new_data <- data.frame(.estimate = new_estimates)
+
+  pred <- predict(model, newdata = new_data, type = "response")
 
   tibble(
     .estimate = new_estimates,
@@ -98,10 +112,46 @@ cal_glm_dataframe <- function(.data, truth, estimate, truth_val = 1) {
     )
 }
 
-probability_bins <- function(.data, truth, estimate, truth_val = 1, no_bins = 10) {
+cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  truth_data <- add_is_val(.data, truth, truth_val)
+
+  model <- isoreg(
+    dplyr::pull(truth_data, !! estimate),
+    dplyr::pull(truth_data, .is_val)
+    )
+
+  model_stepfun <-as.stepfun(model)
+
+  tibble(
+    .estimate = environment(model_stepfun)$x,
+    .adj_estimate = environment(model_stepfun)$y
+  )
+}
+
+cal_add_interval <- function(estimates_table, estimate, .data) {
+  estimate <- enquo(estimate)
+
+  nd <- dplyr::pull(.data, !! estimate)
+
+  x <- dplyr::pull(estimates_table, .estimate)
+
+  y <- dplyr::pull(estimates_table, .adj_estimate)
+
+  dplyr::mutate(
+    .data,
+    .adj_estimate = y[findInterval(nd, x)]
+  )
+}
+
+probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins = 10) {
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
+
+  truth_data <- add_is_val(.data, truth, truth_val)
 
   # Creates a case_when entry for each bin
   bin_exprs <- map(
@@ -111,11 +161,7 @@ probability_bins <- function(.data, truth, estimate, truth_val = 1, no_bins = 10
 
   # .is_val evaluates if truth is equal to truth val
   # essentially binarizying truth in case is not a binary number
-  bin_data <- dplyr::mutate(
-    .data,
-    .is_val = ifelse(!! truth == truth_val, 1, 0),
-    bin = case_when(!!! bin_exprs)
-    )
+  bin_data <- dplyr::mutate(truth_data, bin = case_when(!!! bin_exprs))
 
   bin_group <- dplyr::group_by(bin_data, bin)
 
@@ -127,4 +173,16 @@ probability_bins <- function(.data, truth, estimate, truth_val = 1, no_bins = 10
 
   # Runs collect() to work with remote connections (ie Spark)
   dplyr::collect(bin_summary)
+}
+
+add_is_val <- function(.data, truth, truth_val = NULL) {
+  if(!is.null(truth_val)) {
+    ret <- mutate(
+      .data,
+      .is_val = ifelse(!! truth == !! truth_val, 1, 0)
+    )
+  } else {
+    ret <- mutate(.data, .is_val = !! truth)
+  }
+  ret
 }
