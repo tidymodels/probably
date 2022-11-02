@@ -5,7 +5,32 @@ calibrate <- function(.data, truth, estimate, models = c("glm", "isotonic")) {
 
 #' @export
 calibrate.data.frame <- function(.data, truth, estimate,
-                                 models = c("glm", "isotonic")) {
+                                 models = c("glm", "isotonic")
+                                 ) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  estimates <- list()
+  if(length(estimate) == 2) {
+    type <- "binary"
+    cs <- cal_single(.data, !! truth, !! estimate, models)
+    estimates$cs <- cs
+    estimates <- set_names(estimates, as_name(estimate))
+  } else {
+    type <- "multiclass"
+    stop("Multiclass not supported...yet :)")
+  }
+
+  ret <- list(
+    type = type,
+    estimates = estimates
+  )
+  class(ret) <- c("cal_object", paste0("cal_", type))
+  ret
+}
+
+cal_single <- function(.data, truth, estimate, models) {
+
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -35,15 +60,13 @@ calibrate.data.frame <- function(.data, truth, estimate,
 
   model_named <- set_names(model_obj, models)
 
-  res <- list(
+  list(
     original = list(
       performance = probability_bins(.data, !!truth, !!estimate),
       brier_score = brier_score(.data, !!truth, !!estimate)
-    ),
+      ),
     models = model_named
   )
-  class(res) <- "cal_object"
-  res
 }
 
 #' @export
