@@ -1,108 +1,23 @@
-# --------------------------------- Calibrate ----------------------------------
-#' @export
-cal_multi <- function(.data, truth, estimate,
-                      models = c("glm", "isotonic", "isotonic_boot")
-                      ) {
-  UseMethod("cal_multi")
-}
-
-#' @export
-cal_multi.data.frame <- function(.data, truth, estimate,
-                                 models = c("glm", "isotonic", "isotonic_boot")
-                                 ) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  calibrate_impl(
-    .data = .data,
-    truth = !!truth,
-    estimate = !!estimate,
-    models = models
-  )
-}
-
-calibrate_impl <- function(.data, truth, estimate, models) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  # TODO - Better condition to determine if binary (this is a temp example code)
-  if(length(estimate) == 2) {
-    type <- "binary"
-    estimates <- calibrate_variable(
-      .data = .data,
-      truth = !! truth,
-      estimate = !! estimate,
-      models = models
-      )
-  } else {
-    type <- "multiclass"
-    stop("Multiclass not supported...yet :)")
-  }
-  as_cal_object(estimates, type, "cal_multiple")
-}
-
-calibrate_variable <- function(.data, truth, estimate, models) {
-
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  model_obj <- map(
-    models,
-    ~ {
-      if (.x == "glm") {
-        title <- "GLM"
-        cal <- cal_glm_dataframe(.data, !!truth, !!estimate)
-        preds <- cal_add_join(cal, !!estimate, .data = .data)
-      }
-      if (.x == "isotonic") {
-        title <- "Isotonic"
-        cal <- cal_isoreg_dataframe(.data, !!truth, !!estimate)
-        preds <- cal_add_interval(cal, !!estimate, .data = .data)
-      }
-      if (.x == "isotonic_boot") {
-        title <- "Isotonic Bootstrapped"
-        cal <- cal_isoreg_boot(.data, !!truth, !!estimate)
-        preds <- cal_add_join(cal, !!estimate, .data = .data)
-      }
-      bs <- brier_score(preds, !!truth, .adj_estimate)
-      probs <- probability_bins(preds, !!truth, .adj_estimate)
-      list(
-        title = title,
-        calibration = cal,
-        performance = list(
-          probability_bins = probs,
-          brier_score = bs
-        )
-
-      )
-    }
-  )
-
-  model_named <- set_names(model_obj, models)
-
-  res <- list()
-
-  cal <- list(
-    original = list(
-      performance = list(
-        probability_bins = probability_bins(.data, !!truth, !!estimate),
-        brier_score = brier_score(.data, !!truth, !!estimate)
-      )
-    ),
-    calibration = model_named
-  )
-  res$cs <- cal
-  set_names(res, as_name(estimate))
-}
-
+# ----------------------------- Object Builders --------------------------------
 as_cal_object <- function(estimates, type = NULL, additional_class = NULL) {
   structure(
     list(
       type = type,
       estimates = estimates
     ),
-    class = c("cal_object", additional_class, paste0("cal_", type))
+    class = c("cal_object", paste0("cal_", type), additional_class)
   )
+}
+
+as_cal_variable <- function(estimate_tbl, estimate, title, model) {
+  estimate <- enquo(estimate)
+  mod <- list(
+    title = title,
+    calibration = estimate_tbl
+  )
+  mod <- set_names(list(mod), model)
+  est <- list(mod)
+  set_names(est, as_name(estimate))
 }
 
 # -------------------------------- GLM -----------------------------------------
@@ -117,12 +32,16 @@ cal_glm.data.frame <- function(.data, truth = NULL, estimate = NULL) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  calibrate_impl(
-    .data = .data,
-    truth = !!truth,
-    estimate = !!estimate,
-    models = "glm"
-  )
+  if(is_binary_estimate(!! estimate)) {
+    type <- "binary"
+    res <- cal_glm_dataframe(.data, !!truth, !!estimate)
+    est <- as_cal_variable(res, !! estimate, "GLM", "glm")
+  } else {
+    stop_multiclass()
+  }
+
+  as_cal_object(est, type = type, additional_class = "cal_glm")
+
 }
 
 cal_glm_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
@@ -162,12 +81,15 @@ cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  calibrate_impl(
-    .data = .data,
-    truth = !!truth,
-    estimate = !!estimate,
-    models = "isotonic"
-  )
+  if(is_binary_estimate(!! estimate)) {
+    type <- "binary"
+    res <- cal_isoreg_dataframe(.data, !!truth, !!estimate)
+    est <- as_cal_variable(res, !! estimate, "Isotonic", "isotonic")
+  } else {
+    stop_multiclass()
+  }
+
+  as_cal_object(est, type = type, additional_class = "cal_isotonic")
 }
 
 cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL,
@@ -208,12 +130,15 @@ cal_isotonic_boot.data.frame <- function(.data, truth = NULL, estimate = NULL, t
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  calibrate_impl(
-    .data = .data,
-    truth = !!truth,
-    estimate = !!estimate,
-    models = "isotonic_boot"
-  )
+  if(is_binary_estimate(!! estimate)) {
+    type <- "binary"
+    res <- cal_isoreg_boot(.data, !!truth, !!estimate, times = times)
+    est <- as_cal_variable(res, !! estimate, "Isotonic Bootstrapped", "isotonic_boot")
+  } else {
+    stop_multiclass()
+  }
+
+  as_cal_object(est, type = type, additional_class = "cal_isotonic")
 }
 
 cal_isoreg_boot <- function(.data, truth, estimate, truth_val = NULL, times = 10) {
@@ -221,7 +146,10 @@ cal_isoreg_boot <- function(.data, truth, estimate, truth_val = NULL, times = 10
   estimate <- enquo(estimate)
 
   seeds <- sample.int(10000, times)
-  mods <- purrr::map(seeds, ~ boot_iso(.data, !!truth, !!estimate, truth_val, .x))
+  mods <- purrr::map(
+    seeds,
+    ~ boot_iso(.data, !!truth, !!estimate, truth_val, .x)
+    )
   boot_iso_cal(mods)
 }
 
@@ -290,14 +218,6 @@ print.cal_binary <- function(x, ...) {
   bins <- cal_get_bins_binary(x)
   cat("Binary Probability Calibration\n")
   cat(" Estimate:", names(x$estimates), "\n")
-  cat("  Brier Scores:\n")
-  map(
-    bins,
-    ~ {
-      title <- paste0(.x$title, ":")
-      cat("   |--", title, round(.x$brier, 4), "\n")
-    }
-  )
 }
 
 #' @export
@@ -333,7 +253,7 @@ plot.cal_binary <- function(x, ...) {
     )
 }
 
-brier_score <- function(.data, truth, estimate) {
+brier_score_binary <- function(.data, truth, estimate) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   subs <- expr(!! truth - !! estimate)
@@ -404,4 +324,12 @@ add_is_val <- function(.data, truth, truth_val = NULL) {
     ret <- mutate(.data, .is_val = !!truth)
   }
   ret
+}
+
+is_binary_estimate <- function(estimate) {
+  TRUE
+}
+
+stop_multiclass <- function() {
+  stop("Multiclass not supported...yet")
 }
