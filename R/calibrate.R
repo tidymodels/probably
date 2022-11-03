@@ -1,10 +1,13 @@
+# --------------------------------- Calibrate ----------------------------------
 #' @export
-calibrate <- function(.data, truth, estimate, models = c("glm", "isotonic")) {
-  UseMethod("calibrate")
+cal_multi <- function(.data, truth, estimate,
+                      models = c("glm", "isotonic")
+                      ) {
+  UseMethod("cal_multi")
 }
 
 #' @export
-calibrate.data.frame <- function(.data, truth, estimate,
+cal_multi.data.frame <- function(.data, truth, estimate,
                                  models = c("glm", "isotonic")
                                  ) {
   truth <- enquo(truth)
@@ -18,64 +21,14 @@ calibrate.data.frame <- function(.data, truth, estimate,
   )
 }
 
-#' @export
-cal_glm <- function(.data, truth = NULL, estimate = NULL) {
-  UseMethod("cal_glm")
-}
-
-#' @export
-cal_glm.data.frame <- function(.data, truth = NULL, estimate = NULL) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  calibrate_impl(
-    .data = .data,
-    truth = !!truth,
-    estimate = !!estimate,
-    models = "glm"
-  )
-}
-
-#' @export
-cal_isotonic <- function(.data, truth = NULL, estimate = NULL) {
-  UseMethod("cal_isotonic")
-}
-
-#' @export
-cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  calibrate_impl(
-    .data = .data,
-    truth = !!truth,
-    estimate = !!estimate,
-    models = "isotonic"
-  )
-}
-
-#' @export
-print.cal_binary <- function(x, ...) {
-  bins <- cal_get_bins_binary(x)
-  cat("Binary Probability Calibration\n")
-  cat(" Estimate:", names(x$estimates), "\n")
-  cat("  Brier Scores:\n")
-  map(
-    bins,
-    ~ {
-      title <- paste0(.x$title, ":")
-      cat("   |--", title, .x$brier, "\n")
-    }
-  )
-}
-
 calibrate_impl <- function(.data, truth, estimate, models, ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
+  # TODO - Better condition to determine if binary (this is a temp example code)
   if(length(estimate) == 2) {
     type <- "binary"
-    estimates <- cal_single(.data, !! truth, !! estimate, models = models)
+    estimates <- calibrate_variable(.data, !! truth, !! estimate, models = models)
   } else {
     type <- "multiclass"
     stop("Multiclass not supported...yet :)")
@@ -83,39 +36,7 @@ calibrate_impl <- function(.data, truth, estimate, models, ...) {
   as_cal_object(estimates, type, "cal_multiple")
 }
 
-
-as_cal_object <- function(estimates, type = NULL, additional_class = NULL) {
-  structure(
-    list(
-      type = type,
-      estimates = estimates
-    ),
-    class = c("cal_object", additional_class, paste0("cal_", type))
-  )
-}
-
-cal_get_bins_binary <- function(x) {
-  cals <- map(
-    x$estimates[[1]]$calibration,
-    ~{
-      list(
-        title = .x$title,
-        bins = .x$performance$probability_bins,
-        brier = .x$performance$brier_score
-      )
-    })
-
-  orig <- x$estimates[[1]]$original
-  original <- list(
-    title = "Original",
-    bins = orig$performance$probability_bins,
-    brier = orig$performance$brier_score
-  )
-
-  c(list(original = original), cals)
-}
-
-cal_single <- function(.data, truth, estimate, models) {
+calibrate_variable <- function(.data, truth, estimate, models) {
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -156,80 +77,86 @@ cal_single <- function(.data, truth, estimate, models) {
       performance = list(
         probability_bins = probability_bins(.data, !!truth, !!estimate),
         brier_score = brier_score(.data, !!truth, !!estimate)
-        )
-      ),
+      )
+    ),
     calibration = model_named
   )
   res$cs <- cal
   set_names(res, as_name(estimate))
 }
 
-#' @export
-plot.cal_binary <- function(x, ...) {
-
-  bins <- cal_get_bins_binary(x)
-
-  model_merge <- map(
-    bins,
-    ~ {
-      .x$bins$Source <- .x$title
-      .x$bins
-    }
+as_cal_object <- function(estimates, type = NULL, additional_class = NULL) {
+  structure(
+    list(
+      type = type,
+      estimates = estimates
+    ),
+    class = c("cal_object", additional_class, paste0("cal_", type))
   )
-
-  model_bind <- dplyr::bind_rows(model_merge)
-
-  plot_title <- paste(names(x$estimates), "estimate")
-
-  ggplot(
-    data = model_bind,
-    aes(mean_predicted, fraction_positives, color = Source, group = Source)
-    ) +
-    geom_line() +
-    geom_point() +
-    geom_segment(x = 0, y = 0, xend = 1, yend = 1, linetype = 2, color = "gray") +
-    theme_minimal() +
-    labs(
-      title = plot_title,
-      subtitle = "Calibration Plot",
-      x = "Mean Predicted",
-      y = "Fraction of Positives"
-    )
 }
 
-cal_add_join <- function(estimates_table, estimate, .data) {
+# -------------------------------- GLM -----------------------------------------
+
+#' @export
+cal_glm <- function(.data, truth = NULL, estimate = NULL) {
+  UseMethod("cal_glm")
+}
+
+#' @export
+cal_glm.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+  truth <- enquo(truth)
   estimate <- enquo(estimate)
-  round_data <- mutate(
-    .data,
-    .rounded = round(!!estimate, digits = 3)
+
+  calibrate_impl(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
+    models = "glm"
   )
-  matched_data <- dplyr::left_join(
-    round_data,
-    estimates_table,
-    by = c(".rounded" = ".estimate")
-  )
-  dplyr::select(matched_data, -.rounded)
 }
 
 cal_glm_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
+  # Adds a binary variable if the value of truth is not 0/1,
+  # this is to handle Multiclass in the future
   truth_data <- add_is_val(.data, truth, truth_val)
 
+  # Creates dummy variable to avoid tidyevel in the formula
   val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
 
   model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial")
 
+  # Creates 1,000 predictions using 0 to 1, which become the calibration
   new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
-
   new_data <- data.frame(.estimate = new_estimates)
-
   pred <- predict(model, newdata = new_data, type = "response")
 
+  # Returns table with expected names
   tibble(
     .estimate = new_estimates,
     .adj_estimate = pred
+  )
+}
+
+# ----------------------------- Isotonic ---------------------------------------
+
+#' @export
+cal_isotonic <- function(.data, truth = NULL, estimate = NULL) {
+  UseMethod("cal_isotonic")
+}
+
+#' @export
+cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  calibrate_impl(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
+    models = "isotonic"
   )
 }
 
@@ -252,6 +179,22 @@ cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
   )
 }
 
+# -------------------------- Add Adjustment -------------------------------------
+
+cal_add_join <- function(estimates_table, estimate, .data) {
+  estimate <- enquo(estimate)
+  round_data <- mutate(
+    .data,
+    .rounded = round(!!estimate, digits = 3)
+  )
+  matched_data <- dplyr::left_join(
+    round_data,
+    estimates_table,
+    by = c(".rounded" = ".estimate")
+  )
+  dplyr::select(matched_data, -.rounded)
+}
+
 cal_add_interval <- function(estimates_table, estimate, .data) {
   estimate <- enquo(estimate)
   nd <- dplyr::pull(.data, !!estimate)
@@ -263,6 +206,56 @@ cal_add_interval <- function(estimates_table, estimate, .data) {
   )
 }
 
+# ------------------------------- Binary ---------------------------------------
+
+#' @export
+print.cal_binary <- function(x, ...) {
+  bins <- cal_get_bins_binary(x)
+  cat("Binary Probability Calibration\n")
+  cat(" Estimate:", names(x$estimates), "\n")
+  cat("  Brier Scores:\n")
+  map(
+    bins,
+    ~ {
+      title <- paste0(.x$title, ":")
+      cat("   |--", title, .x$brier, "\n")
+    }
+  )
+}
+
+#' @export
+plot.cal_binary <- function(x, ...) {
+
+  bins <- cal_get_bins_binary(x)
+
+  model_merge <- map(
+    bins,
+    ~ {
+      .x$bins$Source <- .x$title
+      .x$bins
+    }
+  )
+
+  model_bind <- dplyr::bind_rows(model_merge)
+
+  plot_title <- paste(names(x$estimates), "estimate")
+
+  ggplot(
+    data = model_bind,
+    aes(mean_predicted, fraction_positives, color = Source, group = Source)
+  ) +
+    geom_line() +
+    geom_point() +
+    geom_segment(x = 0, y = 0, xend = 1, yend = 1, linetype = 2, color = "gray") +
+    theme_minimal() +
+    labs(
+      title = plot_title,
+      subtitle = "Calibration Plot",
+      x = "Mean Predicted",
+      y = "Fraction of Positives"
+    )
+}
+
 brier_score <- function(.data, truth, estimate) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -271,6 +264,29 @@ brier_score <- function(.data, truth, estimate) {
   bs_sum <- dplyr::summarise(bs, x = sum(subs) / n())
   pull(bs_sum, x)
 }
+
+cal_get_bins_binary <- function(x) {
+  cals <- map(
+    x$estimates[[1]]$calibration,
+    ~{
+      list(
+        title = .x$title,
+        bins = .x$performance$probability_bins,
+        brier = .x$performance$brier_score
+      )
+    })
+
+  orig <- x$estimates[[1]]$original
+  original <- list(
+    title = "Original",
+    bins = orig$performance$probability_bins,
+    brier = orig$performance$brier_score
+  )
+
+  c(list(original = original), cals)
+}
+
+# ------------------------------- Utils ----------------------------------------
 
 probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins = 10) {
   truth <- enquo(truth)
