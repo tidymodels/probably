@@ -1,14 +1,14 @@
 # --------------------------------- Calibrate ----------------------------------
 #' @export
 cal_multi <- function(.data, truth, estimate,
-                      models = c("glm", "isotonic")
+                      models = c("glm", "isotonic", "isotonic_boot")
                       ) {
   UseMethod("cal_multi")
 }
 
 #' @export
 cal_multi.data.frame <- function(.data, truth, estimate,
-                                 models = c("glm", "isotonic")
+                                 models = c("glm", "isotonic", "isotonic_boot")
                                  ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -21,14 +21,19 @@ cal_multi.data.frame <- function(.data, truth, estimate,
   )
 }
 
-calibrate_impl <- function(.data, truth, estimate, models, ...) {
+calibrate_impl <- function(.data, truth, estimate, models) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   # TODO - Better condition to determine if binary (this is a temp example code)
   if(length(estimate) == 2) {
     type <- "binary"
-    estimates <- calibrate_variable(.data, !! truth, !! estimate, models = models)
+    estimates <- calibrate_variable(
+      .data = .data,
+      truth = !! truth,
+      estimate = !! estimate,
+      models = models
+      )
   } else {
     type <- "multiclass"
     stop("Multiclass not supported...yet :)")
@@ -53,6 +58,11 @@ calibrate_variable <- function(.data, truth, estimate, models) {
         title <- "Isotonic"
         cal <- cal_isoreg_dataframe(.data, !!truth, !!estimate)
         preds <- cal_add_interval(cal, !!estimate, .data = .data)
+      }
+      if (.x == "isotonic_boot") {
+        title <- "Isotonic Bootstrapped"
+        cal <- cal_isoreg_boot(.data, !!truth, !!estimate)
+        preds <- cal_add_join(cal, !!estimate, .data = .data)
       }
       bs <- brier_score(preds, !!truth, .adj_estimate)
       probs <- probability_bins(preds, !!truth, .adj_estimate)
@@ -121,7 +131,7 @@ cal_glm_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
 
   # Adds a binary variable if the value of truth is not 0/1,
   # this is to handle Multiclass in the future
-  truth_data <- add_is_val(.data, truth, truth_val)
+  truth_data <- add_is_val(.data, !! truth, truth_val)
 
   # Creates dummy variable to avoid tidyevel in the formula
   val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
@@ -160,15 +170,22 @@ cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
   )
 }
 
-cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
+cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL,
+                                 sampled = FALSE) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  truth_data <- add_is_val(.data, truth, truth_val)
+  truth_data <- add_is_val(.data, !! truth, truth_val)
+
+  if(sampled) {
+    sort_data <- dplyr::slice_sample(truth_data, prop = 1, replace = TRUE)
+  } else {
+    sort_data <- dplyr::arrange(truth_data, !! estimate)
+  }
 
   model <- isoreg(
-    dplyr::pull(truth_data, !!estimate),
-    dplyr::pull(truth_data, .is_val)
+    dplyr::pull(sort_data, !!estimate),
+    dplyr::pull(sort_data, .is_val)
   )
 
   model_stepfun <- as.stepfun(model)
@@ -179,7 +196,67 @@ cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
   )
 }
 
-# -------------------------- Add Adjustment -------------------------------------
+# ------------------------- Isotonic Bootstrapped-------------------------------
+
+#' @export
+cal_isotonic_boot <- function(.data, truth = NULL, estimate = NULL, times = 10) {
+  UseMethod("cal_isotonic_boot")
+}
+
+#' @export
+cal_isotonic_boot.data.frame <- function(.data, truth = NULL, estimate = NULL, times = 10) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  calibrate_impl(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
+    models = "isotonic_boot"
+  )
+}
+
+cal_isoreg_boot <- function(.data, truth, estimate, truth_val = NULL, times = 10) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  seeds <- sample.int(10000, times)
+  mods <- purrr::map(seeds, ~ boot_iso(.data, !!truth, !!estimate, truth_val, .x))
+  boot_iso_cal(mods)
+}
+
+boot_iso <- function(.data, truth, estimate, truth_val, seed) {
+  withr::with_seed(
+    seed,
+    {
+      truth <- enquo(truth)
+      estimate <- enquo(estimate)
+      cal_isoreg_dataframe(.data, !!truth , !!estimate, truth_val, sampled = TRUE)
+    }
+  )
+}
+
+boot_iso_cal <- function(x) {
+  # Creates 1,000 predictions using 0 to 1, which become the calibration
+  new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
+  new_data <- data.frame(.estimate = new_estimates)
+  new_probs <- map(x, ~ cal_add_interval(.x, .estimate, new_data))
+
+  for(i in seq_along(new_probs)) {
+    names(new_probs[[i]]) <- c(".estimate", paste0(".adj_", i))
+  }
+
+  merge_data <- purrr::reduce(new_probs, inner_join, by = ".estimate")
+
+  adj_data <- dplyr::mutate(
+    merge_data,
+    .adj_estimate = rowMeans(dplyr::across(dplyr::contains(".adj_")))
+    )
+
+  dplyr::select(adj_data, .estimate, .adj_estimate)
+}
+
+# -------------------------- Add Adjustment ------------------------------------
 
 cal_add_join <- function(estimates_table, estimate, .data) {
   estimate <- enquo(estimate)
@@ -200,10 +277,10 @@ cal_add_interval <- function(estimates_table, estimate, .data) {
   nd <- dplyr::pull(.data, !!estimate)
   x <- dplyr::pull(estimates_table, .estimate)
   y <- dplyr::pull(estimates_table, .adj_estimate)
-  dplyr::mutate(
-    .data,
-    .adj_estimate = y[findInterval(nd, x)]
-  )
+  find_interval <- findInterval(nd, x)
+  find_interval[find_interval == 0] <- 1
+  intervals <- y[find_interval]
+  dplyr::mutate(.data, .adj_estimate = intervals)
 }
 
 # ------------------------------- Binary ---------------------------------------
@@ -218,7 +295,7 @@ print.cal_binary <- function(x, ...) {
     bins,
     ~ {
       title <- paste0(.x$title, ":")
-      cat("   |--", title, .x$brier, "\n")
+      cat("   |--", title, round(.x$brier, 4), "\n")
     }
   )
 }
@@ -292,7 +369,7 @@ probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins =
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  truth_data <- add_is_val(.data, truth, truth_val)
+  truth_data <- add_is_val(.data, !! truth, truth_val)
 
   # Creates a case_when entry for each bin
   bin_exprs <- map(
@@ -317,6 +394,7 @@ probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins =
 }
 
 add_is_val <- function(.data, truth, truth_val = NULL) {
+  truth <- enquo(truth)
   if (!is.null(truth_val)) {
     ret <- mutate(
       .data,
