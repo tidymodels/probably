@@ -10,23 +10,47 @@ calibrate.data.frame <- function(.data, truth, estimate,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  if(length(estimate) == 2) {
-    type <- "binary"
-    estimates <- cal_single(.data, !! truth, !! estimate, models)
-  } else {
-    type <- "multiclass"
-    stop("Multiclass not supported...yet :)")
-  }
-  as_cal_object(estimates, type, "cal_multiple")
+  calibrate_impl(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
+    models = models
+  )
 }
 
-as_cal_object <- function(estimates, type = NULL, additional_class = NULL) {
-  structure(
-    list(
-      type = type,
-      estimates = estimates
-    ),
-    class = c("cal_object", additional_class, paste0("cal_", type))
+#' @export
+cal_glm <- function(.data, truth = NULL, estimate = NULL) {
+  UseMethod("cal_glm")
+}
+
+#' @export
+cal_glm.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  calibrate_impl(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
+    models = "glm"
+  )
+}
+
+#' @export
+cal_isotonic <- function(.data, truth = NULL, estimate = NULL) {
+  UseMethod("cal_isotonic")
+}
+
+#' @export
+cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  calibrate_impl(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
+    models = "isotonic"
   )
 }
 
@@ -42,6 +66,31 @@ print.cal_binary <- function(x, ...) {
       title <- paste0(.x$title, ":")
       cat("   |--", title, .x$brier, "\n")
     }
+  )
+}
+
+calibrate_impl <- function(.data, truth, estimate, models, ...) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  if(length(estimate) == 2) {
+    type <- "binary"
+    estimates <- cal_single(.data, !! truth, !! estimate, models = models)
+  } else {
+    type <- "multiclass"
+    stop("Multiclass not supported...yet :)")
+  }
+  as_cal_object(estimates, type, "cal_multiple")
+}
+
+
+as_cal_object <- function(estimates, type = NULL, additional_class = NULL) {
+  structure(
+    list(
+      type = type,
+      estimates = estimates
+    ),
+    class = c("cal_object", additional_class, paste0("cal_", type))
   )
 }
 
@@ -65,26 +114,6 @@ cal_get_bins_binary <- function(x) {
 
   c(list(original = original), cals)
 }
-
-#' @export
-cal_glm <- function(.data, truth = NULL, estimate = NULL) {
-  UseMethod("cal_glm")
-}
-
-#' @export
-cal_glm.data.frame <- function(.data, truth = NULL, estimate = NULL) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  cal <- cal_single(
-    .data = .data,
-    truth = !!truth,
-    estimate = !!estimate,
-    models = "glm"
-  )
-  as_cal_object(cal, type = "binary", "cal_glm")
-}
-
 
 cal_single <- function(.data, truth, estimate, models) {
 
