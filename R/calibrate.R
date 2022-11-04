@@ -19,6 +19,10 @@ cal_add_adjust.cal_glm <- function(calibration, .data, output_name) {
   call_add_join_impl(calibration, .data, "glm", output_name)
 }
 
+cal_add_adjust.cal_gam <- function(calibration, .data, output_name) {
+  call_add_join_impl(calibration, .data, "gam", output_name)
+}
+
 cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, output_name) {
   call_add_join_impl(calibration, .data, "isotonic_boot", output_name)
 }
@@ -141,6 +145,54 @@ cal_glm_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
   val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
 
   model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial")
+
+  # Creates 1,000 predictions using 0 to 1, which become the calibration
+  new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
+  new_data <- data.frame(.estimate = new_estimates)
+  pred <- predict(model, newdata = new_data, type = "response")
+
+  # Returns table with expected names
+  tibble(
+    .estimate = new_estimates,
+    .adj_estimate = pred
+  )
+}
+
+# -------------------------------- GAM -----------------------------------------
+
+#' @export
+cal_gam <- function(.data, truth = NULL, estimate = NULL) {
+  UseMethod("cal_gam")
+}
+
+#' @export
+cal_gam.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  if(is_binary_estimate(!! estimate)) {
+    type <- "binary"
+    res <- cal_gam_dataframe(.data, !!truth, !!estimate)
+    est <- as_cal_variable(res, !! estimate, "GAM", "gam")
+  } else {
+    stop_multiclass()
+  }
+
+  as_cal_object(est, !!truth, type, additional_class = "cal_gam")
+}
+
+cal_gam_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  # Adds a binary variable if the value of truth is not 0/1,
+  # this is to handle Multiclass in the future
+  truth_data <- add_is_val(.data, !! truth, truth_val)
+
+  # Creates dummy variable to avoid tidyevel in the formula
+  val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
+
+  model <- gam(.is_val ~ .estimate, data = val_data)
 
   # Creates 1,000 predictions using 0 to 1, which become the calibration
   new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
