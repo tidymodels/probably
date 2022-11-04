@@ -1,8 +1,77 @@
+# ------------------------------------ Apply -----------------------------------
+#' @export
+cal_apply <- function(.data, calibration) {
+  UseMethod("cal_apply")
+}
+
+#' @export
+cal_apply.data.frame <- function(.data, calibration){
+  cal_add_adjust(calibration, .data)
+}
+
+# -------------------------- Add Adjustment ------------------------------------
+
+cal_add_adjust <- function(calibration, .data, estimate) {
+  UseMethod("cal_add_adjust")
+}
+
+cal_add_adjust.cal_glm <- function(calibration, .data) {
+  call_add_join_impl(calibration, .data, "glm")
+}
+
+cal_add_adjust.cal_isotonic_boot <- function(calibration, .data) {
+  call_add_join_impl(calibration, .data, "isotonic_boot")
+}
+
+cal_add_adjust.cal_isotonic <- function(calibration, .data) {
+  if(calibration$type == "binary") {
+    cal <- calibration$estimates[[1]]$isotonic$calibration
+    estimate <- names(calibration$estimates[1])
+    cal_add_interval(cal, !! parse_expr(estimate), .data)
+  }
+}
+
+call_add_join_impl <- function(calibration, .data, model) {
+  if(calibration$type == "binary") {
+    cal <- calibration$estimates[[1]][[model]]$calibration
+    estimate <- names(calibration$estimates[1])
+    cal_add_join(cal, !! parse_expr(estimate), .data)
+  }
+}
+
+cal_add_join <- function(estimates_table, estimate, .data) {
+  estimate <- enquo(estimate)
+  round_data <- mutate(
+    .data,
+    .rounded = round(!!estimate, digits = 3)
+  )
+  matched_data <- dplyr::left_join(
+    round_data,
+    estimates_table,
+    by = c(".rounded" = ".estimate")
+  )
+  dplyr::select(matched_data, -.rounded)
+}
+
+cal_add_interval <- function(estimates_table, estimate, .data) {
+  estimate <- enquo(estimate)
+  nd <- dplyr::pull(.data, !!estimate)
+  x <- dplyr::pull(estimates_table, .estimate)
+  y <- dplyr::pull(estimates_table, .adj_estimate)
+  find_interval <- findInterval(nd, x)
+  find_interval[find_interval == 0] <- 1
+  intervals <- y[find_interval]
+  dplyr::mutate(.data, .adj_estimate = intervals)
+}
+
 # ----------------------------- Object Builders --------------------------------
-as_cal_object <- function(estimates, type = NULL, additional_class = NULL) {
+
+as_cal_object <- function(estimates, truth, type, additional_class = NULL) {
+  truth <- enquo(truth)
   structure(
     list(
       type = type,
+      truth = as_name(truth),
       estimates = estimates
     ),
     class = c("cal_object", paste0("cal_", type), additional_class)
@@ -40,8 +109,7 @@ cal_glm.data.frame <- function(.data, truth = NULL, estimate = NULL) {
     stop_multiclass()
   }
 
-  as_cal_object(est, type = type, additional_class = "cal_glm")
-
+  as_cal_object(est, !!truth, type, additional_class = "cal_glm")
 }
 
 cal_glm_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
@@ -89,7 +157,7 @@ cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
     stop_multiclass()
   }
 
-  as_cal_object(est, type = type, additional_class = "cal_isotonic")
+  as_cal_object(est, !!truth, type, additional_class = "cal_isotonic")
 }
 
 cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL,
@@ -126,7 +194,9 @@ cal_isotonic_boot <- function(.data, truth = NULL, estimate = NULL, times = 10) 
 }
 
 #' @export
-cal_isotonic_boot.data.frame <- function(.data, truth = NULL, estimate = NULL, times = 10) {
+cal_isotonic_boot.data.frame <- function(.data, truth = NULL,
+                                         estimate = NULL, times = 10
+                                         ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -138,7 +208,7 @@ cal_isotonic_boot.data.frame <- function(.data, truth = NULL, estimate = NULL, t
     stop_multiclass()
   }
 
-  as_cal_object(est, type = type, additional_class = "cal_isotonic")
+  as_cal_object(est, !!truth, type, additional_class = "cal_isotonic_boot")
 }
 
 cal_isoreg_boot <- function(.data, truth, estimate, truth_val = NULL, times = 10) {
@@ -182,33 +252,6 @@ boot_iso_cal <- function(x) {
     )
 
   dplyr::select(adj_data, .estimate, .adj_estimate)
-}
-
-# -------------------------- Add Adjustment ------------------------------------
-
-cal_add_join <- function(estimates_table, estimate, .data) {
-  estimate <- enquo(estimate)
-  round_data <- mutate(
-    .data,
-    .rounded = round(!!estimate, digits = 3)
-  )
-  matched_data <- dplyr::left_join(
-    round_data,
-    estimates_table,
-    by = c(".rounded" = ".estimate")
-  )
-  dplyr::select(matched_data, -.rounded)
-}
-
-cal_add_interval <- function(estimates_table, estimate, .data) {
-  estimate <- enquo(estimate)
-  nd <- dplyr::pull(.data, !!estimate)
-  x <- dplyr::pull(estimates_table, .estimate)
-  y <- dplyr::pull(estimates_table, .adj_estimate)
-  find_interval <- findInterval(nd, x)
-  find_interval[find_interval == 0] <- 1
-  intervals <- y[find_interval]
-  dplyr::mutate(.data, .adj_estimate = intervals)
 }
 
 # ------------------------------- Binary ---------------------------------------
