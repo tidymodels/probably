@@ -27,7 +27,8 @@ cal_add_adjust.cal_isotonic <- function(calibration, .data) {
   if(calibration$type == "binary") {
     cal <- calibration$estimates[[1]]$isotonic$calibration
     estimate <- names(calibration$estimates[1])
-    cal_add_interval(cal, !! parse_expr(estimate), .data)
+    adj_name <- paste0(estimate, "_adj_isotonic")
+    cal_add_interval(cal, !! parse_expr(estimate), .data, !! parse_expr(adj_name))
   }
 }
 
@@ -35,25 +36,33 @@ call_add_join_impl <- function(calibration, .data, model) {
   if(calibration$type == "binary") {
     cal <- calibration$estimates[[1]][[model]]$calibration
     estimate <- names(calibration$estimates[1])
-    cal_add_join(cal, !! parse_expr(estimate), .data)
+    adj_name <- paste0(estimate, "_adj_", model)
+    cal_add_join(cal, !! parse_expr(estimate), .data, !! parse_expr(adj_name))
   }
 }
 
-cal_add_join <- function(estimates_table, estimate, .data) {
+cal_add_join <- function(estimates_table, estimate, .data, adj_name) {
+  adj_name <- enquo(adj_name)
   estimate <- enquo(estimate)
+
   round_data <- mutate(
     .data,
-    .rounded = round(!!estimate, digits = 3)
+    .rounded := round(!!estimate, digits = 3)
   )
+
+  est_table <- dplyr::rename(estimates_table, !! adj_name := ".adj_estimate")
+
   matched_data <- dplyr::left_join(
     round_data,
-    estimates_table,
+    est_table,
     by = c(".rounded" = ".estimate")
   )
+
   dplyr::select(matched_data, -.rounded)
 }
 
-cal_add_interval <- function(estimates_table, estimate, .data) {
+cal_add_interval <- function(estimates_table, estimate, .data, adj_name) {
+  adj_name <- enquo(adj_name)
   estimate <- enquo(estimate)
   nd <- dplyr::pull(.data, !!estimate)
   x <- dplyr::pull(estimates_table, .estimate)
@@ -61,7 +70,7 @@ cal_add_interval <- function(estimates_table, estimate, .data) {
   find_interval <- findInterval(nd, x)
   find_interval[find_interval == 0] <- 1
   intervals <- y[find_interval]
-  dplyr::mutate(.data, .adj_estimate = intervals)
+  dplyr::mutate(.data, !!adj_name := intervals)
 }
 
 # ----------------------------- Object Builders --------------------------------
