@@ -263,13 +263,69 @@ boot_iso_cal <- function(x) {
   dplyr::select(adj_data, .estimate, .adj_estimate)
 }
 
-# ------------------------------- Binary ---------------------------------------
+# ------------------------------ Binary ----------------------------------------
+
+
+#' @export
+cal_binary_bins <- function(.data, truth, estimate, bins = 10) {
+  estimate <- enquo(estimate)
+  truth <- enquo(truth)
+  probability_bins(
+    .data = .data,
+    truth = !! truth,
+    estimate = !! estimate,
+    no_bins = bins,
+    truth_val = NULL
+  )
+}
+
+#' @export
+cal_binary_plot <- function(.data, truth, estimate, bins = 10) {
+  estimate <- enquo(estimate)
+  truth <- enquo(truth)
+
+  var_str <- as_name(estimate)
+
+  col_names <- colnames(.data)
+
+  match_bol <- substr(col_names, 1, nchar(var_str)) == var_str
+  match <- col_names[match_bol]
+
+  match_map <- map(
+    match,
+    ~ {
+      bins_tbl <- cal_binary_bins(.data, !! truth, !!parse_expr(.x), bins = bins)
+      dplyr::mutate(bins_tbl, Source = .x)
+    })
+
+  matched_tbl <- dplyr::bind_rows(match_map)
+
+  ggplot(
+    data = matched_tbl,
+    aes(mean_predicted, event_ratio, color = Source, group = Source)
+  ) +
+    geom_line() +
+    geom_point() +
+    geom_segment(x = 0, y = 0, xend = 1, yend = 1, linetype = 2, color = "gray") +
+    theme_minimal() +
+    labs(
+      title = paste0("`", var_str, "` Calibration Plot"),
+      x = "Mean Predicted",
+      y = "Event Ratio"
+    )
+}
+
+# ---------------------------- Binary Objs--------------------------------------
 
 #' @export
 print.cal_binary <- function(x, ...) {
   bins <- cal_get_bins_binary(x)
-  cat("Binary Probability Calibration\n")
-  cat(" Estimate:", names(x$estimates), "\n")
+  cat("Probability Calibration\n")
+  cat(" --------------------- \n")
+  cat("Type: Binary\n")
+  cat("Method:", x$estimates[[1]][[1]]$title, "\n")
+  cat("Truth:   ", x$truth, "\n")
+  cat("Estimate:", names(x$estimates), "\n")
 }
 
 #' @export
@@ -358,11 +414,14 @@ probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins =
   bin_summary <- dplyr::summarise(
     bin_group,
     mean_predicted = mean(!!estimate),
-    fraction_positives = sum(.is_val) / n()
+    event_ratio = sum(.is_val) / n(),
+    events = sum(.is_val),
+    bin_total = n()
   )
+  bin_ungroup <- dplyr::ungroup(bin_summary)
 
   # Runs collect() to work with remote connections (ie Spark)
-  dplyr::collect(bin_summary)
+  dplyr::collect(bin_ungroup)
 }
 
 add_is_val <- function(.data, truth, truth_val = NULL) {
