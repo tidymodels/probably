@@ -124,38 +124,13 @@ cal_glm.data.frame <- function(.data, truth = NULL, estimate = NULL) {
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_glm_dataframe(.data, !!truth, !!estimate)
+    res <- cal_model_impl(.data, !!truth, !!estimate, method = "glm")
     est <- as_cal_variable(res, !! estimate, "GLM", "glm")
   } else {
     stop_multiclass()
   }
 
   as_cal_object(est, !!truth, type, additional_class = "cal_glm")
-}
-
-cal_glm_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  # Adds a binary variable if the value of truth is not 0/1,
-  # this is to handle Multiclass in the future
-  truth_data <- add_is_val(.data, !! truth, truth_val)
-
-  # Creates dummy variable to avoid tidyevel in the formula
-  val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
-
-  model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial")
-
-  # Creates 1,000 predictions using 0 to 1, which become the calibration
-  new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
-  new_data <- data.frame(.estimate = new_estimates)
-  pred <- predict(model, newdata = new_data, type = "response")
-
-  # Returns table with expected names
-  tibble(
-    .estimate = new_estimates,
-    .adj_estimate = pred
-  )
 }
 
 # -------------------------------- GAM -----------------------------------------
@@ -172,7 +147,7 @@ cal_gam.data.frame <- function(.data, truth = NULL, estimate = NULL) {
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_gam_dataframe(.data, !!truth, !!estimate)
+    res <- cal_model_impl(.data, !!truth, !!estimate, method = "gam")
     est <- as_cal_variable(res, !! estimate, "GAM", "gam")
   } else {
     stop_multiclass()
@@ -181,29 +156,27 @@ cal_gam.data.frame <- function(.data, truth = NULL, estimate = NULL) {
   as_cal_object(est, !!truth, type, additional_class = "cal_gam")
 }
 
-cal_gam_dataframe <- function(.data, truth, estimate, truth_val = NULL) {
+# -------------------------------- Beta ----------------------------------------
+
+#' @export
+cal_beta <- function(.data, truth = NULL, estimate = NULL) {
+  UseMethod("cal_beta")
+}
+
+#' @export
+cal_beta.data.frame <- function(.data, truth = NULL, estimate = NULL) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  # Adds a binary variable if the value of truth is not 0/1,
-  # this is to handle Multiclass in the future
-  truth_data <- add_is_val(.data, !! truth, truth_val)
+  if(is_binary_estimate(!! estimate)) {
+    type <- "binary"
+    res <- cal_model_impl(.data, !!truth, !!estimate, method = "beta")
+    est <- as_cal_variable(res, !! estimate, "Beta", "beta")
+  } else {
+    stop_multiclass()
+  }
 
-  # Creates dummy variable to avoid tidyevel in the formula
-  val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
-
-  model <- gam(.is_val ~ .estimate, data = val_data)
-
-  # Creates 1,000 predictions using 0 to 1, which become the calibration
-  new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
-  new_data <- data.frame(.estimate = new_estimates)
-  pred <- predict(model, newdata = new_data, type = "response")
-
-  # Returns table with expected names
-  tibble(
-    .estimate = new_estimates,
-    .adj_estimate = pred
-  )
+  as_cal_object(est, !!truth, type, additional_class = "cal_beta")
 }
 
 # ----------------------------- Isotonic ---------------------------------------
@@ -375,7 +348,7 @@ cal_binary_plot <- function(.data, truth, estimate, ..., bins = 10) {
     geom_line() +
     geom_point(alpha = 0.5) +
     geom_segment(x = 0, y = 0, xend = 1, yend = 1, linetype = 2, color = "gray") +
-    geom_errorbar(width = 0.02, alpha = 0.5) +
+    #geom_errorbar(width = 0.02, alpha = 0.5) +
     theme_minimal() +
     labs(
       title = paste0("`", var_str, "` Calibration Plot"),
@@ -407,6 +380,33 @@ brier_score_binary <- function(.data, truth, estimate) {
 }
 
 # ------------------------------- Utils ----------------------------------------
+
+cal_model_impl <- function(.data, truth, estimate, truth_val = NULL, method) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  # Adds a binary variable if the value of truth is not 0/1,
+  # this is to handle Multiclass in the future
+  truth_data <- add_is_val(.data, !! truth, truth_val)
+
+  # Creates dummy variable to avoid tidyevel in the formula
+  val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
+
+  if(method == "gam") model <- gam(.is_val ~ .estimate, data = val_data)
+  if(method == "glm") model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial")
+  if(method == "beta") model <- betareg(.estimate ~ .is_val, data = val_data)
+
+  # Creates 1,000 predictions using 0 to 1, which become the calibration
+  new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
+  new_data <- data.frame(.estimate = new_estimates)
+  pred <- predict(model, newdata = new_data, type = "response")
+
+  # Returns table with expected names
+  tibble(
+    .estimate = new_estimates,
+    .adj_estimate = pred
+  )
+}
 
 probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins = 10) {
   truth <- enquo(truth)
