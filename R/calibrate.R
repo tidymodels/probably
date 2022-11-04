@@ -367,17 +367,22 @@ cal_binary_plot <- function(.data, truth, estimate, ..., bins = 10) {
 
   ggplot(
     data = matched_tbl,
-    aes(mean_predicted, event_ratio, color = Source, group = Source)
-  ) +
+    aes(mean_predicted, event_ratio,
+        color = Source, group = Source,
+        ymin = conf_low, ymax = conf_high
+        )
+    ) +
     geom_line() +
-    geom_point() +
+    geom_point(alpha = 0.5) +
     geom_segment(x = 0, y = 0, xend = 1, yend = 1, linetype = 2, color = "gray") +
+    geom_errorbar(width = 0.02, alpha = 0.5) +
     theme_minimal() +
     labs(
       title = paste0("`", var_str, "` Calibration Plot"),
       x = "Mean Predicted",
       y = "Event Ratio"
     )
+
 }
 
 # ---------------------------- Binary Objs--------------------------------------
@@ -430,11 +435,8 @@ probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins =
   )
   bin_ungroup <- dplyr::ungroup(bin_summary)
 
-
-
   # Runs collect() to work with remote connections (ie Spark)
   dplyr::collect(bin_ungroup)
-
 
   bin_conf <- map(
     purrr::transpose(bin_ungroup),
