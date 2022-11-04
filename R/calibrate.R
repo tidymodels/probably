@@ -384,46 +384,12 @@ cal_binary_plot <- function(.data, truth, estimate, ..., bins = 10) {
 
 #' @export
 print.cal_binary <- function(x, ...) {
-  bins <- cal_get_bins_binary(x)
   cat("Probability Calibration\n")
   cat(" --------------------- \n")
   cat("Type: Binary\n")
   cat("Method:", x$estimates[[1]][[1]]$title, "\n")
   cat("Truth:   ", x$truth, "\n")
   cat("Estimate:", names(x$estimates), "\n")
-}
-
-#' @export
-plot.cal_binary <- function(x, ...) {
-
-  bins <- cal_get_bins_binary(x)
-
-  model_merge <- map(
-    bins,
-    ~ {
-      .x$bins$Source <- .x$title
-      .x$bins
-    }
-  )
-
-  model_bind <- dplyr::bind_rows(model_merge)
-
-  plot_title <- paste(names(x$estimates), "estimate")
-
-  ggplot(
-    data = model_bind,
-    aes(mean_predicted, fraction_positives, color = Source, group = Source)
-  ) +
-    geom_line() +
-    geom_point() +
-    geom_segment(x = 0, y = 0, xend = 1, yend = 1, linetype = 2, color = "gray") +
-    theme_minimal() +
-    labs(
-      title = plot_title,
-      subtitle = "Calibration Plot",
-      x = "Mean Predicted",
-      y = "Fraction of Positives"
-    )
 }
 
 brier_score_binary <- function(.data, truth, estimate) {
@@ -433,27 +399,6 @@ brier_score_binary <- function(.data, truth, estimate) {
   bs <- dplyr::mutate(.data, subs = !! subs * !! subs)
   bs_sum <- dplyr::summarise(bs, x = sum(subs) / n())
   pull(bs_sum, x)
-}
-
-cal_get_bins_binary <- function(x) {
-  cals <- map(
-    x$estimates[[1]]$calibration,
-    ~{
-      list(
-        title = .x$title,
-        bins = .x$performance$probability_bins,
-        brier = .x$performance$brier_score
-      )
-    })
-
-  orig <- x$estimates[[1]]$original
-  original <- list(
-    title = "Original",
-    bins = orig$performance$probability_bins,
-    brier = orig$performance$brier_score
-  )
-
-  c(list(original = original), cals)
 }
 
 # ------------------------------- Utils ----------------------------------------
@@ -485,8 +430,22 @@ probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins =
   )
   bin_ungroup <- dplyr::ungroup(bin_summary)
 
+
+
   # Runs collect() to work with remote connections (ie Spark)
   dplyr::collect(bin_ungroup)
+
+
+  bin_conf <- map(
+    purrr::transpose(bin_ungroup),
+    ~ {
+      suppressWarnings(pt <- prop.test(.x$events, .x$bin_total))
+      ret <- as_tibble(.x)
+      ret$conf_low <- pt$conf.int[[1]]
+      ret$conf_high <- pt$conf.int[[2]]
+      ret
+    })
+  dplyr::bind_rows(bin_conf)
 }
 
 add_is_val <- function(.data, truth, truth_val = NULL) {
