@@ -1,42 +1,50 @@
 # ------------------------------------ Apply -----------------------------------
 #' @export
-cal_apply <- function(.data, calibration) {
+cal_apply <- function(.data, calibration, output_name = NULL) {
   UseMethod("cal_apply")
 }
 
 #' @export
-cal_apply.data.frame <- function(.data, calibration){
-  cal_add_adjust(calibration, .data)
+cal_apply.data.frame <- function(.data, calibration, output_name = NULL){
+  cal_add_adjust(calibration, .data, output_name)
 }
 
 # -------------------------- Add Adjustment ------------------------------------
 
-cal_add_adjust <- function(calibration, .data, estimate) {
+cal_add_adjust <- function(calibration, .data, output_name) {
   UseMethod("cal_add_adjust")
 }
 
-cal_add_adjust.cal_glm <- function(calibration, .data) {
-  call_add_join_impl(calibration, .data, "glm")
+cal_add_adjust.cal_glm <- function(calibration, .data, output_name) {
+  call_add_join_impl(calibration, .data, "glm", output_name)
 }
 
-cal_add_adjust.cal_isotonic_boot <- function(calibration, .data) {
-  call_add_join_impl(calibration, .data, "isotonic_boot")
+cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, output_name) {
+  call_add_join_impl(calibration, .data, "isotonic_boot", output_name)
 }
 
-cal_add_adjust.cal_isotonic <- function(calibration, .data) {
+cal_add_adjust.cal_isotonic <- function(calibration, .data, output_name) {
   if(calibration$type == "binary") {
     cal <- calibration$estimates[[1]]$isotonic$calibration
     estimate <- names(calibration$estimates[1])
-    adj_name <- paste0(estimate, "_adj_isotonic")
+    if(is.null(output_name)) {
+      adj_name <- paste0(estimate, "_adj_isotonic")
+    } else {
+      adj_name <- output_name
+    }
     cal_add_interval(cal, !! parse_expr(estimate), .data, !! parse_expr(adj_name))
   }
 }
 
-call_add_join_impl <- function(calibration, .data, model) {
+call_add_join_impl <- function(calibration, .data, model, output_name) {
   if(calibration$type == "binary") {
     cal <- calibration$estimates[[1]][[model]]$calibration
     estimate <- names(calibration$estimates[1])
-    adj_name <- paste0(estimate, "_adj_", model)
+    if(is.null(output_name)) {
+      adj_name <- paste0(estimate, "_adj_", model)
+    } else {
+      adj_name <- output_name
+    }
     cal_add_join(cal, !! parse_expr(estimate), .data, !! parse_expr(adj_name))
   }
 }
@@ -280,16 +288,21 @@ cal_binary_bins <- function(.data, truth, estimate, bins = 10) {
 }
 
 #' @export
-cal_binary_plot <- function(.data, truth, estimate, bins = 10) {
+cal_binary_plot <- function(.data, truth, estimate, ..., bins = 10) {
+  vars <- enquos(...)
   estimate <- enquo(estimate)
   truth <- enquo(truth)
 
   var_str <- as_name(estimate)
 
-  col_names <- colnames(.data)
-
-  match_bol <- substr(col_names, 1, nchar(var_str)) == var_str
-  match <- col_names[match_bol]
+  if(length(vars)) {
+    vars_names <- as.character(map(vars, as_name))
+    match <- c(vars_names, var_str)
+  } else {
+    col_names <- colnames(.data)
+    match_bol <- substr(col_names, 1, nchar(var_str)) == var_str
+    match <- col_names[match_bol]
+  }
 
   match_map <- map(
     match,
