@@ -1,27 +1,27 @@
 # ------------------------------------ Apply -----------------------------------
 #' @export
-cal_apply <- function(.data, calibration) {
+cal_apply <- function(x, calibration) {
   UseMethod("cal_apply")
 }
 
 #' @export
-cal_apply.data.frame <- function(.data, calibration){
+cal_apply.data.frame <- function(x, calibration){
   if(calibration$type == "binary") {
     truth <- calibration$truth
     estimate <- names(calibration$estimates[1])
-    .data <- dplyr::select(.data, !!parse_expr(truth), !!parse_expr(estimate))
+    x <- dplyr::select(x, !!parse_expr(truth), !!parse_expr(estimate))
   }
-  x <- cal_add_adjust(calibration, .data)
-  as_cal_applied(x, calibration)
+  ca <- cal_add_adjust(calibration, x)
+  as_cal_applied(ca, calibration)
 }
 
 #' @export
-cal_apply.cal_applied <- function(.data, calibration){
+cal_apply.cal_applied <- function(x, calibration){
   if(calibration$type == "binary") {
-    cal <- .data$calibration[[1]]$table
-    desc <- .data$calibration[[1]]$desc
-    x <- cal_add_adjust(calibration, .data = cal, desc = desc)
-    as_cal_applied(x, calibration)
+    cal <- x$calibration[[1]]$table
+    desc <- x$calibration[[1]]$desc
+    ca <- cal_add_adjust(calibration, cal, desc = desc)
+    as_cal_applied(ca, calibration)
   }
 }
 
@@ -33,8 +33,13 @@ as_cal_applied <- function(results, calibration) {
       type = calibration$type,
       calibration = results
     ),
-    class = "cal_applied"
+    class = c("cal_applied", paste0("cal_applied_", calibration$type))
   )
+}
+
+#' @export
+print.cal_applied <- function(x) {
+  cat("Cal Applied")
 }
 
 # -------------------------- Add Adjustment ------------------------------------
@@ -55,13 +60,31 @@ cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, output_name, de
   call_add_join_impl(calibration, .data, "isotonic_boot", "isotonic_boot", desc = desc)
 }
 
-cal_add_adjust.cal_isotonic <- function(calibration, .data, output_name = "isotonic") {
+cal_add_adjust.cal_isotonic <- function(calibration, .data, output_name = "isotonic", desc = NULL) {
+  ret <- list()
   if(calibration$type == "binary") {
-    cal <- calibration$estimates[[1]]$isotonic$calibration
-    estimate <- names(calibration$estimates[1])
+    estimate <- calibration$estimates[1]
+    ret <- estimate[[1]][["isotonic"]]
+    cal <- ret$calibration
+    est_name <- names(estimate)
     adj_name <- paste0(".adj_", length(colnames(.data)) - 2)
-    cal_add_interval(cal, !! parse_expr(estimate), .data, !! parse_expr(adj_name))
+    x <- cal_add_interval(cal, !! parse_expr(est_name), .data, !! parse_expr(adj_name), desc = desc)
+    ret <- as_cal_res(x, ret$title, adj_name, desc, est_name)
   }
+  ret
+
+}
+
+cal_add_interval <- function(estimates_table, estimate, .data, adj_name, desc = NULL) {
+    adj_name <- enquo(adj_name)
+    estimate <- enquo(estimate)
+    nd <- dplyr::pull(.data, !!estimate)
+    x <- dplyr::pull(estimates_table, .estimate)
+    y <- dplyr::pull(estimates_table, .adj_estimate)
+    find_interval <- findInterval(nd, x)
+    find_interval[find_interval == 0] <- 1
+    intervals <- y[find_interval]
+    dplyr::mutate(.data, !!adj_name := intervals)
 }
 
 call_add_join_impl <- function(calibration, .data, model, output_name, desc = NULL) {
@@ -73,12 +96,12 @@ call_add_join_impl <- function(calibration, .data, model, output_name, desc = NU
     est_name <- names(estimate)
     adj_name <- paste0(".adj_", length(colnames(.data)) - 2)
     x <- cal_add_join(cal, !! parse_expr(est_name), .data, !! parse_expr(adj_name))
-    ret <- as_cal_res(x, ret$title, adj_name, desc)
+    ret <- as_cal_res(x, ret$title, adj_name, desc, est_name)
   }
   ret
 }
 
-as_cal_res <- function(x, title, adj_name, desc) {
+as_cal_res <- function(x, title, adj_name, desc, var_name) {
   desc_table <- tibble(title = title, column = adj_name)
   desc <- dplyr::bind_rows(desc, desc_table)
   ret <- list(
@@ -87,40 +110,24 @@ as_cal_res <- function(x, title, adj_name, desc) {
       desc = desc
     )
   )
-  names(ret) <- est_name
+  names(ret) <- var_name
   ret
 }
 
 cal_add_join <- function(estimates_table, estimate, .data, adj_name) {
   adj_name <- enquo(adj_name)
   estimate <- enquo(estimate)
-
   round_data <- mutate(
     .data,
     .rounded := round(!!estimate, digits = 3)
   )
-
   est_table <- dplyr::rename(estimates_table, !! adj_name := ".adj_estimate")
-
   matched_data <- dplyr::left_join(
     round_data,
     est_table,
     by = c(".rounded" = ".estimate")
   )
-
   dplyr::select(matched_data, -.rounded)
-}
-
-cal_add_interval <- function(estimates_table, estimate, .data, adj_name) {
-  adj_name <- enquo(adj_name)
-  estimate <- enquo(estimate)
-  nd <- dplyr::pull(.data, !!estimate)
-  x <- dplyr::pull(estimates_table, .estimate)
-  y <- dplyr::pull(estimates_table, .adj_estimate)
-  find_interval <- findInterval(nd, x)
-  find_interval[find_interval == 0] <- 1
-  intervals <- y[find_interval]
-  dplyr::mutate(.data, !!adj_name := intervals)
 }
 
 # ----------------------------- Object Builders --------------------------------
@@ -146,6 +153,10 @@ as_cal_variable <- function(estimate_tbl, estimate, title, model) {
   mod <- set_names(list(mod), model)
   est <- list(mod)
   set_names(est, as_name(estimate))
+}
+
+as_tibble.cal_applied_binary <- function() {
+
 }
 
 # -------------------------------- GLM -----------------------------------------
