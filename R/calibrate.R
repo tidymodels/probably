@@ -1,56 +1,94 @@
 # ------------------------------------ Apply -----------------------------------
 #' @export
-cal_apply <- function(.data, calibration, output_name = NULL) {
+cal_apply <- function(.data, calibration) {
   UseMethod("cal_apply")
 }
 
 #' @export
-cal_apply.data.frame <- function(.data, calibration, output_name = NULL){
-  cal_add_adjust(calibration, .data, output_name)
+cal_apply.data.frame <- function(.data, calibration){
+  if(calibration$type == "binary") {
+    truth <- calibration$truth
+    estimate <- names(calibration$estimates[1])
+    .data <- dplyr::select(.data, !!parse_expr(truth), !!parse_expr(estimate))
+  }
+  x <- cal_add_adjust(calibration, .data)
+  as_cal_applied(x, calibration)
+}
+
+#' @export
+cal_apply.cal_applied <- function(.data, calibration){
+  if(calibration$type == "binary") {
+    cal <- .data$calibration[[1]]$table
+    desc <- .data$calibration[[1]]$desc
+    x <- cal_add_adjust(calibration, .data = cal, desc = desc)
+    as_cal_applied(x, calibration)
+  }
+}
+
+as_cal_applied <- function(results, calibration) {
+  new_name <- paste0(".adj_", length(colnames(results)) - 1)
+  structure(
+    list(
+      truth = calibration$truth,
+      type = calibration$type,
+      calibration = results
+    ),
+    class = "cal_applied"
+  )
 }
 
 # -------------------------- Add Adjustment ------------------------------------
 
-cal_add_adjust <- function(calibration, .data, output_name) {
+cal_add_adjust <- function(calibration, .data, output_name, desc = NULL) {
   UseMethod("cal_add_adjust")
 }
 
-cal_add_adjust.cal_glm <- function(calibration, .data, output_name) {
-  call_add_join_impl(calibration, .data, "glm", output_name)
+cal_add_adjust.cal_glm <- function(calibration, .data, output_name, desc = NULL) {
+  call_add_join_impl(calibration, .data, "glm", "glm", desc = desc)
 }
 
-cal_add_adjust.cal_gam <- function(calibration, .data, output_name) {
-  call_add_join_impl(calibration, .data, "gam", output_name)
+cal_add_adjust.cal_gam <- function(calibration, .data, output_name, desc = NULL) {
+  call_add_join_impl(calibration, .data, "gam", "gam", desc = desc)
 }
 
-cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, output_name) {
-  call_add_join_impl(calibration, .data, "isotonic_boot", output_name)
+cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, output_name, desc = NULL) {
+  call_add_join_impl(calibration, .data, "isotonic_boot", "isotonic_boot", desc = desc)
 }
 
-cal_add_adjust.cal_isotonic <- function(calibration, .data, output_name) {
+cal_add_adjust.cal_isotonic <- function(calibration, .data, output_name = "isotonic") {
   if(calibration$type == "binary") {
     cal <- calibration$estimates[[1]]$isotonic$calibration
     estimate <- names(calibration$estimates[1])
-    if(is.null(output_name)) {
-      adj_name <- paste0(estimate, "_adj_isotonic")
-    } else {
-      adj_name <- output_name
-    }
+    adj_name <- paste0(".adj_", length(colnames(.data)) - 2)
     cal_add_interval(cal, !! parse_expr(estimate), .data, !! parse_expr(adj_name))
   }
 }
 
-call_add_join_impl <- function(calibration, .data, model, output_name) {
+call_add_join_impl <- function(calibration, .data, model, output_name, desc = NULL) {
+  ret <- list()
   if(calibration$type == "binary") {
-    cal <- calibration$estimates[[1]][[model]]$calibration
-    estimate <- names(calibration$estimates[1])
-    if(is.null(output_name)) {
-      adj_name <- paste0(estimate, "_adj_", model)
-    } else {
-      adj_name <- output_name
-    }
-    cal_add_join(cal, !! parse_expr(estimate), .data, !! parse_expr(adj_name))
+    estimate <- calibration$estimates[1]
+    ret <- estimate[[1]][[model]]
+    cal <- ret$calibration
+    est_name <- names(estimate)
+    adj_name <- paste0(".adj_", length(colnames(.data)) - 2)
+    x <- cal_add_join(cal, !! parse_expr(est_name), .data, !! parse_expr(adj_name))
+    ret <- as_cal_res(x, ret$title, adj_name, desc)
   }
+  ret
+}
+
+as_cal_res <- function(x, title, adj_name, desc) {
+  desc_table <- tibble(title = title, column = adj_name)
+  desc <- dplyr::bind_rows(desc, desc_table)
+  ret <- list(
+    cs = list(
+      table = x,
+      desc = desc
+    )
+  )
+  names(ret) <- est_name
+  ret
 }
 
 cal_add_join <- function(estimates_table, estimate, .data, adj_name) {
