@@ -201,18 +201,18 @@ as_tibble.cal_applied_binary <- function(x, ...) {
 # ------------------------------ Logistic --------------------------------------
 
 #' @export
-cal_logistic <- function(.data, truth = NULL, estimate = NULL) {
+cal_logistic <- function(.data, truth = NULL, estimate = NULL, ...) {
   UseMethod("cal_logistic")
 }
 
 #' @export
-cal_logistic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+cal_logistic.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_model_impl(.data, !!truth, !!estimate, method = "glm")
+    res <- cal_model_impl(.data, !!truth, !!estimate, method = "glm", ... = ...)
     est <- as_cal_variable(res, !! estimate, "Logistic", "glm")
   } else {
     stop_multiclass()
@@ -224,18 +224,18 @@ cal_logistic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
 # --------------------- Logistic Spline (GAM)  ---------------------------------
 
 #' @export
-cal_logistic_spline <- function(.data, truth = NULL, estimate = NULL) {
+cal_logistic_spline <- function(.data, truth = NULL, estimate = NULL, ...) {
   UseMethod("cal_logistic_spline")
 }
 
 #' @export
-cal_logistic_spline.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+cal_logistic_spline.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_model_impl(.data, !!truth, !!estimate, method = "logistic_spline")
+    res <- cal_model_impl(.data, !!truth, !!estimate, method = "logistic_spline", ... = ...)
     est <- as_cal_variable(res, !! estimate, "Logistic Spline", "logistic_spline")
   } else {
     stop_multiclass()
@@ -247,18 +247,18 @@ cal_logistic_spline.data.frame <- function(.data, truth = NULL, estimate = NULL)
 # -------------------------------- Beta ----------------------------------------
 
 #' @export
-cal_beta <- function(.data, truth = NULL, estimate = NULL) {
+cal_beta <- function(.data, truth = NULL, estimate = NULL, ...) {
   UseMethod("cal_beta")
 }
 
 #' @export
-cal_beta.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+cal_beta.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_model_impl(.data, !!truth, !!estimate, method = "beta")
+    res <- cal_model_impl(.data, !!truth, !!estimate, method = "beta", ... = ...)
     est <- as_cal_variable(res, !! estimate, "Beta", "beta")
   } else {
     stop_multiclass()
@@ -270,18 +270,18 @@ cal_beta.data.frame <- function(.data, truth = NULL, estimate = NULL) {
 # ----------------------------- Isotonic ---------------------------------------
 
 #' @export
-cal_isotonic <- function(.data, truth = NULL, estimate = NULL) {
+cal_isotonic <- function(.data, truth = NULL, estimate = NULL, ...) {
   UseMethod("cal_isotonic")
 }
 
 #' @export
-cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_isoreg_dataframe(.data, !!truth, !!estimate)
+    res <- cal_isoreg_dataframe(.data, !!truth, !!estimate, ... = ...)
     est <- as_cal_variable(res, !! estimate, "Isotonic", "isotonic")
   } else {
     stop_multiclass()
@@ -291,7 +291,7 @@ cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
 }
 
 cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL,
-                                 sampled = FALSE) {
+                                 sampled = FALSE, ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -308,7 +308,7 @@ cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL,
     dplyr::pull(sort_data, .is_val)
   )
 
-  model_stepfun <- as.stepfun(model)
+  model_stepfun <- as.stepfun(model, ... = ...)
 
   tibble(
     .estimate = environment(model_stepfun)$x,
@@ -436,7 +436,7 @@ cal_binary_plot <- function(.data, truth = .truth, estimate = .estimate, breaks 
     theme_minimal() +
     labs(
       title = "Calibration Plot",
-      x = "Mean Predicted",
+      x = "Predicted Midpoint",
       y = "Event Ratio"
     )
 
@@ -465,7 +465,7 @@ brier_score_binary <- function(.data, truth, estimate) {
 
 # ------------------------------- Utils ----------------------------------------
 
-cal_model_impl <- function(.data, truth, estimate, truth_val = NULL, method) {
+cal_model_impl <- function(.data, truth, estimate, truth_val = NULL, method, ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -476,9 +476,15 @@ cal_model_impl <- function(.data, truth, estimate, truth_val = NULL, method) {
   # Creates dummy variable to avoid tidyevel in the formula
   val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
 
-  if(method == "logistic_spline") model <- gam::gam(.is_val ~ .estimate, data = val_data)
-  if(method == "glm") model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial")
-  if(method == "beta") model <- betareg::betareg(.estimate ~ .is_val, data = val_data)
+  if(method == "logistic_spline"){
+    model <- gam::gam(.is_val ~ gam::s(.estimate), data = val_data, ... = ...)
+    }
+  if(method == "glm") {
+    model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial", ... = ...)
+    }
+  if(method == "beta") {
+    model <- betareg::betareg(.estimate ~ .is_val, data = val_data, ... = ...)
+    }
 
   # Creates 1,000 predictions using 0 to 1, which become the calibration
   new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
