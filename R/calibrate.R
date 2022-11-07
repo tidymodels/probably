@@ -55,12 +55,12 @@ cal_add_adjust <- function(calibration, .data, desc = NULL) {
   UseMethod("cal_add_adjust")
 }
 
-cal_add_adjust.cal_glm <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_logistic <- function(calibration, .data, desc = NULL) {
   call_add_join_impl(calibration, .data, "glm", desc = desc)
 }
 
-cal_add_adjust.cal_gam <- function(calibration, .data, desc = NULL) {
-  call_add_join_impl(calibration, .data, "gam", desc = desc)
+cal_add_adjust.cal_logistic_spline <- function(calibration, .data, desc = NULL) {
+  call_add_join_impl(calibration, .data, "logistic_spline", desc = desc)
 }
 
 cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, desc = NULL) {
@@ -75,7 +75,13 @@ cal_add_adjust.cal_isotonic <- function(calibration, .data, desc = NULL) {
     cal <- ret$calibration
     est_name <- names(estimate)
     adj_name <- paste0(".adj_", length(colnames(.data)) - 2)
-    x <- cal_add_interval(cal, !! parse_expr(est_name), .data, !! parse_expr(adj_name), desc = desc)
+    x <- cal_add_interval(
+      estimates_table = cal,
+      estimate = !! parse_expr(est_name),
+      .data = .data,
+      adj_name = !! parse_expr(adj_name),
+      desc = desc
+      )
     ret <- as_cal_res(x, ret$title, adj_name, desc, est_name)
   }
   ret
@@ -192,50 +198,50 @@ as_tibble.cal_applied_binary <- function(x, ...) {
   dplyr::select(tbl_merged, .source, .truth, .estimate)
 }
 
-# -------------------------------- GLM -----------------------------------------
+# ------------------------------ Logistic --------------------------------------
 
 #' @export
-cal_glm <- function(.data, truth = NULL, estimate = NULL) {
-  UseMethod("cal_glm")
+cal_logistic <- function(.data, truth = NULL, estimate = NULL) {
+  UseMethod("cal_logistic")
 }
 
 #' @export
-cal_glm.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+cal_logistic.data.frame <- function(.data, truth = NULL, estimate = NULL) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
     res <- cal_model_impl(.data, !!truth, !!estimate, method = "glm")
-    est <- as_cal_variable(res, !! estimate, "GLM", "glm")
+    est <- as_cal_variable(res, !! estimate, "Logistic", "glm")
   } else {
     stop_multiclass()
   }
 
-  as_cal_object(est, !!truth, type, additional_class = "cal_glm")
+  as_cal_object(est, !!truth, type, additional_class = "cal_logistic")
 }
 
-# -------------------------------- GAM -----------------------------------------
+# --------------------- Logistic Spline (GAM)  ---------------------------------
 
 #' @export
-cal_gam <- function(.data, truth = NULL, estimate = NULL) {
-  UseMethod("cal_gam")
+cal_logistic_spline <- function(.data, truth = NULL, estimate = NULL) {
+  UseMethod("cal_logistic_spline")
 }
 
 #' @export
-cal_gam.data.frame <- function(.data, truth = NULL, estimate = NULL) {
+cal_logistic_spline.data.frame <- function(.data, truth = NULL, estimate = NULL) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_model_impl(.data, !!truth, !!estimate, method = "gam")
-    est <- as_cal_variable(res, !! estimate, "GAM", "gam")
+    res <- cal_model_impl(.data, !!truth, !!estimate, method = "logistic_spline")
+    est <- as_cal_variable(res, !! estimate, "Logistic Spline", "logistic_spline")
   } else {
     stop_multiclass()
   }
 
-  as_cal_object(est, !!truth, type, additional_class = "cal_gam")
+  as_cal_object(est, !!truth, type, additional_class = "cal_logistic_spline")
 }
 
 # -------------------------------- Beta ----------------------------------------
@@ -382,24 +388,25 @@ boot_iso_cal <- function(x) {
 
 
 #' @export
-cal_binary_bins <- function(.data, truth, estimate, bins = 10) {
+cal_binary_breaks <- function(.data, truth, estimate, breaks = 10, conf_level = 0.9) {
   estimate <- enquo(estimate)
   truth <- enquo(truth)
-  probability_bins(
+  probability_breaks(
     .data = .data,
     truth = !! truth,
     estimate = !! estimate,
-    no_bins = bins,
-    truth_val = NULL
-  )
+    num_breaks = breaks,
+    truth_val = NULL,
+    conf_level = conf_level
+    )
 }
 
 #' @export
-cal_binary_plot <- function(.data, truth = .truth, estimate = .estimate, bins = 10) {
+cal_binary_plot <- function(.data, truth = .truth, estimate = .estimate, breaks = 10) {
   estimate <- enquo(estimate)
   truth <- enquo(truth)
 
-  bin_tbl <- cal_binary_bins(
+  bin_tbl <- cal_binary_breaks(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate
@@ -425,7 +432,7 @@ cal_binary_plot <- function(.data, truth = .truth, estimate = .estimate, bins = 
     geom_line() +
     geom_point(alpha = 0.5) +
     geom_segment(x = 0, y = 0, xend = 1, yend = 1, linetype = 2, color = "gray") +
-    #geom_errorbar(width = 0.02, alpha = 0.5) +
+    geom_errorbar(width = 0.02, alpha = 0.5) +
     theme_minimal() +
     labs(
       title = "Calibration Plot",
@@ -469,7 +476,7 @@ cal_model_impl <- function(.data, truth, estimate, truth_val = NULL, method) {
   # Creates dummy variable to avoid tidyevel in the formula
   val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
 
-  if(method == "gam") model <- gam::gam(.is_val ~ .estimate, data = val_data)
+  if(method == "logistic_spline") model <- gam::gam(.is_val ~ .estimate, data = val_data)
   if(method == "glm") model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial")
   if(method == "beta") model <- betareg::betareg(.estimate ~ .is_val, data = val_data)
 
@@ -485,7 +492,13 @@ cal_model_impl <- function(.data, truth, estimate, truth_val = NULL, method) {
   )
 }
 
-probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins = 10) {
+probability_breaks <- function(.data,
+                             truth,
+                             estimate,
+                             truth_val = NULL,
+                             num_breaks = 10,
+                             conf_level = 0.90
+                             ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -493,8 +506,8 @@ probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins =
 
   # Creates a case_when entry for each bin
   bin_exprs <- map(
-    seq_len(no_bins),
-    ~ expr(!!estimate <= !!.x / !!no_bins ~ !!.x)
+    seq_len(num_breaks),
+    ~ expr(!!estimate <= !!.x / !!num_breaks ~ !!.x)
   )
 
   bin_data <- truth_data %>%
@@ -508,16 +521,31 @@ probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins =
     ) %>%
     dplyr::ungroup()
 
-  purrr::map_df(
-    purrr::transpose(bin_data),
-    ~ {
-      suppressWarnings(pt <- prop.test(.x$events, .x$total))
-      ret <- as_tibble(.x)
-      ret$conf_low <- pt$conf.int[[1]]
-      ret$conf_high <- pt$conf.int[[2]]
-      ret
-    })
+  add_conf_intervals(bin_data, events, total, conf_level = conf_level)
+}
 
+add_conf_intervals <- function(.data,
+                               events = events,
+                               total_observations = total,
+                               conf_level = 0.90
+                               ) {
+  events <- enquo(events)
+  total_observations <- enquo(total_observations)
+  .data %>%
+    purrr::transpose() %>%
+    purrr::map_df(
+      ~ {
+        events <- .x[[as_name(events)]]
+        total_observations <- .x[[as_name(total_observations)]]
+        suppressWarnings(
+          pt <- prop.test(events, total_observations, conf.level = conf_level)
+          )
+        ret <- as_tibble(.x)
+        ret$conf_low <- pt$conf.int[[1]]
+        ret$conf_high <- pt$conf.int[[2]]
+        ret
+        }
+    )
 }
 
 add_is_val <- function(.data, truth, truth_val = NULL) {
