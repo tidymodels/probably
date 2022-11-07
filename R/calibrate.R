@@ -38,8 +38,15 @@ as_cal_applied <- function(results, calibration) {
 }
 
 #' @export
-print.cal_applied <- function(x) {
+print.cal_applied <- function(x, ...) {
   cat("Cal Applied")
+}
+
+#' @export
+plot.cal_applied_binary <- function(x, ...) {
+  tibble::as_tibble(x) %>%
+    dplyr::group_by(.source) %>%
+    cal_binary_plot()
 }
 
 # -------------------------- Add Adjustment ------------------------------------
@@ -175,13 +182,14 @@ as_tibble.cal_applied_binary <- function(x, ...) {
     ~{
       tibble(
         .column = names(tbl_map[.x]),
-        .adj_estimate = tbl_map[[.x]]
+        .truth = tbl_map[[1]],
+        .estimate = tbl_map[[.x]]
       )
     }
   )
   tbl_bind <- dplyr::bind_rows(tbl_mapped)
   tbl_merged <- dplyr::left_join(tbl_bind, desc, by = ".column")
-  dplyr::select(tbl_merged, .source, .adj_estimate)
+  dplyr::select(tbl_merged, .source, .truth, .estimate)
 }
 
 # -------------------------------- GLM -----------------------------------------
@@ -387,36 +395,31 @@ cal_binary_bins <- function(.data, truth, estimate, bins = 10) {
 }
 
 #' @export
-cal_binary_plot <- function(.data, truth, estimate, ..., bins = 10) {
-  vars <- enquos(...)
+cal_binary_plot <- function(.data, truth = .truth, estimate = .estimate, bins = 10) {
   estimate <- enquo(estimate)
   truth <- enquo(truth)
 
-  var_str <- as_name(estimate)
+  bin_tbl <- cal_binary_bins(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate
+  )
 
-  if(length(vars)) {
-    vars_names <- as.character(map(vars, as_name))
-    match <- c(vars_names, var_str)
+  grouping <- dplyr::group_vars(.data)
+  if(length(grouping)) {
+    grouping <- parse_expr(grouping)
   } else {
-    col_names <- colnames(.data)
-    match_bol <- substr(col_names, 1, nchar(var_str)) == var_str
-    match <- col_names[match_bol]
+    grouping <- NULL
   }
 
-  match_map <- map(
-    match,
-    ~ {
-      bins_tbl <- cal_binary_bins(.data, !! truth, !!parse_expr(.x), bins = bins)
-      dplyr::mutate(bins_tbl, Source = .x)
-    })
-
-  matched_tbl <- dplyr::bind_rows(match_map)
-
   ggplot(
-    data = matched_tbl,
-    aes(mean_predicted, event_ratio,
-        color = Source, group = Source,
-        ymin = conf_low, ymax = conf_high
+    data = bin_tbl,
+    aes(x = predicted_midpoint,
+        y = event_rate,
+        color = !! grouping,
+        group = !! grouping,
+        ymin = conf_low,
+        ymax = conf_high
         )
     ) +
     geom_line() +
@@ -425,7 +428,7 @@ cal_binary_plot <- function(.data, truth, estimate, ..., bins = 10) {
     #geom_errorbar(width = 0.02, alpha = 0.5) +
     theme_minimal() +
     labs(
-      title = paste0("`", var_str, "` Calibration Plot"),
+      title = "Calibration Plot",
       x = "Mean Predicted",
       y = "Event Ratio"
     )
@@ -466,9 +469,9 @@ cal_model_impl <- function(.data, truth, estimate, truth_val = NULL, method) {
   # Creates dummy variable to avoid tidyevel in the formula
   val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
 
-  if(method == "gam") model <- gam(.is_val ~ .estimate, data = val_data)
+  if(method == "gam") model <- gam::gam(.is_val ~ .estimate, data = val_data)
   if(method == "glm") model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial")
-  if(method == "beta") model <- betareg(.estimate ~ .is_val, data = val_data)
+  if(method == "beta") model <- betareg::betareg(.estimate ~ .is_val, data = val_data)
 
   # Creates 1,000 predictions using 0 to 1, which become the calibration
   new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
@@ -494,34 +497,27 @@ probability_bins <- function(.data, truth, estimate, truth_val = NULL, no_bins =
     ~ expr(!!estimate <= !!.x / !!no_bins ~ !!.x)
   )
 
-  # .is_val evaluates if truth is equal to truth val
-  # essentially binarizying truth in case is not a binary number
-  bin_data <- dplyr::mutate(truth_data, bin = case_when(!!!bin_exprs))
+  bin_data <- truth_data %>%
+    dplyr::mutate(.bin = case_when(!!!bin_exprs)) %>%
+    dplyr::group_by(.bin, .add = TRUE) %>%
+    dplyr::summarise(
+      predicted_midpoint = median(!!estimate),
+      event_rate = sum(.is_val) / n(),
+      events = sum(.is_val),
+      total = n()
+    ) %>%
+    dplyr::ungroup()
 
-  bin_group <- dplyr::group_by(bin_data, bin)
-
-  bin_summary <- dplyr::summarise(
-    bin_group,
-    mean_predicted = mean(!!estimate),
-    event_ratio = sum(.is_val) / n(),
-    events = sum(.is_val),
-    bin_total = n()
-  )
-  bin_ungroup <- dplyr::ungroup(bin_summary)
-
-  # Runs collect() to work with remote connections (ie Spark)
-  dplyr::collect(bin_ungroup)
-
-  bin_conf <- map(
-    purrr::transpose(bin_ungroup),
+  purrr::map_df(
+    purrr::transpose(bin_data),
     ~ {
-      suppressWarnings(pt <- prop.test(.x$events, .x$bin_total))
+      suppressWarnings(pt <- prop.test(.x$events, .x$total))
       ret <- as_tibble(.x)
       ret$conf_low <- pt$conf.int[[1]]
       ret$conf_high <- pt$conf.int[[2]]
       ret
     })
-  dplyr::bind_rows(bin_conf)
+
 }
 
 add_is_val <- function(.data, truth, truth_val = NULL) {
