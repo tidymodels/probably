@@ -44,23 +44,23 @@ print.cal_applied <- function(x) {
 
 # -------------------------- Add Adjustment ------------------------------------
 
-cal_add_adjust <- function(calibration, .data, output_name, desc = NULL) {
+cal_add_adjust <- function(calibration, .data, desc = NULL) {
   UseMethod("cal_add_adjust")
 }
 
-cal_add_adjust.cal_glm <- function(calibration, .data, output_name, desc = NULL) {
-  call_add_join_impl(calibration, .data, "glm", "glm", desc = desc)
+cal_add_adjust.cal_glm <- function(calibration, .data, desc = NULL) {
+  call_add_join_impl(calibration, .data, "glm", desc = desc)
 }
 
-cal_add_adjust.cal_gam <- function(calibration, .data, output_name, desc = NULL) {
-  call_add_join_impl(calibration, .data, "gam", "gam", desc = desc)
+cal_add_adjust.cal_gam <- function(calibration, .data, desc = NULL) {
+  call_add_join_impl(calibration, .data, "gam", desc = desc)
 }
 
-cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, output_name, desc = NULL) {
-  call_add_join_impl(calibration, .data, "isotonic_boot", "isotonic_boot", desc = desc)
+cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, desc = NULL) {
+  call_add_join_impl(calibration, .data, "isotonic_boot", desc = desc)
 }
 
-cal_add_adjust.cal_isotonic <- function(calibration, .data, output_name = "isotonic", desc = NULL) {
+cal_add_adjust.cal_isotonic <- function(calibration, .data, desc = NULL) {
   ret <- list()
   if(calibration$type == "binary") {
     estimate <- calibration$estimates[1]
@@ -87,7 +87,7 @@ cal_add_interval <- function(estimates_table, estimate, .data, adj_name, desc = 
     dplyr::mutate(.data, !!adj_name := intervals)
 }
 
-call_add_join_impl <- function(calibration, .data, model, output_name, desc = NULL) {
+call_add_join_impl <- function(calibration, .data, model, desc = NULL) {
   ret <- list()
   if(calibration$type == "binary") {
     estimate <- calibration$estimates[1]
@@ -102,7 +102,7 @@ call_add_join_impl <- function(calibration, .data, model, output_name, desc = NU
 }
 
 as_cal_res <- function(x, title, adj_name, desc, var_name) {
-  desc_table <- tibble(title = title, column = adj_name)
+  desc_table <- tibble(.source = title, .column = adj_name)
   desc <- dplyr::bind_rows(desc, desc_table)
   ret <- list(
     cs = list(
@@ -155,8 +155,33 @@ as_cal_variable <- function(estimate_tbl, estimate, title, model) {
   set_names(est, as_name(estimate))
 }
 
-as_tibble.cal_applied_binary <- function() {
+#' @importFrom tibble as_tibble
+#' @export
+as_tibble.cal_applied_binary <- function(x, ...) {
+  tbl <- x$calibration[[1]]$table
+  desc <- x$calibration[[1]]$desc
 
+  desc <- dplyr::bind_rows(
+    desc,
+    tibble(
+      .source = names(x$calibration[1]),
+      .column = names(x$calibration[1])
+      )
+  )
+
+  tbl_map <- map(tbl, ~.x)
+  tbl_mapped <- map(
+    2:ncol(tbl),
+    ~{
+      tibble(
+        .column = names(tbl_map[.x]),
+        .adj_estimate = tbl_map[[.x]]
+      )
+    }
+  )
+  tbl_bind <- dplyr::bind_rows(tbl_mapped)
+  tbl_merged <- dplyr::left_join(tbl_bind, desc, by = ".column")
+  dplyr::select(tbl_merged, .source, .adj_estimate)
 }
 
 # -------------------------------- GLM -----------------------------------------
