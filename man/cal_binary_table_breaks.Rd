@@ -11,10 +11,17 @@ cal_binary_table_breaks(
   truth,
   estimate,
   num_breaks = 10,
-  conf_level = 0.9
+  conf_level = 0.9,
+  event_level = c("first", "second")
 )
 
-cal_binary_table_logistic(.data, truth, estimate, conf_level = 0.9)
+cal_binary_table_logistic(
+  .data,
+  truth,
+  estimate,
+  conf_level = 0.9,
+  event_level = c("first", "second")
+)
 
 cal_binary_table_windowed(
   .data,
@@ -22,7 +29,8 @@ cal_binary_table_windowed(
   estimate,
   window_size = round(nrow(.data)/10),
   step_size = window_size,
-  conf_level = 0.9
+  conf_level = 0.9,
+  event_level = c("first", "second")
 )
 }
 \arguments{
@@ -38,6 +46,9 @@ This should be an unquoted column name}
 to 10}
 
 \item{conf_level}{Confidence level to use in the visualization. Defaults to 0.9}
+
+\item{event_level}{single string. Either "first" or "second" to specify which
+level of truth to consider as the "event".}
 
 \item{window_size}{The size of segments. Used for the windowed probability
 calculations}

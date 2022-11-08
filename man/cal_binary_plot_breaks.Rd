@@ -13,7 +13,8 @@ cal_binary_plot_breaks(
   num_breaks = 10,
   conf_level = 0.9,
   include_ribbon = TRUE,
-  include_rug = TRUE
+  include_rug = TRUE,
+  event_level = c("first", "second")
 )
 
 cal_binary_plot_logistic(
@@ -22,7 +23,8 @@ cal_binary_plot_logistic(
   estimate,
   conf_level = 0.9,
   include_rug = TRUE,
-  include_ribbon = TRUE
+  include_ribbon = TRUE,
+  event_level = c("first", "second")
 )
 
 cal_binary_plot_windowed(
@@ -33,7 +35,8 @@ cal_binary_plot_windowed(
   step_size = window_size,
   conf_level = 0.9,
   include_ribbon = TRUE,
-  include_rug = TRUE
+  include_rug = TRUE,
+  event_level = c("first", "second")
 )
 }
 \arguments{
@@ -55,6 +58,9 @@ included. Defaults to \code{TRUE}}
 
 \item{include_rug}{Flag that indicates if the Rug layer is to be included.
 Defaults to \code{TRUE}}
+
+\item{event_level}{single string. Either "first" or "second" to specify which
+level of truth to consider as the "event".}
 
 \item{window_size}{The size of segments. Used for the windowed probability
 calculations}

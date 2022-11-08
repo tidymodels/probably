@@ -10,6 +10,8 @@
 #' (that is a factor). This should be an unquoted column name
 #' @param estimate The column identifier for the prediction probabilities.
 #' This should be an unquoted column name
+#' @param event_level  single string. Either "first" or "second" to specify which
+#' level of truth to consider as the "event".
 #' @param num_breaks The number of segments to group the probabilities. Defaults
 #' to 10
 #' @param window_size The size of segments. Used for the windowed probability
@@ -50,13 +52,16 @@ cal_binary_plot_breaks <- function(.data,
                                    num_breaks = 10,
                                    conf_level = 0.90,
                                    include_ribbon = TRUE,
-                                   include_rug = TRUE
+                                   include_rug = TRUE,
+                                   event_level = c("first", "second")
                                    ) {
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   truth_name <- as_name(truth)
+
+  lev <- process_level(event_level)
 
   truth_levels <- levels(.data[truth_name][[1]])
 
@@ -67,10 +72,11 @@ cal_binary_plot_breaks <- function(.data,
     truth = !!truth,
     estimate = !!estimate,
     num_breaks = num_breaks,
-    conf_level = conf_level
+    conf_level = conf_level,
+    event_level = event_level
   )
 
-  sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[1]], "'")
+  sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[lev]], "'")
 
   binary_plot_impl(prob_tbl, predicted_midpoint, event_rate,
                    .data, !!truth, !!estimate,
@@ -86,13 +92,16 @@ cal_binary_plot_logistic <- function(.data,
                                      estimate,
                                      conf_level = 0.90,
                                      include_rug = TRUE,
-                                     include_ribbon = TRUE
+                                     include_ribbon = TRUE,
+                                     event_level = c("first", "second")
                                      ) {
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   truth_name <- as_name(truth)
+
+  lev <- process_level(event_level)
 
   truth_levels <- levels(.data[truth_name][[1]])
 
@@ -102,10 +111,11 @@ cal_binary_plot_logistic <- function(.data,
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
-    conf_level = conf_level
+    conf_level = conf_level,
+    event_level = event_level
   )
 
-  sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[1]], "'")
+  sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[lev]], "'")
 
   binary_plot_impl(prob_tbl, estimate, prob,
                    .data, !!truth, !!estimate,
@@ -123,13 +133,16 @@ cal_binary_plot_windowed <- function(.data,
                                      step_size = window_size,
                                      conf_level = 0.90,
                                      include_ribbon = TRUE,
-                                     include_rug = TRUE
+                                     include_rug = TRUE,
+                                     event_level = c("first", "second")
                                      ) {
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   truth_name <- as_name(truth)
+
+  lev <- process_level(event_level)
 
   truth_levels <- levels(.data[truth_name][[1]])
 
@@ -141,10 +154,11 @@ cal_binary_plot_windowed <- function(.data,
     estimate = !!estimate,
     window_size = window_size,
     step_size = step_size,
-    conf_level = conf_level
+    conf_level = conf_level,
+    event_level = event_level
   )
 
-  sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[1]], "'")
+  sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[lev]], "'")
 
   binary_plot_impl(prob_tbl, predicted_midpoint, event_rate,
                    .data, !!truth, !!estimate,
@@ -159,6 +173,8 @@ binary_plot_impl <- function(tbl, x, y, .data, truth, estimate,
 ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
+
+
   x  <- enquo(x)
   y <- enquo(y)
 
@@ -245,10 +261,13 @@ cal_binary_table_breaks <- function(.data,
                                    truth,
                                    estimate,
                                    num_breaks = 10,
-                                   conf_level = 0.90
+                                   conf_level = 0.90,
+                                   event_level = c("first", "second")
                                    ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
+
+  lev <- process_level(event_level)
 
   bin_exprs <- purrr::map(
     seq_len(num_breaks),
@@ -258,7 +277,7 @@ cal_binary_table_breaks <- function(.data,
   .data %>%
     dplyr::mutate(
       .bin = dplyr::case_when(!!!bin_exprs),
-      .is_val = ifelse(as.integer(!!truth) == 1, 1, 0)
+      .is_val = ifelse(as.integer(!!truth) == lev, 1, 0)
     ) %>%
     dplyr::group_by(.bin, .add = TRUE) %>%
     dplyr::summarise(
@@ -281,10 +300,13 @@ cal_binary_table_breaks <- function(.data,
 cal_binary_table_logistic <- function(.data,
                                      truth,
                                      estimate,
-                                     conf_level = 0.90
+                                     conf_level = 0.90,
+                                     event_level = c("first", "second")
                                      ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
+
+  lev <- process_level(event_level)
 
   prep_data <- dplyr::select(.data, truth = !!truth, estimate = !!estimate)
 
@@ -299,9 +321,11 @@ cal_binary_table_logistic <- function(.data,
   preds <- predict(model, new_data, type = "response", se.fit = TRUE)
 
   res <- tibble::tibble(
-    prob = 1 - preds$fit,
+    prob = preds$fit,
     se_fit = preds$se.fit
   )
+
+  if(lev == 1) res$prob <- 1 - res$prob
 
   res <- cbind(new_data, res)
 
@@ -320,11 +344,14 @@ cal_binary_table_windowed <- function(.data,
                                       estimate,
                                       window_size = round(nrow(.data) / 10),
                                       step_size = window_size,
-                                      conf_level = 0.90
+                                      conf_level = 0.90,
+                                      event_level = c("first", "second")
                                       ) {
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
+
+  lev <- process_level(event_level)
 
   .data %>%
     dplyr::select(!!truth, !!estimate) %>%
@@ -338,7 +365,7 @@ cal_binary_table_windowed <- function(.data,
       if(!is.null(.x)) {
         .x %>%
           dplyr::mutate(
-            .is_val = ifelse(as.integer(!!truth) == 1, 1, 0)
+            .is_val = ifelse(as.integer(!!truth) == lev, 1, 0)
           ) %>%
           dplyr::summarise(
             predicted_midpoint = round(median(!!estimate), 4),
@@ -355,7 +382,7 @@ add_conf_intervals <- function(.data,
                                events = events,
                                total = total,
                                conf_level = 0.90
-) {
+                               ) {
   events <- enquo(events)
   total <- enquo(total)
   .data %>%
@@ -379,3 +406,14 @@ utils::globalVariables(c(
   ".bin", ".is_val", "event_rate", "events", "lower",
   "predicted_midpoint", "total", "upper"
 ))
+
+process_level <- function(x) {
+  x <- x[[1]]
+  ret <- NULL
+  if(x == "first") ret <- 1
+  if(x == "second") ret <- 2
+  if(is.null(ret)) {
+    stop("Invalid event_level entry. Valid entries are 'first' and 'second'")
+  }
+  ret
+}
