@@ -3,7 +3,7 @@
 \name{cal_binary_plot_breaks}
 \alias{cal_binary_plot_breaks}
 \alias{cal_binary_plot_logistic}
-\title{Calibration plots}
+\title{Probability Calibration plots}
 \usage{
 cal_binary_plot_breaks(
   .data,
@@ -36,8 +36,7 @@ This should be an unquoted column name}
 \item{num_breaks}{The number of segments to group the probabilities. Defaults
 to 10}
 
-\item{conf_level}{Confidence level to use in the visualization. Applies to
-the ribbon layer. Defaults to 0.9}
+\item{conf_level}{Confidence level to use in the visualization. Defaults to 0.9}
 
 \item{include_ribbon}{Flag that indicates if the ribbon layer is to be
 included. Defaults to \code{TRUE}}

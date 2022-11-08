@@ -1,4 +1,4 @@
-#' Calibration plots
+#' Probability Calibration plots
 #' @description Calibration plot functions. They require a data.frame that contains
 #' the predictions and probability columns. The output is a `ggplot2` graph.
 #'
@@ -9,8 +9,7 @@
 #' This should be an unquoted column name
 #' @param num_breaks The number of segments to group the probabilities. Defaults
 #' to 10
-#' @param conf_level Confidence level to use in the visualization. Applies to
-#' the ribbon layer. Defaults to 0.9
+#' @param conf_level Confidence level to use in the visualization. Defaults to 0.9
 #' @param include_ribbon Flag that indicates if the ribbon layer is to be
 #' included. Defaults to `TRUE`
 #' @param include_rug Flag that indicates if the Rug layer is to be included.
@@ -50,7 +49,7 @@ cal_binary_plot_breaks <- function(.data,
 
   if(length(truth_levels) != 2) stop("'", truth_name, "' does not have 2 levels")
 
-  prob_tbl <- cal_probability_breaks(
+  prob_tbl <- cal_binary_table_breaks(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
@@ -122,7 +121,7 @@ cal_binary_plot_logistic <- function(.data,
 
   if(length(truth_levels) != 2) stop("'", truth_name, "' does not have 2 levels")
 
-  prob_tbl <- cal_probability_logistic(
+  prob_tbl <- cal_binary_table_logistic(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
@@ -173,7 +172,29 @@ cal_binary_plot_logistic <- function(.data,
     )
 }
 
-cal_probability_breaks <- function(.data,
+#' Probability Calibration table
+#'
+#' @description Calibration table functions. They require a data.frame that
+#' contains the predictions and probability columns. The output is another
+#' `tibble` with segmented data that compares the accuracy of the probability
+#' to the actual outcome.
+#'
+#' @inheritParams cal_binary_plot_breaks
+#'
+#' @examples
+#' cal_binary_table_breaks(
+#'   segment_logistic,
+#'   Class,
+#'   .pred_good
+#' )
+#'
+#' cal_binary_table_logistic(
+#'   segment_logistic,
+#'   Class,
+#'   .pred_good
+#' )
+#' @export
+cal_binary_table_breaks <- function(.data,
                                    truth,
                                    estimate,
                                    num_breaks = 10,
@@ -234,7 +255,9 @@ add_conf_intervals <- function(.data,
     )
 }
 
-cal_probability_logistic <- function(.data,
+#' @rdname cal_binary_table_breaks
+#' @export
+cal_binary_table_logistic <- function(.data,
                                      truth,
                                      estimate,
                                      conf_level = 0.90
