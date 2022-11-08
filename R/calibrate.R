@@ -1,3 +1,5 @@
+#--------------------------------- Plots ---------------------------------------
+
 #' Probability Calibration plots
 #'
 #' @description Calibration plot functions. They require a data.frame that contains
@@ -10,6 +12,10 @@
 #' This should be an unquoted column name
 #' @param num_breaks The number of segments to group the probabilities. Defaults
 #' to 10
+#' @param window_size The size of segments. Used for the windowed probability
+#' calculations
+#' @param step_size The gap between segments. Used for the windowed probability
+#' calculations
 #' @param conf_level Confidence level to use in the visualization. Defaults to 0.9
 #' @param include_ribbon Flag that indicates if the ribbon layer is to be
 #' included. Defaults to `TRUE`
@@ -26,6 +32,12 @@
 #' )
 #'
 #' cal_binary_plot_logistic(
+#'   segment_logistic,
+#'   Class,
+#'   .pred_good
+#' )
+#'
+#' cal_binary_plot_windowed(
 #'   segment_logistic,
 #'   Class,
 #'   .pred_good
@@ -102,6 +114,45 @@ cal_binary_plot_logistic <- function(.data,
                    )
 }
 
+#' @rdname cal_binary_plot_breaks
+#' @export
+cal_binary_plot_windowed <- function(.data,
+                                     truth,
+                                     estimate,
+                                     window_size = 100,
+                                     step_size = window_size,
+                                     conf_level = 0.90,
+                                     include_ribbon = TRUE,
+                                     include_rug = TRUE
+                                     ) {
+
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  truth_name <- as_name(truth)
+
+  truth_levels <- levels(.data[truth_name][[1]])
+
+  if(length(truth_levels) != 2) stop("'", truth_name, "' does not have 2 levels")
+
+  prob_tbl <- cal_binary_table_windowed(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
+    window_size = window_size,
+    step_size = step_size,
+    conf_level = conf_level
+  )
+
+  sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[1]], "'")
+
+  binary_plot_impl(prob_tbl, predicted_midpoint, event_rate,
+                   .data, !!truth, !!estimate,
+                   "Predicted Midpoint", "Event Rate",
+                   sub_title, include_ribbon, include_rug, TRUE
+  )
+}
+
 binary_plot_impl <- function(tbl, x, y, .data, truth, estimate,
                              x_label, y_label, sub_title,
                              include_ribbon, include_rug, include_points
@@ -155,9 +206,11 @@ binary_plot_impl <- function(tbl, x, y, .data, truth, estimate,
       subtitle = sub_title,
       x = x_label,
       y = y_label
-    )
+    ) +
+    theme_light()
 }
 
+#--------------------------------- Tables --------------------------------------
 
 #' Probability Calibration table
 #'
@@ -180,6 +233,13 @@ binary_plot_impl <- function(tbl, x, y, .data, truth, estimate,
 #'   Class,
 #'   .pred_good
 #' )
+#'
+#' cal_binary_table_windowed(
+#'   segment_logistic,
+#'   Class,
+#'   .pred_good
+#' )
+#'
 #' @export
 cal_binary_table_breaks <- function(.data,
                                    truth,
@@ -195,7 +255,7 @@ cal_binary_table_breaks <- function(.data,
     ~ expr(!!estimate <= !!.x / !!num_breaks ~ !!.x)
   )
 
-  bin_data <- .data %>%
+  .data %>%
     dplyr::mutate(
       .bin = dplyr::case_when(!!!bin_exprs),
       .is_val = ifelse(as.integer(!!truth) == 1, 1, 0)
@@ -208,38 +268,12 @@ cal_binary_table_breaks <- function(.data,
       total = dplyr::n()
     ) %>%
     dplyr::ungroup() %>%
-    dplyr::select(-.bin)
-
-  add_conf_intervals(
-    .data = bin_data,
-    events = events,
-    total = total,
-    conf_level = conf_level
-    )
-}
-
-add_conf_intervals <- function(.data,
-                               events = events,
-                               total = total,
-                               conf_level = 0.90
-                               ) {
-  events <- enquo(events)
-  total <- enquo(total)
-  .data %>%
-    purrr::transpose() %>%
-    purrr::map_df(
-      ~ {
-        events <- .x[[as_name(events)]]
-        total <- .x[[as_name(total)]]
-        suppressWarnings(
-          pt <- prop.test(events, total, conf.level = conf_level)
-        )
-        ret <- tibble::as_tibble(.x)
-        ret$lower <- pt$conf.int[[1]]
-        ret$upper <- pt$conf.int[[2]]
-        ret
-      }
-    )
+    dplyr::select(-.bin) %>%
+    add_conf_intervals(
+      events = events,
+      total = total,
+      conf_level = conf_level
+      )
 }
 
 #' @rdname cal_binary_table_breaks
@@ -277,6 +311,68 @@ cal_binary_table_logistic <- function(.data,
 
   tibble::as_tibble(res)
 
+}
+
+#' @rdname cal_binary_table_breaks
+#' @export
+cal_binary_table_windowed <- function(.data,
+                                      truth,
+                                      estimate,
+                                      window_size = 100,
+                                      step_size = window_size,
+                                      conf_level = 0.90
+                                      ) {
+
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  .data %>%
+    dplyr::select(!!truth, !!estimate) %>%
+    dplyr::arrange(!!estimate) %>%
+    slider::slide(~.x,
+          .before = window_size,
+          .complete = TRUE,
+          .step = step_size
+    ) %>%
+    purrr::map_df(~{
+      if(!is.null(.x)) {
+        .x %>%
+          dplyr::mutate(
+            .is_val = ifelse(as.integer(!!truth) == 1, 1, 0)
+          ) %>%
+          dplyr::summarise(
+            predicted_midpoint = round(median(!!estimate), 4),
+            event_rate = round(sum(.is_val) / dplyr::n(), 4),
+            events = sum(.is_val),
+            total = dplyr::n()
+          ) %>%
+          add_conf_intervals(events, total, conf_level = conf_level)
+      }
+    })
+}
+
+add_conf_intervals <- function(.data,
+                               events = events,
+                               total = total,
+                               conf_level = 0.90
+) {
+  events <- enquo(events)
+  total <- enquo(total)
+  .data %>%
+    purrr::transpose() %>%
+    purrr::map_df(
+      ~ {
+        events <- .x[[as_name(events)]]
+        total <- .x[[as_name(total)]]
+        suppressWarnings(
+          pt <- prop.test(events, total, conf.level = conf_level)
+        )
+        ret <- tibble::as_tibble(.x)
+        ret$lower <- pt$conf.int[[1]]
+        ret$upper <- pt$conf.int[[2]]
+        ret
+      }
+    )
 }
 
 utils::globalVariables(c(

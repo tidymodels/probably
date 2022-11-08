@@ -3,6 +3,7 @@
 \name{cal_binary_table_breaks}
 \alias{cal_binary_table_breaks}
 \alias{cal_binary_table_logistic}
+\alias{cal_binary_table_windowed}
 \title{Probability Calibration table}
 \usage{
 cal_binary_table_breaks(
@@ -14,6 +15,15 @@ cal_binary_table_breaks(
 )
 
 cal_binary_table_logistic(.data, truth, estimate, conf_level = 0.9)
+
+cal_binary_table_windowed(
+  .data,
+  truth,
+  estimate,
+  window_size = 100,
+  step_size = window_size,
+  conf_level = 0.9
+)
 }
 \arguments{
 \item{.data}{A data.frame object containing predictions and probability columns}
@@ -28,6 +38,12 @@ This should be an unquoted column name}
 to 10}
 
 \item{conf_level}{Confidence level to use in the visualization. Defaults to 0.9}
+
+\item{window_size}{The size of segments. Used for the windowed probability
+calculations}
+
+\item{step_size}{The gap between segments. Used for the windowed probability
+calculations}
 }
 \description{
 Calibration table functions. They require a data.frame that
@@ -47,4 +63,11 @@ cal_binary_table_logistic(
   Class,
   .pred_good
 )
+
+cal_binary_table_windowed(
+  segment_logistic,
+  Class,
+  .pred_good
+)
+
 }

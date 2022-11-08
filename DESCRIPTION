@@ -26,8 +26,9 @@ Imports:
     yardstick (>= 1.0.0),
     ggplot2,
     tibble,
-    tune,
     purrr,
+    slider,
+    tune,
     mgcv
 Suggests:
     covr,

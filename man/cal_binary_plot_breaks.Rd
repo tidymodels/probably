@@ -3,6 +3,7 @@
 \name{cal_binary_plot_breaks}
 \alias{cal_binary_plot_breaks}
 \alias{cal_binary_plot_logistic}
+\alias{cal_binary_plot_windowed}
 \title{Probability Calibration plots}
 \usage{
 cal_binary_plot_breaks(
@@ -22,6 +23,17 @@ cal_binary_plot_logistic(
   conf_level = 0.9,
   include_rug = TRUE,
   include_ribbon = TRUE
+)
+
+cal_binary_plot_windowed(
+  .data,
+  truth,
+  estimate,
+  window_size = 100,
+  step_size = window_size,
+  conf_level = 0.9,
+  include_ribbon = TRUE,
+  include_rug = TRUE
 )
 }
 \arguments{
@@ -43,6 +55,12 @@ included. Defaults to \code{TRUE}}
 
 \item{include_rug}{Flag that indicates if the Rug layer is to be included.
 Defaults to \code{TRUE}}
+
+\item{window_size}{The size of segments. Used for the windowed probability
+calculations}
+
+\item{step_size}{The gap between segments. Used for the windowed probability
+calculations}
 }
 \description{
 Calibration plot functions. They require a data.frame that contains
@@ -59,6 +77,12 @@ cal_binary_plot_breaks(
 )
 
 cal_binary_plot_logistic(
+  segment_logistic,
+  Class,
+  .pred_good
+)
+
+cal_binary_plot_windowed(
   segment_logistic,
   Class,
   .pred_good
