@@ -62,6 +62,18 @@ contains the predictions and probability columns. The output is another
 \code{tibble} with segmented data that compares the accuracy of the probability
 to the actual outcome.
 }
+\details{
+\itemize{
+\item \code{cal_binary_table_breaks()} - Splits the data into bins, based on the
+number of breaks provided (\code{num_breaks}). The bins are even ranges, starting
+at 0, and ending at 1.
+\item \code{cal_binary_table_logistic()} - Fits a logistic spline regression (GAM)
+against the data. It then creates a table with the predictions based on 100
+probabilities starting at 0, and ending at1.
+\item \code{cal_binary_table_windowed()} - Creates a running percentage of the probability
+that moves across the proportion of events.
+}
+}
 \examples{
 cal_binary_table_breaks(
   segment_logistic,

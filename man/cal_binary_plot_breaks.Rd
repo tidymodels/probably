@@ -72,6 +72,18 @@ calculations}
 Calibration plot functions. They require a data.frame that contains
 the predictions and probability columns. The output is a \code{ggplot2} graph.
 }
+\details{
+\itemize{
+\item \code{cal_binary_plot_breaks()} - Splits the data into bins, based on the
+number of breaks provided (\code{num_breaks}). The bins are even ranges, starting
+at 0, and ending at 1.
+\item \code{cal_binary_plot_logistic()} - Fits a logistic spline regression (GAM)
+against the data. It then creates a table with the predictions based on 100
+probabilities starting at 0, and ending at1.
+\item \code{cal_binary_plot_windowed()} - Creates a running percentage of the probability
+that moves across the proportion of events.
+}
+}
 \examples{
 
 library(ggplot2)
@@ -94,4 +106,9 @@ cal_binary_plot_windowed(
   .pred_good
 )
 
+}
+\seealso{
+These functions depend on tables built by the following corresponding
+functions: \code{\link[=cal_binary_table_breaks]{cal_binary_table_breaks()}}, \code{\link[=cal_binary_table_logistic]{cal_binary_table_logistic()}}, and
+\code{\link[=cal_binary_table_windowed]{cal_binary_table_windowed()}}
 }
