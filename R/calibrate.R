@@ -16,9 +16,6 @@ cal_binary_plot_breaks <- function(.data,
 
   if(length(truth_levels) != 2) stop("'", truth_name, "' does not have 2 levels")
 
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
   prob_tbl <- probability_breaks(
     .data = .data,
     truth = !!truth,
@@ -30,7 +27,7 @@ cal_binary_plot_breaks <- function(.data,
   sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[1]], "'")
 
   res <- ggplot(data = prob_tbl, aes(x = predicted_midpoint)) +
-    geom_abline(col = "green", lty = 2) +
+    geom_abline(col = "#999999", lty = 2) +
     geom_line(aes(y = event_rate)) +
     geom_point(aes(y = event_rate))
 
@@ -86,10 +83,7 @@ cal_binary_plot_logistic <- function(.data,
 
   if(length(truth_levels) != 2) stop("'", truth_name, "' does not have 2 levels")
 
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  prob_tbl <- probability_gam(
+  prob_tbl <- probability_logistic(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate
@@ -98,7 +92,7 @@ cal_binary_plot_logistic <- function(.data,
   sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[1]], "'")
 
   res <- ggplot(data = prob_tbl, aes(x = estimate)) +
-    geom_abline(col = "green", lty = 2) +
+    geom_abline(col = "#999999", linetype = 2) +
     geom_line(aes(y = prob))
 
   if(include_ribbon) {
@@ -131,8 +125,8 @@ cal_binary_plot_logistic <- function(.data,
     labs(
       title = "Calibration Plot",
       subtitle = sub_title,
-      x = "Predicted Midpoint",
-      y = "Event Rate"
+      x = "Estimate",
+      y = "Probability"
     )
 }
 
@@ -192,7 +186,7 @@ add_conf_intervals <- function(.data,
     )
 }
 
-probability_gam <- function(.data, truth, estimate) {
+probability_logistic <- function(.data, truth, estimate) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
