@@ -20,7 +20,7 @@ cal_binary_table_windowed(
   .data,
   truth,
   estimate,
-  window_size = 100,
+  window_size = round(nrow(.data)/10),
   step_size = window_size,
   conf_level = 0.9
 )
