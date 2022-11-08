@@ -24,11 +24,13 @@ Imports:
     tidyselect (>= 1.1.2),
     vctrs (>= 0.4.1),
     yardstick (>= 1.0.0),
+    ggplot2,
+    tibble,
+    tune,
     purrr,
     mgcv
 Suggests:
     covr,
-    ggplot2,
     knitr,
     modeldata,
     parsnip,
