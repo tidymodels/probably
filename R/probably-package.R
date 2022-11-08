@@ -7,5 +7,6 @@
 #' @import ggplot2
 #' @importFrom magrittr %>%
 #' @importFrom yardstick sens spec j_index
+#' @importFrom stats binomial median predict qnorm
 ## usethis namespace: end
 NULL

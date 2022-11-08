@@ -1,4 +1,5 @@
 #' Probability Calibration plots
+#'
 #' @description Calibration plot functions. They require a data.frame that contains
 #' the predictions and probability columns. The output is a `ggplot2` graph.
 #'
@@ -59,47 +60,11 @@ cal_binary_plot_breaks <- function(.data,
 
   sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[1]], "'")
 
-  res <- ggplot(
-    data = prob_tbl,
-    aes(x = predicted_midpoint)
-    ) +
-    geom_abline(col = "#999999", linetype = 2) +
-    geom_line(aes(y = event_rate)) +
-    geom_point(aes(y = event_rate))
-
-  if(include_ribbon) {
-    res <- res +
-      geom_ribbon(aes(y = event_rate, ymin = lower, ymax = upper), alpha = 0.1)
-  }
-
-  if(include_rug) {
-    level_1_tbl <- dplyr::filter(.data, as.integer(!!truth) == 1)
-    level_2_tbl <- dplyr::filter(.data, as.integer(!!truth) != 1)
-    res <- res +
-      geom_rug(
-        data = level_1_tbl,
-        aes(x = !!estimate, col = !!truth),
-        sides = "b",
-        cex = 0.2,
-        show.legend = FALSE
-        ) +
-      geom_rug(
-        data = level_2_tbl,
-        aes(x = !!estimate, col = !!truth),
-        sides = "t",
-        cex = 0.2,
-        show.legend = FALSE
-        )
-  }
-
-  res +
-    tune::coord_obs_pred() +
-    labs(
-      title = "Calibration Plot",
-      subtitle = sub_title,
-      x = "Predicted Midpoint",
-      y = "Event Rate"
-    )
+  binary_plot_impl(prob_tbl, predicted_midpoint, event_rate,
+                   .data, !!truth, !!estimate,
+                   "Predicted Midpoint", "Event Rate",
+                   sub_title, include_ribbon, include_rug, TRUE
+                   )
 }
 
 #' @rdname cal_binary_plot_breaks
@@ -130,16 +95,37 @@ cal_binary_plot_logistic <- function(.data,
 
   sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[1]], "'")
 
+  binary_plot_impl(prob_tbl, estimate, prob,
+                   .data, !!truth, !!estimate,
+                   "Estimate", "Probability",
+                   sub_title, include_ribbon, include_rug, FALSE
+                   )
+}
+
+binary_plot_impl <- function(tbl, x, y, .data, truth, estimate,
+                             x_label, y_label, sub_title,
+                             include_ribbon, include_rug, include_points
+) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+  x  <- enquo(x)
+  y <- enquo(y)
+
   res <- ggplot(
-    data = prob_tbl,
-    aes(x = estimate)
-    ) +
+    data = tbl,
+    aes(x = !!x)
+  ) +
     geom_abline(col = "#999999", linetype = 2) +
-    geom_line(aes(y = prob))
+    geom_line(aes(y = !!y))
+
+  if(include_points) {
+    res <- res + geom_point(aes(y = !!y))
+  }
+
 
   if(include_ribbon) {
     res <- res +
-      geom_ribbon(aes(y = prob, ymin = lower, ymax = upper), alpha = 0.1)
+      geom_ribbon(aes(y = !!y, ymin = lower, ymax = upper), alpha = 0.1)
   }
 
   if(include_rug) {
@@ -167,10 +153,11 @@ cal_binary_plot_logistic <- function(.data,
     labs(
       title = "Calibration Plot",
       subtitle = sub_title,
-      x = "Estimate",
-      y = "Probability"
+      x = x_label,
+      y = y_label
     )
 }
+
 
 #' Probability Calibration table
 #'
@@ -291,3 +278,8 @@ cal_binary_table_logistic <- function(.data,
   tibble::as_tibble(res)
 
 }
+
+utils::globalVariables(c(
+  ".bin", ".is_val", "event_rate", "events", "lower",
+  "predicted_midpoint", "total", "upper"
+))
