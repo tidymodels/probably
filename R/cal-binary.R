@@ -96,7 +96,7 @@ cal_binary_plot_breaks_impl <- function(.data,
     prob_tbl, predicted_midpoint, event_rate,
     .data, !!truth, !!estimate,
     "Predicted Midpoint", "Event Rate",
-    sub_title, include_ribbon, include_rug, TRUE
+    NULL, include_ribbon, include_rug, TRUE
   )
 }
 
@@ -145,8 +145,8 @@ cal_binary_plot_logistic <- function(.data,
 
 
 cal_binary_plot_logistic_impl <- function(.data,
-                                          truth,
-                                          estimate,
+                                          truth = NULL,
+                                          estimate = NULL,
                                           conf_level = 0.90,
                                           include_rug = TRUE,
                                           include_ribbon = TRUE,
@@ -154,13 +154,7 @@ cal_binary_plot_logistic_impl <- function(.data,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  truth_name <- as_name(truth)
-
-  lev <- process_level(event_level)
-
-  truth_levels <- levels(.data[truth_name][[1]])
-
-  if (length(truth_levels) != 2) stop("'", truth_name, "' does not have 2 levels")
+  assert_truth_two_levels(.data, !!truth)
 
   prob_tbl <- cal_binary_table_logistic(
     .data = .data,
@@ -170,13 +164,11 @@ cal_binary_plot_logistic_impl <- function(.data,
     event_level = event_level
   )
 
-  sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[lev]], "'")
-
   binary_plot_impl(
     prob_tbl, estimate, prob,
     .data, !!truth, !!estimate,
     "Estimate", "Probability",
-    sub_title, include_ribbon, include_rug, FALSE
+    NULL, include_ribbon, include_rug, FALSE
   )
 }
 
@@ -188,8 +180,8 @@ cal_binary_plot_logistic.tune_results <- function(.data,
                                                   truth = NULL,
                                                   estimate = NULL,
                                                   conf_level = 0.90,
-                                                  include_ribbon = TRUE,
                                                   include_rug = TRUE,
+                                                  include_ribbon = TRUE,
                                                   event_level = c("first", "second")) {
   rs <- tune::collect_predictions(.data, summarize = TRUE)
 
@@ -211,8 +203,8 @@ cal_binary_plot_logistic.tune_results <- function(.data,
 #' @rdname cal_binary_plot_breaks
 #' @export
 cal_binary_plot_windowed <- function(.data,
-                                     truth,
-                                     estimate,
+                                     truth = NULL,
+                                     estimate = NULL,
                                      window_size = round(nrow(.data) / 10),
                                      step_size = window_size,
                                      conf_level = 0.90,
@@ -234,13 +226,7 @@ cal_binary_plot_windowed_impl <- function(.data,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  truth_name <- as_name(truth)
-
-  lev <- process_level(event_level)
-
-  truth_levels <- levels(.data[truth_name][[1]])
-
-  if (length(truth_levels) != 2) stop("'", truth_name, "' does not have 2 levels")
+  assert_truth_two_levels(.data, !!truth)
 
   prob_tbl <- cal_binary_table_windowed(
     .data = .data,
@@ -252,13 +238,11 @@ cal_binary_plot_windowed_impl <- function(.data,
     event_level = event_level
   )
 
-  sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[lev]], "'")
-
   binary_plot_impl(
     prob_tbl, predicted_midpoint, event_rate,
     .data, !!truth, !!estimate,
     "Predicted Midpoint", "Event Rate",
-    sub_title, include_ribbon, include_rug, TRUE
+    NULL, include_ribbon, include_rug, TRUE
   )
 }
 
@@ -270,7 +254,8 @@ cal_binary_plot_windowed.tune_results <- function(.data,
                                                   truth = NULL,
                                                   estimate = NULL,
                                                   window_size = round(nrow(.data) / 10),
-                                                  step_size = window_size, conf_level = 0.90,
+                                                  step_size = window_size,
+                                                  conf_level = 0.90,
                                                   include_ribbon = TRUE,
                                                   include_rug = TRUE,
                                                   event_level = c("first", "second")) {
@@ -474,16 +459,14 @@ cal_binary_table_logistic <- function(.data,
                                       estimate,
                                       conf_level = 0.90,
                                       event_level = c("first", "second")) {
-
   UseMethod("cal_binary_table_logistic")
 }
 
 cal_binary_table_logistic_impl <- function(.data,
-                                      truth,
-                                      estimate,
-                                      conf_level = 0.90,
-                                      event_level = c("first", "second")) {
-
+                                           truth,
+                                           estimate,
+                                           conf_level = 0.90,
+                                           event_level = c("first", "second")) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -524,9 +507,6 @@ cal_binary_table_logistic.data.frame <- cal_binary_table_logistic_impl
 cal_binary_table_logistic.tune_results <- function(.data,
                                                    truth = NULL,
                                                    estimate = NULL,
-                                                   window_size = round(nrow(.data) / 10),
-                                                   step_size = window_size,
-                                                   num_breaks = 10,
                                                    conf_level = 0.90,
                                                    event_level = c("first", "second")) {
   rs <- tune::collect_predictions(.data, summarize = TRUE)
@@ -602,7 +582,6 @@ cal_binary_table_windowed.tune_results <- function(.data,
                                                    estimate = NULL,
                                                    window_size = round(nrow(.data) / 10),
                                                    step_size = window_size,
-                                                   num_breaks = 10,
                                                    conf_level = 0.90,
                                                    event_level = c("first", "second")) {
   rs <- tune::collect_predictions(.data, summarize = TRUE)
