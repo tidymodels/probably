@@ -130,6 +130,7 @@ cal_binary_plot_breaks.tune_results <- function(.data,
 
 
 #' @rdname cal_binary_plot_breaks
+#'
 #' @export
 cal_binary_plot_logistic <- function(.data,
                                      truth,
@@ -138,6 +139,17 @@ cal_binary_plot_logistic <- function(.data,
                                      include_rug = TRUE,
                                      include_ribbon = TRUE,
                                      event_level = c("first", "second")) {
+  UseMethod("cal_binary_plot_logistic")
+}
+
+
+cal_binary_plot_logistic_impl <- function(.data,
+                                          truth,
+                                          estimate,
+                                          conf_level = 0.90,
+                                          include_rug = TRUE,
+                                          include_ribbon = TRUE,
+                                          event_level = c("first", "second")) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -164,6 +176,33 @@ cal_binary_plot_logistic <- function(.data,
     .data, !!truth, !!estimate,
     "Estimate", "Probability",
     sub_title, include_ribbon, include_rug, FALSE
+  )
+}
+
+#' @export
+cal_binary_plot_logistic.data.frame <- cal_binary_plot_logistic_impl
+
+#' @export
+cal_binary_plot_logistic.tune_results <- function(.data,
+                                                  truth = NULL,
+                                                  estimate = NULL,
+                                                  num_breaks = 10,
+                                                  conf_level = 0.90,
+                                                  include_ribbon = TRUE,
+                                                  include_rug = TRUE,
+                                                  event_level = c("first", "second")) {
+  rs <- tune::collect_predictions(.data, summarize = TRUE)
+
+  te <- tune_results_args(.data, {{ truth }}, {{ estimate }}, event_level, rs)
+
+  cal_binary_plot_logistic_impl(
+    .data = rs,
+    truth = !!te$truth,
+    estimate = !!te$estimate,
+    conf_level = conf_level,
+    include_ribbon = include_ribbon,
+    include_rug = include_rug,
+    event_level = event_level
   )
 }
 
