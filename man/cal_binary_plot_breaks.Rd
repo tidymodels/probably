@@ -8,8 +8,8 @@
 \usage{
 cal_binary_plot_breaks(
   .data,
-  truth,
-  estimate,
+  truth = NULL,
+  estimate = NULL,
   num_breaks = 10,
   conf_level = 0.9,
   include_ribbon = TRUE,

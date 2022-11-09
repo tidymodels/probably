@@ -60,23 +60,28 @@
 #'
 #' @export
 cal_binary_plot_breaks <- function(.data,
-                                   truth,
-                                   estimate,
+                                   truth = NULL,
+                                   estimate = NULL,
                                    num_breaks = 10,
                                    conf_level = 0.90,
                                    include_ribbon = TRUE,
                                    include_rug = TRUE,
                                    event_level = c("first", "second")) {
+  UseMethod("cal_binary_plot_breaks")
+}
+
+cal_binary_plot_breaks_impl <- function(.data,
+                                        truth = NULL,
+                                        estimate = NULL,
+                                        num_breaks = 10,
+                                        conf_level = 0.90,
+                                        include_ribbon = TRUE,
+                                        include_rug = TRUE,
+                                        event_level = c("first", "second")) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  truth_name <- as_name(truth)
-
-  lev <- process_level(event_level)
-
-  truth_levels <- levels(.data[truth_name][[1]])
-
-  if (length(truth_levels) != 2) stop("'", truth_name, "' does not have 2 levels")
+  assert_truth_two_levels(.data, !!truth)
 
   prob_tbl <- cal_binary_table_breaks(
     .data = .data,
@@ -87,8 +92,6 @@ cal_binary_plot_breaks <- function(.data,
     event_level = event_level
   )
 
-  sub_title <- paste0("'", truth_name, "' is equal to '", truth_levels[[lev]], "'")
-
   binary_plot_impl(
     prob_tbl, predicted_midpoint, event_rate,
     .data, !!truth, !!estimate,
@@ -96,6 +99,35 @@ cal_binary_plot_breaks <- function(.data,
     sub_title, include_ribbon, include_rug, TRUE
   )
 }
+
+#' @export
+cal_binary_plot_breaks.data.frame <- cal_binary_plot_breaks_impl
+
+#' @export
+cal_binary_plot_breaks.tune_results <- function(.data,
+                                                truth = NULL,
+                                                estimate = NULL,
+                                                num_breaks = 10,
+                                                conf_level = 0.90,
+                                                include_ribbon = TRUE,
+                                                include_rug = TRUE,
+                                                event_level = c("first", "second")) {
+  rs <- tune::collect_predictions(.data, summarize = TRUE)
+
+  te <- tune_results_args(.data, {{ truth }}, {{ estimate }}, event_level, rs)
+
+  cal_binary_plot_breaks_impl(
+    .data = rs,
+    truth = !!te$truth,
+    estimate = !!te$estimate,
+    num_breaks = num_breaks,
+    conf_level = conf_level,
+    include_ribbon = include_ribbon,
+    include_rug = include_rug,
+    event_level = event_level
+  )
+}
+
 
 #' @rdname cal_binary_plot_breaks
 #' @export
@@ -224,6 +256,8 @@ binary_plot_impl <- function(tbl, x, y, .data, truth, estimate,
       )
   }
 
+  sub_title <- paste0("'", as_name(truth), "' vs '", as_name(estimate), "'")
+
   res +
     tune::coord_obs_pred() +
     labs(
@@ -276,11 +310,20 @@ binary_plot_impl <- function(tbl, x, y, .data, truth, estimate,
 #'
 #' @export
 cal_binary_table_breaks <- function(.data,
-                                    truth,
-                                    estimate,
+                                    truth = NULL,
+                                    estimate = NULL,
                                     num_breaks = 10,
                                     conf_level = 0.90,
                                     event_level = c("first", "second")) {
+  UseMethod("cal_binary_table_breaks")
+}
+
+cal_binary_table_breaks_impl <- function(.data,
+                                         truth,
+                                         estimate,
+                                         num_breaks = 10,
+                                         conf_level = 0.90,
+                                         event_level = c("first", "second")) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -310,6 +353,30 @@ cal_binary_table_breaks <- function(.data,
       total = total,
       conf_level = conf_level
     )
+}
+
+#' @export
+cal_binary_table_breaks.data.frame <- cal_binary_table_breaks_impl
+
+#' @export
+cal_binary_table_breaks.tune_results <- function(.data,
+                                                 truth = NULL,
+                                                 estimate = NULL,
+                                                 num_breaks = 10,
+                                                 conf_level = 0.90,
+                                                 event_level = c("first", "second")) {
+  rs <- tune::collect_predictions(.data, summarize = TRUE)
+
+  te <- tune_results_args(.data, {{ truth }}, {{ estimate }}, event_level, rs)
+
+  cal_binary_table_breaks_impl(
+    .data = rs,
+    truth = !!te$truth,
+    estimate = !!te$estimate,
+    num_breaks = num_breaks,
+    conf_level = conf_level,
+    event_level = event_level
+  )
 }
 
 #' @rdname cal_binary_table_breaks
@@ -428,4 +495,36 @@ process_level <- function(x) {
     stop("Invalid event_level entry. Valid entries are 'first' and 'second'")
   }
   ret
+}
+
+assert_truth_two_levels <- function(.data, truth) {
+  truth <- enquo(truth)
+  if (!quo_is_null(truth)) {
+    truth_name <- as_name(truth)
+    truth_levels <- levels(.data[truth_name][[1]])
+    if (length(truth_levels) != 2) stop("'", truth_name, "' does not have 2 levels")
+  }
+}
+
+tune_results_args <- function(.data, truth, estimate, event_level, resampled_data) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  if (quo_is_null(truth)) {
+    truth_str <- attributes(.data)$outcome
+    truth <- parse_expr(truth_str)
+  }
+
+  if (quo_is_null(estimate)) {
+    truth_str <- as_name(truth)
+    lev <- process_level(event_level)
+    fc_truth <- levels(resampled_data[[truth_str]])
+    estimate_str <- paste0(".pred_", fc_truth[[lev]])
+    estimate <- parse_expr(estimate_str)
+  }
+
+  list(
+    truth = quo(!!truth),
+    estimate = quo(!!estimate)
+  )
 }
