@@ -1,5 +1,5 @@
 #--------------------------------- Plots ---------------------------------------
-
+#------------------------------- >> Breaks -------------------------------------
 #' Probability Calibration plots
 #'
 #' @description Calibration plot functions. They require a data.frame that contains
@@ -128,6 +128,7 @@ cal_binary_plot_breaks.tune_results <- function(.data,
   )
 }
 
+#------------------------------ >> Logistic ------------------------------------
 
 #' @rdname cal_binary_plot_breaks
 #'
@@ -186,7 +187,6 @@ cal_binary_plot_logistic.data.frame <- cal_binary_plot_logistic_impl
 cal_binary_plot_logistic.tune_results <- function(.data,
                                                   truth = NULL,
                                                   estimate = NULL,
-                                                  num_breaks = 10,
                                                   conf_level = 0.90,
                                                   include_ribbon = TRUE,
                                                   include_rug = TRUE,
@@ -206,6 +206,8 @@ cal_binary_plot_logistic.tune_results <- function(.data,
   )
 }
 
+#----------------------------- >> Windowed -------------------------------------
+
 #' @rdname cal_binary_plot_breaks
 #' @export
 cal_binary_plot_windowed <- function(.data,
@@ -217,6 +219,18 @@ cal_binary_plot_windowed <- function(.data,
                                      include_ribbon = TRUE,
                                      include_rug = TRUE,
                                      event_level = c("first", "second")) {
+  UseMethod("cal_binary_plot_windowed")
+}
+
+cal_binary_plot_windowed_impl <- function(.data,
+                                          truth,
+                                          estimate,
+                                          window_size = round(nrow(.data) / 10),
+                                          step_size = window_size,
+                                          conf_level = 0.90,
+                                          include_ribbon = TRUE,
+                                          include_rug = TRUE,
+                                          event_level = c("first", "second")) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -247,6 +261,37 @@ cal_binary_plot_windowed <- function(.data,
     sub_title, include_ribbon, include_rug, TRUE
   )
 }
+
+#' @export
+cal_binary_plot_windowed.data.frame <- cal_binary_plot_windowed_impl
+
+#' @export
+cal_binary_plot_windowed.tune_results <- function(.data,
+                                                  truth = NULL,
+                                                  estimate = NULL,
+                                                  window_size = round(nrow(.data) / 10),
+                                                  step_size = window_size, conf_level = 0.90,
+                                                  include_ribbon = TRUE,
+                                                  include_rug = TRUE,
+                                                  event_level = c("first", "second")) {
+  rs <- tune::collect_predictions(.data, summarize = TRUE)
+
+  te <- tune_results_args(.data, {{ truth }}, {{ estimate }}, event_level, rs)
+
+  cal_binary_plot_windowed_impl(
+    .data = rs,
+    truth = !!te$truth,
+    estimate = !!te$estimate,
+    window_size = window_size,
+    step_size = step_size,
+    conf_level = conf_level,
+    include_ribbon = include_ribbon,
+    include_rug = include_rug,
+    event_level = event_level
+  )
+}
+
+#------------------------------- >> Utils --------------------------------------
 
 binary_plot_impl <- function(tbl, x, y, .data, truth, estimate,
                              x_label, y_label, sub_title,
@@ -309,6 +354,7 @@ binary_plot_impl <- function(tbl, x, y, .data, truth, estimate,
 }
 
 #--------------------------------- Tables --------------------------------------
+#------------------------------- >> Breaks -------------------------------------
 
 #' Probability Calibration table
 #'
@@ -418,6 +464,9 @@ cal_binary_table_breaks.tune_results <- function(.data,
   )
 }
 
+#------------------------------ >> Logistic ------------------------------------
+
+
 #' @rdname cal_binary_table_breaks
 #' @export
 cal_binary_table_logistic <- function(.data,
@@ -425,6 +474,16 @@ cal_binary_table_logistic <- function(.data,
                                       estimate,
                                       conf_level = 0.90,
                                       event_level = c("first", "second")) {
+
+  UseMethod("cal_binary_table_logistic")
+}
+
+cal_binary_table_logistic_impl <- function(.data,
+                                      truth,
+                                      estimate,
+                                      conf_level = 0.90,
+                                      event_level = c("first", "second")) {
+
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -458,6 +517,33 @@ cal_binary_table_logistic <- function(.data,
   tibble::as_tibble(res)
 }
 
+#' @export
+cal_binary_table_logistic.data.frame <- cal_binary_table_logistic_impl
+
+#' @export
+cal_binary_table_logistic.tune_results <- function(.data,
+                                                   truth = NULL,
+                                                   estimate = NULL,
+                                                   window_size = round(nrow(.data) / 10),
+                                                   step_size = window_size,
+                                                   num_breaks = 10,
+                                                   conf_level = 0.90,
+                                                   event_level = c("first", "second")) {
+  rs <- tune::collect_predictions(.data, summarize = TRUE)
+
+  te <- tune_results_args(.data, {{ truth }}, {{ estimate }}, event_level, rs)
+
+  cal_binary_table_logistic_impl(
+    .data = rs,
+    truth = !!te$truth,
+    estimate = !!te$estimate,
+    conf_level = conf_level,
+    event_level = event_level
+  )
+}
+
+#----------------------------- >> Windowed -------------------------------------
+
 #' @rdname cal_binary_table_breaks
 #' @export
 cal_binary_table_windowed <- function(.data,
@@ -467,6 +553,16 @@ cal_binary_table_windowed <- function(.data,
                                       step_size = window_size,
                                       conf_level = 0.90,
                                       event_level = c("first", "second")) {
+  UseMethod("cal_binary_table_windowed")
+}
+
+cal_binary_table_windowed_impl <- function(.data,
+                                           truth,
+                                           estimate,
+                                           window_size = round(nrow(.data) / 10),
+                                           step_size = window_size,
+                                           conf_level = 0.90,
+                                           event_level = c("first", "second")) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -496,6 +592,36 @@ cal_binary_table_windowed <- function(.data,
       }
     })
 }
+
+#' @export
+cal_binary_table_windowed.data.frame <- cal_binary_table_windowed_impl
+
+#' @export
+cal_binary_table_windowed.tune_results <- function(.data,
+                                                   truth = NULL,
+                                                   estimate = NULL,
+                                                   window_size = round(nrow(.data) / 10),
+                                                   step_size = window_size,
+                                                   num_breaks = 10,
+                                                   conf_level = 0.90,
+                                                   event_level = c("first", "second")) {
+  rs <- tune::collect_predictions(.data, summarize = TRUE)
+
+  te <- tune_results_args(.data, {{ truth }}, {{ estimate }}, event_level, rs)
+
+  cal_binary_table_windowed_impl(
+    .data = rs,
+    truth = !!te$truth,
+    estimate = !!te$estimate,
+    window_size = window_size,
+    step_size = step_size,
+    conf_level = conf_level,
+    event_level = event_level
+  )
+}
+
+
+#------------------------------- >> Utils --------------------------------------
 
 add_conf_intervals <- function(.data,
                                events = events,
