@@ -10,6 +10,7 @@ cal_binary_plot_breaks(
   .data,
   truth = NULL,
   estimate = NULL,
+  group = NULL,
   num_breaks = 10,
   conf_level = 0.9,
   include_ribbon = TRUE,
@@ -19,8 +20,9 @@ cal_binary_plot_breaks(
 
 cal_binary_plot_logistic(
   .data,
-  truth,
-  estimate,
+  truth = NULL,
+  estimate = NULL,
+  group = NULL,
   conf_level = 0.9,
   include_rug = TRUE,
   include_ribbon = TRUE,
@@ -31,6 +33,7 @@ cal_binary_plot_windowed(
   .data,
   truth = NULL,
   estimate = NULL,
+  group = NULL,
   window_size = round(nrow(.data)/10),
   step_size = window_size,
   conf_level = 0.9,
@@ -47,6 +50,8 @@ cal_binary_plot_windowed(
 
 \item{estimate}{The column identifier for the prediction probabilities.
 This should be an unquoted column name}
+
+\item{group}{The column identifier to group the results.}
 
 \item{num_breaks}{The number of segments to group the probabilities. Defaults
 to 10}

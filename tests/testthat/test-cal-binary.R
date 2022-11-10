@@ -15,8 +15,8 @@ test_that("Binary breaks functions work", {
 
   x12 <- cal_binary_table_breaks(testthat_get_tune_results())
 
-  expect_equal(sd(x12$predicted_midpoint), 0.3126558, tolerance = 0.000001)
-  expect_equal(mean(x12$predicted_midpoint), 0.5007873, tolerance = 0.000001)
+  expect_equal(sd(x12$predicted_midpoint), 0.2982188, tolerance = 0.000001)
+  expect_equal(mean(x12$predicted_midpoint), 0.5010704, tolerance = 0.000001)
 
   x13 <- cal_binary_plot_breaks(testthat_get_tune_results())
 
@@ -40,8 +40,8 @@ test_that("Binary logistic functions work", {
 
   x22 <- cal_binary_table_logistic(testthat_get_tune_results())
 
-  expect_equal(sd(x22$prob), 0.2714321, tolerance = 0.000001)
-  expect_equal(mean(x22$prob), 0.4733052, tolerance = 0.000001)
+  expect_equal(sd(x22$prob), 0.2784706, tolerance = 0.000001)
+  expect_equal(mean(x22$prob), 0.4765672, tolerance = 0.000001)
 
   x23 <- cal_binary_plot_logistic(testthat_get_tune_results())
 
@@ -63,10 +63,10 @@ test_that("Binary windowed functions work", {
     "'Species' does not have 2 levels"
   )
 
-  x32 <- cal_binary_table_windowed(testthat_get_tune_results(), window_size = 1000)
+  x32 <- cal_binary_table_windowed(testthat_get_tune_results(), window_size = 100)
 
-  expect_equal(sd(x32$predicted_midpoint), 0.3374938, tolerance = 0.000001)
-  expect_equal(mean(x32$predicted_midpoint), 0.3016333, tolerance = 0.000001)
+  expect_equal(sd(x32$predicted_midpoint), 0.3127347, tolerance = 0.000001)
+  expect_equal(mean(x32$predicted_midpoint), 0.3391562, tolerance = 0.000001)
 
   x33 <- cal_binary_plot_windowed(testthat_get_tune_results())
 
