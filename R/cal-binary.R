@@ -133,19 +133,17 @@ cal_binary_plot_breaks.tune_results <- function(.data,
                                                 include_rug = TRUE,
                                                 event_level = c("first", "second"),
                                                 ...) {
-  rs <- tune::collect_predictions(.data, summarize = TRUE, ...)
-
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     group = {{group}},
     event_level = event_level,
-    resampled_data = rs
+    ...
   )
 
   cal_binary_plot_breaks_impl(
-    .data = rs,
+    .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
     group = !!tune_args$group,
@@ -232,19 +230,17 @@ cal_binary_plot_logistic.tune_results <- function(.data,
                                                   include_ribbon = TRUE,
                                                   event_level = c("first", "second"),
                                                   ...) {
-  rs <- tune::collect_predictions(.data, summarize = TRUE, ...)
-
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     group = {{group}},
     event_level = event_level,
-    resampled_data = rs
+    ...
   )
 
   cal_binary_plot_logistic_impl(
-    .data = rs,
+    .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
     group = !!tune_args$group,
@@ -333,19 +329,17 @@ cal_binary_plot_windowed.tune_results <- function(.data,
                                                   include_rug = TRUE,
                                                   event_level = c("first", "second"),
                                                   ...) {
-  rs <- tune::collect_predictions(.data, summarize = TRUE, ...)
-
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     group = {{group}},
     event_level = event_level,
-    resampled_data = rs
+    ...
   )
 
   cal_binary_plot_windowed_impl(
-    .data = rs,
+    .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
     group = !!tune_args$group,
@@ -532,19 +526,17 @@ cal_binary_table_breaks.tune_results <- function(.data,
                                                  conf_level = 0.90,
                                                  event_level = c("first", "second"),
                                                  ...) {
-  rs <- tune::collect_predictions(.data, summarize = TRUE, ...)
-
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     group = {{group}},
     event_level = event_level,
-    resampled_data = rs
+    ...
     )
 
   cal_binary_table_breaks_impl(
-    .data = rs,
+    .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
     group = !!tune_args$group,
@@ -655,7 +647,6 @@ cal_binary_table_logistic.tune_results <- function(.data,
                                                    conf_level = 0.90,
                                                    event_level = c("first", "second"),
                                                    ...) {
-  rs <- tune::collect_predictions(.data, summarize = TRUE, ...)
 
   tune_args <- tune_results_args(
     .data = .data,
@@ -663,11 +654,11 @@ cal_binary_table_logistic.tune_results <- function(.data,
     estimate = {{ estimate }},
     group = {{group}},
     event_level = event_level,
-    resampled_data = rs
+    ...
   )
 
   cal_binary_table_logistic_impl(
-    .data = rs,
+    .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
     group = !! tune_args$group,
@@ -779,19 +770,17 @@ cal_binary_table_windowed.tune_results <- function(.data,
                                                    conf_level = 0.90,
                                                    event_level = c("first", "second"),
                                                    ...) {
-  rs <- tune::collect_predictions(.data, summarize = TRUE, ...)
-
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     group = {{group}},
     event_level = event_level,
-    resampled_data = rs
+    ...
   )
 
   cal_binary_table_windowed_impl(
-    .data = rs,
+    .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
     group = !!tune_args$group,
@@ -854,7 +843,19 @@ assert_truth_two_levels <- function(.data, truth) {
   }
 }
 
-tune_results_args <- function(.data, truth, estimate, group, event_level, resampled_data) {
+tune_results_args <- function(.data, truth, estimate, group, event_level, ...) {
+
+  if(!(".predictions" %in% colnames(.data))) {
+    rlang::abort(
+      paste0(
+      "The `tune_results` object does not contain the `.predictions` column.",
+      " Refit with the control argument `save_pred = TRUE` to save predictions."
+      )
+    )
+  }
+
+  predictions <- tune::collect_predictions(.data, summarize = TRUE, ...)
+
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -867,7 +868,7 @@ tune_results_args <- function(.data, truth, estimate, group, event_level, resamp
   if (quo_is_null(estimate)) {
     truth_str <- as_name(truth)
     lev <- process_level(event_level)
-    fc_truth <- levels(resampled_data[[truth_str]])
+    fc_truth <- levels(predictions[[truth_str]])
     estimate_str <- paste0(".pred_", fc_truth[[lev]])
     estimate <- parse_expr(estimate_str)
   }
@@ -879,6 +880,7 @@ tune_results_args <- function(.data, truth, estimate, group, event_level, resamp
   list(
     truth = quo(!!truth),
     estimate = quo(!!estimate),
-    group = quo(!!group)
+    group = quo(!!group),
+    predictions = predictions
   )
 }
