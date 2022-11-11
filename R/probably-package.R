@@ -10,3 +10,8 @@
 #' @importFrom stats binomial median predict qnorm
 ## usethis namespace: end
 NULL
+
+utils::globalVariables(c(
+  ".bin", ".is_val", "event_rate", "events", "lower",
+  "predicted_midpoint", "total", "upper", ".config"
+))

@@ -15,7 +15,8 @@ cal_binary_plot_breaks(
   conf_level = 0.9,
   include_ribbon = TRUE,
   include_rug = TRUE,
-  event_level = c("first", "second")
+  event_level = c("first", "second"),
+  ...
 )
 
 cal_binary_plot_logistic(
@@ -24,9 +25,11 @@ cal_binary_plot_logistic(
   estimate = NULL,
   group = NULL,
   conf_level = 0.9,
+  smooth = TRUE,
   include_rug = TRUE,
   include_ribbon = TRUE,
-  event_level = c("first", "second")
+  event_level = c("first", "second"),
+  ...
 )
 
 cal_binary_plot_windowed(
@@ -34,44 +37,51 @@ cal_binary_plot_windowed(
   truth = NULL,
   estimate = NULL,
   group = NULL,
-  window_size = round(nrow(.data)/10),
-  step_size = window_size,
+  window_size = 0.1,
+  step_size = window_size/2,
   conf_level = 0.9,
   include_ribbon = TRUE,
   include_rug = TRUE,
-  event_level = c("first", "second")
+  event_level = c("first", "second"),
+  ...
 )
 }
 \arguments{
-\item{.data}{A data.frame object containing predictions and probability columns}
+\item{.data}{A data.frame object containing predictions and probability columns.}
 
 \item{truth}{The column identifier for the true class results
-(that is a factor). This should be an unquoted column name}
+(that is a factor). This should be an unquoted column name.}
 
 \item{estimate}{The column identifier for the prediction probabilities.
 This should be an unquoted column name}
 
 \item{group}{The column identifier to group the results.}
 
-\item{num_breaks}{The number of segments to group the probabilities. Defaults
-to 10}
+\item{num_breaks}{The number of segments to group the probabilities. It
+defaults to 10.}
 
-\item{conf_level}{Confidence level to use in the visualization. Defaults to 0.9}
+\item{conf_level}{Confidence level to use in the visualization. It defaults
+to 0.9.}
 
 \item{include_ribbon}{Flag that indicates if the ribbon layer is to be
-included. Defaults to \code{TRUE}}
+included. It defaults to \code{TRUE}.}
 
 \item{include_rug}{Flag that indicates if the Rug layer is to be included.
-Defaults to \code{TRUE}}
+It defaults to \code{TRUE}.}
 
 \item{event_level}{single string. Either "first" or "second" to specify which
 level of truth to consider as the "event".}
 
+\item{...}{Additional arguments passed to the \code{tune_results} object.}
+
+\item{smooth}{Applies to the logistic models. It switches between logistic
+spline when \code{TRUE}, and regular logistic when \code{FALSE}.}
+
 \item{window_size}{The size of segments. Used for the windowed probability
-calculations}
+calculations. It defaults to 10\% of segments.}
 
 \item{step_size}{The gap between segments. Used for the windowed probability
-calculations}
+calculations. It defaults to half the size of \code{window_size}}
 }
 \description{
 Calibration plot functions. They require a data.frame that contains
@@ -115,5 +125,5 @@ cal_binary_plot_windowed(
 \seealso{
 These functions depend on tables built by the following corresponding
 functions: \code{\link[=cal_binary_table_breaks]{cal_binary_table_breaks()}}, \code{\link[=cal_binary_table_logistic]{cal_binary_table_logistic()}}, and
-\code{\link[=cal_binary_table_windowed]{cal_binary_table_windowed()}}
+\code{\link[=cal_binary_table_windowed]{cal_binary_table_windowed()}}.
 }

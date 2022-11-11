@@ -51,8 +51,8 @@ test_that("Binary logistic functions work", {
 test_that("Binary windowed functions work", {
   x30 <- cal_binary_table_windowed(segment_logistic, Class, .pred_good)
 
-  expect_equal(sd(x30$predicted_midpoint), 0.3121576, tolerance = 0.000001)
-  expect_equal(mean(x30$predicted_midpoint), 0.3111778, tolerance = 0.000001)
+  expect_equal(sd(x30$predicted_midpoint), 0.3324863, tolerance = 0.000001)
+  expect_equal(mean(x30$predicted_midpoint), 0.3625737, tolerance = 0.000001)
 
   x31 <- cal_binary_plot_windowed(segment_logistic, Class, .pred_good)
 
@@ -63,10 +63,10 @@ test_that("Binary windowed functions work", {
     "'Species' does not have 2 levels"
   )
 
-  x32 <- cal_binary_table_windowed(testthat_get_tune_results(), window_size = 100)
+  x32 <- cal_binary_table_windowed(testthat_get_tune_results())
 
-  expect_equal(sd(x32$predicted_midpoint), 0.3127347, tolerance = 0.000001)
-  expect_equal(mean(x32$predicted_midpoint), 0.3391562, tolerance = 0.000001)
+  expect_equal(sd(x32$predicted_midpoint), 0.357171, tolerance = 0.000001)
+  expect_equal(mean(x32$predicted_midpoint), 0.4374097, tolerance = 0.000001)
 
   x33 <- cal_binary_plot_windowed(testthat_get_tune_results())
 
