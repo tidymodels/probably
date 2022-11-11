@@ -36,7 +36,8 @@
 #' @param include_ribbon Flag that indicates if the ribbon layer is to be
 #' included. It defaults to `TRUE`.
 #' @param include_rug Flag that indicates if the Rug layer is to be included.
-#' It defaults to `TRUE`.
+#' It defaults to `TRUE`. In the plot, the top side shows the frequency the
+#' event occurring, and the bottom the frequency of the event not occurring.
 #' @param include_points Flag that indicates if the point layer is to be included.
 #' @param ... Additional arguments passed to the `tune_results` object.
 #' @seealso These functions depend on tables built by the following corresponding
@@ -141,7 +142,7 @@ cal_binary_plot_breaks.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{group}},
+    group = {{ group }},
     event_level = event_level,
     ...
   )
@@ -239,7 +240,7 @@ cal_binary_plot_logistic.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{group}},
+    group = {{ group }},
     event_level = event_level,
     ...
   )
@@ -341,7 +342,7 @@ cal_binary_plot_windowed.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{group}},
+    group = {{ group }},
     event_level = event_level,
     ...
   )
@@ -366,8 +367,7 @@ cal_binary_plot_windowed.tune_results <- function(.data,
 binary_plot_impl <- function(tbl, x, y,
                              .data, truth, estimate, group,
                              x_label, y_label,
-                             include_ribbon, include_rug, include_points
-                             ) {
+                             include_ribbon, include_rug, include_points) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -375,17 +375,13 @@ binary_plot_impl <- function(tbl, x, y,
   x <- enquo(x)
   y <- enquo(y)
 
-  res <- ggplot(
-    data = tbl,
-    aes(x = !!x)
-  ) +
-    geom_abline(col = "#999999", linetype = 2) +
+  res <- ggplot(data = tbl, aes(x = !!x)) +
+    geom_abline(col = "#aaaaaa", linetype = 2) +
     geom_line(aes(y = !!y))
 
   if (include_points) {
     res <- res + geom_point(aes(y = !!y))
   }
-
 
   if (include_ribbon) {
     res <- res +
@@ -393,23 +389,19 @@ binary_plot_impl <- function(tbl, x, y,
   }
 
   if (include_rug) {
-    level_1_tbl <- dplyr::filter(.data, as.integer(!!truth) == 1)
-    level_2_tbl <- dplyr::filter(.data, as.integer(!!truth) != 1)
-    res <- res +
-      geom_rug(
-        data = level_1_tbl,
-        aes(x = !!estimate, col = !!truth),
-        sides = "t",
-        cex = 0.1,
-        show.legend = FALSE
-      ) +
-      geom_rug(
-        data = level_2_tbl,
-        aes(x = !!estimate, col = !!truth),
-        sides = "b",
-        cex = 0.1,
-        show.legend = FALSE
-      )
+    truth_values <- 1:2
+    side_values <- c("t", "b")
+    for (i in seq_along(truth_values)) {
+      level_tbl <- dplyr::filter(.data, as.integer(!!truth) == truth_values[i])
+      res <- res +
+        geom_rug(
+          data = level_tbl,
+          aes(x = !!estimate, col = !!truth),
+          sides = side_values[i],
+          cex = 0.1,
+          show.legend = FALSE
+        )
+    }
   }
 
   sub_title <- paste0("'", as_name(truth), "' vs '", as_name(estimate), "'")
@@ -424,7 +416,7 @@ binary_plot_impl <- function(tbl, x, y,
     theme_light() +
     theme(aspect.ratio = 1)
 
-  if(!quo_is_null(group)) {
+  if (!quo_is_null(group)) {
     res <- res + facet_wrap(group)
   }
 
@@ -504,22 +496,14 @@ cal_binary_table_breaks_impl <- function(.data,
 
   .data %>%
     dplyr::mutate(
-      .bin = dplyr::case_when(!!!bin_exprs),
-      .is_val = ifelse(as.integer(!!truth) == lev, 1, 0)
+      .bin = dplyr::case_when(!!!bin_exprs)
     ) %>%
-    dplyr::group_by(!!group, .bin, .add = TRUE) %>%
-    dplyr::summarise(
-      predicted_midpoint = median(!!estimate, na.rm = TRUE),
-      event_rate = sum(.is_val, na.rm = TRUE) / dplyr::n(),
-      events = sum(.is_val, na.rm = TRUE),
-      total = dplyr::n()
-    ) %>%
-    dplyr::ungroup() %>%
-    dplyr::filter(total > 0) %>%
-    dplyr::select(-.bin) %>%
-    add_conf_intervals(
-      events = events,
-      total = total,
+    process_midpoint(
+      truth = !!truth,
+      estimate = !!estimate,
+      group = !!group,
+      .bin = .bin,
+      level = lev,
       conf_level = conf_level
     )
 }
@@ -540,10 +524,10 @@ cal_binary_table_breaks.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{group}},
+    group = {{ group }},
     event_level = event_level,
     ...
-    )
+  )
 
   cal_binary_table_breaks_impl(
     .data = tune_args$predictions,
@@ -585,7 +569,7 @@ cal_binary_table_logistic_impl <- function(.data,
 
   tbls <- .data %>%
     dplyr::group_by(!!group) %>%
-    dplyr::group_map(~{
+    dplyr::group_map(~ {
       grp <- cal_binary_table_logistic_grp(
         .data = .x,
         truth = !!truth,
@@ -613,7 +597,7 @@ cal_binary_table_logistic_grp <- function(.data,
 
   prep_data <- dplyr::select(.data, truth = !!truth, estimate = !!estimate)
 
-  if(smooth) {
+  if (smooth) {
     model <- mgcv::gam(
       truth ~ s(estimate, k = 10),
       data = prep_data,
@@ -657,12 +641,11 @@ cal_binary_table_logistic.tune_results <- function(.data,
                                                    conf_level = 0.90,
                                                    event_level = c("first", "second"),
                                                    ...) {
-
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{group}},
+    group = {{ group }},
     event_level = event_level,
     ...
   )
@@ -671,7 +654,7 @@ cal_binary_table_logistic.tune_results <- function(.data,
     .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
-    group = !! tune_args$group,
+    group = !!tune_args$group,
     conf_level = conf_level,
     event_level = event_level
   )
@@ -708,7 +691,7 @@ cal_binary_table_windowed_impl <- function(.data,
 
   tbls <- .data %>%
     dplyr::group_by(!!group) %>%
-    dplyr::group_map(~{
+    dplyr::group_map(~ {
       grp <- cal_binary_table_windowed_grp(
         .data = .x,
         truth = !!truth,
@@ -721,16 +704,15 @@ cal_binary_table_windowed_impl <- function(.data,
       dplyr::bind_cols(.y, grp)
     })
   dplyr::bind_rows(tbls)
-
 }
 
 cal_binary_table_windowed_grp <- function(.data,
-                                           truth,
-                                           estimate,
-                                           window_size = 0.1,
-                                           step_size = window_size / 2,
-                                           conf_level = 0.90,
-                                           event_level = c("first", "second"),
+                                          truth,
+                                          estimate,
+                                          window_size = 0.1,
+                                          step_size = window_size / 2,
+                                          conf_level = 0.90,
+                                          event_level = c("first", "second"),
                                           ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -745,24 +727,21 @@ cal_binary_table_windowed_grp <- function(.data,
   .data %>%
     dplyr::select(!!truth, !!estimate) %>%
     dplyr::arrange(!!estimate) %>%
-    slider::slide(~.x,
+    slider::slide(
+      ~.x,
       .before = window_number,
       .complete = TRUE,
       .step = step_number
     ) %>%
     purrr::map_df(~ {
       if (!is.null(.x)) {
-        .x %>%
-          dplyr::mutate(
-            .is_val = ifelse(as.integer(!!truth) == lev, 1, 0)
-          ) %>%
-          dplyr::summarise(
-            predicted_midpoint = round(median(!!estimate, na.rm = TRUE), 4),
-            event_rate = round(sum(.is_val, na.rm = TRUE) / dplyr::n(), 4),
-            events = sum(.is_val, na.rm = TRUE),
-            total = dplyr::n()
-          ) %>%
-          add_conf_intervals(events, total, conf_level = conf_level)
+        process_midpoint(
+          .data = .x,
+          truth = !!truth,
+          estimate = !!estimate,
+          level = lev,
+          conf_level = conf_level
+        )
       }
     })
 }
@@ -784,7 +763,7 @@ cal_binary_table_windowed.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{group}},
+    group = {{ group }},
     event_level = event_level,
     ...
   )
@@ -803,6 +782,47 @@ cal_binary_table_windowed.tune_results <- function(.data,
 
 
 #------------------------------- >> Utils --------------------------------------
+
+process_midpoint <- function(.data,
+                             truth,
+                             estimate,
+                             group = NULL,
+                             .bin = NULL,
+                             level = 1,
+                             conf_level = 0.95) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+  group <- enquo(group)
+  .bin <- enquo(.bin)
+
+  tbl <- .data %>%
+    dplyr::mutate(
+      .bin = !!.bin,
+      .is_val = ifelse(as.integer(!!truth) == level, 1, 0)
+    )
+
+  if (!quo_is_null(group)) tbl <- dplyr::group_by(tbl, !!group, .add = TRUE)
+  if (!quo_is_null(.bin)) tbl <- dplyr::group_by(tbl, !!.bin, .add = TRUE)
+
+  tbl <- tbl %>%
+    dplyr::summarise(
+      predicted_midpoint = median(!!estimate, na.rm = TRUE),
+      event_rate = sum(.is_val, na.rm = TRUE) / dplyr::n(),
+      events = sum(.is_val, na.rm = TRUE),
+      total = dplyr::n()
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::filter(total > 0)
+
+  if (!quo_is_null(.bin)) tbl <- dplyr::select(tbl, -.bin)
+
+  add_conf_intervals(
+    .data = tbl,
+    events = events,
+    total = total,
+    conf_level = conf_level
+  )
+}
 
 add_conf_intervals <- function(.data,
                                events = events,
@@ -830,12 +850,12 @@ add_conf_intervals <- function(.data,
 process_level <- function(x) {
   x <- x[[1]]
   ret <- NULL
-  if (x == "first")  {
+  if (x == "first") {
     ret <- 1
-    }
+  }
   if (x == "second") {
     ret <- 2
-    }
+  }
   if (is.null(ret)) {
     rlang::abort("Invalid event_level entry. Valid entries are 'first' and 'second'")
   }
@@ -847,19 +867,18 @@ assert_truth_two_levels <- function(.data, truth) {
   if (!quo_is_null(truth)) {
     truth_name <- as_name(truth)
     truth_levels <- levels(.data[truth_name][[1]])
-    if (length(truth_levels) != 2){
+    if (length(truth_levels) != 2) {
       rlang::abort(paste0("'", truth_name, "' does not have 2 levels"))
-      }
+    }
   }
 }
 
 tune_results_args <- function(.data, truth, estimate, group, event_level, ...) {
-
-  if(!(".predictions" %in% colnames(.data))) {
+  if (!(".predictions" %in% colnames(.data))) {
     rlang::abort(
       paste0(
-      "The `tune_results` object does not contain the `.predictions` column.",
-      " Refit with the control argument `save_pred = TRUE` to save predictions."
+        "The `tune_results` object does not contain the `.predictions` column.",
+        " Refit with the control argument `save_pred = TRUE` to save predictions."
       )
     )
   }
@@ -883,7 +902,7 @@ tune_results_args <- function(.data, truth, estimate, group, event_level, ...) {
     estimate <- parse_expr(estimate_str)
   }
 
-  if( quo_is_null(group)) {
+  if (quo_is_null(group)) {
     group <- quo(.config)
   }
 
