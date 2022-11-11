@@ -627,22 +627,19 @@ cal_binary_table_logistic_grp <- function(.data,
 
   new_seq <- seq(0, 1, by = .01)
   new_data <- data.frame(estimate = new_seq)
-  preds <- predict(model, new_data, type = "response", se.fit = TRUE)
-
-  res <- tibble::tibble(
-    prob = preds$fit,
-    se_fit = preds$se.fit
-  )
+  preds <- predict(model, new_data, se.fit = TRUE)
 
   if (lev == 1) {
-    res$prob <- (1 - res$prob)
-    }
+    preds$fit <- -preds$fit
+  }
+
+  res <- tibble::tibble(
+    prob = binomial()$linkinv(preds$fit),
+    lower = binomial()$linkinv(preds$fit - qnorm(conf_level) * preds$se.fit),
+    upper = binomial()$linkinv(preds$fit + qnorm(conf_level) * preds$se.fit)
+  )
 
   res <- cbind(new_data, res)
-
-  res$lower <- res$prob - qnorm(conf_level) * res$se_fit
-  res$upper <- res$prob + qnorm(conf_level) * res$se_fit
-  res$se_fit <- NULL
 
   tibble::as_tibble(res)
 }

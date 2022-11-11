@@ -46,6 +46,11 @@ test_that("Binary logistic functions work", {
   x23 <- cal_binary_plot_logistic(testthat_get_tune_results())
 
   expect_s3_class(x23, "ggplot")
+
+  x24 <- cal_binary_table_logistic(segment_logistic, Class, .pred_good, smooth = FALSE)
+
+  expect_equal(sd(x24$prob), 0.2744587, tolerance = 0.000001)
+  expect_equal(mean(x24$prob), 0.4391935, tolerance = 0.000001)
 })
 
 test_that("Binary windowed functions work", {
