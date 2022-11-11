@@ -15,6 +15,7 @@ cal_binary_plot_breaks(
   conf_level = 0.9,
   include_ribbon = TRUE,
   include_rug = TRUE,
+  include_points = TRUE,
   event_level = c("first", "second"),
   ...
 )
@@ -42,6 +43,7 @@ cal_binary_plot_windowed(
   conf_level = 0.9,
   include_ribbon = TRUE,
   include_rug = TRUE,
+  include_points = FALSE,
   event_level = c("first", "second"),
   ...
 )
@@ -68,6 +70,8 @@ included. It defaults to \code{TRUE}.}
 
 \item{include_rug}{Flag that indicates if the Rug layer is to be included.
 It defaults to \code{TRUE}.}
+
+\item{include_points}{Flag that indicates if the point layer is to be included.}
 
 \item{event_level}{single string. Either "first" or "second" to specify which
 level of truth to consider as the "event".}

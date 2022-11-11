@@ -37,6 +37,7 @@
 #' included. It defaults to `TRUE`.
 #' @param include_rug Flag that indicates if the Rug layer is to be included.
 #' It defaults to `TRUE`.
+#' @param include_points Flag that indicates if the point layer is to be included.
 #' @param ... Additional arguments passed to the `tune_results` object.
 #' @seealso These functions depend on tables built by the following corresponding
 #' functions: [cal_binary_table_breaks()], [cal_binary_table_logistic()], and
@@ -72,6 +73,7 @@ cal_binary_plot_breaks <- function(.data,
                                    conf_level = 0.90,
                                    include_ribbon = TRUE,
                                    include_rug = TRUE,
+                                   include_points = TRUE,
                                    event_level = c("first", "second"),
                                    ...) {
   UseMethod("cal_binary_plot_breaks")
@@ -85,6 +87,7 @@ cal_binary_plot_breaks_impl <- function(.data,
                                         conf_level = 0.90,
                                         include_ribbon = TRUE,
                                         include_rug = TRUE,
+                                        include_points = TRUE,
                                         event_level = c("first", "second"),
                                         ...) {
   truth <- enquo(truth)
@@ -115,7 +118,7 @@ cal_binary_plot_breaks_impl <- function(.data,
     y_label = "Event Rate",
     include_ribbon = include_ribbon,
     include_rug = include_rug,
-    include_points = TRUE
+    include_points = include_points
   )
 }
 
@@ -131,6 +134,7 @@ cal_binary_plot_breaks.tune_results <- function(.data,
                                                 conf_level = 0.90,
                                                 include_ribbon = TRUE,
                                                 include_rug = TRUE,
+                                                include_points = TRUE,
                                                 event_level = c("first", "second"),
                                                 ...) {
   tune_args <- tune_results_args(
@@ -151,6 +155,7 @@ cal_binary_plot_breaks.tune_results <- function(.data,
     conf_level = conf_level,
     include_ribbon = include_ribbon,
     include_rug = include_rug,
+    include_points = include_points,
     event_level = event_level
   )
 }
@@ -265,6 +270,7 @@ cal_binary_plot_windowed <- function(.data,
                                      conf_level = 0.90,
                                      include_ribbon = TRUE,
                                      include_rug = TRUE,
+                                     include_points = FALSE,
                                      event_level = c("first", "second"),
                                      ...) {
   UseMethod("cal_binary_plot_windowed")
@@ -279,6 +285,7 @@ cal_binary_plot_windowed_impl <- function(.data,
                                           conf_level = 0.90,
                                           include_ribbon = TRUE,
                                           include_rug = TRUE,
+                                          include_points = FALSE,
                                           event_level = c("first", "second"),
                                           ...) {
   truth <- enquo(truth)
@@ -310,7 +317,7 @@ cal_binary_plot_windowed_impl <- function(.data,
     y_label = "Event Rate",
     include_ribbon = include_ribbon,
     include_rug = include_rug,
-    include_points = TRUE
+    include_points = include_points
   )
 }
 
@@ -327,6 +334,7 @@ cal_binary_plot_windowed.tune_results <- function(.data,
                                                   conf_level = 0.90,
                                                   include_ribbon = TRUE,
                                                   include_rug = TRUE,
+                                                  include_points = FALSE,
                                                   event_level = c("first", "second"),
                                                   ...) {
   tune_args <- tune_results_args(
@@ -348,6 +356,7 @@ cal_binary_plot_windowed.tune_results <- function(.data,
     conf_level = conf_level,
     include_ribbon = include_ribbon,
     include_rug = include_rug,
+    include_points = include_points,
     event_level = event_level
   )
 }
@@ -390,15 +399,15 @@ binary_plot_impl <- function(tbl, x, y,
       geom_rug(
         data = level_1_tbl,
         aes(x = !!estimate, col = !!truth),
-        sides = "b",
-        cex = 0.2,
+        sides = "t",
+        cex = 0.1,
         show.legend = FALSE
       ) +
       geom_rug(
         data = level_2_tbl,
         aes(x = !!estimate, col = !!truth),
-        sides = "t",
-        cex = 0.2,
+        sides = "b",
+        cex = 0.1,
         show.legend = FALSE
       )
   }
@@ -406,13 +415,14 @@ binary_plot_impl <- function(tbl, x, y,
   sub_title <- paste0("'", as_name(truth), "' vs '", as_name(estimate), "'")
 
   res <- res +
-    tune::coord_obs_pred() +
+    lims(x = 0:1, y = 0:1) +
     labs(
       subtitle = sub_title,
       x = x_label,
       y = y_label
     ) +
-    theme_light()
+    theme_light() +
+    theme(aspect.ratio = 1)
 
   if(!quo_is_null(group)) {
     res <- res + facet_wrap(group)
