@@ -40,9 +40,6 @@
 #' event occurring, and the bottom the frequency of the event not occurring.
 #' @param include_points Flag that indicates if the point layer is to be included.
 #' @param ... Additional arguments passed to the `tune_results` object.
-#' @seealso These functions depend on tables built by the following corresponding
-#' functions: [cal_binary_table_breaks()], [cal_binary_table_logistic()], and
-#' [cal_binary_table_windowed()].
 #' @examples
 #'
 #' library(ggplot2)
@@ -97,7 +94,7 @@ cal_binary_plot_breaks_impl <- function(.data,
 
   assert_truth_two_levels(.data, !!truth)
 
-  prob_tbl <- cal_binary_table_breaks(
+  prob_tbl <- .cal_binary_table_breaks(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
@@ -164,7 +161,6 @@ cal_binary_plot_breaks.tune_results <- function(.data,
 #------------------------------ >> Logistic ------------------------------------
 
 #' @rdname cal_binary_plot_breaks
-#'
 #' @export
 cal_binary_plot_logistic <- function(.data,
                                      truth = NULL,
@@ -196,7 +192,7 @@ cal_binary_plot_logistic_impl <- function(.data,
 
   assert_truth_two_levels(.data, !!truth)
 
-  prob_tbl <- cal_binary_table_logistic(
+  prob_tbl <- .cal_binary_table_logistic(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
@@ -295,7 +291,7 @@ cal_binary_plot_windowed_impl <- function(.data,
 
   assert_truth_two_levels(.data, !!truth)
 
-  prob_tbl <- cal_binary_table_windowed(
+  prob_tbl <- .cal_binary_table_windowed(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
@@ -434,48 +430,50 @@ binary_plot_impl <- function(tbl, x, y,
 #' to the actual outcome.
 #'
 #' @details
-#' - `cal_binary_table_breaks()` - Splits the data into bins, based on the
+#' - `.cal_binary_table_breaks()` - Splits the data into bins, based on the
 #' number of breaks provided (`num_breaks`). The bins are even ranges, starting
 #' at 0, and ending at 1.
-#' - `cal_binary_table_logistic()` - Fits a logistic spline regression (GAM)
+#' - `.cal_binary_table_logistic()` - Fits a logistic spline regression (GAM)
 #' against the data. It then creates a table with the predictions based on 100
 #' probabilities starting at 0, and ending at 1.
-#' - `cal_binary_table_windowed()` - Creates a running percentage of the
+#' - `.cal_binary_table_windowed()` - Creates a running percentage of the
 #' probability that moves across the proportion of events.
+#'
 #' @inheritParams cal_binary_plot_breaks
 #'
 #' @examples
-#' cal_binary_table_breaks(
+#' .cal_binary_table_breaks(
 #'   segment_logistic,
 #'   Class,
 #'   .pred_good
 #' )
 #'
-#' cal_binary_table_logistic(
+#' .cal_binary_table_logistic(
 #'   segment_logistic,
 #'   Class,
 #'   .pred_good
 #' )
 #'
-#' cal_binary_table_windowed(
+#' .cal_binary_table_windowed(
 #'   segment_logistic,
 #'   Class,
 #'   .pred_good
 #' )
-#'
+#' @rdname cal_binary_tables
 #' @export
-cal_binary_table_breaks <- function(.data,
-                                    truth = NULL,
+#' @keywords internal
+.cal_binary_table_breaks <- function(.data,
+                                     truth = NULL,
                                     estimate = NULL,
                                     group = NULL,
                                     num_breaks = 10,
                                     conf_level = 0.90,
                                     event_level = c("first", "second"),
                                     ...) {
-  UseMethod("cal_binary_table_breaks")
+  UseMethod(".cal_binary_table_breaks")
 }
 
-cal_binary_table_breaks_impl <- function(.data,
+.cal_binary_table_breaks_impl <- function(.data,
                                          truth,
                                          estimate,
                                          group,
@@ -509,10 +507,12 @@ cal_binary_table_breaks_impl <- function(.data,
 }
 
 #' @export
-cal_binary_table_breaks.data.frame <- cal_binary_table_breaks_impl
+#' @keywords internal
+.cal_binary_table_breaks.data.frame <- .cal_binary_table_breaks_impl
 
 #' @export
-cal_binary_table_breaks.tune_results <- function(.data,
+#' @keywords internal
+.cal_binary_table_breaks.tune_results <- function(.data,
                                                  truth = NULL,
                                                  estimate = NULL,
                                                  group = NULL,
@@ -529,7 +529,7 @@ cal_binary_table_breaks.tune_results <- function(.data,
     ...
   )
 
-  cal_binary_table_breaks_impl(
+  .cal_binary_table_breaks_impl(
     .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
@@ -543,19 +543,20 @@ cal_binary_table_breaks.tune_results <- function(.data,
 #------------------------------ >> Logistic ------------------------------------
 
 
-#' @rdname cal_binary_table_breaks
+#' @rdname cal_binary_tables
 #' @export
-cal_binary_table_logistic <- function(.data,
+#' @keywords internal
+.cal_binary_table_logistic <- function(.data,
                                       truth = NULL,
                                       estimate = NULL,
                                       group = NULL,
                                       conf_level = 0.90,
                                       event_level = c("first", "second"),
                                       ...) {
-  UseMethod("cal_binary_table_logistic")
+  UseMethod(".cal_binary_table_logistic")
 }
 
-cal_binary_table_logistic_impl <- function(.data,
+.cal_binary_table_logistic_impl <- function(.data,
                                            truth = NULL,
                                            estimate = NULL,
                                            group = NULL,
@@ -570,7 +571,7 @@ cal_binary_table_logistic_impl <- function(.data,
   tbls <- .data %>%
     dplyr::group_by(!!group) %>%
     dplyr::group_map(~ {
-      grp <- cal_binary_table_logistic_grp(
+      grp <- .cal_binary_table_logistic_grp(
         .data = .x,
         truth = !!truth,
         estimate = !!estimate,
@@ -583,7 +584,7 @@ cal_binary_table_logistic_impl <- function(.data,
   dplyr::bind_rows(tbls)
 }
 
-cal_binary_table_logistic_grp <- function(.data,
+.cal_binary_table_logistic_grp <- function(.data,
                                           truth = NULL,
                                           estimate = NULL,
                                           conf_level = 0.90,
@@ -631,10 +632,12 @@ cal_binary_table_logistic_grp <- function(.data,
 }
 
 #' @export
-cal_binary_table_logistic.data.frame <- cal_binary_table_logistic_impl
+#' @keywords internal
+.cal_binary_table_logistic.data.frame <- .cal_binary_table_logistic_impl
 
 #' @export
-cal_binary_table_logistic.tune_results <- function(.data,
+#' @keywords internal
+.cal_binary_table_logistic.tune_results <- function(.data,
                                                    truth = NULL,
                                                    estimate = NULL,
                                                    group = NULL,
@@ -650,7 +653,7 @@ cal_binary_table_logistic.tune_results <- function(.data,
     ...
   )
 
-  cal_binary_table_logistic_impl(
+  .cal_binary_table_logistic_impl(
     .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
@@ -662,9 +665,10 @@ cal_binary_table_logistic.tune_results <- function(.data,
 
 #----------------------------- >> Windowed -------------------------------------
 
-#' @rdname cal_binary_table_breaks
+#' @rdname cal_binary_tables
 #' @export
-cal_binary_table_windowed <- function(.data,
+#' @keywords internal
+.cal_binary_table_windowed <- function(.data,
                                       truth = NULL,
                                       estimate = NULL,
                                       group = NULL,
@@ -673,10 +677,10 @@ cal_binary_table_windowed <- function(.data,
                                       conf_level = 0.90,
                                       event_level = c("first", "second"),
                                       ...) {
-  UseMethod("cal_binary_table_windowed")
+  UseMethod(".cal_binary_table_windowed")
 }
 
-cal_binary_table_windowed_impl <- function(.data,
+.cal_binary_table_windowed_impl <- function(.data,
                                            truth = NULL,
                                            estimate = NULL,
                                            group = NULL,
@@ -692,7 +696,7 @@ cal_binary_table_windowed_impl <- function(.data,
   tbls <- .data %>%
     dplyr::group_by(!!group) %>%
     dplyr::group_map(~ {
-      grp <- cal_binary_table_windowed_grp(
+      grp <- .cal_binary_table_windowed_grp(
         .data = .x,
         truth = !!truth,
         estimate = !!estimate,
@@ -706,7 +710,7 @@ cal_binary_table_windowed_impl <- function(.data,
   dplyr::bind_rows(tbls)
 }
 
-cal_binary_table_windowed_grp <- function(.data,
+.cal_binary_table_windowed_grp <- function(.data,
                                           truth,
                                           estimate,
                                           window_size = 0.1,
@@ -747,10 +751,12 @@ cal_binary_table_windowed_grp <- function(.data,
 }
 
 #' @export
-cal_binary_table_windowed.data.frame <- cal_binary_table_windowed_impl
+#' @keywords internal
+.cal_binary_table_windowed.data.frame <- .cal_binary_table_windowed_impl
 
 #' @export
-cal_binary_table_windowed.tune_results <- function(.data,
+#' @keywords internal
+.cal_binary_table_windowed.tune_results <- function(.data,
                                                    truth = NULL,
                                                    estimate = NULL,
                                                    group = NULL,
@@ -768,7 +774,7 @@ cal_binary_table_windowed.tune_results <- function(.data,
     ...
   )
 
-  cal_binary_table_windowed_impl(
+  .cal_binary_table_windowed_impl(
     .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,

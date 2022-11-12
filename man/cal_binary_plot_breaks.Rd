@@ -69,7 +69,8 @@ to 0.9.}
 included. It defaults to \code{TRUE}.}
 
 \item{include_rug}{Flag that indicates if the Rug layer is to be included.
-It defaults to \code{TRUE}.}
+It defaults to \code{TRUE}. In the plot, the top side shows the frequency the
+event occurring, and the bottom the frequency of the event not occurring.}
 
 \item{include_points}{Flag that indicates if the point layer is to be included.}
 
@@ -125,9 +126,4 @@ cal_binary_plot_windowed(
   .pred_good
 )
 
-}
-\seealso{
-These functions depend on tables built by the following corresponding
-functions: \code{\link[=cal_binary_table_breaks]{cal_binary_table_breaks()}}, \code{\link[=cal_binary_table_logistic]{cal_binary_table_logistic()}}, and
-\code{\link[=cal_binary_table_windowed]{cal_binary_table_windowed()}}.
 }
