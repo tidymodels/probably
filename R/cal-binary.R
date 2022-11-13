@@ -267,7 +267,7 @@ cal_plot_windowed <- function(.data,
                                      conf_level = 0.90,
                                      include_ribbon = TRUE,
                                      include_rug = TRUE,
-                                     include_points = FALSE,
+                                     include_points = TRUE,
                                      event_level = c("first", "second"),
                                      ...) {
   UseMethod("cal_plot_windowed")
@@ -282,7 +282,7 @@ cal_plot_windowed_impl <- function(.data,
                                           conf_level = 0.90,
                                           include_ribbon = TRUE,
                                           include_rug = TRUE,
-                                          include_points = FALSE,
+                                          include_points = TRUE,
                                           event_level = c("first", "second"),
                                           ...) {
   truth <- enquo(truth)
@@ -331,7 +331,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                                   conf_level = 0.90,
                                                   include_ribbon = TRUE,
                                                   include_rug = TRUE,
-                                                  include_points = FALSE,
+                                                  include_points = TRUE,
                                                   event_level = c("first", "second"),
                                                   ...) {
   tune_args <- tune_results_args(

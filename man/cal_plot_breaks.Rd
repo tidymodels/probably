@@ -43,7 +43,7 @@ cal_plot_windowed(
   conf_level = 0.9,
   include_ribbon = TRUE,
   include_rug = TRUE,
-  include_points = FALSE,
+  include_points = TRUE,
   event_level = c("first", "second"),
   ...
 )
