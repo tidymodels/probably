@@ -394,7 +394,8 @@ binary_plot_impl <- function(tbl, x, y,
           data = level_tbl,
           aes(x = !!estimate, col = !!truth),
           sides = side_values[i],
-          cex = 0.1,
+          length = unit(0.015, "npc"),
+          alpha = 3 / 4,
           show.legend = FALSE
         )
     }
