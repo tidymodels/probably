@@ -401,12 +401,9 @@ binary_plot_impl <- function(tbl, x, y,
     }
   }
 
-  sub_title <- paste0("'", as_name(truth), "' vs '", as_name(estimate), "'")
-
   res <- res +
     lims(x = 0:1, y = 0:1) +
     labs(
-      subtitle = sub_title,
       x = x_label,
       y = y_label
     ) +
