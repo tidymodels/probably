@@ -6,13 +6,13 @@
 #' the predictions and probability columns. The output is a `ggplot2` graph.
 #'
 #' @details
-#' - `cal_binary_plot_breaks()` - Splits the data into bins, based on the
+#' - `cal_plot_breaks()` - Splits the data into bins, based on the
 #' number of breaks provided (`num_breaks`). The bins are even ranges, starting
 #' at 0, and ending at 1.
-#' - `cal_binary_plot_logistic()` - Fits a logistic spline regression (GAM)
+#' - `cal_plot_logistic()` - Fits a logistic spline regression (GAM)
 #' against the data. It then creates a table with the predictions based on 100
 #' probabilities starting at 0, and ending at1.
-#' - `cal_binary_plot_windowed()` - Creates a running percentage of the probability
+#' - `cal_plot_windowed()` - Creates a running percentage of the probability
 #' that moves across the proportion of events.
 #'
 #' @param .data A data.frame object containing predictions and probability columns.
@@ -44,26 +44,26 @@
 #'
 #' library(ggplot2)
 #'
-#' cal_binary_plot_breaks(
+#' cal_plot_breaks(
 #'   segment_logistic,
 #'   Class,
 #'   .pred_good
 #' )
 #'
-#' cal_binary_plot_logistic(
+#' cal_plot_logistic(
 #'   segment_logistic,
 #'   Class,
 #'   .pred_good
 #' )
 #'
-#' cal_binary_plot_windowed(
+#' cal_plot_windowed(
 #'   segment_logistic,
 #'   Class,
 #'   .pred_good
 #' )
 #'
 #' @export
-cal_binary_plot_breaks <- function(.data,
+cal_plot_breaks <- function(.data,
                                    truth = NULL,
                                    estimate = NULL,
                                    group = NULL,
@@ -74,10 +74,10 @@ cal_binary_plot_breaks <- function(.data,
                                    include_points = TRUE,
                                    event_level = c("first", "second"),
                                    ...) {
-  UseMethod("cal_binary_plot_breaks")
+  UseMethod("cal_plot_breaks")
 }
 
-cal_binary_plot_breaks_impl <- function(.data,
+cal_plot_breaks_impl <- function(.data,
                                         truth = NULL,
                                         estimate = NULL,
                                         group = NULL,
@@ -121,10 +121,10 @@ cal_binary_plot_breaks_impl <- function(.data,
 }
 
 #' @export
-cal_binary_plot_breaks.data.frame <- cal_binary_plot_breaks_impl
+cal_plot_breaks.data.frame <- cal_plot_breaks_impl
 
 #' @export
-cal_binary_plot_breaks.tune_results <- function(.data,
+cal_plot_breaks.tune_results <- function(.data,
                                                 truth = NULL,
                                                 estimate = NULL,
                                                 group = NULL,
@@ -144,7 +144,7 @@ cal_binary_plot_breaks.tune_results <- function(.data,
     ...
   )
 
-  cal_binary_plot_breaks_impl(
+  cal_plot_breaks_impl(
     .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
@@ -160,9 +160,9 @@ cal_binary_plot_breaks.tune_results <- function(.data,
 
 #------------------------------ >> Logistic ------------------------------------
 
-#' @rdname cal_binary_plot_breaks
+#' @rdname cal_plot_breaks
 #' @export
-cal_binary_plot_logistic <- function(.data,
+cal_plot_logistic <- function(.data,
                                      truth = NULL,
                                      estimate = NULL,
                                      group = NULL,
@@ -172,11 +172,11 @@ cal_binary_plot_logistic <- function(.data,
                                      include_ribbon = TRUE,
                                      event_level = c("first", "second"),
                                      ...) {
-  UseMethod("cal_binary_plot_logistic")
+  UseMethod("cal_plot_logistic")
 }
 
 
-cal_binary_plot_logistic_impl <- function(.data,
+cal_plot_logistic_impl <- function(.data,
                                           truth = NULL,
                                           estimate = NULL,
                                           group = NULL,
@@ -219,10 +219,10 @@ cal_binary_plot_logistic_impl <- function(.data,
 }
 
 #' @export
-cal_binary_plot_logistic.data.frame <- cal_binary_plot_logistic_impl
+cal_plot_logistic.data.frame <- cal_plot_logistic_impl
 
 #' @export
-cal_binary_plot_logistic.tune_results <- function(.data,
+cal_plot_logistic.tune_results <- function(.data,
                                                   truth = NULL,
                                                   estimate = NULL,
                                                   group = NULL,
@@ -241,7 +241,7 @@ cal_binary_plot_logistic.tune_results <- function(.data,
     ...
   )
 
-  cal_binary_plot_logistic_impl(
+  cal_plot_logistic_impl(
     .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
@@ -256,9 +256,9 @@ cal_binary_plot_logistic.tune_results <- function(.data,
 
 #----------------------------- >> Windowed -------------------------------------
 
-#' @rdname cal_binary_plot_breaks
+#' @rdname cal_plot_breaks
 #' @export
-cal_binary_plot_windowed <- function(.data,
+cal_plot_windowed <- function(.data,
                                      truth = NULL,
                                      estimate = NULL,
                                      group = NULL,
@@ -270,10 +270,10 @@ cal_binary_plot_windowed <- function(.data,
                                      include_points = FALSE,
                                      event_level = c("first", "second"),
                                      ...) {
-  UseMethod("cal_binary_plot_windowed")
+  UseMethod("cal_plot_windowed")
 }
 
-cal_binary_plot_windowed_impl <- function(.data,
+cal_plot_windowed_impl <- function(.data,
                                           truth = NULL,
                                           estimate = NULL,
                                           group = NULL,
@@ -319,10 +319,10 @@ cal_binary_plot_windowed_impl <- function(.data,
 }
 
 #' @export
-cal_binary_plot_windowed.data.frame <- cal_binary_plot_windowed_impl
+cal_plot_windowed.data.frame <- cal_plot_windowed_impl
 
 #' @export
-cal_binary_plot_windowed.tune_results <- function(.data,
+cal_plot_windowed.tune_results <- function(.data,
                                                   truth = NULL,
                                                   estimate = NULL,
                                                   group = NULL,
@@ -343,7 +343,7 @@ cal_binary_plot_windowed.tune_results <- function(.data,
     ...
   )
 
-  cal_binary_plot_windowed_impl(
+  cal_plot_windowed_impl(
     .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
@@ -439,7 +439,7 @@ binary_plot_impl <- function(tbl, x, y,
 #' - `.cal_binary_table_windowed()` - Creates a running percentage of the
 #' probability that moves across the proportion of events.
 #'
-#' @inheritParams cal_binary_plot_breaks
+#' @inheritParams cal_plot_breaks
 #'
 #' @examples
 #' .cal_binary_table_breaks(
