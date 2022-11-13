@@ -40,4 +40,4 @@ reference:
 
 - title: Calibration
   contents:
-  - starts_with("cal_binary")
+  - starts_with("cal_")
