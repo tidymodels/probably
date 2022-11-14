@@ -1,7 +1,7 @@
-.cal_ven <- new.env()
+.cal_env <- new.env()
 
-testthat_get_tune_results <- function() {
-  ret <- .cal_ven$tune_results
+testthat_cal_tune_results <- function() {
+  ret <- .cal_env$tune_results
 
   if(is.null(ret)) {
     set.seed(111)
@@ -18,9 +18,8 @@ testthat_get_tune_results <- function() {
       control = tune::control_resamples(save_pred = TRUE)
     )
 
-    .cal_ven$tune_results <- ret
+    .cal_env$tune_results <- ret
   }
 
   ret
 }
-
