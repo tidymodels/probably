@@ -394,7 +394,10 @@ binary_plot_impl <- function(tbl, x, y,
 
   if (include_ribbon) {
     res <- res +
-      geom_ribbon(aes(y = !!y, ymin = lower, ymax = upper), alpha = 0.1)
+      geom_ribbon(
+        aes(y = !!y, ymin = lower, ymax = upper), color = "#ffffff00",
+        alpha = 0.08
+        )
   }
 
   if (include_rug & !has_groups) {
