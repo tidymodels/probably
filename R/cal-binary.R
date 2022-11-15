@@ -567,7 +567,7 @@ binary_plot_impl <- function(tbl, x, y,
   group <- enquo(group)
 
   tbls <- .data %>%
-    dplyr::group_by(!!group) %>%
+    dplyr::group_by(!!group, .add = TRUE) %>%
     dplyr::group_map(~ {
       grp <- .cal_binary_table_logistic_grp(
         .data = .x,
@@ -692,7 +692,7 @@ binary_plot_impl <- function(tbl, x, y,
   group <- enquo(group)
 
   tbls <- .data %>%
-    dplyr::group_by(!!group) %>%
+    dplyr::group_by(!!group, .add = TRUE) %>%
     dplyr::group_map(~ {
       grp <- .cal_binary_table_windowed_grp(
         .data = .x,
