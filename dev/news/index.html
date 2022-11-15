@@ -51,9 +51,12 @@
       <small>Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="section level2"><h2 class="pkg-version" data-toc-text="development version" id="probably-development-version">probably (development version)<a class="anchor" aria-label="anchor" href="#probably-development-version"></a></h2></div>
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.0" id="probably-010">probably 0.1.0<a class="anchor" aria-label="anchor" href="#probably-010"></a></h2>
+<h2 class="pkg-version" data-toc-text="development version" id="probably-development-version">probably (development version)<a class="anchor" aria-label="anchor" href="#probably-development-version"></a></h2>
+<ul><li>Adds model calibration diagnostic functions. They implement three methods: binning probabilities, fitting a logistic spline model against the probabilities, and with creating a running percentage of the data. There are three new plotting functions, and three table functions. It supports data.frames and tune_results objects.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.0" id="probably-010">probably 0.1.0<a class="anchor" aria-label="anchor" href="#probably-010"></a></h2><p class="text-muted">CRAN release: 2022-08-29</p>
 <ul><li><p>Max Kuhn is now the maintainer (<a href="https://github.com/tidymodels/probably/issues/49" class="external-link">#49</a>).</p></li>
 <li><p>Re-licensed package from GPL-2 to MIT. All copyright holders are RStudio employees and give consent.</p></li>
 <li><p>Fixed a bug with how <code><a href="../reference/make_class_pred.html">make_class_pred()</a></code> and <code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code> validate the <code>levels</code> argument (<a href="https://github.com/tidymodels/probably/issues/42" class="external-link">#42</a>).</p></li>
@@ -64,10 +67,12 @@
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.6" id="probably-006">probably 0.0.6<a class="anchor" aria-label="anchor" href="#probably-006"></a></h2><p class="text-muted">CRAN release: 2020-06-05</p>
 <ul><li>
-<code>class_pred</code> objects are now comparable and will be ordered by their levels. Equivocal values are generally considered to be the smallest value when ordering. <code>NA</code> values can be considered smaller if <code>vec_order(na_value = "smallest")</code> is used.</li></ul></div>
+<code>class_pred</code> objects are now comparable and will be ordered by their levels. Equivocal values are generally considered to be the smallest value when ordering. <code>NA</code> values can be considered smaller if <code>vec_order(na_value = "smallest")</code> is used.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.5" id="probably-005">probably 0.0.5<a class="anchor" aria-label="anchor" href="#probably-005"></a></h2><p class="text-muted">CRAN release: 2020-05-14</p>
-<ul><li>Internal cleanup to be more compatible with vctrs 0.3.0.</li></ul></div>
+<ul><li>Internal cleanup to be more compatible with vctrs 0.3.0.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.4" id="probably-004">probably 0.0.4<a class="anchor" aria-label="anchor" href="#probably-004"></a></h2><p class="text-muted">CRAN release: 2020-01-13</p>
 <ul><li><p>Suggest the modeldata package, which is where the <code>lending_club</code> dataset has been moved after being removed from recipes.</p></li>
@@ -96,7 +101,8 @@
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.1" id="probably-001">probably 0.0.1<a class="anchor" aria-label="anchor" href="#probably-001"></a></h2><p class="text-muted">CRAN release: 2018-12-18</p>
-<ul><li>First release</li></ul></div>
+<ul><li>First release</li>
+</ul></div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 

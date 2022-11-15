@@ -76,9 +76,10 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Where does probably fit in?</h1>
-                        <h4 data-toc-skip class="author">Davis Vaughan</h4>
+                        <h4 data-toc-skip class="author">Davis
+Vaughan</h4>
             
-            <h4 data-toc-skip class="date">2022-08-29</h4>
+            <h4 data-toc-skip class="date">2022-11-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/vignettes/where-to-use.Rmd" class="external-link"><code>vignettes/where-to-use.Rmd</code></a></small>
       <div class="d-none name"><code>where-to-use.Rmd</code></div>
@@ -89,13 +90,21 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>An obvious question regarding probably might be: where does this fit in with the rest of the tidymodels ecosystem? Like the other pieces of the ecosystem, probably is designed to be modular, but plays well with other tidymodels packages.</p>
-<p>Regarding placement in the modeling workflow, probably best fits in as a post processing step <em>after</em> the model has been fit, but <em>before</em> the model performance has been calculated.</p>
+<p>An obvious question regarding probably might be: where does this fit
+in with the rest of the tidymodels ecosystem? Like the other pieces of
+the ecosystem, probably is designed to be modular, but plays well with
+other tidymodels packages.</p>
+<p>Regarding placement in the modeling workflow, probably best fits in
+as a post processing step <em>after</em> the model has been fit, but
+<em>before</em> the model performance has been calculated.</p>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
-<p>As an example, we’ll use parsnip to fit a logistic regression on some <a href="https://www.lendingclub.com/info/download-data.action" class="external-link">Lending Club</a> loan data, and then use probably to investigate what happens to performance when you vary the threshold of what a “good” loan is.</p>
+<p>As an example, we’ll use parsnip to fit a logistic regression on some
+<a href="https://www.lendingclub.com/info/download-data.action" class="external-link">Lending
+Club</a> loan data, and then use probably to investigate what happens to
+performance when you vary the threshold of what a “good” loan is.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/parsnip" class="external-link">parsnip</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/probably/" class="external-link">probably</a></span><span class="op">)</span></span>
@@ -128,7 +137,8 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> good       <span style="text-decoration: underline;">89</span>000 Source_Verified     B3       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> good       <span style="text-decoration: underline;">48</span>000 Not_Verified        C2       </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 9,847 more rows</span></span></span></code></pre></div>
-<p>Let’s split this into 75% training and 25% testing for something to predict on.</p>
+<p>Let’s split this into 75% training and 25% testing for something to
+predict on.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># 75% train, 25% test</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
@@ -137,7 +147,8 @@
 <span></span>
 <span><span class="va">lending_train</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html" class="external-link">training</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span></span>
 <span><span class="va">lending_test</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rsample.tidymodels.org/reference/initial_split.html" class="external-link">testing</a></span><span class="op">(</span><span class="va">split</span><span class="op">)</span></span></code></pre></div>
-<p>Before we do anything, let’s look at the counts of what we are going to be predicting, the <code>Class</code> of the loan.</p>
+<p>Before we do anything, let’s look at the counts of what we are going
+to be predicting, the <code>Class</code> of the loan.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">lending_train</span>, <span class="va">Class</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 × 2</span></span></span>
@@ -145,8 +156,19 @@
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> good   <span style="text-decoration: underline;">7</span>008</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> bad     384</span></span></code></pre></div>
-<p>Clearly there is a large imbalance here with the number of good and bad loans. This is probably a good thing for the bank, but poses an interesting issue for us because we might want to ensure we are sensitive to the bad loans and are not overwhelmed by the number of good ones. One thing that we might do is <em>downsample</em> the number of good loans so that the total number of them is more in line with the number of bad loans. We could do this before fitting the model using <code>themis::step_downsample()</code>, but for now, let’s continue with the data unchanged.</p>
-<p>We’ll use parsnip’s <code><a href="https://parsnip.tidymodels.org/reference/logistic_reg.html" class="external-link">logistic_reg()</a></code> to create a model specification for logistic regression, set the engine to be <code>glm</code> and then actually fit the model using our data and the model formula.</p>
+<p>Clearly there is a large imbalance here with the number of good and
+bad loans. This is probably a good thing for the bank, but poses an
+interesting issue for us because we might want to ensure we are
+sensitive to the bad loans and are not overwhelmed by the number of good
+ones. One thing that we might do is <em>downsample</em> the number of
+good loans so that the total number of them is more in line with the
+number of bad loans. We could do this before fitting the model using
+<code>themis::step_downsample()</code>, but for now, let’s continue with
+the data unchanged.</p>
+<p>We’ll use parsnip’s <code><a href="https://parsnip.tidymodels.org/reference/logistic_reg.html" class="external-link">logistic_reg()</a></code> to create a model
+specification for logistic regression, set the engine to be
+<code>glm</code> and then actually fit the model using our data and the
+model formula.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">logi_reg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://parsnip.tidymodels.org/reference/logistic_reg.html" class="external-link">logistic_reg</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">logi_reg_glm</span> <span class="op">&lt;-</span> <span class="va">logi_reg</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html" class="external-link">set_engine</a></span><span class="op">(</span><span class="st">"glm"</span><span class="op">)</span></span>
@@ -215,8 +237,13 @@
 <span><span class="co">#&gt; Degrees of Freedom: 7391 Total (i.e. Null);  7354 Residual</span></span>
 <span><span class="co">#&gt; Null Deviance:       3019 </span></span>
 <span><span class="co">#&gt; Residual Deviance: 2716  AIC: 2792</span></span></code></pre></div>
-<p>The output of the parsnip <code><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit()</a></code> call is a parsnip <code>model_fit</code> object, but the underlying print method for the <code>glm</code> fit is used.</p>
-<p>Now let’s predict on our testing set, and use <code>type = "prob"</code> to get <em>class probabilities</em> back rather than hard predictions. We will use these with probably to investigate performance.</p>
+<p>The output of the parsnip <code><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit()</a></code> call is a parsnip
+<code>model_fit</code> object, but the underlying print method for the
+<code>glm</code> fit is used.</p>
+<p>Now let’s predict on our testing set, and use
+<code>type = "prob"</code> to get <em>class probabilities</em> back
+rather than hard predictions. We will use these with probably to
+investigate performance.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">predictions</span> <span class="op">&lt;-</span> <span class="va">logi_reg_fit</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span>new_data <span class="op">=</span> <span class="va">lending_test</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span></span>
@@ -245,7 +272,11 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>      0.963   0.037<span style="text-decoration: underline;">0</span>  good       <span style="text-decoration: underline;">52</span>000 Verified            B4       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>      0.983   0.017<span style="text-decoration: underline;">3</span>  good       <span style="text-decoration: underline;">61</span>000 Verified            B2       </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 2,455 more rows</span></span></span></code></pre></div>
-<p>With our class probabilities in hand, we can use <code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code> to convert these probabilities into hard predictions using a threshold. A threshold of <code>0.5</code> just says that if the predicted probability is above <code>0.5</code>, then classify this prediction as a “good” loan, otherwise, bad.</p>
+<p>With our class probabilities in hand, we can use
+<code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code> to convert these probabilities into
+hard predictions using a threshold. A threshold of <code>0.5</code> just
+says that if the predicted probability is above <code>0.5</code>, then
+classify this prediction as a “good” loan, otherwise, bad.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hard_pred_0.5</span> <span class="op">&lt;-</span> <span class="va">lending_test_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -264,7 +295,11 @@
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;clss_prd&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> good         good  <span style="text-decoration: underline;">2</span>332</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> bad          good   133</span></span></code></pre></div>
-<p>Hmm, with a <code>0.5</code> threshold, almost all of the loans were predicted as “good”. Perhaps this has something to do with the large class imbalance. On the other hand, the bank might want to be more stringent with what is classified as a “good” loan, and might require a probability of <code>0.75</code> as the threshold.</p>
+<p>Hmm, with a <code>0.5</code> threshold, almost all of the loans were
+predicted as “good”. Perhaps this has something to do with the large
+class imbalance. On the other hand, the bank might want to be more
+stringent with what is classified as a “good” loan, and might require a
+probability of <code>0.75</code> as the threshold.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">hard_pred_0.75</span> <span class="op">&lt;-</span> <span class="va">lending_test_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
@@ -285,10 +320,16 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> good          bad    12</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> bad          good   129</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> bad           bad     4</span></span></code></pre></div>
-<p>In this case, 4 of the bad loans were correctly classified as bad, but more of the good loans were also misclassified as bad now. There is a tradeoff here, which can be somewhat captured by the metrics <em>sensitivity</em> and <em>specificity</em>. Both metrics have a max value of <code>1</code>.</p>
+<p>In this case, 4 of the bad loans were correctly classified as bad,
+but more of the good loans were also misclassified as bad now. There is
+a tradeoff here, which can be somewhat captured by the metrics
+<em>sensitivity</em> and <em>specificity</em>. Both metrics have a max
+value of <code>1</code>.</p>
 <ul>
-<li>sensitivity - The proportion of predicted “good” loans out of all “good” loans</li>
-<li>specificity - The proportion of predicted “bad” loans out of all “bad” loans</li>
+<li>sensitivity - The proportion of predicted “good” loans out of all
+“good” loans</li>
+<li>specificity - The proportion of predicted “bad” loans out of all
+“bad” loans</li>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/yardstick" class="external-link">yardstick</a></span><span class="op">)</span></span>
@@ -316,9 +357,19 @@
 <span><span class="co">#&gt;   .metric .estimator .estimate</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> spec    binary        0.030<span style="text-decoration: underline;">1</span></span></span></code></pre></div>
-<p>In this example, as we increased specificity (by capturing those 4 bad loans with a higher threshold), we lowered sensitivity (by incorrectly reclassifying some of the good loans as bad). It would be nice to have some combination of these metrics to represent this tradeoff. Luckily, <code>j_index</code> is exactly that.</p>
-<p><span class="math display">\[ j\_index = sens + spec - 1 \]</span></p>
-<p><code>j_index</code> has a maximum value of 1 when there are no false positives and no false negatives. It can be used as justification of whether or not an increase in the threshold value is worth it. If increasing the threshold results in more of an increase in the specificity than a decrease in the sensitivity, we can see that with <code>j_index</code>.</p>
+<p>In this example, as we increased specificity (by capturing those 4
+bad loans with a higher threshold), we lowered sensitivity (by
+incorrectly reclassifying some of the good loans as bad). It would be
+nice to have some combination of these metrics to represent this
+tradeoff. Luckily, <code>j_index</code> is exactly that.</p>
+<p><span class="math display">\[ j\_index = sens + spec - 1
+\]</span></p>
+<p><code>j_index</code> has a maximum value of 1 when there are no false
+positives and no false negatives. It can be used as justification of
+whether or not an increase in the threshold value is worth it. If
+increasing the threshold results in more of an increase in the
+specificity than a decrease in the sensitivity, we can see that with
+<code>j_index</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://yardstick.tidymodels.org/reference/j_index.html" class="external-link">j_index</a></span><span class="op">(</span><span class="va">hard_pred_0.5</span>, <span class="va">Class</span>, <span class="va">.pred</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 3</span></span></span>
@@ -330,8 +381,13 @@
 <span><span class="co">#&gt;   .metric .estimator .estimate</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> j_index binary        0.024<span style="text-decoration: underline;">9</span></span></span></code></pre></div>
-<p>Now, this is not the only way to optimize things. If you care about low false positives, you might be more interested in keeping sensitivity high, and this wouldn’t be the best way to tackle this problem. But for now, let’s see how we can use probably to optimize the <code>j_index</code>.</p>
-<p><code><a href="../reference/threshold_perf.html">threshold_perf()</a></code> will recalculate a number of metrics across varying thresholds. One of these is <code>j_index</code>.</p>
+<p>Now, this is not the only way to optimize things. If you care about
+low false positives, you might be more interested in keeping sensitivity
+high, and this wouldn’t be the best way to tackle this problem. But for
+now, let’s see how we can use probably to optimize the
+<code>j_index</code>.</p>
+<p><code><a href="../reference/threshold_perf.html">threshold_perf()</a></code> will recalculate a number of metrics
+across varying thresholds. One of these is <code>j_index</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">threshold_data</span> <span class="op">&lt;-</span> <span class="va">lending_test_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/threshold_perf.html">threshold_perf</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_good</span>, thresholds <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">1</span>, by <span class="op">=</span> <span class="fl">0.0025</span><span class="op">)</span><span class="op">)</span></span>
@@ -353,7 +409,9 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        0.5 distance binary        1     </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>        0.6 distance binary        0.955 </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>        0.7 distance binary        0.955</span></span></code></pre></div>
-<p>With <code>ggplot2</code>, we can easily visualize this varying performance to find our optimal threshold for maximizing <code>j_index</code>.</p>
+<p>With <code>ggplot2</code>, we can easily visualize this varying
+performance to find our optimal threshold for maximizing
+<code>j_index</code>.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
@@ -382,7 +440,10 @@
 <span>    subtitle <span class="op">=</span> <span class="st">"Sensitivity or specificity alone might not be enough!\nVertical line = Max J-Index"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p><img src="where-to-use_files/figure-html/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;"></p>
-<p>It’s clear from this visual that the optimal threshold is very high, exactly 0.945. This is pretty high, so again, this optimization method won’t be useful for all cases. To wrap up, here are all of the test set metrics for that threshold value.</p>
+<p>It’s clear from this visual that the optimal threshold is very high,
+exactly 0.945. This is pretty high, so again, this optimization method
+won’t be useful for all cases. To wrap up, here are all of the test set
+metrics for that threshold value.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">threshold_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.threshold</span> <span class="op">==</span> <span class="va">max_j_index_threshold</span><span class="op">)</span></span>

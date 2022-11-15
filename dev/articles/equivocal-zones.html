@@ -76,9 +76,10 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Equivocal zones</h1>
-                        <h4 data-toc-skip class="author">Davis Vaughan</h4>
+                        <h4 data-toc-skip class="author">Davis
+Vaughan</h4>
             
-            <h4 data-toc-skip class="date">2022-08-29</h4>
+            <h4 data-toc-skip class="date">2022-11-15</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/vignettes/equivocal-zones.Rmd" class="external-link"><code>vignettes/equivocal-zones.Rmd</code></a></small>
       <div class="d-none name"><code>equivocal-zones.Rmd</code></div>
@@ -91,10 +92,26 @@
 <div class="section level2">
 <h2 id="equivocal-zones">Equivocal zones<a class="anchor" aria-label="anchor" href="#equivocal-zones"></a>
 </h2>
-<p>In some fields, class probability predictions must meet certain standards before a firm decision can be made using them. If they fail these standards, the prediction can be marked as <em>equivocal</em>, which just means that you are unsure of the true result. You might want to further investigate these equivocal values, or rerun whatever process generated them before proceeding.</p>
-<p>For example, in a binary model, if a prediction returned probability values of 52% Yes and 48% No, are you really sure that that isn’t just random noise? In this case, you could use a <em>buffer</em> surrounding a <em>threshold</em> of 50% to determine whether or not your model is sure of its predictions, and mark values you are unsure about as equivocal.</p>
-<p>Another example could come from a Bayesian perspective, where each prediction comes with a probability distribution. Your model might predict 80% Yes, but could have a standard deviation around that of +/- 20%. In this case, you could set a maximum allowed standard deviation as the cutoff of whether or not to mark values as equivocal.</p>
-<p>To work with these equivocal zones, probably provides a new class for hard class predictions that is very similar to a factor, but allows you to mark certain values as equivocal.</p>
+<p>In some fields, class probability predictions must meet certain
+standards before a firm decision can be made using them. If they fail
+these standards, the prediction can be marked as <em>equivocal</em>,
+which just means that you are unsure of the true result. You might want
+to further investigate these equivocal values, or rerun whatever process
+generated them before proceeding.</p>
+<p>For example, in a binary model, if a prediction returned probability
+values of 52% Yes and 48% No, are you really sure that that isn’t just
+random noise? In this case, you could use a <em>buffer</em> surrounding
+a <em>threshold</em> of 50% to determine whether or not your model is
+sure of its predictions, and mark values you are unsure about as
+equivocal.</p>
+<p>Another example could come from a Bayesian perspective, where each
+prediction comes with a probability distribution. Your model might
+predict 80% Yes, but could have a standard deviation around that of +/-
+20%. In this case, you could set a maximum allowed standard deviation as
+the cutoff of whether or not to mark values as equivocal.</p>
+<p>To work with these equivocal zones, probably provides a new class for
+hard class predictions that is very similar to a factor, but allows you
+to mark certain values as equivocal.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Yes"</span>, <span class="st">"No"</span>, <span class="st">"Yes"</span>, <span class="st">"Yes"</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -110,8 +127,17 @@
 <span><span class="co">#&gt; [1] Yes  No   [EQ] Yes </span></span>
 <span><span class="co">#&gt; Levels: No Yes</span></span>
 <span><span class="co">#&gt; Reportable: 75%</span></span></code></pre></div>
-<p>The <em>reportable rate</em> is the fraction of values that are not equivocal, relative to the total number. Above, you can see that the reportable rate started at 100%, but as soon as a single value was marked equivocal, that value dropped to 75%. In fields where equivocal zones are used, there is often a tradeoff between marking values as equivocal and keeping a certain minimum reportable rate.</p>
-<p>Generally, you won’t create these <code>class_pred</code> objects directly, but will instead create them indirectly through converting class probabilities into class predictions with <code><a href="../reference/make_class_pred.html">make_class_pred()</a></code> and <code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code>.</p>
+<p>The <em>reportable rate</em> is the fraction of values that are not
+equivocal, relative to the total number. Above, you can see that the
+reportable rate started at 100%, but as soon as a single value was
+marked equivocal, that value dropped to 75%. In fields where equivocal
+zones are used, there is often a tradeoff between marking values as
+equivocal and keeping a certain minimum reportable rate.</p>
+<p>Generally, you won’t create these <code>class_pred</code> objects
+directly, but will instead create them indirectly through converting
+class probabilities into class predictions with
+<code><a href="../reference/make_class_pred.html">make_class_pred()</a></code> and
+<code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"segment_logistic"</span><span class="op">)</span></span>
@@ -158,7 +184,9 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    0.995      0.004<span style="text-decoration: underline;">58</span> poor        poor</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    0.765      0.235   poor        poor</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># … with 1,000 more rows</span></span></span></code></pre></div>
-<p>If a <code>buffer</code> is used, an equivocal zone is created around the threshold of <code>threshold +/- buffer</code> and any values inside the zone are automatically marked as equivocal.</p>
+<p>If a <code>buffer</code> is used, an equivocal zone is created around
+the threshold of <code>threshold +/- buffer</code> and any values inside
+the zone are automatically marked as equivocal.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Convert probabilities into predictions</span></span>
 <span><span class="co">#        x &gt; 0.55 = good</span></span>
@@ -189,7 +217,10 @@
 <span><span class="co">#&gt;   reportable</span></span>
 <span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0.955</span></span></code></pre></div>
-<p>Equivocal values in <code>class_pred</code> objects are converted to <code>NA</code> when the object is converted to a factor. It’s also worth noting that the <code>[EQ]</code> label is not treated as a separate level.</p>
+<p>Equivocal values in <code>class_pred</code> objects are converted to
+<code>NA</code> when the object is converted to a factor. It’s also
+worth noting that the <code>[EQ]</code> label is not treated as a
+separate level.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">segment_pred</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>.pred_fct <span class="op">=</span> <span class="fu"><a href="https://generics.r-lib.org/reference/coercion-factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">.pred</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
@@ -203,7 +234,11 @@
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">segment_pred</span><span class="op">$</span><span class="va">.pred</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "good" "poor"</span></span></code></pre></div>
-<p>This <code>NA</code> behavior feeds into how probably can be used with yardstick. Generally, equivocal values are removed completely from performance evaluation. So converting them to <code>NA</code> and then leaving the default <code>na_rm = TRUE</code> in any yardstick metric removes them from consideration.</p>
+<p>This <code>NA</code> behavior feeds into how probably can be used
+with yardstick. Generally, equivocal values are removed completely from
+performance evaluation. So converting them to <code>NA</code> and then
+leaving the default <code>na_rm = TRUE</code> in any yardstick metric
+removes them from consideration.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/yardstick" class="external-link">yardstick</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; For binary classification, the first factor level is assumed to be the event.</span></span>
@@ -226,7 +261,12 @@
 <span><span class="co">#&gt;   .metric   .estimator .estimate</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> precision binary         0.694</span></span></code></pre></div>
-<p>As seen above, removing equivocal values using a simple threshold generally improves performance because the values your model is most unsure about are removed. But don’t be fooled! You should give those cases extra consideration, and remember that your reportable rate has decreased by removing them. In production, you’ll likely have to do something with those predictions!</p>
+<p>As seen above, removing equivocal values using a simple threshold
+generally improves performance because the values your model is most
+unsure about are removed. But don’t be fooled! You should give those
+cases extra consideration, and remember that your reportable rate has
+decreased by removing them. In production, you’ll likely have to do
+something with those predictions!</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
