@@ -27,7 +27,6 @@ Imports:
     ggplot2,
     tibble,
     purrr,
-    slider,
     tune,
     mgcv
 Suggests:

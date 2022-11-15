@@ -371,7 +371,20 @@ binary_plot_impl <- function(tbl, x, y,
   x <- enquo(x)
   y <- enquo(y)
 
-  res <- ggplot(data = tbl, aes(x = !!x)) +
+  gp_vars <- dplyr::group_vars(.data)
+
+  if(length(gp_vars)) {
+    if(length(gp_vars) > 1) {
+      rlang::abort("Plot does not support more than one grouping variable")
+    }
+    has_groups <- TRUE
+    dplyr_group <- parse_expr(gp_vars)
+  } else {
+    has_groups <- FALSE
+    dplyr_group <- NULL
+  }
+
+  res <- ggplot(data = tbl, aes(x = !!x, color = !!dplyr_group, fill = !!dplyr_group)) +
     geom_abline(col = "#aaaaaa", linetype = 2) +
     geom_line(aes(y = !!y))
 
@@ -384,7 +397,7 @@ binary_plot_impl <- function(tbl, x, y,
       geom_ribbon(aes(y = !!y, ymin = lower, ymax = upper), alpha = 0.1)
   }
 
-  if (include_rug) {
+  if (include_rug & !has_groups) {
     truth_values <- 1:2
     side_values <- c("t", "b")
     for (i in seq_along(truth_values)) {
@@ -392,10 +405,11 @@ binary_plot_impl <- function(tbl, x, y,
       res <- res +
         geom_rug(
           data = level_tbl,
-          aes(x = !!estimate, col = !!truth),
+          aes(x = !!estimate),
+          color = "#999999",
           sides = side_values[i],
           length = unit(0.015, "npc"),
-          alpha = 3 / 4,
+          alpha = 0.7,
           show.legend = FALSE
         )
     }
