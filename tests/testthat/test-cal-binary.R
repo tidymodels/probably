@@ -107,13 +107,52 @@ test_that("Binary logistic functions work", {
     .pred_poor,
     event_level = "second"
   )
+
+  expect_equal(
+    which(x25$prob == max(x25$prob)),
+    nrow(x25)
+  )
 })
 
 test_that("Binary windowed functions work", {
-  x30 <- .cal_binary_table_windowed(segment_logistic, Class, .pred_good)
 
-  expect_equal(sd(x30$predicted_midpoint), 0.3324836, tolerance = 0.000001)
-  expect_equal(mean(x30$predicted_midpoint), 0.3625673, tolerance = 0.000001)
+  x30 <- .cal_binary_table_windowed(
+    segment_logistic,
+    truth = Class,
+    estimate = .pred_good,
+    step_size = 0.11,
+    window_size = 0.10
+    )
+
+  x30_1 <- segment_logistic %>%
+    dplyr::mutate(x = dplyr::case_when(
+      .pred_good <= 0.05 ~ 1,
+      .pred_good >= 0.06 & .pred_good <= 0.16 ~ 2,
+      .pred_good >= 0.17 & .pred_good <= 0.27 ~ 3,
+      .pred_good >= 0.28 & .pred_good <= 0.38 ~ 4,
+      .pred_good >= 0.39 & .pred_good <= 0.49 ~ 5,
+      .pred_good >= 0.50 & .pred_good <= 0.60 ~ 6,
+      .pred_good >= 0.61 & .pred_good <= 0.71 ~ 7,
+      .pred_good >= 0.72 & .pred_good <= 0.82 ~ 8,
+      .pred_good >= 0.83 & .pred_good <= 0.93 ~ 9,
+      .pred_good >= 0.94 & .pred_good <= 1 ~ 10,
+    )) %>%
+    dplyr::filter(!is.na(x)) %>%
+    dplyr::group_by(x) %>%
+    dplyr::summarise(predicted_midpoint = median(.pred_good))
+
+
+  expect_equal(
+    sd(x30$predicted_midpoint),
+    sd(x30_1$predicted_midpoint),
+    tolerance = 0.000001
+    )
+
+  expect_equal(
+    mean(x30$predicted_midpoint),
+    mean(x30_1$predicted_midpoint),
+    tolerance = 0.000001
+    )
 
   x31 <- cal_plot_windowed(segment_logistic, Class, .pred_good)
 
@@ -124,10 +163,42 @@ test_that("Binary windowed functions work", {
     "'Species' does not have 2 levels"
   )
 
-  x32 <- .cal_binary_table_windowed(testthat_cal_tune_results())
+  x32 <- .cal_binary_table_windowed(
+    testthat_cal_tune_results(),
+    step_size = 0.11,
+    window_size = 0.10
+    )
 
-  expect_equal(sd(x32$predicted_midpoint), 0.3571706, tolerance = 0.000001)
-  expect_equal(mean(x32$predicted_midpoint), 0.4374119, tolerance = 0.000001)
+  x32_1 <- testthat_cal_tune_results() %>%
+    tune::collect_predictions(summarize = TRUE) %>%
+    dplyr::mutate(x = dplyr::case_when(
+      .pred_class_1 <= 0.05 ~ 1,
+      .pred_class_1 >= 0.06 & .pred_class_1 <= 0.16 ~ 2,
+      .pred_class_1 >= 0.17 & .pred_class_1 <= 0.27 ~ 3,
+      .pred_class_1 >= 0.28 & .pred_class_1 <= 0.38 ~ 4,
+      .pred_class_1 >= 0.39 & .pred_class_1 <= 0.49 ~ 5,
+      .pred_class_1 >= 0.50 & .pred_class_1 <= 0.60 ~ 6,
+      .pred_class_1 >= 0.61 & .pred_class_1 <= 0.71 ~ 7,
+      .pred_class_1 >= 0.72 & .pred_class_1 <= 0.82 ~ 8,
+      .pred_class_1 >= 0.83 & .pred_class_1 <= 0.93 ~ 9,
+      .pred_class_1 >= 0.94 & .pred_class_1 <= 1 ~ 10,
+    )) %>%
+    dplyr::filter(!is.na(x)) %>%
+    dplyr::group_by(.config, x) %>%
+    dplyr::summarise(predicted_midpoint = median(.pred_class_1), .groups = "keep")
+
+
+  expect_equal(
+    sd(x32$predicted_midpoint),
+    sd(x32_1$predicted_midpoint),
+    tolerance = 0.000001
+    )
+
+  expect_equal(
+    mean(x32$predicted_midpoint),
+    mean(x32_1$predicted_midpoint),
+    tolerance = 0.000001
+    )
 
   x33 <- cal_plot_windowed(testthat_cal_tune_results())
 

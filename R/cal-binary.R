@@ -64,30 +64,30 @@
 #'
 #' @export
 cal_plot_breaks <- function(.data,
-                                   truth = NULL,
-                                   estimate = NULL,
-                                   group = NULL,
-                                   num_breaks = 10,
-                                   conf_level = 0.90,
-                                   include_ribbon = TRUE,
-                                   include_rug = TRUE,
-                                   include_points = TRUE,
-                                   event_level = c("first", "second"),
-                                   ...) {
+                            truth = NULL,
+                            estimate = NULL,
+                            group = NULL,
+                            num_breaks = 10,
+                            conf_level = 0.90,
+                            include_ribbon = TRUE,
+                            include_rug = TRUE,
+                            include_points = TRUE,
+                            event_level = c("first", "second"),
+                            ...) {
   UseMethod("cal_plot_breaks")
 }
 
 cal_plot_breaks_impl <- function(.data,
-                                        truth = NULL,
-                                        estimate = NULL,
-                                        group = NULL,
-                                        num_breaks = 10,
-                                        conf_level = 0.90,
-                                        include_ribbon = TRUE,
-                                        include_rug = TRUE,
-                                        include_points = TRUE,
-                                        event_level = c("first", "second"),
-                                        ...) {
+                                 truth = NULL,
+                                 estimate = NULL,
+                                 group = NULL,
+                                 num_breaks = 10,
+                                 conf_level = 0.90,
+                                 include_ribbon = TRUE,
+                                 include_rug = TRUE,
+                                 include_points = TRUE,
+                                 event_level = c("first", "second"),
+                                 ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -125,16 +125,16 @@ cal_plot_breaks.data.frame <- cal_plot_breaks_impl
 
 #' @export
 cal_plot_breaks.tune_results <- function(.data,
-                                                truth = NULL,
-                                                estimate = NULL,
-                                                group = NULL,
-                                                num_breaks = 10,
-                                                conf_level = 0.90,
-                                                include_ribbon = TRUE,
-                                                include_rug = TRUE,
-                                                include_points = TRUE,
-                                                event_level = c("first", "second"),
-                                                ...) {
+                                         truth = NULL,
+                                         estimate = NULL,
+                                         group = NULL,
+                                         num_breaks = 10,
+                                         conf_level = 0.90,
+                                         include_ribbon = TRUE,
+                                         include_rug = TRUE,
+                                         include_points = TRUE,
+                                         event_level = c("first", "second"),
+                                         ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -163,29 +163,29 @@ cal_plot_breaks.tune_results <- function(.data,
 #' @rdname cal_plot_breaks
 #' @export
 cal_plot_logistic <- function(.data,
-                                     truth = NULL,
-                                     estimate = NULL,
-                                     group = NULL,
-                                     conf_level = 0.90,
-                                     smooth = TRUE,
-                                     include_rug = TRUE,
-                                     include_ribbon = TRUE,
-                                     event_level = c("first", "second"),
-                                     ...) {
+                              truth = NULL,
+                              estimate = NULL,
+                              group = NULL,
+                              conf_level = 0.90,
+                              smooth = TRUE,
+                              include_rug = TRUE,
+                              include_ribbon = TRUE,
+                              event_level = c("first", "second"),
+                              ...) {
   UseMethod("cal_plot_logistic")
 }
 
 
 cal_plot_logistic_impl <- function(.data,
-                                          truth = NULL,
-                                          estimate = NULL,
-                                          group = NULL,
-                                          conf_level = 0.90,
-                                          smooth = TRUE,
-                                          include_rug = TRUE,
-                                          include_ribbon = TRUE,
-                                          event_level = c("first", "second"),
-                                          ...) {
+                                   truth = NULL,
+                                   estimate = NULL,
+                                   group = NULL,
+                                   conf_level = 0.90,
+                                   smooth = TRUE,
+                                   include_rug = TRUE,
+                                   include_ribbon = TRUE,
+                                   event_level = c("first", "second"),
+                                   ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -223,15 +223,15 @@ cal_plot_logistic.data.frame <- cal_plot_logistic_impl
 
 #' @export
 cal_plot_logistic.tune_results <- function(.data,
-                                                  truth = NULL,
-                                                  estimate = NULL,
-                                                  group = NULL,
-                                                  conf_level = 0.90,
-                                                  smooth = TRUE,
-                                                  include_rug = TRUE,
-                                                  include_ribbon = TRUE,
-                                                  event_level = c("first", "second"),
-                                                  ...) {
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           group = NULL,
+                                           conf_level = 0.90,
+                                           smooth = TRUE,
+                                           include_rug = TRUE,
+                                           include_ribbon = TRUE,
+                                           event_level = c("first", "second"),
+                                           ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -259,32 +259,32 @@ cal_plot_logistic.tune_results <- function(.data,
 #' @rdname cal_plot_breaks
 #' @export
 cal_plot_windowed <- function(.data,
-                                     truth = NULL,
-                                     estimate = NULL,
-                                     group = NULL,
-                                     window_size = 0.1,
-                                     step_size = window_size / 2,
-                                     conf_level = 0.90,
-                                     include_ribbon = TRUE,
-                                     include_rug = TRUE,
-                                     include_points = TRUE,
-                                     event_level = c("first", "second"),
-                                     ...) {
+                              truth = NULL,
+                              estimate = NULL,
+                              group = NULL,
+                              window_size = 0.1,
+                              step_size = window_size / 2,
+                              conf_level = 0.90,
+                              include_ribbon = TRUE,
+                              include_rug = TRUE,
+                              include_points = TRUE,
+                              event_level = c("first", "second"),
+                              ...) {
   UseMethod("cal_plot_windowed")
 }
 
 cal_plot_windowed_impl <- function(.data,
-                                          truth = NULL,
-                                          estimate = NULL,
-                                          group = NULL,
-                                          window_size = 0.1,
-                                          step_size = window_size / 2,
-                                          conf_level = 0.90,
-                                          include_ribbon = TRUE,
-                                          include_rug = TRUE,
-                                          include_points = TRUE,
-                                          event_level = c("first", "second"),
-                                          ...) {
+                                   truth = NULL,
+                                   estimate = NULL,
+                                   group = NULL,
+                                   window_size = 0.1,
+                                   step_size = window_size / 2,
+                                   conf_level = 0.90,
+                                   include_ribbon = TRUE,
+                                   include_rug = TRUE,
+                                   include_points = TRUE,
+                                   event_level = c("first", "second"),
+                                   ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -323,17 +323,17 @@ cal_plot_windowed.data.frame <- cal_plot_windowed_impl
 
 #' @export
 cal_plot_windowed.tune_results <- function(.data,
-                                                  truth = NULL,
-                                                  estimate = NULL,
-                                                  group = NULL,
-                                                  window_size = 0.1,
-                                                  step_size = window_size / 2,
-                                                  conf_level = 0.90,
-                                                  include_ribbon = TRUE,
-                                                  include_rug = TRUE,
-                                                  include_points = TRUE,
-                                                  event_level = c("first", "second"),
-                                                  ...) {
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           group = NULL,
+                                           window_size = 0.1,
+                                           step_size = window_size / 2,
+                                           conf_level = 0.90,
+                                           include_ribbon = TRUE,
+                                           include_rug = TRUE,
+                                           include_points = TRUE,
+                                           event_level = c("first", "second"),
+                                           ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -462,23 +462,23 @@ binary_plot_impl <- function(tbl, x, y,
 #' @keywords internal
 .cal_binary_table_breaks <- function(.data,
                                      truth = NULL,
-                                    estimate = NULL,
-                                    group = NULL,
-                                    num_breaks = 10,
-                                    conf_level = 0.90,
-                                    event_level = c("first", "second"),
-                                    ...) {
+                                     estimate = NULL,
+                                     group = NULL,
+                                     num_breaks = 10,
+                                     conf_level = 0.90,
+                                     event_level = c("first", "second"),
+                                     ...) {
   UseMethod(".cal_binary_table_breaks")
 }
 
 .cal_binary_table_breaks_impl <- function(.data,
-                                         truth,
-                                         estimate,
-                                         group,
-                                         num_breaks = 10,
-                                         conf_level = 0.90,
-                                         event_level = c("first", "second"),
-                                         ...) {
+                                          truth,
+                                          estimate,
+                                          group,
+                                          num_breaks = 10,
+                                          conf_level = 0.90,
+                                          event_level = c("first", "second"),
+                                          ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -511,13 +511,13 @@ binary_plot_impl <- function(tbl, x, y,
 #' @export
 #' @keywords internal
 .cal_binary_table_breaks.tune_results <- function(.data,
-                                                 truth = NULL,
-                                                 estimate = NULL,
-                                                 group = NULL,
-                                                 num_breaks = 10,
-                                                 conf_level = 0.90,
-                                                 event_level = c("first", "second"),
-                                                 ...) {
+                                                  truth = NULL,
+                                                  estimate = NULL,
+                                                  group = NULL,
+                                                  num_breaks = 10,
+                                                  conf_level = 0.90,
+                                                  event_level = c("first", "second"),
+                                                  ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -545,23 +545,23 @@ binary_plot_impl <- function(tbl, x, y,
 #' @export
 #' @keywords internal
 .cal_binary_table_logistic <- function(.data,
-                                      truth = NULL,
-                                      estimate = NULL,
-                                      group = NULL,
-                                      conf_level = 0.90,
-                                      event_level = c("first", "second"),
-                                      ...) {
+                                       truth = NULL,
+                                       estimate = NULL,
+                                       group = NULL,
+                                       conf_level = 0.90,
+                                       event_level = c("first", "second"),
+                                       ...) {
   UseMethod(".cal_binary_table_logistic")
 }
 
 .cal_binary_table_logistic_impl <- function(.data,
-                                           truth = NULL,
-                                           estimate = NULL,
-                                           group = NULL,
-                                           conf_level = 0.90,
-                                           event_level = c("first", "second"),
-                                           smooth = TRUE,
-                                           ...) {
+                                            truth = NULL,
+                                            estimate = NULL,
+                                            group = NULL,
+                                            conf_level = 0.90,
+                                            event_level = c("first", "second"),
+                                            smooth = TRUE,
+                                            ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -583,12 +583,12 @@ binary_plot_impl <- function(tbl, x, y,
 }
 
 .cal_binary_table_logistic_grp <- function(.data,
-                                          truth = NULL,
-                                          estimate = NULL,
-                                          conf_level = 0.90,
-                                          event_level = c("first", "second"),
-                                          smooth = TRUE,
-                                          ...) {
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           conf_level = 0.90,
+                                           event_level = c("first", "second"),
+                                           smooth = TRUE,
+                                           ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -636,12 +636,12 @@ binary_plot_impl <- function(tbl, x, y,
 #' @export
 #' @keywords internal
 .cal_binary_table_logistic.tune_results <- function(.data,
-                                                   truth = NULL,
-                                                   estimate = NULL,
-                                                   group = NULL,
-                                                   conf_level = 0.90,
-                                                   event_level = c("first", "second"),
-                                                   ...) {
+                                                    truth = NULL,
+                                                    estimate = NULL,
+                                                    group = NULL,
+                                                    conf_level = 0.90,
+                                                    event_level = c("first", "second"),
+                                                    ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -667,26 +667,26 @@ binary_plot_impl <- function(tbl, x, y,
 #' @export
 #' @keywords internal
 .cal_binary_table_windowed <- function(.data,
-                                      truth = NULL,
-                                      estimate = NULL,
-                                      group = NULL,
-                                      window_size = 0.1,
-                                      step_size = window_size / 2,
-                                      conf_level = 0.90,
-                                      event_level = c("first", "second"),
-                                      ...) {
+                                       truth = NULL,
+                                       estimate = NULL,
+                                       group = NULL,
+                                       window_size = 0.1,
+                                       step_size = window_size / 2,
+                                       conf_level = 0.90,
+                                       event_level = c("first", "second"),
+                                       ...) {
   UseMethod(".cal_binary_table_windowed")
 }
 
 .cal_binary_table_windowed_impl <- function(.data,
-                                           truth = NULL,
-                                           estimate = NULL,
-                                           group = NULL,
-                                           window_size = 0.1,
-                                           step_size = window_size / 2,
-                                           conf_level = 0.90,
-                                           event_level = c("first", "second"),
-                                           ...) {
+                                            truth = NULL,
+                                            estimate = NULL,
+                                            group = NULL,
+                                            window_size = 0.1,
+                                            step_size = window_size / 2,
+                                            conf_level = 0.90,
+                                            event_level = c("first", "second"),
+                                            ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -709,43 +709,40 @@ binary_plot_impl <- function(tbl, x, y,
 }
 
 .cal_binary_table_windowed_grp <- function(.data,
-                                          truth,
-                                          estimate,
-                                          window_size = 0.1,
-                                          step_size = window_size / 2,
-                                          conf_level = 0.90,
-                                          event_level = c("first", "second"),
-                                          ...) {
+                                           truth,
+                                           estimate,
+                                           window_size = 0.1,
+                                           step_size = window_size / 2,
+                                           conf_level = 0.90,
+                                           event_level = c("first", "second"),
+                                           ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   lev <- process_level(event_level)
 
-  n_row <- nrow(.data)
+  steps <- seq(0, 1, by = step_size)
+  cuts <- list()
+  cuts$lower_cut <- steps - (window_size / 2)
+  cuts$lower_cut[cuts$lower_cut < 0] <- 0
+  cuts$upper_cut <- steps + (window_size / 2)
+  cuts$upper_cut[cuts$upper_cut > 1] <- 1
 
-  window_number <- round(n_row * window_size)
-  step_number <- round(n_row * step_size)
-
-  .data %>%
-    dplyr::select(!!truth, !!estimate) %>%
-    dplyr::arrange(!!estimate) %>%
-    slider::slide(
-      ~.x,
-      .before = window_number,
-      .complete = TRUE,
-      .step = step_number
-    ) %>%
-    purrr::map_df(~ {
-      if (!is.null(.x)) {
+  purrr::map_df(
+    purrr::transpose(cuts),
+    ~ {
+      .data %>%
+        dplyr::filter(
+          !!estimate >= !!.x$lower_cut & !!estimate <= !!.x$upper_cut
+        ) %>%
         process_midpoint(
-          .data = .x,
           truth = !!truth,
           estimate = !!estimate,
           level = lev,
           conf_level = conf_level
         )
-      }
-    })
+    }
+  )
 }
 
 #' @export
@@ -755,14 +752,14 @@ binary_plot_impl <- function(tbl, x, y,
 #' @export
 #' @keywords internal
 .cal_binary_table_windowed.tune_results <- function(.data,
-                                                   truth = NULL,
-                                                   estimate = NULL,
-                                                   group = NULL,
-                                                   window_size = 0.1,
-                                                   step_size = window_size / 2,
-                                                   conf_level = 0.90,
-                                                   event_level = c("first", "second"),
-                                                   ...) {
+                                                    truth = NULL,
+                                                    estimate = NULL,
+                                                    group = NULL,
+                                                    window_size = 0.1,
+                                                    step_size = window_size / 2,
+                                                    conf_level = 0.90,
+                                                    event_level = c("first", "second"),
+                                                    ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
