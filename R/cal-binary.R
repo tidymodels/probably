@@ -43,6 +43,7 @@
 #' @examples
 #'
 #' library(ggplot2)
+#' library(dplyr)
 #'
 #' cal_plot_breaks(
 #'   segment_logistic,
@@ -61,6 +62,28 @@
 #'   Class,
 #'   .pred_good
 #' )
+#'
+#' # The functions support dplyr groups
+#'
+#' model <- glm(Class ~ .pred_good, segment_logistic, family = "binomial")
+#'
+#' preds <- predict(model, segment_logistic, type = "response")
+#'
+#' gl <- segment_logistic %>%
+#'   mutate(.pred_good = 1- preds, source = "glm")
+#'
+#' combined <- bind_rows(mutate(segment_logistic, source = "original"), gl)
+#'
+#' combined %>%
+#'   group_by(source) %>%
+#'   cal_plot_logistic(Class, .pred_good)
+#'
+#' # The grouping can be faceted in ggplot2
+#' combined %>%
+#'   group_by(source) %>%
+#'   cal_plot_logistic(Class, .pred_good) +
+#'   facet_wrap(~source) +
+#'   theme(legend.position = "")
 #'
 #' @export
 cal_plot_breaks <- function(.data,
