@@ -43,6 +43,7 @@
 #' @examples
 #'
 #' library(ggplot2)
+#' library(dplyr)
 #'
 #' cal_plot_breaks(
 #'   segment_logistic,
@@ -61,6 +62,28 @@
 #'   Class,
 #'   .pred_good
 #' )
+#'
+#' # The functions support dplyr groups
+#'
+#' model <- glm(Class ~ .pred_good, segment_logistic, family = "binomial")
+#'
+#' preds <- predict(model, segment_logistic, type = "response")
+#'
+#' gl <- segment_logistic %>%
+#'   mutate(.pred_good = 1- preds, source = "glm")
+#'
+#' combined <- bind_rows(mutate(segment_logistic, source = "original"), gl)
+#'
+#' combined %>%
+#'   group_by(source) %>%
+#'   cal_plot_logistic(Class, .pred_good)
+#'
+#' # The grouping can be faceted in ggplot2
+#' combined %>%
+#'   group_by(source) %>%
+#'   cal_plot_logistic(Class, .pred_good) +
+#'   facet_wrap(~source) +
+#'   theme(legend.position = "")
 #'
 #' @export
 cal_plot_breaks <- function(.data,
@@ -210,8 +233,8 @@ cal_plot_logistic_impl <- function(.data,
     truth = !!truth,
     estimate = !!estimate,
     group = !!group,
-    x_label = "Estimate",
-    y_label = "Probability",
+    x_label = "Probability",
+    y_label = "Predicted Event Rate",
     include_ribbon = include_ribbon,
     include_rug = include_rug,
     include_points = FALSE
@@ -371,7 +394,20 @@ binary_plot_impl <- function(tbl, x, y,
   x <- enquo(x)
   y <- enquo(y)
 
-  res <- ggplot(data = tbl, aes(x = !!x)) +
+  gp_vars <- dplyr::group_vars(.data)
+
+  if(length(gp_vars)) {
+    if(length(gp_vars) > 1) {
+      rlang::abort("Plot does not support more than one grouping variable")
+    }
+    has_groups <- TRUE
+    dplyr_group <- parse_expr(gp_vars)
+  } else {
+    has_groups <- FALSE
+    dplyr_group <- NULL
+  }
+
+  res <- ggplot(data = tbl, aes(x = !!x, color = !!dplyr_group, fill = !!dplyr_group)) +
     geom_abline(col = "#aaaaaa", linetype = 2) +
     geom_line(aes(y = !!y))
 
@@ -381,10 +417,13 @@ binary_plot_impl <- function(tbl, x, y,
 
   if (include_ribbon) {
     res <- res +
-      geom_ribbon(aes(y = !!y, ymin = lower, ymax = upper), alpha = 0.1)
+      geom_ribbon(
+        aes(y = !!y, ymin = lower, ymax = upper), color = "#ffffff00",
+        alpha = 0.08
+        )
   }
 
-  if (include_rug) {
+  if (include_rug & !has_groups) {
     truth_values <- 1:2
     side_values <- c("t", "b")
     for (i in seq_along(truth_values)) {
@@ -392,10 +431,11 @@ binary_plot_impl <- function(tbl, x, y,
       res <- res +
         geom_rug(
           data = level_tbl,
-          aes(x = !!estimate, col = !!truth),
+          aes(x = !!estimate),
+          color = "#999999",
           sides = side_values[i],
           length = unit(0.015, "npc"),
-          alpha = 3 / 4,
+          alpha = 0.7,
           show.legend = FALSE
         )
     }
@@ -567,7 +607,7 @@ binary_plot_impl <- function(tbl, x, y,
   group <- enquo(group)
 
   tbls <- .data %>%
-    dplyr::group_by(!!group) %>%
+    dplyr::group_by(!!group, .add = TRUE) %>%
     dplyr::group_map(~ {
       grp <- .cal_binary_table_logistic_grp(
         .data = .x,
@@ -692,7 +732,7 @@ binary_plot_impl <- function(tbl, x, y,
   group <- enquo(group)
 
   tbls <- .data %>%
-    dplyr::group_by(!!group) %>%
+    dplyr::group_by(!!group, .add = TRUE) %>%
     dplyr::group_map(~ {
       grp <- .cal_binary_table_windowed_grp(
         .data = .x,

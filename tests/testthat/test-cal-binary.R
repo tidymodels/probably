@@ -217,3 +217,30 @@ test_that("Event level handling works", {
     "Invalid event_level entry. Valid entries are 'first' and 'second'"
   )
 })
+
+
+test_that("Groups are respected", {
+  preds <- segment_logistic %>%
+    dplyr::mutate(source = "logistic") %>%
+    dplyr::bind_rows(segment_naive_bayes) %>%
+    dplyr::mutate(source = ifelse(is.na(source), "nb", source)) %>%
+    dplyr::group_by(source)
+
+  x40 <- .cal_binary_table_breaks(preds, Class, .pred_good)
+
+  expect_equal(as.integer(table(x40$source)), c(10, 10))
+
+  expect_equal(unique(x40$source), c("logistic", "nb"))
+
+  x41 <- .cal_binary_table_logistic(preds, Class, .pred_good)
+
+  expect_equal(as.integer(table(x41$source)), c(101, 101))
+
+  expect_equal(unique(x41$source), c("logistic", "nb"))
+
+  x42 <- .cal_binary_table_windowed(preds, Class, .pred_good)
+
+  expect_equal(as.integer(table(x42$source)), c(21, 21))
+
+  expect_equal(unique(x42$source), c("logistic", "nb"))
+})
