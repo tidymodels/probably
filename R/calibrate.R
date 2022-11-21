@@ -9,10 +9,8 @@ cal_apply.data.frame <- function(x, calibration){
   if(calibration$type == "binary") {
     truth <- calibration$truth
     estimate <- names(calibration$estimates[1])
-    x <- dplyr::select(x, !!parse_expr(truth), !!parse_expr(estimate))
   }
-  ca <- cal_add_adjust(calibration, x)
-  as_cal_applied(ca, calibration)
+  cal_add_adjust(calibration, x)
 }
 
 #' @export
@@ -89,29 +87,27 @@ cal_add_adjust.cal_isotonic <- function(calibration, .data, desc = NULL) {
 }
 
 cal_add_interval <- function(estimates_table, estimate, .data, adj_name, desc = NULL) {
-    adj_name <- enquo(adj_name)
     estimate <- enquo(estimate)
-    nd <- dplyr::pull(.data, !!estimate)
-    x <- dplyr::pull(estimates_table, .estimate)
-    y <- dplyr::pull(estimates_table, .adj_estimate)
-    find_interval <- findInterval(nd, x)
+    y <- estimates_table$.adj_estimate
+    find_interval <- findInterval(
+      dplyr::pull(.data, !!estimate),
+      estimates_table$.estimate
+      )
     find_interval[find_interval == 0] <- 1
     intervals <- y[find_interval]
-    dplyr::mutate(.data, !!adj_name := intervals)
+    dplyr::mutate(.data, !!estimate := intervals)
 }
 
 call_add_join_impl <- function(calibration, .data, model, desc = NULL) {
-  ret <- list()
   if(calibration$type == "binary") {
     estimate <- calibration$estimates[1]
     ret <- estimate[[1]][[model]]
     cal <- ret$calibration
     est_name <- names(estimate)
     adj_name <- paste0(".adj_", length(colnames(.data)) - 2)
-    x <- cal_add_join(cal, !! parse_expr(est_name), .data, !! parse_expr(adj_name))
-    ret <- as_cal_res(x, ret$title, adj_name, desc, est_name)
+    .data <- cal_add_join(cal, !! parse_expr(est_name), .data, !! parse_expr(est_name))
   }
-  ret
+  .data
 }
 
 as_cal_res <- function(x, title, adj_name, desc, var_name) {
@@ -130,9 +126,10 @@ as_cal_res <- function(x, title, adj_name, desc, var_name) {
 cal_add_join <- function(estimates_table, estimate, .data, adj_name) {
   adj_name <- enquo(adj_name)
   estimate <- enquo(estimate)
-  round_data <- mutate(
+  round_data <- dplyr::select(
     .data,
-    .rounded := round(!!estimate, digits = 3)
+    .rounded := round(!!estimate, digits = 3),
+    - !! estimate
   )
   est_table <- dplyr::rename(estimates_table, !! adj_name := ".adj_estimate")
   matched_data <- dplyr::left_join(
@@ -201,18 +198,28 @@ as_tibble.cal_applied_binary <- function(x, ...) {
 # ------------------------------ Logistic --------------------------------------
 
 #' @export
-cal_logistic <- function(.data, truth = NULL, estimate = NULL, ...) {
+cal_logistic <- function(.data,
+                         truth = NULL,
+                         estimate = NULL,
+                         event_level = c("first", "second"),
+                         ...
+                         ) {
   UseMethod("cal_logistic")
 }
 
 #' @export
-cal_logistic.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
+cal_logistic.data.frame <- function(.data,
+                                    truth = NULL,
+                                    estimate = NULL,
+                                    event_level = c("first", "second"),
+                                    ...
+                                    ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_model_impl(.data, !!truth, !!estimate, method = "glm", ... = ...)
+    res <- cal_model_impl(.data, !!truth, !!estimate, event_level = event_level, method = "glm", ... = ...)
     est <- as_cal_variable(res, !! estimate, "Logistic", "glm")
   } else {
     stop_multiclass()
@@ -384,64 +391,6 @@ boot_iso_cal <- function(x) {
   dplyr::select(adj_data, .estimate, .adj_estimate)
 }
 
-# ------------------------------ Binary ----------------------------------------
-
-
-#' @export
-cal_binary_breaks <- function(.data, truth, estimate, breaks = 10, conf_level = 0.9) {
-  estimate <- enquo(estimate)
-  truth <- enquo(truth)
-  probability_breaks(
-    .data = .data,
-    truth = !! truth,
-    estimate = !! estimate,
-    num_breaks = breaks,
-    truth_val = NULL,
-    conf_level = conf_level
-    )
-}
-
-#' @export
-cal_binary_plot <- function(.data, truth = .truth, estimate = .estimate, breaks = 10) {
-  estimate <- enquo(estimate)
-  truth <- enquo(truth)
-
-  bin_tbl <- cal_binary_breaks(
-    .data = .data,
-    truth = !!truth,
-    estimate = !!estimate
-  )
-
-  grouping <- dplyr::group_vars(.data)
-  if(length(grouping)) {
-    grouping <- parse_expr(grouping)
-  } else {
-    grouping <- NULL
-  }
-
-  ggplot(
-    data = bin_tbl,
-    aes(x = predicted_midpoint,
-        y = event_rate,
-        color = !! grouping,
-        group = !! grouping,
-        ymin = conf_low,
-        ymax = conf_high
-        )
-    ) +
-    geom_line() +
-    geom_point(alpha = 0.5) +
-    geom_segment(x = 0, y = 0, xend = 1, yend = 1, linetype = 2, color = "gray") +
-    geom_errorbar(width = 0.02, alpha = 0.5) +
-    theme_minimal() +
-    labs(
-      title = "Calibration Plot",
-      x = "Predicted Midpoint",
-      y = "Event Ratio"
-    )
-
-}
-
 # ---------------------------- Binary Objs--------------------------------------
 
 #' @export
@@ -465,29 +414,27 @@ brier_score_binary <- function(.data, truth, estimate) {
 
 # ------------------------------- Utils ----------------------------------------
 
-cal_model_impl <- function(.data, truth, estimate, truth_val = NULL, method, ...) {
+cal_model_impl <- function(.data, truth, estimate, method, event_level, ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  # Adds a binary variable if the value of truth is not 0/1,
-  # this is to handle Multiclass in the future
-  truth_data <- add_is_val(.data, !! truth, truth_val)
-
-  # Creates dummy variable to avoid tidyevel in the formula
-  val_data <- dplyr::mutate(truth_data, .estimate = !!estimate)
+  val_data <- dplyr::mutate(.data,
+                            .estimate = !!estimate,
+                            .is_val := !!truth
+                            )
 
   if(method == "logistic_spline"){
-    model <- gam::gam(.is_val ~ gam::s(.estimate), data = val_data, ... = ...)
+    model <- gam::gam(.is_val ~ gam::s(.estimate), data = val_data, ...)
     }
   if(method == "glm") {
-    model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial", ... = ...)
+    model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial", ...)
     }
   if(method == "beta") {
-    model <- betareg::betareg(.estimate ~ .is_val, data = val_data, ... = ...)
+    model <- betareg::betareg(.estimate ~ .is_val, data = val_data,  ...)
     }
 
   # Creates 1,000 predictions using 0 to 1, which become the calibration
-  new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
+  new_estimates <- 1 - seq(0, 1, by = .001)
   new_data <- data.frame(.estimate = new_estimates)
   pred <- predict(model, newdata = new_data, type = "response")
 
@@ -496,62 +443,6 @@ cal_model_impl <- function(.data, truth, estimate, truth_val = NULL, method, ...
     .estimate = new_estimates,
     .adj_estimate = pred
   )
-}
-
-probability_breaks <- function(.data,
-                             truth,
-                             estimate,
-                             truth_val = NULL,
-                             num_breaks = 10,
-                             conf_level = 0.90
-                             ) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  truth_data <- add_is_val(.data, !! truth, truth_val)
-
-  # Creates a case_when entry for each bin
-  bin_exprs <- map(
-    seq_len(num_breaks),
-    ~ expr(!!estimate <= !!.x / !!num_breaks ~ !!.x)
-  )
-
-  bin_data <- truth_data %>%
-    dplyr::mutate(.bin = case_when(!!!bin_exprs)) %>%
-    dplyr::group_by(.bin, .add = TRUE) %>%
-    dplyr::summarise(
-      predicted_midpoint = median(!!estimate),
-      event_rate = sum(.is_val) / n(),
-      events = sum(.is_val),
-      total = n()
-    ) %>%
-    dplyr::ungroup()
-
-  add_conf_intervals(bin_data, events, total, conf_level = conf_level)
-}
-
-add_conf_intervals <- function(.data,
-                               events = events,
-                               total_observations = total,
-                               conf_level = 0.90
-                               ) {
-  events <- enquo(events)
-  total_observations <- enquo(total_observations)
-  .data %>%
-    purrr::transpose() %>%
-    purrr::map_df(
-      ~ {
-        events <- .x[[as_name(events)]]
-        total_observations <- .x[[as_name(total_observations)]]
-        suppressWarnings(
-          pt <- prop.test(events, total_observations, conf.level = conf_level)
-          )
-        ret <- as_tibble(.x)
-        ret$conf_low <- pt$conf.int[[1]]
-        ret$conf_high <- pt$conf.int[[2]]
-        ret
-        }
-    )
 }
 
 add_is_val <- function(.data, truth, truth_val = NULL) {
