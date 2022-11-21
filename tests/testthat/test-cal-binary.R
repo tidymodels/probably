@@ -2,13 +2,10 @@ test_that("Binary breaks functions work", {
 
   x10 <- .cal_binary_table_breaks(segment_logistic, Class, .pred_good)
 
-  x10_1 <- segment_logistic %>%
-    dplyr::group_by(floor(.pred_good * 10)) %>%
-    dplyr::summarise(median(.pred_good)) %>%
-    dplyr::pull()
-
-  expect_equal(sd(x10$predicted_midpoint), sd(x10_1), tolerance = 0.000001)
-  expect_equal(mean(x10$predicted_midpoint), mean(x10_1), tolerance = 0.000001)
+  expect_equal(
+    x10$predicted_midpoint,
+    seq(0.05, 0.95, by = 0.10)
+    )
 
   expect_s3_class(
     cal_plot_breaks(segment_logistic, Class, .pred_good),
@@ -20,16 +17,12 @@ test_that("Binary breaks functions work", {
     "'Species' does not have 2 levels"
   )
 
-  x12 <- .cal_binary_table_breaks(testthat_cal_tune_results())
+  x11 <- .cal_binary_table_breaks(testthat_cal_tune_results())
 
-  x12_1 <- testthat_cal_tune_results() %>%
-    tune::collect_predictions(summarize = TRUE) %>%
-    dplyr::group_by(.config, floor(.pred_class_1 * 10)) %>%
-    dplyr::summarise(median(.pred_class_1), .groups = "keep") %>%
-    dplyr::pull()
-
-  expect_equal(sd(x12$predicted_midpoint), sd(x12_1), tolerance = 0.000001)
-  expect_equal(mean(x12$predicted_midpoint), mean(x12_1), tolerance = 0.000001)
+  expect_equal(
+    x11$predicted_midpoint,
+    rep(seq(0.05, 0.95, by = 0.10), times = 8)
+    )
 
   expect_s3_class(
     cal_plot_breaks(testthat_cal_tune_results()),
@@ -138,21 +131,12 @@ test_that("Binary windowed functions work", {
       .pred_good >= 0.94 & .pred_good <= 1 ~ 10,
     )) %>%
     dplyr::filter(!is.na(x)) %>%
-    dplyr::group_by(x) %>%
-    dplyr::summarise(predicted_midpoint = median(.pred_good))
-
+    count(x)
 
   expect_equal(
-    sd(x30$predicted_midpoint),
-    sd(x30_1$predicted_midpoint),
-    tolerance = 0.000001
-    )
-
-  expect_equal(
-    mean(x30$predicted_midpoint),
-    mean(x30_1$predicted_midpoint),
-    tolerance = 0.000001
-    )
+    x30$total,
+    x30_1$n
+  )
 
   x31 <- cal_plot_windowed(segment_logistic, Class, .pred_good)
 
@@ -184,21 +168,12 @@ test_that("Binary windowed functions work", {
       .pred_class_1 >= 0.94 & .pred_class_1 <= 1 ~ 10,
     )) %>%
     dplyr::filter(!is.na(x)) %>%
-    dplyr::group_by(.config, x) %>%
-    dplyr::summarise(predicted_midpoint = median(.pred_class_1), .groups = "keep")
-
+    dplyr::count(.config, x)
 
   expect_equal(
-    sd(x32$predicted_midpoint),
-    sd(x32_1$predicted_midpoint),
-    tolerance = 0.000001
-    )
-
-  expect_equal(
-    mean(x32$predicted_midpoint),
-    mean(x32_1$predicted_midpoint),
-    tolerance = 0.000001
-    )
+    x32$total,
+    x32_1$n
+  )
 
   x33 <- cal_plot_windowed(testthat_cal_tune_results())
 

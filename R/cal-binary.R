@@ -530,6 +530,19 @@ binary_plot_impl <- function(tbl, x, y,
     ~ expr(!!estimate <= !!.x / !!num_breaks ~ !!.x)
   )
 
+  groups <- .data %>%
+    dplyr::group_by(!!group, .add = TRUE) %>%
+    dplyr::summarise(.groups = "keep") %>%
+    dplyr::ungroup() %>%
+    dplyr::count() %>%
+    dplyr::pull()
+
+  side <-  seq(0, 1, by = 1 / num_breaks)
+  side1 <- side[1:length(side) - 1]
+  side2 <- side[2:length(side)]
+  side_mid <- (side2 - side1) / 2
+  midpoint <- rep(side1 + side_mid, times = groups)
+
   .data %>%
     dplyr::mutate(
       .bin = dplyr::case_when(!!!bin_exprs)
@@ -541,7 +554,9 @@ binary_plot_impl <- function(tbl, x, y,
       .bin = .bin,
       level = lev,
       conf_level = conf_level
-    )
+    ) %>%
+    dplyr::mutate(predicted_midpoint = midpoint) %>%
+    dplyr::select(predicted_midpoint, dplyr::everything())
 }
 
 #' @export
@@ -768,21 +783,26 @@ binary_plot_impl <- function(tbl, x, y,
   cuts$upper_cut <- steps + (window_size / 2)
   cuts$upper_cut[cuts$upper_cut > 1] <- 1
 
-  purrr::map_df(
-    purrr::transpose(cuts),
-    ~ {
-      .data %>%
-        dplyr::filter(
-          !!estimate >= !!.x$lower_cut & !!estimate <= !!.x$upper_cut
-        ) %>%
-        process_midpoint(
-          truth = !!truth,
-          estimate = !!estimate,
-          level = lev,
-          conf_level = conf_level
-        )
-    }
-  )
+  cuts %>%
+    purrr::transpose() %>%
+    purrr::map_df(
+      ~ {
+        .data %>%
+          dplyr::filter(
+            !!estimate >= !!.x$lower_cut & !!estimate <= !!.x$upper_cut
+          ) %>%
+          process_midpoint(
+            truth = !!truth,
+            estimate = !!estimate,
+            level = lev,
+            conf_level = conf_level
+          ) %>%
+          dplyr::mutate(
+            predicted_midpoint = .x$lower_cut + ((.x$upper_cut - .x$lower_cut) / 2)
+            ) %>%
+          dplyr::select(predicted_midpoint, dplyr::everything())
+      }
+    )
 }
 
 #' @export
@@ -847,12 +867,11 @@ process_midpoint <- function(.data,
 
   tbl <- tbl %>%
     dplyr::summarise(
-      predicted_midpoint = median(!!estimate, na.rm = TRUE),
       event_rate = sum(.is_val, na.rm = TRUE) / dplyr::n(),
       events = sum(.is_val, na.rm = TRUE),
       total = dplyr::n()
     ) %>%
-    dplyr::ungroup() %>%
+    #dplyr::ungroup() %>%
     dplyr::filter(total > 0)
 
   if (!quo_is_null(.bin)) tbl <- dplyr::select(tbl, -.bin)
