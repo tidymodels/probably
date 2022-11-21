@@ -4,8 +4,15 @@
 ## usethis namespace: start
 #' @import rlang
 #' @import vctrs
-#' @importFrom purrr map
+#' @import ggplot2
 #' @importFrom magrittr %>%
+#' @importFrom purrr map
 #' @importFrom yardstick sens spec j_index
+#' @importFrom stats binomial median predict qnorm
 ## usethis namespace: end
 NULL
+
+utils::globalVariables(c(
+  ".bin", ".is_val", "event_rate", "events", "lower",
+  "predicted_midpoint", "total", "upper", ".config"
+))

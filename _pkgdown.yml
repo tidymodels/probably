@@ -37,3 +37,7 @@ reference:
   - segment_naive_bayes
   - segment_logistic
   - species_probs
+
+- title: Calibration
+  contents:
+  - starts_with("cal_")
