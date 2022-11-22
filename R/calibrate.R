@@ -7,10 +7,8 @@ cal_apply <- function(x, calibration) {
 #' @export
 cal_apply.data.frame <- function(x, calibration){
   if(calibration$type == "binary") {
-    truth <- calibration$truth
-    estimate <- names(calibration$estimates[1])
+    cal_add_adjust(calibration, x)
   }
-  cal_add_adjust(calibration, x)
 }
 
 #' @export
@@ -54,15 +52,23 @@ cal_add_adjust <- function(calibration, .data, desc = NULL) {
 }
 
 cal_add_adjust.cal_logistic <- function(calibration, .data, desc = NULL) {
-  call_add_join_impl(calibration, .data, "glm", desc = desc)
+  cal_add_predict_impl(
+    calibration = calibration,
+    .data = .data,
+    model = "glm"
+    )
 }
 
 cal_add_adjust.cal_logistic_spline <- function(calibration, .data, desc = NULL) {
-  call_add_join_impl(calibration, .data, "logistic_spline", desc = desc)
+  cal_add_predict_impl(
+    calibration = calibration,
+    .data = .data,
+    model = "logistic_spline"
+  )
 }
 
 cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, desc = NULL) {
-  call_add_join_impl(calibration, .data, "isotonic_boot", desc = desc)
+  cal_add_join_impl(calibration, .data, "isotonic_boot", desc = desc)
 }
 
 cal_add_adjust.cal_isotonic <- function(calibration, .data, desc = NULL) {
@@ -98,7 +104,18 @@ cal_add_interval <- function(estimates_table, estimate, .data, adj_name, desc = 
     dplyr::mutate(.data, !!estimate := intervals)
 }
 
-call_add_join_impl <- function(calibration, .data, model, desc = NULL) {
+cal_add_predict_impl <- function(calibration, .data, model) {
+  if(calibration$type == "binary") {
+    estimate <- names(calibration$estimates)
+    model <- calibration$estimates[[estimate]][[model]]$calibration
+    preds <- predict(model, newdata = .data, type = "response")
+    if(calibration$event_level == 1) preds <- 1 - preds
+    .data[[estimate]] <- preds
+  }
+  .data
+}
+
+cal_add_join_impl <- function(calibration, .data, model, desc = NULL) {
   if(calibration$type == "binary") {
     estimate <- calibration$estimates[1]
     ret <- estimate[[1]][[model]]
@@ -142,12 +159,17 @@ cal_add_join <- function(estimates_table, estimate, .data, adj_name) {
 
 # ----------------------------- Object Builders --------------------------------
 
-as_cal_object <- function(estimates, truth, type, additional_class = NULL) {
+as_cal_object <- function(estimates, truth, type, .data, event_level, additional_class = NULL) {
+  lev <- process_level(event_level)
   truth <- enquo(truth)
+  truth_name <- as_name(truth)
+  levels <- levels(.data[, truth_name][[1]])
   structure(
     list(
       type = type,
-      truth = as_name(truth),
+      truth = truth_name,
+      levels = levels,
+      event_level = lev,
       estimates = estimates
     ),
     class = c("cal_object", paste0("cal_", type), additional_class)
@@ -219,24 +241,48 @@ cal_logistic.data.frame <- function(.data,
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_model_impl(.data, !!truth, !!estimate, event_level = event_level, method = "glm", ... = ...)
+    res <- cal_model_impl(
+      .data = .data,
+      truth = !!truth,
+      estimate = !!estimate,
+      event_level = event_level,
+      method = "glm",
+      ...
+      )
     est <- as_cal_variable(res, !! estimate, "Logistic", "glm")
   } else {
     stop_multiclass()
   }
 
-  as_cal_object(est, !!truth, type, additional_class = "cal_logistic")
+  as_cal_object(
+    estimates = est,
+    truth = !!truth,
+    type = type,
+    .data = .data,
+    event_level = event_level,
+    additional_class = "cal_logistic"
+    )
 }
 
 # --------------------- Logistic Spline (GAM)  ---------------------------------
 
 #' @export
-cal_logistic_spline <- function(.data, truth = NULL, estimate = NULL, ...) {
+cal_logistic_spline <- function(.data,
+                                truth = NULL,
+                                estimate = NULL,
+                                event_level = c("first", "second"),
+                                ...
+                                ) {
   UseMethod("cal_logistic_spline")
 }
 
 #' @export
-cal_logistic_spline.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
+cal_logistic_spline.data.frame <- function(.data,
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           event_level = c("first", "second"),
+                                           ...
+                                           ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -248,7 +294,14 @@ cal_logistic_spline.data.frame <- function(.data, truth = NULL, estimate = NULL,
     stop_multiclass()
   }
 
-  as_cal_object(est, !!truth, type, additional_class = "cal_logistic_spline")
+  as_cal_object(
+    estimates = est,
+    truth = !!truth,
+    type = type,
+    .data = .data,
+    event_level = event_level,
+    additional_class = "cal_logistic_spline"
+  )
 }
 
 # -------------------------------- Beta ----------------------------------------
@@ -396,53 +449,32 @@ boot_iso_cal <- function(x) {
 #' @export
 print.cal_binary <- function(x, ...) {
   cat("Probability Calibration\n")
-  cat(" --------------------- \n")
-  cat("Type: Binary\n")
-  cat("Method:", x$estimates[[1]][[1]]$title, "\n")
-  cat("Truth:   ", x$truth, "\n")
-  cat("Estimate:", names(x$estimates), "\n")
-}
-
-brier_score_binary <- function(.data, truth, estimate) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-  subs <- expr(!! truth - !! estimate)
-  bs <- dplyr::mutate(.data, subs = !! subs * !! subs)
-  bs_sum <- dplyr::summarise(bs, x = sum(subs) / n())
-  pull(bs_sum, x)
+  cat("----------------------- \n")
+  cat("Type:      Binary\n")
+  cat("Method:    ", x$estimates[[1]][[1]]$title, "\n")
+  cat("Truth:     ", x$truth, "\n")
+  cat(" |- Levels: ", paste(x$levels, collapse = "/"), "\n")
+  cat("Estimate:  ", names(x$estimates), "\n")
 }
 
 # ------------------------------- Utils ----------------------------------------
 
 cal_model_impl <- function(.data, truth, estimate, method, event_level, ...) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  val_data <- dplyr::mutate(.data,
-                            .estimate = !!estimate,
-                            .is_val := !!truth
-                            )
+  truth <- ensym(truth)
+  estimate <- ensym(estimate)
 
   if(method == "logistic_spline"){
-    model <- gam::gam(.is_val ~ gam::s(.estimate), data = val_data, ...)
+    f_model <- expr(!!truth ~ s(!!estimate, k = 10))
+    init_model <- mgcv::gam(f_model, data = .data, family = "binomial", ...)
+    model <- butcher::butcher(init_model)
     }
   if(method == "glm") {
-    model <- glm(.is_val ~ .estimate, data = val_data, family = "binomial", ...)
-    }
-  if(method == "beta") {
-    model <- betareg::betareg(.estimate ~ .is_val, data = val_data,  ...)
+    f_model <- expr(!!truth ~ !!estimate)
+    init_model <- glm(f_model, data = .data, family = "binomial", ...)
+    model <- butcher::butcher(init_model)
     }
 
-  # Creates 1,000 predictions using 0 to 1, which become the calibration
-  new_estimates <- 1 - seq(0, 1, by = .001)
-  new_data <- data.frame(.estimate = new_estimates)
-  pred <- predict(model, newdata = new_data, type = "response")
-
-  # Returns table with expected names
-  tibble(
-    .estimate = new_estimates,
-    .adj_estimate = pred
-  )
+  model
 }
 
 add_is_val <- function(.data, truth, truth_val = NULL) {
