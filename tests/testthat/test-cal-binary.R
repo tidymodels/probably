@@ -219,3 +219,54 @@ test_that("Groups are respected", {
 
   expect_equal(unique(x42$source), c("logistic", "nb"))
 })
+
+test_that("Groupings that may not match work", {
+  model <- glm(Class ~ .pred_good, segment_logistic, family = "binomial")
+
+  preds <- 1 -  predict(model, segment_logistic, type = "response")
+
+  combined <- dplyr::bind_rows(
+    dplyr::mutate(segment_logistic, source = "original"),
+    dplyr::mutate(segment_logistic, .pred_good = preds, source = "glm")
+  )
+
+  x50 <- combined %>%
+    group_by(source) %>%
+    .cal_binary_table_breaks(Class, .pred_good)
+
+  expect_equal(
+    unique(x50$predicted_midpoint),
+    seq(0.05, 0.95, by = 0.10)
+  )
+
+  x51 <- combined %>%
+    group_by(source) %>%
+    .cal_binary_table_windowed(
+      truth = Class,
+      estimate = .pred_good,
+      step_size = 0.11,
+      window_size = 0.10
+      )
+
+  x51_1 <- combined %>%
+    dplyr::mutate(x = dplyr::case_when(
+      .pred_good <= 0.05 ~ 1,
+      .pred_good >= 0.06 & .pred_good <= 0.16 ~ 2,
+      .pred_good >= 0.17 & .pred_good <= 0.27 ~ 3,
+      .pred_good >= 0.28 & .pred_good <= 0.38 ~ 4,
+      .pred_good >= 0.39 & .pred_good <= 0.49 ~ 5,
+      .pred_good >= 0.50 & .pred_good <= 0.60 ~ 6,
+      .pred_good >= 0.61 & .pred_good <= 0.71 ~ 7,
+      .pred_good >= 0.72 & .pred_good <= 0.82 ~ 8,
+      .pred_good >= 0.83 & .pred_good <= 0.93 ~ 9,
+      .pred_good >= 0.94 & .pred_good <= 1 ~ 10,
+    )) %>%
+    dplyr::filter(!is.na(x)) %>%
+    count(source, x)
+
+  expect_equal(
+    x51$total,
+    x51_1$n
+  )
+
+})
