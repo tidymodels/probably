@@ -511,6 +511,7 @@ binary_plot_impl <- function(tbl, x, y,
   UseMethod(".cal_binary_table_breaks")
 }
 
+
 .cal_binary_table_breaks_impl <- function(.data,
                                           truth,
                                           estimate,
@@ -523,25 +524,50 @@ binary_plot_impl <- function(tbl, x, y,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
+  tbls <- .data %>%
+    dplyr::group_by(!!group, .add = TRUE) %>%
+    dplyr::group_map(~ {
+      grp <- .cal_binary_table_breaks_grp(
+        .data = .x,
+        truth = !!truth,
+        estimate = !!estimate,
+        num_breaks = num_breaks,
+        conf_level = conf_level,
+        event_level = event_level
+      )
+      dplyr::bind_cols(.y, grp)
+    })
+  dplyr::bind_rows(tbls)
+}
+
+.cal_binary_table_breaks_grp <- function(.data,
+                                          truth,
+                                          estimate,
+                                          group,
+                                          num_breaks = 10,
+                                          conf_level = 0.90,
+                                          event_level = c("first", "second"),
+                                          ...) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
   lev <- process_level(event_level)
 
-  bin_exprs <- purrr::map(
-    seq_len(num_breaks),
-    ~ expr(!!estimate <= !!.x / !!num_breaks ~ !!.x)
+  side <-  seq(0, 1, by = 1 / num_breaks)
+
+  cuts <- list(
+    lower_cut = side[1:length(side) - 1],
+    upper_cut = side[2:length(side)]
   )
 
-  .data %>%
-    dplyr::mutate(
-      .bin = dplyr::case_when(!!!bin_exprs)
-    ) %>%
-    process_midpoint(
-      truth = !!truth,
-      estimate = !!estimate,
-      group = !!group,
-      .bin = .bin,
-      level = lev,
-      conf_level = conf_level
-    )
+  .cal_groups(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
+    cuts = cuts,
+    lev = lev,
+    conf_level = conf_level
+  )
 }
 
 #' @export
@@ -768,20 +794,13 @@ binary_plot_impl <- function(tbl, x, y,
   cuts$upper_cut <- steps + (window_size / 2)
   cuts$upper_cut[cuts$upper_cut > 1] <- 1
 
-  purrr::map_df(
-    purrr::transpose(cuts),
-    ~ {
-      .data %>%
-        dplyr::filter(
-          !!estimate >= !!.x$lower_cut & !!estimate <= !!.x$upper_cut
-        ) %>%
-        process_midpoint(
-          truth = !!truth,
-          estimate = !!estimate,
-          level = lev,
-          conf_level = conf_level
-        )
-    }
+  .cal_groups(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
+    cuts = cuts,
+    lev = lev,
+    conf_level = conf_level
   )
 }
 
@@ -847,12 +866,11 @@ process_midpoint <- function(.data,
 
   tbl <- tbl %>%
     dplyr::summarise(
-      predicted_midpoint = median(!!estimate, na.rm = TRUE),
       event_rate = sum(.is_val, na.rm = TRUE) / dplyr::n(),
       events = sum(.is_val, na.rm = TRUE),
       total = dplyr::n()
     ) %>%
-    dplyr::ungroup() %>%
+    #dplyr::ungroup() %>%
     dplyr::filter(total > 0)
 
   if (!quo_is_null(.bin)) tbl <- dplyr::select(tbl, -.bin)
@@ -953,4 +971,31 @@ tune_results_args <- function(.data, truth, estimate, group, event_level, ...) {
     group = quo(!!group),
     predictions = predictions
   )
+}
+
+.cal_groups <- function(.data, truth, estimate, cuts, lev, conf_level) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+
+  cuts %>%
+    purrr::transpose() %>%
+    purrr::map_df(
+      ~ {
+        .data %>%
+          dplyr::filter(
+            !!estimate >= !!.x$lower_cut & !!estimate <= !!.x$upper_cut
+          ) %>%
+          process_midpoint(
+            truth = !!truth,
+            estimate = !!estimate,
+            level = lev,
+            conf_level = conf_level
+          ) %>%
+          dplyr::mutate(
+            predicted_midpoint = .x$lower_cut + ((.x$upper_cut - .x$lower_cut) / 2)
+          ) %>%
+          dplyr::select(predicted_midpoint, dplyr::everything())
+      }
+    )
 }
