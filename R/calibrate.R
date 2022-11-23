@@ -131,7 +131,11 @@ cal_isoreg_dataframe <- function(.data,
   sort_data <- dplyr::arrange(.data, !! estimate)
 
   if(sampled) {
-    sort_data <- dplyr::slice_sample(sort_data, prop = 1, replace = TRUE)
+    sort_data <- dplyr::slice_sample(
+      .data = sort_data,
+      prop = 1,
+      replace = TRUE
+      )
   }
 
   x <- dplyr::pull(sort_data, {{estimate}})
@@ -151,68 +155,120 @@ cal_isoreg_dataframe <- function(.data,
 
 #-------------------------- Isotonic Bootstrapped-------------------------------
 
-cal_isotonic_boot <- function(.data, truth = NULL, estimate = NULL, times = 10) {
+#' Uses a bootstrapped Isotonic regression model to calibrate probabilities
+#' @param times Number of bootstraps.
+#' @inheritParams cal_logistic
+#' @export
+cal_isotonic_boot <- function(.data,
+                              truth = NULL,
+                              estimate = NULL,
+                              times = 10,
+                              event_level = c("first", "second"),
+                              ...
+                              ) {
   UseMethod("cal_isotonic_boot")
 }
 
-cal_isotonic_boot.data.frame <- function(.data, truth = NULL,
-                                         estimate = NULL, times = 10
+#' @export
+cal_isotonic_boot.data.frame <- function(.data,
+                                         truth = NULL,
+                                         estimate = NULL,
+                                         times = 10,
+                                         event_level = c("first", "second"),
+                                         ...
                                          ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
+  lev <- process_level(event_level)
+
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_isoreg_boot(.data = .data, truth = !!truth, estimate = !!estimate, times = times)
-    est <- as_cal_estimate(res, !! estimate)
+    res <- cal_isoreg_boot(
+      .data = .data,
+      truth = !!truth,
+      estimate = !!estimate,
+      truth_level = lev,
+      times = times
+      )
+
+    estimates <- as_cal_estimate(res, !! estimate)
+    res
   } else {
     stop_multiclass()
   }
 
-  as_cal_object(est, !!truth, type, additional_class = "cal_isotonic_boot")
+  as_cal_object(
+    estimates = estimates,
+    truth = !!truth,
+    type = type,
+    method = "Isotonic Bootstrapped",
+    .data = .data,
+    event_level = event_level,
+    additional_class = "cal_isotonic_boot"
+  )
 }
 
-cal_isoreg_boot <- function(.data, truth, estimate, truth_val = NULL, times = 10) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
+cal_isoreg_boot <- function(.data,
+                            truth,
+                            estimate,
+                            truth_level,
+                            times = 10
+                            ) {
 
-  seeds <- sample.int(10000, times)
-  mods <- purrr::map(
-    seeds,
-    ~ boot_iso(.data, !!truth, !!estimate, truth_val, .x)
-    )
-  boot_iso_cal(mods)
+  sample.int(10000, times) %>%
+    purrr::map(
+      ~ boot_iso(
+        .data = .data,
+        truth =  {{truth}},
+        estimate = {{estimate}},
+        truth_level = truth_level,
+        seed = .x
+        )) %>%
+    boot_iso_cal()
 }
 
-boot_iso <- function(.data, truth, estimate, truth_val, seed) {
+boot_iso <- function(.data, truth, estimate, truth_level, seed) {
   withr::with_seed(
     seed,
     {
-      truth <- enquo(truth)
-      estimate <- enquo(estimate)
-      cal_isoreg_dataframe(.data, !!truth , !!estimate, truth_val, sampled = TRUE)
+      cal_isoreg_dataframe(
+        .data = .data,
+        truth = {{truth}} ,
+        estimate = {{estimate}},
+        truth_level = truth_level,
+        sampled = TRUE
+        )
     }
   )
 }
 
 boot_iso_cal <- function(x) {
   # Creates 1,000 predictions using 0 to 1, which become the calibration
-  new_estimates <- round(seq_len(1000) * 0.001, digits = 3)
-  new_data <- data.frame(.estimate = new_estimates)
-  new_probs <- map(x, ~ cal_add_interval(.x, .estimate, new_data))
+  new_estimates <- seq(0, 1, by = 0.01)
+
+  new_data <- data.frame(
+    .estimate = new_estimates,
+    .adj_estimate = new_estimates
+    )
+
+  new_probs <- purrr::map(
+    x,
+    ~ cal_add_interval(.x, .adj_estimate, new_data)
+    )
 
   for(i in seq_along(new_probs)) {
     names(new_probs[[i]]) <- c(".estimate", paste0(".adj_", i))
   }
 
-  merge_data <- purrr::reduce(new_probs, dplyr::inner_join, by = ".estimate")
-
-  adj_data <- dplyr::mutate(
-    merge_data,
-    .adj_estimate = rowMeans(dplyr::across(dplyr::contains(".adj_")))
-    )
-
-  dplyr::select(adj_data, .estimate, .adj_estimate)
+  merge_data <- new_probs %>%
+    purrr::reduce(
+      dplyr::inner_join, by = ".estimate"
+    ) %>%
+    dplyr::mutate(
+      .adj_estimate = rowMeans(dplyr::across(dplyr::contains(".adj_")))
+    ) %>%
+    dplyr::select(.estimate, .adj_estimate)
 }
 
 #--------------------------------- Beta ----------------------------------------
