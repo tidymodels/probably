@@ -1,7 +1,4 @@
-
-# ------------------------------ Logistic --------------------------------------
-
-
+#------------------------------- Logistic --------------------------------------
 #' @export
 cal_logistic <- function(.data,
                          truth = NULL,
@@ -19,13 +16,10 @@ cal_logistic.data.frame <- function(.data,
                                     event_level = c("first", "second"),
                                     ...
                                     ) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
   cal_logistic_impl(
     .data = .data,
-    truth = !!truth,
-    estimate = !!estimate,
+    truth = {{truth}},
+    estimate = {{estimate}},
     event_level = event_level,
     model = "glm",
     method = "Logistic",
@@ -33,7 +27,7 @@ cal_logistic.data.frame <- function(.data,
     )
 }
 
-# --------------------- Logistic Spline (GAM)  ---------------------------------
+#---------------------- Logistic Spline (GAM)  ---------------------------------
 
 #' @export
 cal_logistic_spline <- function(.data,
@@ -52,13 +46,10 @@ cal_logistic_spline.data.frame <- function(.data,
                                            event_level = c("first", "second"),
                                            ...
                                            ) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
   cal_logistic_impl(
     .data = .data,
-    truth = !!truth,
-    estimate = !!estimate,
+    truth = {{truth}},
+    estimate = {{estimate}},
     event_level = event_level,
     model = "logistic_spline",
     method = "Logistic Spline",
@@ -66,7 +57,7 @@ cal_logistic_spline.data.frame <- function(.data,
   )
 }
 
-# -------------------------------- Beta ----------------------------------------
+#--------------------------------- Beta ----------------------------------------
 
 #' @export
 cal_beta <- function(.data, truth = NULL, estimate = NULL, ...) {
@@ -89,56 +80,88 @@ cal_beta.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
   as_cal_object(est, !!truth, type, additional_class = "cal_beta")
 }
 
-# ----------------------------- Isotonic ---------------------------------------
+#------------------------------ Isotonic ---------------------------------------
 
 #' @export
-cal_isotonic <- function(.data, truth = NULL, estimate = NULL, ...) {
+cal_isotonic <- function(.data,
+                         truth = NULL,
+                         estimate = NULL,
+                         event_level = c("first", "second"),
+                         ...
+                         ) {
   UseMethod("cal_isotonic")
 }
 
 #' @export
-cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
+cal_isotonic.data.frame <- function(.data,
+                                    truth = NULL,
+                                    estimate = NULL,
+                                    event_level = c("first", "second"),
+                                    ...
+                                    ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
+  lev <- process_level(event_level)
+
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_isoreg_dataframe(.data, !!truth, !!estimate, ... = ...)
-    est <- as_cal_estimate(res, !! estimate)
+    res <- cal_isoreg_dataframe(
+      .data = .data,
+      truth =  !!truth,
+      estimate = !!estimate,
+      truth_level = lev,
+      ...
+      )
+    estimates <- as_cal_estimate(res, !! estimate)
   } else {
     stop_multiclass()
   }
 
-  as_cal_object(est, !!truth, type, additional_class = "cal_isotonic")
+  as_cal_object(
+    estimates = estimates,
+    truth = !!truth,
+    type = type,
+    method = "Isotonic",
+    .data = .data,
+    event_level = event_level,
+    additional_class = "cal_isotonic"
+  )
 }
 
-cal_isoreg_dataframe <- function(.data, truth, estimate, truth_val = NULL,
-                                 sampled = FALSE, ...) {
+cal_isoreg_dataframe <- function(.data,
+                                 truth,
+                                 estimate,
+                                 truth_level,
+                                 sampled = FALSE,
+                                 ...
+                                 ) {
+
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  truth_data <- add_is_val(.data, !! truth, truth_val)
+  sort_data <- dplyr::arrange(.data, !! estimate)
 
   if(sampled) {
-    sort_data <- dplyr::slice_sample(truth_data, prop = 1, replace = TRUE)
-  } else {
-    sort_data <- dplyr::arrange(truth_data, !! estimate)
+    sort_data <- dplyr::slice_sample(sort_data, prop = 1, replace = TRUE)
   }
 
-  model <- isoreg(
-    dplyr::pull(sort_data, !!estimate),
-    dplyr::pull(sort_data, .is_val)
-  )
+  x <- dplyr::pull(sort_data, {{estimate}})
+
+  truth <- dplyr::pull(sort_data, {{truth}})
+  y <- as.integer(as.integer(truth) == truth_level)
+
+  model <- isoreg(x = x, y = y)
 
   model_stepfun <- as.stepfun(model, ... = ...)
 
-  tibble(
+  dplyr::tibble(
     .estimate = environment(model_stepfun)$x,
     .adj_estimate = environment(model_stepfun)$y
   )
 }
 
-# ------------------------- Isotonic Bootstrapped-------------------------------
+#-------------------------- Isotonic Bootstrapped-------------------------------
 
 #' @export
 cal_isotonic_boot <- function(.data, truth = NULL, estimate = NULL, times = 10) {
@@ -154,7 +177,7 @@ cal_isotonic_boot.data.frame <- function(.data, truth = NULL,
 
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
-    res <- cal_isoreg_boot(.data, !!truth, !!estimate, times = times)
+    res <- cal_isoreg_boot(.data = .data, truth = !!truth, estimate = !!estimate, times = times)
     est <- as_cal_estimate(res, !! estimate)
   } else {
     stop_multiclass()

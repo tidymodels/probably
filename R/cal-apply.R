@@ -1,3 +1,5 @@
+#------------------------------ cal_apply() ------------------------------------
+
 #' Applies a calibration to a set of prediction probabilities
 #' @details It currently supports data.frames only. It extracts the `truth` and
 #' the estimate columns names, and levels, from the calibration object.
@@ -43,32 +45,27 @@ cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, desc = NULL) {
 }
 
 cal_add_adjust.cal_isotonic <- function(calibration, .data, desc = NULL) {
-  ret <- list()
   if(calibration$type == "binary") {
     estimate <- calibration$estimates[1]
-    ret <- estimate[[1]][["isotonic"]]
-    cal <- ret$calibration
+    estimates_table <- estimate[[1]]
     est_name <- names(estimate)
     adj_name <- paste0(".adj_", length(colnames(.data)) - 2)
-    x <- cal_add_interval(
-      estimates_table = cal,
+    ret <- cal_add_interval(
+      estimates_table = estimates_table,
       estimate = !! parse_expr(est_name),
-      .data = .data,
-      adj_name = !! parse_expr(adj_name),
-      desc = desc
+      .data = .data
     )
-    ret <- as_cal_res(x, ret$title, adj_name, desc, est_name)
   }
   ret
 
 }
 
-cal_add_interval <- function(estimates_table, estimate, .data, adj_name, desc = NULL) {
+cal_add_interval <- function(estimates_table, estimate, .data) {
   estimate <- enquo(estimate)
   y <- estimates_table$.adj_estimate
   find_interval <- findInterval(
-    dplyr::pull(.data, !!estimate),
-    estimates_table$.estimate
+    x = dplyr::pull(.data, !!estimate),
+    vec = estimates_table$.estimate
   )
   find_interval[find_interval == 0] <- 1
   intervals <- y[find_interval]
@@ -101,7 +98,7 @@ cal_add_join_impl <- function(calibration, .data, model, desc = NULL) {
 }
 
 as_cal_res <- function(x, title, adj_name, desc, var_name) {
-  desc_table <- tibble(.source = title, .column = adj_name)
+  desc_table <- tibble::tibble(.source = title, .column = adj_name)
   desc <- dplyr::bind_rows(desc, desc_table)
   ret <- list(
     cs = list(
