@@ -1,199 +1,6 @@
-#------------------------------------ Apply ------------------------------------
-#' Applies a calibration to a set of prediction probabilities
-#' @details It currently supports data.frames only. It extracts the `truth` and
-#' the estimate columns names, and levels, from the calibration object.
-#' @param x An object that can process a calibration object.
-#' @param calibration The calibration object (`cal_object`).
-#' @param ... Optional arguments; currently unused.
-#' @export
-cal_apply <- function(x, calibration, ...) {
-  UseMethod("cal_apply")
-}
-
-#' @export
-cal_apply.data.frame <- function(x, calibration, ...){
-  if(calibration$type == "binary") {
-    ret <- cal_add_adjust(calibration, x)
-    model_type <- names(calibration$estimates$.pred_good)
-    classes <- c("class_apply", "class_apply_binary", paste0("class_apply_", model_type))
-    class(ret) <- c(class(ret), classes)
-    ret
-  }
-}
-
-# -------------------------- Add Adjustment ------------------------------------
-
-cal_add_adjust <- function(calibration, .data, desc = NULL) {
-  UseMethod("cal_add_adjust")
-}
-
-cal_add_adjust.cal_logistic <- function(calibration, .data, desc = NULL) {
-  cal_add_predict_impl(
-    calibration = calibration,
-    .data = .data,
-    model = "glm"
-    )
-}
-
-cal_add_adjust.cal_logistic_spline <- function(calibration, .data, desc = NULL) {
-  cal_add_predict_impl(
-    calibration = calibration,
-    .data = .data,
-    model = "logistic_spline"
-  )
-}
-
-cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, desc = NULL) {
-  cal_add_join_impl(calibration, .data, "isotonic_boot", desc = desc)
-}
-
-cal_add_adjust.cal_isotonic <- function(calibration, .data, desc = NULL) {
-  ret <- list()
-  if(calibration$type == "binary") {
-    estimate <- calibration$estimates[1]
-    ret <- estimate[[1]][["isotonic"]]
-    cal <- ret$calibration
-    est_name <- names(estimate)
-    adj_name <- paste0(".adj_", length(colnames(.data)) - 2)
-    x <- cal_add_interval(
-      estimates_table = cal,
-      estimate = !! parse_expr(est_name),
-      .data = .data,
-      adj_name = !! parse_expr(adj_name),
-      desc = desc
-      )
-    ret <- as_cal_res(x, ret$title, adj_name, desc, est_name)
-  }
-  ret
-
-}
-
-cal_add_interval <- function(estimates_table, estimate, .data, adj_name, desc = NULL) {
-    estimate <- enquo(estimate)
-    y <- estimates_table$.adj_estimate
-    find_interval <- findInterval(
-      dplyr::pull(.data, !!estimate),
-      estimates_table$.estimate
-      )
-    find_interval[find_interval == 0] <- 1
-    intervals <- y[find_interval]
-    dplyr::mutate(.data, !!estimate := intervals)
-}
-
-cal_add_predict_impl <- function(calibration, .data, model) {
-  if(calibration$type == "binary") {
-    estimate <- names(calibration$estimates)
-    model <- calibration$estimates[[estimate]][[model]]$calibration
-    preds <- predict(model, newdata = .data, type = "response")
-    if(calibration$event_level == 1) preds <- 1 - preds
-    .data[[estimate]] <- preds
-  }
-  .data
-}
-
-cal_add_join_impl <- function(calibration, .data, model, desc = NULL) {
-  if(calibration$type == "binary") {
-    estimate <- calibration$estimates[1]
-    ret <- estimate[[1]][[model]]
-    cal <- ret$calibration
-    est_name <- names(estimate)
-    adj_name <- paste0(".adj_", length(colnames(.data)) - 2)
-    .data <- cal_add_join(cal, !! parse_expr(est_name), .data, !! parse_expr(est_name))
-  }
-  .data
-}
-
-as_cal_res <- function(x, title, adj_name, desc, var_name) {
-  desc_table <- tibble(.source = title, .column = adj_name)
-  desc <- dplyr::bind_rows(desc, desc_table)
-  ret <- list(
-    cs = list(
-      table = x,
-      desc = desc
-    )
-  )
-  names(ret) <- var_name
-  ret
-}
-
-cal_add_join <- function(estimates_table, estimate, .data, adj_name) {
-  adj_name <- enquo(adj_name)
-  estimate <- enquo(estimate)
-  round_data <- dplyr::select(
-    .data,
-    .rounded := round(!!estimate, digits = 3),
-    - !! estimate
-  )
-  est_table <- dplyr::rename(estimates_table, !! adj_name := ".adj_estimate")
-  matched_data <- dplyr::left_join(
-    round_data,
-    est_table,
-    by = c(".rounded" = ".estimate")
-  )
-  dplyr::select(matched_data, -.rounded)
-}
-
-# ----------------------------- Object Builders --------------------------------
-
-as_cal_object <- function(estimates, truth, type, .data, event_level, additional_class = NULL) {
-  lev <- process_level(event_level)
-  truth <- enquo(truth)
-  truth_name <- as_name(truth)
-  levels <- levels(.data[, truth_name][[1]])
-  structure(
-    list(
-      type = type,
-      truth = truth_name,
-      levels = levels,
-      event_level = lev,
-      estimates = estimates
-    ),
-    class = c("cal_object", paste0("cal_", type), additional_class)
-  )
-}
-
-as_cal_variable <- function(estimate_tbl, estimate, title, model) {
-  estimate <- enquo(estimate)
-  mod <- list(
-    title = title,
-    calibration = estimate_tbl
-  )
-  mod <- set_names(list(mod), model)
-  est <- list(mod)
-  set_names(est, as_name(estimate))
-}
-
-#' @importFrom tibble as_tibble
-#' @export
-as_tibble.cal_applied_binary <- function(x, ...) {
-  tbl <- x$calibration[[1]]$table
-  desc <- x$calibration[[1]]$desc
-
-  desc <- dplyr::bind_rows(
-    desc,
-    tibble(
-      .source = names(x$calibration[1]),
-      .column = names(x$calibration[1])
-      )
-  )
-
-  tbl_map <- map(tbl, ~.x)
-  tbl_mapped <- map(
-    2:ncol(tbl),
-    ~{
-      tibble(
-        .column = names(tbl_map[.x]),
-        .truth = tbl_map[[1]],
-        .estimate = tbl_map[[.x]]
-      )
-    }
-  )
-  tbl_bind <- dplyr::bind_rows(tbl_mapped)
-  tbl_merged <- dplyr::left_join(tbl_bind, desc, by = ".column")
-  dplyr::select(tbl_merged, .source, .truth, .estimate)
-}
 
 # ------------------------------ Logistic --------------------------------------
+
 
 #' @export
 cal_logistic <- function(.data,
@@ -215,27 +22,13 @@ cal_logistic.data.frame <- function(.data,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  if(is_binary_estimate(!! estimate)) {
-    type <- "binary"
-    res <- cal_model_impl(
-      .data = .data,
-      truth = !!truth,
-      estimate = !!estimate,
-      event_level = event_level,
-      method = "glm",
-      ...
-      )
-    est <- as_cal_variable(res, !! estimate, "Logistic", "glm")
-  } else {
-    stop_multiclass()
-  }
-
-  as_cal_object(
-    estimates = est,
-    truth = !!truth,
-    type = type,
+  cal_logistic_impl(
     .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
     event_level = event_level,
+    model = "glm",
+    method = "Logistic",
     additional_class = "cal_logistic"
     )
 }
@@ -262,20 +55,13 @@ cal_logistic_spline.data.frame <- function(.data,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  if(is_binary_estimate(!! estimate)) {
-    type <- "binary"
-    res <- cal_model_impl(.data, !!truth, !!estimate, method = "logistic_spline", ... = ...)
-    est <- as_cal_variable(res, !! estimate, "Logistic Spline", "logistic_spline")
-  } else {
-    stop_multiclass()
-  }
-
-  as_cal_object(
-    estimates = est,
-    truth = !!truth,
-    type = type,
+  cal_logistic_impl(
     .data = .data,
+    truth = !!truth,
+    estimate = !!estimate,
     event_level = event_level,
+    model = "logistic_spline",
+    method = "Logistic Spline",
     additional_class = "cal_logistic_spline"
   )
 }
@@ -295,7 +81,7 @@ cal_beta.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
     res <- cal_model_impl(.data, !!truth, !!estimate, method = "beta", ... = ...)
-    est <- as_cal_variable(res, !! estimate, "Beta", "beta")
+    est <- as_cal_estimate(res, !! estimate)
   } else {
     stop_multiclass()
   }
@@ -318,7 +104,7 @@ cal_isotonic.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
     res <- cal_isoreg_dataframe(.data, !!truth, !!estimate, ... = ...)
-    est <- as_cal_variable(res, !! estimate, "Isotonic", "isotonic")
+    est <- as_cal_estimate(res, !! estimate)
   } else {
     stop_multiclass()
   }
@@ -369,7 +155,7 @@ cal_isotonic_boot.data.frame <- function(.data, truth = NULL,
   if(is_binary_estimate(!! estimate)) {
     type <- "binary"
     res <- cal_isoreg_boot(.data, !!truth, !!estimate, times = times)
-    est <- as_cal_variable(res, !! estimate, "Isotonic Bootstrapped", "isotonic_boot")
+    est <- as_cal_estimate(res, !! estimate)
   } else {
     stop_multiclass()
   }
@@ -424,24 +210,98 @@ boot_iso_cal <- function(x) {
 
 #' @export
 print.cal_binary <- function(x, ...) {
-  if(x$event_level == 1) {
-    lv <- paste(cli::col_yellow(x$levels[[1]]), "/", x$levels[[2]])
-  } else {
-    lv <- paste(x$levels[[1]], "/", cli::col_yellow(x$levels[[2]]))
-  }
-
+  cli::cli_div(theme = list(
+    span.val0 = list(color = "blue"),
+    span.val1 = list(color = "yellow")
+  ))
   cli::cli_h2("Probability Calibration")
-  cli::cli_ul()
-  cli::cli_li(paste("Type:", cli::col_blue("Binary")))
-  cli::cli_li(paste("Method:", cli::col_blue(x$estimates[[1]][[1]]$title)))
-  cli::cli_li(paste("Estimate:", cli::col_yellow(names(x$estimates))))
-  cli::cli_li(paste("Truth:", cli::col_blue(x$truth)))
-  cli::cli_ul()
-  cli::cli_li(paste("Levels:", lv))
+  cli::cli_text("Type: {.val0 Binary}")
+  cli::cli_text("Method: {.val0 {x$method}}")
+  cli::cli_text("Truth: {.val0 {x$truth}}")
+  if(x$event_level == 1) {
+    cli::cli_text("Levels: {.val1 {x$levels[[1]]}}{.val0 /{x$levels[[2]]}} ")
+  } else {
+    cli::cli_text("Levels: {.val0 {x$levels[[1]]}/}{.val1 {x$levels[[2]]}} ")
+  }
+  cli::cli_text("Estimate: {.val1 {names(x$estimates)}}")
+  cli::cli_end()
+}
 
+# ----------------------------- Object Builders --------------------------------
+
+as_cal_object <- function(estimates,
+                          truth,
+                          type,
+                          .data,
+                          event_level,
+                          method,
+                          additional_class = NULL) {
+  lev <- process_level(event_level)
+  truth <- enquo(truth)
+  truth_name <- as_name(truth)
+  levels <- levels(.data[, truth_name][[1]])
+  structure(
+    list(
+      type = type,
+      method = method,
+      truth = truth_name,
+      levels = levels,
+      event_level = lev,
+      estimates = estimates
+    ),
+    class = c("cal_object", paste0("cal_", type), additional_class)
+  )
+}
+
+as_cal_estimate <- function(x, estimate) {
+  estimate <- enquo(estimate)
+  mod <- set_names(
+    list(calibration = x),
+    as_name(estimate)
+  )
+  mod
 }
 
 # ------------------------------- Utils ----------------------------------------
+
+cal_logistic_impl <- function(.data,
+                              truth = NULL,
+                              estimate = NULL,
+                              event_level = c("first", "second"),
+                              type,
+                              model,
+                              method,
+                              additional_class,
+                              ...
+                              ) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  if(is_binary_estimate(!! estimate)) {
+    type <- "binary"
+    res <- cal_model_impl(
+      .data = .data,
+      truth = !!truth,
+      estimate = !!estimate,
+      event_level = event_level,
+      method = model,
+      ...
+    )
+    estimates <- as_cal_estimate(res, !! estimate)
+  } else {
+    stop_multiclass()
+  }
+
+  as_cal_object(
+    estimates = estimates,
+    truth = !!truth,
+    type = type,
+    method = method,
+    .data = .data,
+    event_level = event_level,
+    additional_class = additional_class
+  )
+}
 
 cal_model_impl <- function(.data, truth, estimate, method, event_level, ...) {
   truth <- ensym(truth)
