@@ -1,4 +1,13 @@
 #------------------------------- Logistic --------------------------------------
+#' Uses a logistic model to calibrate probabilities
+#' @param .data A data.frame object containing predictions and probability columns.
+#' @param truth The column identifier for the true class results
+#' (that is a factor). This should be an unquoted column name.
+#' @param estimate The column identifier for the prediction probabilities.
+#' This should be an unquoted column name
+#' @param event_level  single string. Either "first" or "second" to specify which
+#' level of truth to consider as the "event".
+#' @param ... Optional arguments; currently unused.
 #' @export
 cal_logistic <- function(.data,
                          truth = NULL,
@@ -28,7 +37,8 @@ cal_logistic.data.frame <- function(.data,
 }
 
 #---------------------- Logistic Spline (GAM)  ---------------------------------
-
+#' Uses a logistic spline model to calibrate probabilities
+#' @inheritParams  cal_logistic
 #' @export
 cal_logistic_spline <- function(.data,
                                 truth = NULL,
@@ -57,31 +67,9 @@ cal_logistic_spline.data.frame <- function(.data,
   )
 }
 
-#--------------------------------- Beta ----------------------------------------
-
-#' @export
-cal_beta <- function(.data, truth = NULL, estimate = NULL, ...) {
-  UseMethod("cal_beta")
-}
-
-#' @export
-cal_beta.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  if(is_binary_estimate(!! estimate)) {
-    type <- "binary"
-    res <- cal_model_impl(.data, !!truth, !!estimate, method = "beta", ... = ...)
-    est <- as_cal_estimate(res, !! estimate)
-  } else {
-    stop_multiclass()
-  }
-
-  as_cal_object(est, !!truth, type, additional_class = "cal_beta")
-}
-
 #------------------------------ Isotonic ---------------------------------------
-
+#' Uses an Isotonic regression model to calibrate probabilities
+#' @inheritParams cal_logistic
 #' @export
 cal_isotonic <- function(.data,
                          truth = NULL,
@@ -163,12 +151,10 @@ cal_isoreg_dataframe <- function(.data,
 
 #-------------------------- Isotonic Bootstrapped-------------------------------
 
-#' @export
 cal_isotonic_boot <- function(.data, truth = NULL, estimate = NULL, times = 10) {
   UseMethod("cal_isotonic_boot")
 }
 
-#' @export
 cal_isotonic_boot.data.frame <- function(.data, truth = NULL,
                                          estimate = NULL, times = 10
                                          ) {
@@ -219,7 +205,7 @@ boot_iso_cal <- function(x) {
     names(new_probs[[i]]) <- c(".estimate", paste0(".adj_", i))
   }
 
-  merge_data <- purrr::reduce(new_probs, inner_join, by = ".estimate")
+  merge_data <- purrr::reduce(new_probs, dplyr::inner_join, by = ".estimate")
 
   adj_data <- dplyr::mutate(
     merge_data,
@@ -229,7 +215,27 @@ boot_iso_cal <- function(x) {
   dplyr::select(adj_data, .estimate, .adj_estimate)
 }
 
-# ---------------------------- Binary Objs--------------------------------------
+#--------------------------------- Beta ----------------------------------------
+cal_beta <- function(.data, truth = NULL, estimate = NULL, ...) {
+  UseMethod("cal_beta")
+}
+
+cal_beta.data.frame <- function(.data, truth = NULL, estimate = NULL, ...) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  if(is_binary_estimate(!! estimate)) {
+    type <- "binary"
+    res <- cal_model_impl(.data, !!truth, !!estimate, method = "beta", ... = ...)
+    est <- as_cal_estimate(res, !! estimate)
+  } else {
+    stop_multiclass()
+  }
+
+  as_cal_object(est, !!truth, type, additional_class = "cal_beta")
+}
+
+#----------------------------- Binary Objs--------------------------------------
 
 #' @export
 print.cal_binary <- function(x, ...) {
@@ -342,19 +348,6 @@ cal_model_impl <- function(.data, truth, estimate, method, event_level, ...) {
     }
 
   model
-}
-
-add_is_val <- function(.data, truth, truth_val = NULL) {
-  truth <- enquo(truth)
-  if (!is.null(truth_val)) {
-    ret <- mutate(
-      .data,
-      .is_val = ifelse(!!truth == !!truth_val, 1, 0)
-    )
-  } else {
-    ret <- mutate(.data, .is_val = !!truth)
-  }
-  ret
 }
 
 is_binary_estimate <- function(estimate) {
