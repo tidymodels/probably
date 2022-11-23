@@ -1,48 +1,24 @@
-# ------------------------------------ Apply -----------------------------------
+#------------------------------------ Apply ------------------------------------
+#' Applies a calibration to a set of prediction probabilities
+#' @details It currently supports data.frames only. It extracts the `truth` and
+#' the estimate columns names, and levels, from the calibration object.
+#' @param x An object that can process a calibration object.
+#' @param calibration The calibration object (`cal_object`).
+#' @param ... Optional arguments; currently unused.
 #' @export
-cal_apply <- function(x, calibration) {
+cal_apply <- function(x, calibration, ...) {
   UseMethod("cal_apply")
 }
 
 #' @export
-cal_apply.data.frame <- function(x, calibration){
+cal_apply.data.frame <- function(x, calibration, ...){
   if(calibration$type == "binary") {
-    cal_add_adjust(calibration, x)
+    ret <- cal_add_adjust(calibration, x)
+    model_type <- names(calibration$estimates$.pred_good)
+    classes <- c("class_apply", "class_apply_binary", paste0("class_apply_", model_type))
+    class(ret) <- c(class(ret), classes)
+    ret
   }
-}
-
-#' @export
-cal_apply.cal_applied <- function(x, calibration){
-  if(calibration$type == "binary") {
-    cal <- x$calibration[[1]]$table
-    desc <- x$calibration[[1]]$desc
-    ca <- cal_add_adjust(calibration, cal, desc = desc)
-    as_cal_applied(ca, calibration)
-  }
-}
-
-as_cal_applied <- function(results, calibration) {
-  new_name <- paste0(".adj_", length(colnames(results)) - 1)
-  structure(
-    list(
-      truth = calibration$truth,
-      type = calibration$type,
-      calibration = results
-    ),
-    class = c("cal_applied", paste0("cal_applied_", calibration$type))
-  )
-}
-
-#' @export
-print.cal_applied <- function(x, ...) {
-  cat("Cal Applied")
-}
-
-#' @export
-plot.cal_applied_binary <- function(x, ...) {
-  tibble::as_tibble(x) %>%
-    dplyr::group_by(.source) %>%
-    cal_binary_plot()
 }
 
 # -------------------------- Add Adjustment ------------------------------------
@@ -448,13 +424,21 @@ boot_iso_cal <- function(x) {
 
 #' @export
 print.cal_binary <- function(x, ...) {
-  cat("Probability Calibration\n")
-  cat("----------------------- \n")
-  cat("Type:      Binary\n")
-  cat("Method:    ", x$estimates[[1]][[1]]$title, "\n")
-  cat("Truth:     ", x$truth, "\n")
-  cat(" |- Levels: ", paste(x$levels, collapse = "/"), "\n")
-  cat("Estimate:  ", names(x$estimates), "\n")
+  if(x$event_level == 1) {
+    lv <- paste(cli::col_yellow(x$levels[[1]]), "/", x$levels[[2]])
+  } else {
+    lv <- paste(x$levels[[1]], "/", cli::col_yellow(x$levels[[2]]))
+  }
+
+  cli::cli_h2("Probability Calibration")
+  cli::cli_ul()
+  cli::cli_li(paste("Type:", cli::col_blue("Binary")))
+  cli::cli_li(paste("Method:", cli::col_blue(x$estimates[[1]][[1]]$title)))
+  cli::cli_li(paste("Estimate:", cli::col_yellow(names(x$estimates))))
+  cli::cli_li(paste("Truth:", cli::col_blue(x$truth)))
+  cli::cli_ul()
+  cli::cli_li(paste("Levels:", lv))
+
 }
 
 # ------------------------------- Utils ----------------------------------------
