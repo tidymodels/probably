@@ -3,15 +3,18 @@
 #' @param .data A data.frame object containing predictions and probability columns.
 #' @param truth The column identifier for the true class results
 #' (that is a factor). This should be an unquoted column name.
-#' @param estimate The column identifier for the prediction probabilities.
-#' This should be an unquoted column name
+#' @param estimate A vector of column identifiers, or one of `dplyr` selector
+#' functions to choose which variables contains the class probabilities. It
+#' defaults to the prefix used by tidymodels (`.pred_`). The order of the
+#' identifiers will be considered the same as the order of the levels of the
+#' `truth` variable.
 #' @param event_level  single string. Either "first" or "second" to specify which
 #' level of truth to consider as the "event".
 #' @param ... Optional arguments; currently unused.
 #' @export
 cal_logistic <- function(.data,
                          truth = NULL,
-                         estimate = NULL,
+                         estimate = dplyr::starts_with(".pred_"),
                          event_level = c("first", "second"),
                          ...
                          ) {
@@ -21,14 +24,15 @@ cal_logistic <- function(.data,
 #' @export
 cal_logistic.data.frame <- function(.data,
                                     truth = NULL,
-                                    estimate = NULL,
+                                    estimate = dplyr::starts_with(".pred_"),
                                     event_level = c("first", "second"),
                                     ...
                                     ) {
+
   cal_logistic_impl(
     .data = .data,
-    truth = {{truth}},
-    estimate = {{estimate}},
+    truth = {{ truth }},
+    estimate = {{ estimate }},
     event_level = event_level,
     model = "glm",
     method = "Logistic",
@@ -193,7 +197,6 @@ cal_isotonic_boot.data.frame <- function(.data,
       )
 
     estimates <- as_cal_estimate(res, !! estimate)
-    res
   } else {
     stop_multiclass()
   }
@@ -360,19 +363,20 @@ cal_logistic_impl <- function(.data,
                               ...
                               ) {
   truth <- enquo(truth)
-  estimate <- enquo(estimate)
 
-  if(is_binary_estimate(!! estimate)) {
+  if(is_binary_estimate(.data, !!truth)) {
     type <- "binary"
+    te_map <- truth_estimate_map(.data, !! truth, {{ estimate }})
+    estimate_1 <- te_map[[1]]
     res <- cal_model_impl(
       .data = .data,
       truth = !!truth,
-      estimate = !!estimate,
+      estimate = estimate_1,
       event_level = event_level,
       method = model,
       ...
     )
-    estimates <- as_cal_estimate(res, !! estimate)
+    estimates <- as_cal_estimate(res, !!estimate_1)
   } else {
     stop_multiclass()
   }
@@ -390,7 +394,6 @@ cal_logistic_impl <- function(.data,
 
 cal_model_impl <- function(.data, truth, estimate, method, event_level, ...) {
   truth <- ensym(truth)
-  estimate <- ensym(estimate)
 
   if(method == "logistic_spline"){
     f_model <- expr(!!truth ~ s(!!estimate, k = 10))
@@ -406,10 +409,47 @@ cal_model_impl <- function(.data, truth, estimate, method, event_level, ...) {
   model
 }
 
-is_binary_estimate <- function(estimate) {
-  TRUE
+is_binary_estimate <- function(.data, truth) {
+  l <- length(levels(dplyr::pull(.data, {{ truth }})))
+  l == 2
 }
 
 stop_multiclass <- function() {
-  stop("Multiclass not supported...yet")
+  cli::cli_abort("Multiclass not supported...yet")
+}
+
+truth_estimate_map <- function(.data, truth, estimate) {
+
+  truth_str <- tidyselect::eval_select(
+    expr = enquo(truth),
+    data = .data[unique(names(.data))],
+    allow_rename = FALSE
+  )
+
+  truth_levels <- levels(.data[[truth_str]])
+
+  estimate_str <- tidyselect::eval_select(
+    expr = enquo(estimate),
+    data = .data[unique(names(.data))],
+    allow_rename = FALSE
+  ) %>%
+    names()
+
+  if (length(estimate_str) == 0) {
+    cli::cli_abort("{.arg estimate} must select at least one column.")
+  }
+
+  if(all(substr(estimate_str, 1, 6) == ".pred_")) {
+    est_map <- purrr::map(
+      truth_levels,
+      ~ sym(estimate_str[paste0(".pred_", .x) == estimate_str])
+    )
+  } else {
+    est_map <- purrr::map(
+      seq_along(truth_levels),
+      ~ sym(estimate_str[[.x]])
+    )
+  }
+
+  set_names(est_map, truth_levels)
 }
