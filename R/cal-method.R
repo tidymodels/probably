@@ -119,7 +119,7 @@ cal_isoreg_dataframe <- function(.data,
   x <- dplyr::pull(sort_data, !!estimate)
 
   truth <- dplyr::pull(sort_data, {{truth}})
-  y <- as.integer(truth)
+  y <- as.integer(as.integer(truth) == 1)
 
   model <- isoreg(x = x, y = y)
 
@@ -218,13 +218,16 @@ boot_iso_cal <- function(x) {
     .adj_estimate = new_estimates
   )
 
-  new_probs <- purrr::map(x, cal_add_interval, .adj_estimate, new_data)
+  new_probs <- purrr::map(x, cal_get_intervals, new_data, expr(.adj_estimate))
 
   for (i in seq_along(new_probs)) {
-    names(new_probs[[i]]) <- c(".estimate", paste0(".adj_", i))
+    x <- new_data
+    x$.adj_estimate <- new_probs[[i]]
+    names(x) <- c(".estimate", paste0(".adj_", i))
+    new_probs[[i]] <- x
   }
 
-  merge_data <- new_probs %>%
+  new_probs %>%
     purrr::reduce(
       dplyr::inner_join,
       by = ".estimate"
