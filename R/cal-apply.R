@@ -60,27 +60,15 @@ cal_add_adjust.cal_method_isotonic <- function(calibration, .data, desc = NULL) 
 
 }
 
-cal_add_interval <- function(estimates_table, estimate, .data) {
-  estimate <- enquo(estimate)
-  y <- estimates_table$.adj_estimate
-  find_interval <- findInterval(
-    x = dplyr::pull(.data, !!estimate),
-    vec = estimates_table$.estimate
-  )
-  find_interval[find_interval == 0] <- 1
-  intervals <- y[find_interval]
-  dplyr::mutate(.data, !!estimate := intervals)
-}
-
 #---------------------------- Adjust Implementations ---------------------------
 
 cal_add_predict_impl <- function(calibration, .data) {
   if(calibration$type == "binary") {
-    estimate <- names(calibration$estimates)
-    model <- calibration$estimates[[estimate]]
+    model <- calibration$estimates
     preds <- predict(model, newdata = .data, type = "response")
-    if(calibration$event_level == 1) preds <- 1 - preds
-    .data[[estimate]] <- preds
+    preds <- 1 - preds
+    .data[calibration$levels[[1]]] <- preds
+    .data[calibration$levels[[2]]] <- 1 - preds
   }
   .data
 }
@@ -95,19 +83,6 @@ cal_add_join_impl <- function(calibration, .data, model, desc = NULL) {
     .data <- cal_add_join(cal, !! parse_expr(est_name), .data, !! parse_expr(est_name))
   }
   .data
-}
-
-as_cal_res <- function(x, title, adj_name, desc, var_name) {
-  desc_table <- tibble::tibble(.source = title, .column = adj_name)
-  desc <- dplyr::bind_rows(desc, desc_table)
-  ret <- list(
-    cs = list(
-      table = x,
-      desc = desc
-    )
-  )
-  names(ret) <- var_name
-  ret
 }
 
 cal_add_join <- function(estimates_table, estimate, .data, adj_name) {
@@ -125,4 +100,16 @@ cal_add_join <- function(estimates_table, estimate, .data, adj_name) {
     by = c(".rounded" = ".estimate")
   )
   dplyr::select(matched_data, -.rounded)
+}
+
+cal_add_interval <- function(estimates_table, estimate, .data) {
+  estimate <- enquo(estimate)
+  y <- estimates_table$.adj_estimate
+  find_interval <- findInterval(
+    x = dplyr::pull(.data, !!estimate),
+    vec = estimates_table$.estimate
+  )
+  find_interval[find_interval == 0] <- 1
+  intervals <- y[find_interval]
+  dplyr::mutate(.data, !!estimate := intervals)
 }
