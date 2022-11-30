@@ -26,28 +26,28 @@ cal_add_adjust <- function(calibration, .data, desc = NULL) {
   UseMethod("cal_add_adjust")
 }
 
-cal_add_adjust.cal_method_logistic <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_estimate_logistic <- function(calibration, .data, desc = NULL) {
   cal_add_predict_impl(
     calibration = calibration,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_method_logistic_spline <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_estimate_logistic_spline <- function(calibration, .data, desc = NULL) {
   cal_add_predict_impl(
     calibration = calibration,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_method_isotonic_boot <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_estimate_isotonic_boot <- function(calibration, .data, desc = NULL) {
   cal_add_interval_impl(
     calibration = calibration,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_method_isotonic <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_estimate_isotonic <- function(calibration, .data, desc = NULL) {
   cal_add_interval_impl(
     calibration = calibration,
     .data = .data

@@ -11,67 +11,67 @@
 #' @param ... Additional arguments passed to the models or routines used to
 #' calculate the new probabilities.
 #' @export
-cal_method_logistic <- function(.data,
+cal_estimate_logistic <- function(.data,
                          truth = NULL,
                          estimate = dplyr::starts_with(".pred_"),
                          ...) {
-  UseMethod("cal_method_logistic")
+  UseMethod("cal_estimate_logistic")
 }
 
 #' @export
-cal_method_logistic.data.frame <- function(.data,
+cal_estimate_logistic.data.frame <- function(.data,
                                     truth = NULL,
                                     estimate = dplyr::starts_with(".pred_"),
                                     ...) {
-  cal_method_logistic_impl(
+  cal_estimate_logistic_impl(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     model = "glm",
     method = "Logistic",
-    additional_class = "cal_method_logistic"
+    additional_class = "cal_estimate_logistic"
   )
 }
 
 #---------------------- Logistic Spline (GAM)  ---------------------------------
 #' Uses a logistic spline model to calibrate probabilities
-#' @inheritParams  cal_method_logistic
+#' @inheritParams  cal_estimate_logistic
 #' @export
-cal_method_logistic_spline <- function(.data,
+cal_estimate_logistic_spline <- function(.data,
                                 truth = NULL,
                                 estimate = dplyr::starts_with(".pred_"),
                                 ...) {
-  UseMethod("cal_method_logistic_spline")
+  UseMethod("cal_estimate_logistic_spline")
 }
 
 #' @export
-cal_method_logistic_spline.data.frame <- function(.data,
+cal_estimate_logistic_spline.data.frame <- function(.data,
                                            truth = NULL,
                                            estimate = dplyr::starts_with(".pred_"),
                                            ...) {
-  cal_method_logistic_impl(
+  cal_estimate_logistic_impl(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     model = "logistic_spline",
     method = "Logistic Spline",
-    additional_class = "cal_method_logistic_spline"
+    additional_class = "cal_estimate_logistic_spline"
   )
 }
 
 #------------------------------ Isotonic ---------------------------------------
 #' Uses an Isotonic regression model to calibrate probabilities
-#' @inheritParams cal_method_logistic
+#' @inheritParams cal_estimate_logistic
 #' @export
-cal_method_isotonic <- function(.data,
+cal_estimate_isotonic <- function(.data,
                          truth = NULL,
                          estimate = dplyr::starts_with(".pred_"),
                          ...) {
-  UseMethod("cal_method_isotonic")
+  UseMethod("cal_estimate_isotonic")
 }
 
 #' @export
-cal_method_isotonic.data.frame <- function(.data,
+cal_estimate_isotonic.data.frame <- function(.data,
                                     truth = NULL,
                                     estimate = dplyr::starts_with(".pred_"),
                                     ...) {
@@ -92,7 +92,7 @@ cal_method_isotonic.data.frame <- function(.data,
       levels = levels,
       truth = !!truth,
       method = "Isotonic",
-      additional_class = "cal_method_isotonic"
+      additional_class = "cal_estimate_isotonic"
     )
   } else {
     stop_multiclass()
@@ -135,18 +135,18 @@ cal_isoreg_dataframe <- function(.data,
 
 #' Uses a bootstrapped Isotonic regression model to calibrate probabilities
 #' @param times Number of bootstraps.
-#' @inheritParams cal_method_logistic
+#' @inheritParams cal_estimate_logistic
 #' @export
-cal_method_isotonic_boot <- function(.data,
+cal_estimate_isotonic_boot <- function(.data,
                               truth = NULL,
                               estimate = dplyr::starts_with(".pred_"),
                               times = 10,
                               ...) {
-  UseMethod("cal_method_isotonic_boot")
+  UseMethod("cal_estimate_isotonic_boot")
 }
 
 #' @export
-cal_method_isotonic_boot.data.frame <- function(.data,
+cal_estimate_isotonic_boot.data.frame <- function(.data,
                                          truth = NULL,
                                          estimate = dplyr::starts_with(".pred_"),
                                          times = 10,
@@ -169,7 +169,7 @@ cal_method_isotonic_boot.data.frame <- function(.data,
       levels = levels,
       truth = !!truth,
       method = "Isotonic Bootstrapped",
-      additional_class = "cal_method_isotonic_boot"
+      additional_class = "cal_estimate_isotonic_boot"
     )
   } else {
     stop_multiclass()
@@ -278,7 +278,7 @@ as_binary_cal_object <- function(estimate,
 
 # ------------------------------- Utils ----------------------------------------
 
-cal_method_logistic_impl <- function(.data,
+cal_estimate_logistic_impl <- function(.data,
                               truth = NULL,
                               estimate = dplyr::starts_with(".pred_"),
                               type,
