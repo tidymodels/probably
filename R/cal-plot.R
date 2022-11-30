@@ -840,6 +840,49 @@ binary_plot_impl <- function(tbl, x, y,
   )
 }
 
+#------------------------------- >> Compare ------------------------------------
+
+#' Compare one or several calibrations
+#' @param .data A data.frame object containing predictions and probability columns.
+#' @param ... One or multiple `cal_objects`. They can be named.
+#' @param .original_name Label for the original probabilities. It default to
+#' "Original". Setting to `NULL` will prevent the original probabilities from
+#' being added to this function's output.
+#' @export
+#' @keywords internal
+.cal_table_compare <- function(.data, ..., .original_name = "Original") {
+  UseMethod(".cal_table_compare")
+}
+
+#' @export
+#' @keywords internal
+.cal_table_compare <- function(.data, ..., .original_name = "Original") {
+  models <- rlang::list2(...)
+
+  #TODO - Check that the data and all the calibrations match
+  #       the number of probabilities
+
+  if(!is.null(.original_name)) {
+    original_table <- .data
+    original_table$source <- .original_name
+  } else {
+    original_table <- NULL
+  }
+
+  sources <- purrr::imap(
+    models, ~ {
+      x <- cal_apply(.data, .x)
+      source <- ifelse(.y == "", .x$method, .y)
+      x$source <- source
+      x
+    }) %>%
+    purrr::reduce(dplyr::bind_rows)
+
+  dplyr::bind_rows(
+    original_table,
+    sources
+  )
+}
 
 #------------------------------- >> Utils --------------------------------------
 
