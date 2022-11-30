@@ -26,25 +26,25 @@ cal_add_adjust <- function(calibration, .data, desc = NULL) {
   UseMethod("cal_add_adjust")
 }
 
-cal_add_adjust.cal_logistic <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_method_logistic <- function(calibration, .data, desc = NULL) {
   cal_add_predict_impl(
     calibration = calibration,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_logistic_spline <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_method_logistic_spline <- function(calibration, .data, desc = NULL) {
   cal_add_predict_impl(
     calibration = calibration,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_isotonic_boot <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_method_isotonic_boot <- function(calibration, .data, desc = NULL) {
   cal_add_join_impl(calibration, .data, "isotonic_boot", desc = desc)
 }
 
-cal_add_adjust.cal_isotonic <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_method_isotonic <- function(calibration, .data, desc = NULL) {
   if(calibration$type == "binary") {
     estimate <- calibration$estimates[1]
     estimates_table <- estimate[[1]]
