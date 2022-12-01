@@ -1,4 +1,4 @@
-#------------------------------ cal_apply() ------------------------------------
+#---------------------------------- Apply --------------------------------------
 
 #' Applies a calibration to a set of prediction probabilities
 #' @details It currently supports data.frames only. It extracts the `truth` and
@@ -14,13 +14,13 @@ cal_apply <- function(.data, calibration, ...) {
 #' @export
 cal_apply.data.frame <- function(.data, calibration, ...) {
   if (calibration$type == "binary") {
-    cal_add_adjust(calibration, x)
+    cal_add_adjust(calibration, .data)
   } else {
     stop_multiclass()
   }
 }
 
-# ------------------------ call_add_adjust() -----------------------------------
+# ------------------------------- Adjust ---------------------------------------
 
 cal_add_adjust <- function(calibration, .data) {
   UseMethod("cal_add_adjust")
@@ -54,7 +54,7 @@ cal_add_adjust.cal_estimate_isotonic <- function(calibration, .data) {
   )
 }
 
-#---------------------------- >> Adjust implementations ---------------------------
+#---------------------------- Adjust implementations ---------------------------
 
 cal_add_predict_impl <- function(calibration, .data) {
   if (calibration$type == "binary") {

@@ -1,4 +1,5 @@
-#------------------------------- Logistic --------------------------------------
+#------------------------------ Estimates --------------------------------------
+#----------------------------- >> Logistic --------------------------------------
 #' Uses a logistic model to calibrate probabilities
 #' @param .data A data.frame object containing predictions and probability columns.
 #' @param truth The column identifier for the true class results
@@ -12,17 +13,17 @@
 #' calculate the new probabilities.
 #' @export
 cal_estimate_logistic <- function(.data,
-                         truth = NULL,
-                         estimate = dplyr::starts_with(".pred_"),
-                         ...) {
+                                  truth = NULL,
+                                  estimate = dplyr::starts_with(".pred_"),
+                                  ...) {
   UseMethod("cal_estimate_logistic")
 }
 
 #' @export
 cal_estimate_logistic.data.frame <- function(.data,
-                                    truth = NULL,
-                                    estimate = dplyr::starts_with(".pred_"),
-                                    ...) {
+                                             truth = NULL,
+                                             estimate = dplyr::starts_with(".pred_"),
+                                             ...) {
   cal_estimate_logistic_impl(
     .data = .data,
     truth = {{ truth }},
@@ -33,22 +34,22 @@ cal_estimate_logistic.data.frame <- function(.data,
   )
 }
 
-#---------------------- Logistic Spline (GAM)  ---------------------------------
+#---------------------- >> Logistic Spline (GAM)  ------------------------------
 #' Uses a logistic spline model to calibrate probabilities
 #' @inheritParams  cal_estimate_logistic
 #' @export
 cal_estimate_logistic_spline <- function(.data,
-                                truth = NULL,
-                                estimate = dplyr::starts_with(".pred_"),
-                                ...) {
+                                         truth = NULL,
+                                         estimate = dplyr::starts_with(".pred_"),
+                                         ...) {
   UseMethod("cal_estimate_logistic_spline")
 }
 
 #' @export
 cal_estimate_logistic_spline.data.frame <- function(.data,
-                                           truth = NULL,
-                                           estimate = dplyr::starts_with(".pred_"),
-                                           ...) {
+                                                    truth = NULL,
+                                                    estimate = dplyr::starts_with(".pred_"),
+                                                    ...) {
   cal_estimate_logistic_impl(
     .data = .data,
     truth = {{ truth }},
@@ -59,25 +60,25 @@ cal_estimate_logistic_spline.data.frame <- function(.data,
   )
 }
 
-#------------------------------ Isotonic ---------------------------------------
+#----------------------------- >> Isotonic -------------------------------------
 #' Uses an Isotonic regression model to calibrate probabilities
 #' @inheritParams cal_estimate_logistic
 #' @export
 cal_estimate_isotonic <- function(.data,
-                         truth = NULL,
-                         estimate = dplyr::starts_with(".pred_"),
-                         ...) {
+                                  truth = NULL,
+                                  estimate = dplyr::starts_with(".pred_"),
+                                  ...) {
   UseMethod("cal_estimate_isotonic")
 }
 
 #' @export
 cal_estimate_isotonic.data.frame <- function(.data,
-                                    truth = NULL,
-                                    estimate = dplyr::starts_with(".pred_"),
-                                    ...) {
+                                             truth = NULL,
+                                             estimate = dplyr::starts_with(".pred_"),
+                                             ...) {
   truth <- enquo(truth)
 
-  levels <- truth_estimate_map(.data, {{truth}}, {{estimate}})
+  levels <- truth_estimate_map(.data, {{ truth }}, {{ estimate }})
 
   if (length(levels) == 2) {
     iso_model <- cal_isoreg_dataframe(
@@ -101,56 +102,25 @@ cal_estimate_isotonic.data.frame <- function(.data,
   res
 }
 
-cal_isoreg_dataframe <- function(.data,
-                                 truth,
-                                 estimate,
-                                 sampled = FALSE,
-                                 ...) {
-  sort_data <- dplyr::arrange(.data, !!estimate)
-
-  if (sampled) {
-    sort_data <- dplyr::slice_sample(
-      .data = sort_data,
-      prop = 1,
-      replace = TRUE
-    )
-  }
-
-  x <- dplyr::pull(sort_data, !!estimate)
-
-  truth <- dplyr::pull(sort_data, {{truth}})
-  y <- as.integer(as.integer(truth) == 1)
-
-  model <- isoreg(x = x, y = y)
-
-  model_stepfun <- as.stepfun(model, ...)
-
-  dplyr::tibble(
-    .estimate = environment(model_stepfun)$x,
-    .adj_estimate = environment(model_stepfun)$y
-  )
-}
-
-#-------------------------- Isotonic Bootstrapped-------------------------------
-
+#------------------------ >> Isotonic Bootstrapped------------------------------
 #' Uses a bootstrapped Isotonic regression model to calibrate probabilities
 #' @param times Number of bootstraps.
 #' @inheritParams cal_estimate_logistic
 #' @export
 cal_estimate_isotonic_boot <- function(.data,
-                              truth = NULL,
-                              estimate = dplyr::starts_with(".pred_"),
-                              times = 10,
-                              ...) {
+                                       truth = NULL,
+                                       estimate = dplyr::starts_with(".pred_"),
+                                       times = 10,
+                                       ...) {
   UseMethod("cal_estimate_isotonic_boot")
 }
 
 #' @export
 cal_estimate_isotonic_boot.data.frame <- function(.data,
-                                         truth = NULL,
-                                         estimate = dplyr::starts_with(".pred_"),
-                                         times = 10,
-                                         ...) {
+                                                  truth = NULL,
+                                                  estimate = dplyr::starts_with(".pred_"),
+                                                  times = 10,
+                                                  ...) {
   truth <- enquo(truth)
 
   levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
@@ -176,6 +146,92 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
   }
 
   res
+}
+
+#------------------------- Estimate implementation -----------------------------
+#------------------------------ >> Logistic ------------------------------------
+cal_estimate_logistic_impl <- function(.data,
+                                       truth = NULL,
+                                       estimate = dplyr::starts_with(".pred_"),
+                                       type,
+                                       model,
+                                       method,
+                                       additional_class,
+                                       ...) {
+  truth <- enquo(truth)
+
+  levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
+
+  if (length(levels) == 2) {
+    log_model <- cal_model_impl(
+      .data = .data,
+      truth = !!truth,
+      estimate = levels[[1]],
+      run_model = model,
+      ...
+    )
+
+    res <- as_binary_cal_object(
+      estimate = log_model,
+      levels = levels,
+      truth = !!truth,
+      method = method,
+      additional_class = additional_class
+    )
+  } else {
+    stop_multiclass()
+  }
+
+  res
+}
+
+cal_model_impl <- function(.data, truth, estimate, run_model, ...) {
+  truth <- ensym(truth)
+
+  if (run_model == "logistic_spline") {
+    f_model <- expr(!!truth ~ s(!!estimate, k = 10))
+    init_model <- mgcv::gam(f_model, data = .data, family = "binomial", ...)
+    model <- butcher::butcher(init_model)
+  }
+
+  if (run_model == "glm") {
+    f_model <- expr(!!truth ~ !!estimate)
+    init_model <- glm(f_model, data = .data, family = "binomial", ...)
+    model <- butcher::butcher(init_model)
+  }
+
+  model
+}
+
+#------------------------------ >> Isotonic ------------------------------------
+cal_isoreg_dataframe <- function(.data,
+                                 truth,
+                                 estimate,
+                                 sampled = FALSE,
+                                 ...) {
+  sort_data <- dplyr::arrange(.data, !!estimate)
+
+  if (sampled) {
+    sort_data <- dplyr::slice_sample(
+      .data = sort_data,
+      prop = 1,
+      replace = TRUE
+    )
+  }
+
+  x <- dplyr::pull(sort_data, !!estimate)
+
+  truth <- dplyr::pull(sort_data, {{ truth }})
+  y <- as.integer(as.integer(truth) == 1)
+
+  model <- isoreg(x = x, y = y)
+
+  model_stepfun <- as.stepfun(model, ...)
+
+  dplyr::tibble(
+    .estimate = environment(model_stepfun)$x,
+    .adj_estimate = environment(model_stepfun)$y
+  )
 }
 
 cal_isoreg_boot <- function(.data,
@@ -238,7 +294,7 @@ boot_iso_cal <- function(x) {
     dplyr::select(.estimate, .adj_estimate)
 }
 
-#----------------------------- Binary Objs--------------------------------------
+#-------------------------- Binary Objects -------------------------------------
 
 #' @export
 print.cal_binary <- function(x, ...) {
@@ -275,61 +331,7 @@ as_binary_cal_object <- function(estimate,
   )
 }
 
-
 # ------------------------------- Utils ----------------------------------------
-
-cal_estimate_logistic_impl <- function(.data,
-                              truth = NULL,
-                              estimate = dplyr::starts_with(".pred_"),
-                              type,
-                              model,
-                              method,
-                              additional_class,
-                              ...) {
-  truth <- enquo(truth)
-
-  levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
-
-  if (length(levels) == 2) {
-    log_model <- cal_model_impl(
-      .data = .data,
-      truth = !!truth,
-      estimate = levels[[1]],
-      run_model = model,
-      ...
-    )
-
-    res <- as_binary_cal_object(
-      estimate = log_model,
-      levels = levels,
-      truth = !!truth,
-      method = method,
-      additional_class = additional_class
-    )
-  } else {
-    stop_multiclass()
-  }
-
-  res
-}
-
-cal_model_impl <- function(.data, truth, estimate, run_model, ...) {
-  truth <- ensym(truth)
-
-  if (run_model == "logistic_spline") {
-    f_model <- expr(!!truth ~ s(!!estimate, k = 10))
-    init_model <- mgcv::gam(f_model, data = .data, family = "binomial", ...)
-    model <- butcher::butcher(init_model)
-  }
-
-  if (run_model == "glm") {
-    f_model <- expr(!!truth ~ !!estimate)
-    init_model <- glm(f_model, data = .data, family = "binomial", ...)
-    model <- butcher::butcher(init_model)
-  }
-
-  model
-}
 
 stop_multiclass <- function() {
   cli::cli_abort("Multiclass not supported...yet")
