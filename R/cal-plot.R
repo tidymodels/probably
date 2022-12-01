@@ -381,25 +381,6 @@ cal_plot_windowed.tune_results <- function(.data,
   )
 }
 
-cal_plot_compare_impl <- function(.data, ..., .original_name = "Original") {
-
-  res <- .cal_table_compare(
-    .data = .data,
-    .original_name = .original_name,
-    ... = ...
-  )
-
-  first_model <- rlang::list2(...)[[1]]
-  truth <- rlang::parse_expr(first_model$truth)
-  estimate <- first_model$levels[[1]]
-
-  list(
-    truth = truth,
-    estimate = estimate,
-    tbl = res
-  )
-}
-
 #------------------------------- >> Utils --------------------------------------
 
 binary_plot_impl <- function(tbl, x, y,
