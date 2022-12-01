@@ -381,45 +381,6 @@ cal_plot_windowed.tune_results <- function(.data,
   )
 }
 
-#------------------------------- >> Compare ------------------------------------
-
-#' Compare one or several calibrations
-#' @param .data A data.frame object containing predictions and probability columns.
-#' @param ... One or multiple `cal_objects`. They can be named.
-#' @param .original_name Label for the original probabilities. It default to
-#' "Original". Setting to `NULL` will prevent the original probabilities from
-#' being added to this function's output.
-#' @inheritParams cal_plot_breaks
-#' @export
-cal_plot_compare_breaks <- function(.data,
-                                    ...,
-                                    num_breaks = 10,
-                                    .original_name = "Original") {
-  UseMethod("cal_plot_compare_breaks")
-}
-
-#' @export
-cal_plot_compare_breaks <- function(.data,
-                                    ...,
-                                    num_breaks = 10,
-                                    .original_name = "Original") {
-
-
-  res <- cal_plot_compare_impl(
-    .data = .data,
-    ... = ...,
-    .original_name = .original_name
-    )
-
-  res$tbl %>%
-    group_by(.source) %>%
-    cal_plot_breaks(
-      truth = !!res$truth,
-      estimate = !!res$estimate,
-      num_breaks = num_breaks
-    )
-}
-
 cal_plot_compare_impl <- function(.data, ..., .original_name = "Original") {
 
   res <- .cal_table_compare(
@@ -896,56 +857,6 @@ binary_plot_impl <- function(tbl, x, y,
     step_size = step_size,
     conf_level = conf_level,
     event_level = event_level
-  )
-}
-
-#------------------------------- >> Compare ------------------------------------
-
-#' Compare one or several calibrations
-#' @param .data A data.frame object containing predictions and probability columns.
-#' @param ... One or multiple `cal_objects`. They can be named.
-#' @param .original_name Label for the original probabilities. It default to
-#' "Original". Setting to `NULL` will prevent the original probabilities from
-#' being added to this function's output.
-#' @export
-#' @keywords internal
-.cal_table_compare <- function(.data, ..., .original_name = "Original") {
-  UseMethod(".cal_table_compare")
-}
-
-#' @export
-#' @keywords internal
-.cal_table_compare <- function(.data, ..., .original_name = "Original") {
-  models <- rlang::list2(...)
-
-  # TODO - Check that the data and all the calibrations match
-  #       the number of probabilities
-
-  if (!is.null(.original_name)) {
-    original_table <- .data
-    original_table$.source <- .original_name
-  } else {
-    original_table <- NULL
-  }
-
-  model_names <- names(models)
-
-  sources <- purrr::imap(
-    models, ~ {
-      x <- cal_apply(.data, .x)
-      source <- .x$method
-      if (!is.null(model_names) && .y != "") {
-        source <- .y
-      }
-      x$.source <- source
-      x
-    }
-  ) %>%
-    purrr::reduce(dplyr::bind_rows)
-
-  dplyr::bind_rows(
-    original_table,
-    sources
   )
 }
 

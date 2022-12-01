@@ -134,7 +134,7 @@ model <- glm(Class ~ .pred_good, segment_logistic, family = "binomial")
 preds <- predict(model, segment_logistic, type = "response")
 
 gl <- segment_logistic \%>\%
-  mutate(.pred_good = 1- preds, source = "glm")
+  mutate(.pred_good = 1 - preds, source = "glm")
 
 combined <- bind_rows(mutate(segment_logistic, source = "original"), gl)
 

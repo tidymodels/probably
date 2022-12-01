@@ -4,10 +4,10 @@
 \alias{cal_apply}
 \title{Applies a calibration to a set of prediction probabilities}
 \usage{
-cal_apply(x, calibration, ...)
+cal_apply(.data, calibration, ...)
 }
 \arguments{
-\item{x}{An object that can process a calibration object.}
+\item{.data}{An object that can process a calibration object.}
 
 \item{calibration}{The calibration object (\code{cal_object}).}
 

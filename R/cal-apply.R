@@ -3,16 +3,16 @@
 #' Applies a calibration to a set of prediction probabilities
 #' @details It currently supports data.frames only. It extracts the `truth` and
 #' the estimate columns names, and levels, from the calibration object.
-#' @param x An object that can process a calibration object.
+#' @param .data An object that can process a calibration object.
 #' @param calibration The calibration object (`cal_object`).
 #' @param ... Optional arguments; currently unused.
 #' @export
-cal_apply <- function(x, calibration, ...) {
+cal_apply <- function(.data, calibration, ...) {
   UseMethod("cal_apply")
 }
 
 #' @export
-cal_apply.data.frame <- function(x, calibration, ...) {
+cal_apply.data.frame <- function(.data, calibration, ...) {
   if (calibration$type == "binary") {
     cal_add_adjust(calibration, x)
   } else {
@@ -20,41 +20,41 @@ cal_apply.data.frame <- function(x, calibration, ...) {
   }
 }
 
-# -------------------------- Adjust Methods ------------------------------------
+# ------------------------ call_add_adjust() -----------------------------------
 
-cal_add_adjust <- function(calibration, .data, desc = NULL) {
+cal_add_adjust <- function(calibration, .data) {
   UseMethod("cal_add_adjust")
 }
 
-cal_add_adjust.cal_estimate_logistic <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_estimate_logistic <- function(calibration, .data) {
   cal_add_predict_impl(
     calibration = calibration,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_estimate_logistic_spline <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_estimate_logistic_spline <- function(calibration, .data) {
   cal_add_predict_impl(
     calibration = calibration,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_estimate_isotonic_boot <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_estimate_isotonic_boot <- function(calibration, .data) {
   cal_add_interval_impl(
     calibration = calibration,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_estimate_isotonic <- function(calibration, .data, desc = NULL) {
+cal_add_adjust.cal_estimate_isotonic <- function(calibration, .data) {
   cal_add_interval_impl(
     calibration = calibration,
     .data = .data
   )
 }
 
-#---------------------------- Adjust Implementations ---------------------------
+#---------------------------- >> Adjust implementations ---------------------------
 
 cal_add_predict_impl <- function(calibration, .data) {
   if (calibration$type == "binary") {
