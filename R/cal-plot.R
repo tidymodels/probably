@@ -70,7 +70,7 @@
 #' preds <- predict(model, segment_logistic, type = "response")
 #'
 #' gl <- segment_logistic %>%
-#'   mutate(.pred_good = 1- preds, source = "glm")
+#'   mutate(.pred_good = 1 - preds, source = "glm")
 #'
 #' combined <- bind_rows(mutate(segment_logistic, source = "original"), gl)
 #'
@@ -381,6 +381,64 @@ cal_plot_windowed.tune_results <- function(.data,
   )
 }
 
+#------------------------------- >> Compare ------------------------------------
+
+#' Compare one or several calibrations
+#' @param .data A data.frame object containing predictions and probability columns.
+#' @param ... One or multiple `cal_objects`. They can be named.
+#' @param .original_name Label for the original probabilities. It default to
+#' "Original". Setting to `NULL` will prevent the original probabilities from
+#' being added to this function's output.
+#' @inheritParams cal_plot_breaks
+#' @export
+cal_plot_compare_breaks <- function(.data,
+                                    ...,
+                                    num_breaks = 10,
+                                    .original_name = "Original") {
+  UseMethod("cal_plot_compare_breaks")
+}
+
+#' @export
+cal_plot_compare_breaks <- function(.data,
+                                    ...,
+                                    num_breaks = 10,
+                                    .original_name = "Original") {
+
+
+  res <- cal_plot_compare_impl(
+    .data = .data,
+    ... = ...,
+    .original_name = .original_name
+    )
+
+  res$tbl %>%
+    group_by(.source) %>%
+    cal_plot_breaks(
+      truth = !!res$truth,
+      estimate = !!res$estimate,
+      num_breaks = num_breaks
+    )
+}
+
+cal_plot_compare_impl <- function(.data, ..., .original_name = "Original") {
+
+  res <- .cal_table_compare(
+    .data = .data,
+    .original_name = .original_name,
+    ... = ...
+  )
+
+  first_model <- rlang::list2(...)[[1]]
+  truth <- rlang::parse_expr(first_model$truth)
+  estimate <- first_model$levels[[1]]
+
+  list(
+    truth = truth,
+    estimate = estimate,
+    tbl = res
+  )
+}
+
 #------------------------------- >> Utils --------------------------------------
 
 binary_plot_impl <- function(tbl, x, y,
@@ -396,8 +454,8 @@ binary_plot_impl <- function(tbl, x, y,
 
   gp_vars <- dplyr::group_vars(.data)
 
-  if(length(gp_vars)) {
-    if(length(gp_vars) > 1) {
+  if (length(gp_vars)) {
+    if (length(gp_vars) > 1) {
       rlang::abort("Plot does not support more than one grouping variable")
     }
     has_groups <- TRUE
@@ -418,9 +476,10 @@ binary_plot_impl <- function(tbl, x, y,
   if (include_ribbon) {
     res <- res +
       geom_ribbon(
-        aes(y = !!y, ymin = lower, ymax = upper), color = "#ffffff00",
+        aes(y = !!y, ymin = lower, ymax = upper),
+        color = "#ffffff00",
         alpha = 0.08
-        )
+      )
   }
 
   if (include_rug & !has_groups) {
@@ -541,19 +600,19 @@ binary_plot_impl <- function(tbl, x, y,
 }
 
 .cal_binary_table_breaks_grp <- function(.data,
-                                          truth,
-                                          estimate,
-                                          group,
-                                          num_breaks = 10,
-                                          conf_level = 0.90,
-                                          event_level = c("first", "second"),
-                                          ...) {
+                                         truth,
+                                         estimate,
+                                         group,
+                                         num_breaks = 10,
+                                         conf_level = 0.90,
+                                         event_level = c("first", "second"),
+                                         ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   lev <- process_level(event_level)
 
-  side <-  seq(0, 1, by = 1 / num_breaks)
+  side <- seq(0, 1, by = 1 / num_breaks)
 
   cuts <- list(
     lower_cut = side[1:length(side) - 1],
@@ -859,12 +918,12 @@ binary_plot_impl <- function(tbl, x, y,
 .cal_table_compare <- function(.data, ..., .original_name = "Original") {
   models <- rlang::list2(...)
 
-  #TODO - Check that the data and all the calibrations match
+  # TODO - Check that the data and all the calibrations match
   #       the number of probabilities
 
-  if(!is.null(.original_name)) {
+  if (!is.null(.original_name)) {
     original_table <- .data
-    original_table$source <- .original_name
+    original_table$.source <- .original_name
   } else {
     original_table <- NULL
   }
@@ -875,12 +934,13 @@ binary_plot_impl <- function(tbl, x, y,
     models, ~ {
       x <- cal_apply(.data, .x)
       source <- .x$method
-      if(!is.null(model_names) && .y != "") {
+      if (!is.null(model_names) && .y != "") {
         source <- .y
       }
-      x$source <- source
+      x$.source <- source
       x
-    }) %>%
+    }
+  ) %>%
     purrr::reduce(dplyr::bind_rows)
 
   dplyr::bind_rows(
@@ -918,7 +978,7 @@ process_midpoint <- function(.data,
       events = sum(.is_val, na.rm = TRUE),
       total = dplyr::n()
     ) %>%
-    #dplyr::ungroup() %>%
+    # dplyr::ungroup() %>%
     dplyr::filter(total > 0)
 
   if (!quo_is_null(.bin)) tbl <- dplyr::select(tbl, -.bin)
