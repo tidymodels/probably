@@ -11,6 +11,14 @@
 #' `truth` variable.
 #' @param ... Additional arguments passed to the models or routines used to
 #' calculate the new probabilities.
+#' @examples
+#' # It will automatically identify the probability columns
+#' # if passed a model fitted with tidymodels
+#' cal_estimate_logistic(segment_logistic, Class)
+#' # Specify the variable names in a vector of unquoted names
+#' cal_estimate_logistic(segment_logistic, Class, c(.pred_poor, .pred_good))
+#' # dplyr selector functions are also supported
+#' cal_estimate_logistic(segment_logistic, Class, dplyr::starts_with(".pred_"))
 #' @export
 cal_estimate_logistic <- function(.data,
                                   truth = NULL,
@@ -37,6 +45,14 @@ cal_estimate_logistic.data.frame <- function(.data,
 #---------------------- >> Logistic Spline (GAM)  ------------------------------
 #' Uses a logistic spline model to calibrate probabilities
 #' @inheritParams  cal_estimate_logistic
+#' @examples
+#' # It will automatically identify the probability columns
+#' # if passed a model fitted with tidymodels
+#' cal_estimate_logistic_spline(segment_logistic, Class)
+#' # Specify the variable names in a vector of unquoted names
+#' cal_estimate_logistic_spline(segment_logistic, Class, c(.pred_poor, .pred_good))
+#' # dplyr selector functions are also supported
+#' cal_estimate_logistic_spline(segment_logistic, Class, dplyr::starts_with(".pred_"))
 #' @export
 cal_estimate_logistic_spline <- function(.data,
                                          truth = NULL,
@@ -63,6 +79,14 @@ cal_estimate_logistic_spline.data.frame <- function(.data,
 #----------------------------- >> Isotonic -------------------------------------
 #' Uses an Isotonic regression model to calibrate probabilities
 #' @inheritParams cal_estimate_logistic
+#' @examples
+#' # It will automatically identify the probability columns
+#' # if passed a model fitted with tidymodels
+#' cal_estimate_isotonic(segment_logistic, Class)
+#' # Specify the variable names in a vector of unquoted names
+#' cal_estimate_isotonic(segment_logistic, Class, c(.pred_poor, .pred_good))
+#' # dplyr selector functions are also supported
+#' cal_estimate_isotonic(segment_logistic, Class, dplyr::starts_with(".pred_"))
 #' @export
 cal_estimate_isotonic <- function(.data,
                                   truth = NULL,
@@ -106,6 +130,14 @@ cal_estimate_isotonic.data.frame <- function(.data,
 #' Uses a bootstrapped Isotonic regression model to calibrate probabilities
 #' @param times Number of bootstraps.
 #' @inheritParams cal_estimate_logistic
+#' @examples
+#' # It will automatically identify the probability columns
+#' # if passed a model fitted with tidymodels
+#' cal_estimate_isotonic_boot(segment_logistic, Class)
+#' # Specify the variable names in a vector of unquoted names
+#' cal_estimate_isotonic_boot(segment_logistic, Class, c(.pred_poor, .pred_good))
+#' # dplyr selector functions are also supported
+#' cal_estimate_isotonic_boot(segment_logistic, Class, dplyr::starts_with(".pred_"))
 #' @export
 cal_estimate_isotonic_boot <- function(.data,
                                        truth = NULL,

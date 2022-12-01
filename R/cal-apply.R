@@ -6,6 +6,10 @@
 #' @param .data An object that can process a calibration object.
 #' @param calibration The calibration object (`cal_object`).
 #' @param ... Optional arguments; currently unused.
+#' @examples
+#' w_calibration <- cal_estimate_logistic(segment_logistic, Class)
+#'
+#' cal_apply(segment_logistic, w_calibration)
 #' @export
 cal_apply <- function(.data, calibration, ...) {
   UseMethod("cal_apply")

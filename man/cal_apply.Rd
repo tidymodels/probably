@@ -20,3 +20,8 @@ Applies a calibration to a set of prediction probabilities
 It currently supports data.frames only. It extracts the \code{truth} and
 the estimate columns names, and levels, from the calibration object.
 }
+\examples{
+w_calibration <- cal_estimate_logistic(segment_logistic, Class)
+
+cal_apply(segment_logistic, w_calibration)
+}
