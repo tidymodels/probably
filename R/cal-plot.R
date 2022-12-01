@@ -869,10 +869,15 @@ binary_plot_impl <- function(tbl, x, y,
     original_table <- NULL
   }
 
+  model_names <- names(models)
+
   sources <- purrr::imap(
     models, ~ {
       x <- cal_apply(.data, .x)
-      source <- ifelse(.y == "", .x$method, .y)
+      source <- .x$method
+      if(!is.null(model_names) && .y != "") {
+        source <- .y
+      }
       x$source <- source
       x
     }) %>%
