@@ -47,7 +47,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic Bootstrapped
+      Method: Bootstrapped Isotonic Regression
       Type: Binary
       Truth: `Class`
       Estimates:

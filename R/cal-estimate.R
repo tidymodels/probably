@@ -1,6 +1,6 @@
 #------------------------------ Estimates --------------------------------------
 #----------------------------- >> Logistic --------------------------------------
-#' Uses a logistic model to calibrate probabilities
+#' Uses a logistic regression model to calibrate probabilities
 #' @param .data A data.frame object containing predictions and probability columns.
 #' @param truth The column identifier for the true class results
 #' (that is a factor). This should be an unquoted column name.
@@ -126,7 +126,7 @@ cal_estimate_isotonic.data.frame <- function(.data,
   res
 }
 
-#------------------------ >> Isotonic Bootstrapped------------------------------
+#------------------ >>  Bootstrapped Isotonic Regression------------------------
 #' Uses a bootstrapped Isotonic regression model to calibrate probabilities
 #' @param times Number of bootstraps.
 #' @inheritParams cal_estimate_logistic
@@ -170,7 +170,7 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
       estimate = log_model,
       levels = levels,
       truth = !!truth,
-      method = "Isotonic Bootstrapped",
+      method = "Bootstrapped Isotonic Regression",
       additional_class = "cal_estimate_isotonic_boot"
     )
   } else {
@@ -256,7 +256,7 @@ cal_isoreg_dataframe <- function(.data,
   truth <- dplyr::pull(sort_data, {{ truth }})
   y <- as.integer(as.integer(truth) == 1)
 
-  model <- isoreg(x = x, y = y)
+  model <- stats::isoreg(x = x, y = y)
 
   model_stepfun <- as.stepfun(model, ...)
 

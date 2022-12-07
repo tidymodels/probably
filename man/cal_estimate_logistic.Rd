@@ -2,7 +2,7 @@
 % Please edit documentation in R/cal-estimate.R
 \name{cal_estimate_logistic}
 \alias{cal_estimate_logistic}
-\title{Uses a logistic model to calibrate probabilities}
+\title{Uses a logistic regression model to calibrate probabilities}
 \usage{
 cal_estimate_logistic(
   .data,
@@ -27,7 +27,7 @@ identifiers will be considered the same as the order of the levels of the
 calculate the new probabilities.}
 }
 \description{
-Uses a logistic model to calibrate probabilities
+Uses a logistic regression model to calibrate probabilities
 }
 \examples{
 # It will automatically identify the probability columns
