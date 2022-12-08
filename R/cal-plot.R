@@ -32,7 +32,7 @@
 #' @param conf_level Confidence level to use in the visualization. It defaults
 #' to 0.9.
 #' @param smooth Applies to the logistic models. It switches between logistic
-#' spline when `TRUE`, and regular logistic when `FALSE`.
+#' spline when `TRUE`, and simple logistic regression when `FALSE`.
 #' @param include_ribbon Flag that indicates if the ribbon layer is to be
 #' included. It defaults to `TRUE`.
 #' @param include_rug Flag that indicates if the Rug layer is to be included.

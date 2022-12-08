@@ -8,6 +8,7 @@ cal_estimate_logistic(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
   ...
 )
 }
@@ -22,6 +23,9 @@ functions to choose which variables contains the class probabilities. It
 defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
+
+\item{smooth}{Applies to the logistic models. It switches between logistic
+spline when \code{TRUE}, and simple logistic regression when \code{FALSE}.}
 
 \item{...}{Additional arguments passed to the models or routines used to
 calculate the new probabilities.}

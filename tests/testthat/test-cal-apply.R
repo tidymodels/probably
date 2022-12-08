@@ -1,5 +1,5 @@
 test_that("Logistic apply work", {
-  sl_logistic <- cal_estimate_logistic(segment_logistic, Class)
+  sl_logistic <- cal_estimate_logistic(segment_logistic, Class, smooth = FALSE)
   ap_logistic <- cal_apply(segment_logistic, sl_logistic)
 
   pred_good <-  ap_logistic$.pred_good
@@ -8,7 +8,7 @@ test_that("Logistic apply work", {
 })
 
 test_that("Logistic spline apply work", {
-  sl_gam <- cal_estimate_logistic_spline(segment_logistic, Class)
+  sl_gam <- cal_estimate_logistic(segment_logistic, Class)
   ap_gam <- cal_apply(segment_logistic, sl_gam)
 
   pred_good <-  ap_gam$.pred_good

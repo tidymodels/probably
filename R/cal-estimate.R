@@ -11,6 +11,8 @@
 #' `truth` variable.
 #' @param ... Additional arguments passed to the models or routines used to
 #' calculate the new probabilities.
+#' @param smooth Applies to the logistic models. It switches between logistic
+#' spline when `TRUE`, and simple logistic regression when `FALSE`.
 #' @examples
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
@@ -23,6 +25,7 @@
 cal_estimate_logistic <- function(.data,
                                   truth = NULL,
                                   estimate = dplyr::starts_with(".pred_"),
+                                  smooth = TRUE,
                                   ...) {
   UseMethod("cal_estimate_logistic")
 }
@@ -31,50 +34,29 @@ cal_estimate_logistic <- function(.data,
 cal_estimate_logistic.data.frame <- function(.data,
                                              truth = NULL,
                                              estimate = dplyr::starts_with(".pred_"),
+                                             smooth = TRUE,
                                              ...) {
+  if(smooth) {
+    model <- "logistic_spline"
+    method <- "Logistic Spline"
+    additional_class <- "cal_estimate_logistic_spline"
+  } else {
+    model <- "glm"
+    method <- "Logistic"
+    additional_class <- "cal_estimate_logistic"
+  }
+
+
   cal_estimate_logistic_impl(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    model = "glm",
-    method = "Logistic",
-    additional_class = "cal_estimate_logistic"
+    model = model,
+    method = method,
+    additional_class = additional_class
   )
 }
 
-#---------------------- >> Logistic Spline (GAM)  ------------------------------
-#' Uses a logistic spline model to calibrate probabilities
-#' @inheritParams  cal_estimate_logistic
-#' @examples
-#' # It will automatically identify the probability columns
-#' # if passed a model fitted with tidymodels
-#' cal_estimate_logistic_spline(segment_logistic, Class)
-#' # Specify the variable names in a vector of unquoted names
-#' cal_estimate_logistic_spline(segment_logistic, Class, c(.pred_poor, .pred_good))
-#' # dplyr selector functions are also supported
-#' cal_estimate_logistic_spline(segment_logistic, Class, dplyr::starts_with(".pred_"))
-#' @export
-cal_estimate_logistic_spline <- function(.data,
-                                         truth = NULL,
-                                         estimate = dplyr::starts_with(".pred_"),
-                                         ...) {
-  UseMethod("cal_estimate_logistic_spline")
-}
-
-#' @export
-cal_estimate_logistic_spline.data.frame <- function(.data,
-                                                    truth = NULL,
-                                                    estimate = dplyr::starts_with(".pred_"),
-                                                    ...) {
-  cal_estimate_logistic_impl(
-    .data = .data,
-    truth = {{ truth }},
-    estimate = {{ estimate }},
-    model = "logistic_spline",
-    method = "Logistic Spline",
-    additional_class = "cal_estimate_logistic_spline"
-  )
-}
 
 #----------------------------- >> Isotonic -------------------------------------
 #' Uses an Isotonic regression model to calibrate probabilities

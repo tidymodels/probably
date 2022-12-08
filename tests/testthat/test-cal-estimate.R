@@ -1,5 +1,5 @@
 test_that("Logistic estimates work", {
-  sl_logistic <- cal_estimate_logistic(segment_logistic, Class)
+  sl_logistic <- cal_estimate_logistic(segment_logistic, Class, smooth = FALSE)
   expect_cal_type(sl_logistic, "binary")
   expect_cal_method(sl_logistic, "Logistic")
   expect_cal_estimate(sl_logistic, "glm")
@@ -7,7 +7,7 @@ test_that("Logistic estimates work", {
 })
 
 test_that("Logistic spline estimates work", {
-  sl_gam <- cal_estimate_logistic_spline(segment_logistic, Class)
+  sl_gam <- cal_estimate_logistic(segment_logistic, Class)
   expect_cal_type(sl_gam, "binary")
   expect_cal_method(sl_gam, "Logistic Spline")
   expect_cal_estimate(sl_gam, "gam")

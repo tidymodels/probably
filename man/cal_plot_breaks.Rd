@@ -80,7 +80,7 @@ level of truth to consider as the "event".}
 \item{...}{Additional arguments passed to the \code{tune_results} object.}
 
 \item{smooth}{Applies to the logistic models. It switches between logistic
-spline when \code{TRUE}, and regular logistic when \code{FALSE}.}
+spline when \code{TRUE}, and simple logistic regression when \code{FALSE}.}
 
 \item{window_size}{The size of segments. Used for the windowed probability
 calculations. It defaults to 10\% of segments.}
