@@ -31,3 +31,11 @@ test_that("Isotonic Bootstrapped apply work", {
 
   expect_true(all(ap_boot$.pred_poor + ap_boot$.pred_good == 1))
 })
+
+test_that("Passing the data frame first returns expected abort message", {
+  sl_boot <- cal_estimate_isotonic_boot(segment_logistic, Class)
+
+  expect_error(
+    cal_apply(sl_boot, segment_logistic)
+    )
+})

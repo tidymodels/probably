@@ -24,6 +24,13 @@ cal_apply.data.frame <- function(.data, calibration, ...) {
   }
 }
 
+#' @export
+cal_apply.cal_object <- function(.data, calibration, ...) {
+  rlang::abort(paste0("`cal_apply()` expects the data as the first argument,",
+                 "and the calibration object as the second argument."
+                 ))
+}
+
 # ------------------------------- Adjust ---------------------------------------
 
 cal_add_adjust <- function(calibration, .data) {
