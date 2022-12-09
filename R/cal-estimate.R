@@ -351,6 +351,12 @@ stop_multiclass <- function() {
   cli::cli_abort("Multiclass not supported...yet")
 }
 
+# Centralizes the figuring out of which probability-variable maps to which
+# factor level of the "truth" variable. This is where the logic of finding
+# and mapping tidymodels explicit column names happen. If there are no .pred_
+# named variables, it will map the variables based on the position.
+# It returns a named list, wit the variable names as syms, and the assigned
+# levels as the name.
 truth_estimate_map <- function(.data, truth, estimate) {
   truth_str <- tidyselect_cols(.data, {{ truth }})
 
@@ -378,6 +384,7 @@ truth_estimate_map <- function(.data, truth, estimate) {
   set_names(est_map, truth_levels)
 }
 
+# Wraps tidyselect call to avoid code duplication in the function above
 tidyselect_cols <- function(.data, x) {
   tidyselect::eval_select(
     expr = enquo(x),
