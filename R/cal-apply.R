@@ -4,85 +4,86 @@
 #' @details It currently supports data.frames only. It extracts the `truth` and
 #' the estimate columns names, and levels, from the calibration object.
 #' @param .data An object that can process a calibration object.
-#' @param calibration The calibration object (`cal_object`).
+#' @param object The calibration object (`cal_object`).
 #' @param ... Optional arguments; currently unused.
 #' @examples
 #' w_calibration <- cal_estimate_logistic(segment_logistic, Class)
 #'
 #' cal_apply(segment_logistic, w_calibration)
 #' @export
-cal_apply <- function(.data, calibration, ...) {
+cal_apply <- function(.data, object, ...) {
+  rlang::check_dots_empty()
   UseMethod("cal_apply")
 }
 
 #' @export
-cal_apply.data.frame <- function(.data, calibration, ...) {
-  if (calibration$type == "binary") {
-    cal_add_adjust(calibration, .data)
+cal_apply.data.frame <- function(.data, object, ...) {
+  if (object$type == "binary") {
+    cal_add_adjust(object, .data)
   } else {
     stop_multiclass()
   }
 }
 
 #' @export
-cal_apply.cal_object <- function(.data, calibration, ...) {
+cal_apply.cal_object <- function(.data, object, ...) {
   rlang::abort(paste0("`cal_apply()` expects the data as the first argument,",
-                 "and the calibration object as the second argument."
+                 "and the object object as the second argument."
                  ))
 }
 
 # ------------------------------- Adjust ---------------------------------------
 
-cal_add_adjust <- function(calibration, .data) {
+cal_add_adjust <- function(object, .data) {
   UseMethod("cal_add_adjust")
 }
 
-cal_add_adjust.cal_estimate_logistic <- function(calibration, .data) {
+cal_add_adjust.cal_estimate_logistic <- function(object, .data) {
   cal_add_predict_impl(
-    calibration = calibration,
+    object = object,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_estimate_logistic_spline <- function(calibration, .data) {
+cal_add_adjust.cal_estimate_logistic_spline <- function(object, .data) {
   cal_add_predict_impl(
-    calibration = calibration,
+    object = object,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_estimate_isotonic_boot <- function(calibration, .data) {
+cal_add_adjust.cal_estimate_isotonic_boot <- function(object, .data) {
   cal_add_interval_impl(
-    calibration = calibration,
+    object = object,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_estimate_isotonic <- function(calibration, .data) {
+cal_add_adjust.cal_estimate_isotonic <- function(object, .data) {
   cal_add_interval_impl(
-    calibration = calibration,
+    object = object,
     .data = .data
   )
 }
 
 #---------------------------- Adjust implementations ---------------------------
 
-cal_add_predict_impl <- function(calibration, .data) {
-  if (calibration$type == "binary") {
-    model <- calibration$estimates
+cal_add_predict_impl <- function(object, .data) {
+  if (object$type == "binary") {
+    model <- object$estimates
     preds <- predict(model, newdata = .data, type = "response")
     preds <- 1 - preds
-    .data[calibration$levels[[1]]] <- preds
-    .data[calibration$levels[[2]]] <- 1 - preds
+    .data[object$levels[[1]]] <- preds
+    .data[object$levels[[2]]] <- 1 - preds
   }
   .data
 }
 
-cal_add_interval_impl <- function(calibration, .data) {
-  if (calibration$type == "binary") {
-    estimates_table <- calibration$estimates
-    level_1 <- calibration$levels[[1]]
-    level_2 <- calibration$levels[[2]]
+cal_add_interval_impl <- function(object, .data) {
+  if (object$type == "binary") {
+    estimates_table <- object$estimates
+    level_1 <- object$levels[[1]]
+    level_2 <- object$levels[[2]]
     intervals <- cal_get_intervals(
       estimates_table = estimates_table,
       .data = .data,
