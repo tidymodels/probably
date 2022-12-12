@@ -203,7 +203,7 @@ cal_model_impl <- function(.data, truth, estimate, run_model, ...) {
   truth <- ensym(truth)
 
   if (run_model == "logistic_spline") {
-    f_model <- expr(!!truth ~ s(!!estimate, k = 10))
+    f_model <- expr(!!truth ~ s(!!estimate))
     init_model <- mgcv::gam(f_model, data = .data, family = "binomial", ...)
     model <- butcher::butcher(init_model)
   }
@@ -223,19 +223,19 @@ cal_isoreg_dataframe <- function(.data,
                                  estimate,
                                  sampled = FALSE,
                                  ...) {
-  sort_data <- dplyr::arrange(.data, !!estimate)
+  sorted_data <- dplyr::arrange(.data, !!estimate)
 
   if (sampled) {
-    sort_data <- dplyr::slice_sample(
-      .data = sort_data,
+    sorted_data <- dplyr::slice_sample(
+      .data = sorted_data,
       prop = 1,
       replace = TRUE
     )
   }
 
-  x <- dplyr::pull(sort_data, !!estimate)
+  x <- dplyr::pull(sorted_data, !!estimate)
 
-  truth <- dplyr::pull(sort_data, {{ truth }})
+  truth <- dplyr::pull(sorted_data, {{ truth }})
   y <- as.integer(as.integer(truth) == 1)
 
   model <- stats::isoreg(x = x, y = y)
