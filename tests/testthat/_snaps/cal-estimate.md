@@ -7,8 +7,9 @@
       -- Probability Calibration 
       Method: Logistic
       Type: Binary
-      Truth: `Class`
-      Estimates:
+      Train set size: 1,010
+      Truth variable: `Class`
+      Estimate variables:
       `.pred_good` ==> good
       `.pred_poor` ==> poor
 
@@ -21,8 +22,9 @@
       -- Probability Calibration 
       Method: Logistic Spline
       Type: Binary
-      Truth: `Class`
-      Estimates:
+      Train set size: 1,010
+      Truth variable: `Class`
+      Estimate variables:
       `.pred_good` ==> good
       `.pred_poor` ==> poor
 
@@ -35,8 +37,9 @@
       -- Probability Calibration 
       Method: Isotonic
       Type: Binary
-      Truth: `Class`
-      Estimates:
+      Train set size: 1,010
+      Truth variable: `Class`
+      Estimate variables:
       `.pred_good` ==> good
       `.pred_poor` ==> poor
 
@@ -49,8 +52,9 @@
       -- Probability Calibration 
       Method: Bootstrapped Isotonic Regression
       Type: Binary
-      Truth: `Class`
-      Estimates:
+      Train set size: 1,010
+      Truth variable: `Class`
+      Estimate variables:
       `.pred_good` ==> good
       `.pred_poor` ==> poor
 
@@ -63,8 +67,9 @@
       -- Probability Calibration 
       Method: Isotonic
       Type: Binary
-      Truth: `Class`
-      Estimates:
+      Train set size: 1,010
+      Truth variable: `Class`
+      Estimate variables:
       `good` ==> good
       `poor` ==> poor
 

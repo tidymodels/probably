@@ -3,6 +3,7 @@ test_that("Logistic estimates work", {
   expect_cal_type(sl_logistic, "binary")
   expect_cal_method(sl_logistic, "Logistic")
   expect_cal_estimate(sl_logistic, "glm")
+  expect_cal_rows(sl_logistic)
   expect_snapshot(print(sl_logistic))
 })
 
@@ -11,6 +12,7 @@ test_that("Logistic spline estimates work", {
   expect_cal_type(sl_gam, "binary")
   expect_cal_method(sl_gam, "Logistic Spline")
   expect_cal_estimate(sl_gam, "gam")
+  expect_cal_rows(sl_gam)
   expect_snapshot(print(sl_gam))
 })
 
@@ -19,6 +21,7 @@ test_that("Isotonic estimates work", {
   expect_cal_type(sl_isotonic, "binary")
   expect_cal_method(sl_isotonic, "Isotonic")
   expect_cal_estimate(sl_isotonic, "data.frame")
+  expect_cal_rows(sl_isotonic)
   expect_snapshot(print(sl_isotonic))
 })
 

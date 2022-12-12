@@ -99,6 +99,7 @@ cal_estimate_isotonic.data.frame <- function(.data,
       levels = levels,
       truth = !!truth,
       method = "Isotonic",
+      rows = nrow(.data),
       additional_class = "cal_estimate_isotonic"
     )
   } else {
@@ -152,6 +153,7 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
       estimate = log_model,
       levels = levels,
       truth = !!truth,
+      rows = nrow(.data),
       method = "Bootstrapped Isotonic Regression",
       additional_class = "cal_estimate_isotonic_boot"
     )
@@ -190,6 +192,7 @@ cal_estimate_logistic_impl <- function(.data,
       levels = levels,
       truth = !!truth,
       method = method,
+      rows = nrow(.data),
       additional_class = additional_class
     )
   } else {
@@ -288,13 +291,16 @@ boot_iso <- function(.data, truth, estimate, seed) {
 print.cal_binary <- function(x, ...) {
   cli::cli_div(theme = list(
     span.val0 = list(color = "blue"),
-    span.val1 = list(color = "yellow")
+    span.val1 = list(color = "yellow"),
+    span.val2 = list(color = "darkgreen")
   ))
+  rows <- prettyNum(x$rows, ",")
   cli::cli_h3("Probability Calibration")
-  cli::cli_text("Method: {.val0 {x$method}}")
-  cli::cli_text("Type: {.val0 Binary}")
-  cli::cli_text("Truth: `{.val0 {x$truth}}`")
-  cli::cli_text("Estimates:")
+  cli::cli_text("Method: {.val2 {x$method}}")
+  cli::cli_text("Type: {.val2 Binary}")
+  cli::cli_text("Train set size: {.val2 {rows}}")
+  cli::cli_text("Truth variable: `{.val0 {x$truth}}`")
+  cli::cli_text("Estimate variables:")
   cli::cli_text("{.val1 `{x$levels[[1]]}`} ==> {.val0 {names(x$levels[1])}}")
   cli::cli_text("{.val1 `{x$levels[[2]]}`} ==> {.val0 {names(x$levels[2])}}")
   cli::cli_end()
@@ -304,7 +310,8 @@ as_binary_cal_object <- function(estimate,
                                  truth,
                                  levels,
                                  method,
-                                 additional_class = NULL) {
+                                 additional_class = NULL,
+                                 rows) {
   truth_name <- as_name(enquo(truth))
 
   structure(
@@ -313,6 +320,7 @@ as_binary_cal_object <- function(estimate,
       method = method,
       truth = truth_name,
       levels = levels,
+      rows = rows,
       estimates = estimate
     ),
     class = c(additional_class, "cal_binary", "cal_object")

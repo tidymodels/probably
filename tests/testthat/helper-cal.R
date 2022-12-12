@@ -35,3 +35,7 @@ expect_cal_method <- function(x, method) {
 expect_cal_estimate <- function(x, class) {
   expect_s3_class(x$estimates, class)
 }
+
+expect_cal_rows <- function(x, n = 1010) {
+  expect_equal(x$rows, n)
+}
