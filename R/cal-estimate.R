@@ -289,6 +289,15 @@ boot_iso <- function(.data, truth, estimate, seed) {
 
 #' @export
 print.cal_binary <- function(x, ...) {
+  print_cal_binary(x, ...)
+}
+
+#' @export
+print.cal_estimate_isotonic <- function(x, ...) {
+  print_cal_binary(x, upv = TRUE, ...)
+}
+
+print_cal_binary <- function(x, upv = FALSE, ...) {
   cli::cli_div(theme = list(
     span.val0 = list(color = "blue"),
     span.val1 = list(color = "yellow"),
@@ -299,6 +308,10 @@ print.cal_binary <- function(x, ...) {
   cli::cli_text("Method: {.val2 {x$method}}")
   cli::cli_text("Type: {.val2 Binary}")
   cli::cli_text("Train set size: {.val2 {rows}}")
+  if(upv) {
+    upv_no <- prettyNum(nrow(x$estimates), ",")
+    cli::cli_text("Unique Probability Values: {.val2 {upv_no}}")
+  }
   cli::cli_text("Truth variable: `{.val0 {x$truth}}`")
   cli::cli_text("Estimate variables:")
   cli::cli_text("{.val1 `{x$levels[[1]]}`} ==> {.val0 {names(x$levels[1])}}")
