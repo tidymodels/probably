@@ -248,21 +248,24 @@ cal_isoreg_dataframe <- function(.data,
   )
 }
 
+# cal_isoreg_boot() runs boot_iso() as many times specified by `times`.
+# Each time it runs, it passes a different seed. boot_iso() then runs a
+# single Isotonic model with using withr to set a new seed.
+
 cal_isoreg_boot <- function(.data,
                             truth,
                             estimate,
                             times,
                             ...) {
-  sample.int(10000, times) %>%
     purrr::map(
+      sample.int(10000, times),
       ~ boot_iso(
         .data = .data,
         truth = {{ truth }},
         estimate = {{ estimate }},
         seed = .x
       )
-    ) %>%
-    boot_iso_cal()
+    )
 }
 
 boot_iso <- function(.data, truth, estimate, seed) {
@@ -277,35 +280,6 @@ boot_iso <- function(.data, truth, estimate, seed) {
       )
     }
   )
-}
-
-boot_iso_cal <- function(x) {
-  # Creates 1,000 predictions using 0 to 1, which become the calibration
-  new_estimates <- seq(0, 1, by = 0.01)
-
-  new_data <- data.frame(
-    .estimate = new_estimates,
-    .adj_estimate = new_estimates
-  )
-
-  new_probs <- purrr::map(x, cal_get_intervals, new_data, expr(.adj_estimate))
-
-  for (i in seq_along(new_probs)) {
-    x <- new_data
-    x$.adj_estimate <- new_probs[[i]]
-    names(x) <- c(".estimate", paste0(".adj_", i))
-    new_probs[[i]] <- x
-  }
-
-  new_probs %>%
-    purrr::reduce(
-      dplyr::inner_join,
-      by = ".estimate"
-    ) %>%
-    dplyr::mutate(
-      .adj_estimate = rowMeans(dplyr::across(dplyr::contains(".adj_")))
-    ) %>%
-    dplyr::select(.estimate, .adj_estimate)
 }
 
 #-------------------------- Binary Objects -------------------------------------
