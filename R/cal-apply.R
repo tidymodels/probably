@@ -84,11 +84,19 @@ cal_add_interval_impl <- function(object, .data) {
     estimates_table <- object$estimates
     level_1 <- object$levels[[1]]
     level_2 <- object$levels[[2]]
-    intervals <- cal_get_intervals(
-      estimates_table = estimates_table,
-      .data = .data,
-      estimate = level_1
-    )
+    if("data.frame" %in% class(estimates_table)) {
+      intervals <- cal_get_intervals(
+        estimates_table = estimates_table,
+        .data = .data,
+        estimate = level_1
+      )
+    } else {
+      intervals <- estimates_table %>%
+        map(cal_get_intervals, .data, level_1) %>%
+        unlist() %>%
+        matrix(nrow = nrow(.data)) %>%
+        apply(1, mean)
+    }
     .data[level_1] <- intervals
     .data[level_2] <- 1 - intervals
   }
@@ -102,5 +110,5 @@ cal_get_intervals <- function(estimates_table, .data, estimate) {
     vec = estimates_table$.estimate
   )
   find_interval[find_interval == 0] <- 1
-  intervals <- y[find_interval]
+  y[find_interval]
 }

@@ -26,7 +26,6 @@ test_that("Isotonic Bootstrapped estimates work", {
   sl_boot <- cal_estimate_isotonic_boot(segment_logistic, Class)
   expect_cal_type(sl_boot, "binary")
   expect_cal_method(sl_boot, "Bootstrapped Isotonic Regression")
-  expect_cal_estimate(sl_boot, "data.frame")
   expect_snapshot(print(sl_boot))
 })
 
