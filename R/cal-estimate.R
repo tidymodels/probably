@@ -164,6 +164,95 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
   res
 }
 
+#------------------------------- >> Beta --------------------------------------
+#' Uses a Beta calibration model to calculate new probabilities
+#' @param shape_params Number of shape parameters to use. Accepted values are
+#' 1 and 2. Defaults to 2.
+#' @param location_params Number of location parameters to use. Accepted values
+#' 1 and 0. Defaults to 1.
+#' @inheritParams cal_estimate_logistic
+#' @examples
+#' # It will automatically identify the probability columns
+#' # if passed a model fitted with tidymodels
+#' cal_estimate_beta(segment_logistic, Class)
+#' # Specify the variable names in a vector of unquoted names
+#' cal_estimate_beta(segment_logistic, Class, c(.pred_poor, .pred_good))
+#' # dplyr selector functions are also supported
+#' cal_estimate_beta(segment_logistic, Class, dplyr::starts_with(".pred_"))
+#' @export
+cal_estimate_beta <- function(.data,
+                              truth = NULL,
+                              shape_params = 2,
+                              location_params = 1,
+                              estimate = dplyr::starts_with(".pred_"),
+                              ...) {
+  UseMethod("cal_estimate_beta")
+}
+
+#' @export
+cal_estimate_beta.data.frame <- function(.data,
+                                         truth = NULL,
+                                         shape_params = 2,
+                                         location_params = 1,
+                                         estimate = dplyr::starts_with(".pred_"),
+                                         ...) {
+  truth <- enquo(truth)
+
+  levels <- truth_estimate_map(.data, {{ truth }}, {{ estimate }})
+
+  if (length(levels) == 2) {
+
+    x_factor <- dplyr::pull(.data, !! truth)
+    x <- x_factor == names(levels[1])
+    y <- dplyr::pull(.data, !! levels[[1]])
+
+    parameters <- NULL
+
+    if(shape_params == 1) {
+      parameters <- "a"
+      }
+
+    if(shape_params == 2) {
+      parameters <- "ab"
+      }
+
+    if(location_params == 1) {
+      parameters <- paste0(parameters, "m")
+      }
+
+    if(location_params > 1) {
+      rlang::abort("Invalid `location_params`, allowed values are 1 and 0")
+    }
+
+    if(is.null(parameters)) {
+      rlang::abort("Invalid `sharpe_params`, allowed values are 1 and 2")
+    }
+
+
+    prevent_output <- capture_output(
+      beta_model <- invisible(betacal::beta_calibration(
+        p = y,
+        y = x,
+        parameters = parameters
+      ))
+
+    )
+
+    res <- as_binary_cal_object(
+      estimate = beta_model,
+      levels = levels,
+      truth = !!truth,
+      method = "Beta",
+      rows = nrow(.data),
+      additional_class = "cal_estimate_beta"
+    )
+  } else {
+    stop_multiclass()
+  }
+
+  res
+}
+
 #------------------------- Estimate implementation -----------------------------
 #------------------------------ >> Logistic ------------------------------------
 cal_estimate_logistic_impl <- function(.data,
