@@ -175,10 +175,6 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
 #' cal_estimate_beta(segment_logistic, Class)
-#' # Specify the variable names in a vector of unquoted names
-#' cal_estimate_beta(segment_logistic, Class, c(.pred_poor, .pred_good))
-#' # dplyr selector functions are also supported
-#' cal_estimate_beta(segment_logistic, Class, dplyr::starts_with(".pred_"))
 #' @export
 cal_estimate_beta <- function(.data,
                               truth = NULL,
@@ -229,7 +225,7 @@ cal_estimate_beta.data.frame <- function(.data,
     }
 
 
-    prevent_output <- capture_output(
+    prevent_output <- utils::capture.output(
       beta_model <- invisible(betacal::beta_calibration(
         p = y,
         y = x,

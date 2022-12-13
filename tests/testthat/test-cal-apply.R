@@ -25,6 +25,16 @@ test_that("Isotonic apply work", {
   expect_equal(sd(pred_good), 0.2870775, tolerance = 0.000001)
 })
 
+test_that("Beta apply work", {
+  sl_beta <- cal_estimate_beta(segment_logistic, Class)
+  ap_beta <- cal_apply(segment_logistic, sl_beta)
+
+  pred_good <-  ap_beta$.pred_good
+  expect_equal(mean(pred_good), 0.3425743, tolerance = 0.000001)
+  expect_equal(sd(pred_good), 0.294565, tolerance = 0.000001)
+})
+
+
 test_that("Isotonic Bootstrapped apply work", {
   sl_boot <- cal_estimate_isotonic_boot(segment_logistic, Class)
   ap_boot <- cal_apply(segment_logistic, sl_boot)

@@ -41,8 +41,4 @@ Uses a Beta calibration model to calculate new probabilities
 # It will automatically identify the probability columns
 # if passed a model fitted with tidymodels
 cal_estimate_beta(segment_logistic, Class)
-# Specify the variable names in a vector of unquoted names
-cal_estimate_beta(segment_logistic, Class, c(.pred_poor, .pred_good))
-# dplyr selector functions are also supported
-cal_estimate_beta(segment_logistic, Class, dplyr::starts_with(".pred_"))
 }

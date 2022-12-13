@@ -66,6 +66,20 @@ cal_add_adjust.cal_estimate_isotonic <- function(object, .data) {
   )
 }
 
+cal_add_adjust.cal_estimate_beta <- function(object, .data) {
+  if (object$type == "binary") {
+    p <- dplyr::pull(.data, !!object$levels[[1]])
+    model <- object$estimates
+    preds <- betacal::beta_predict(
+      p = p,
+      calib = model
+    )
+    .data[object$levels[[1]]] <- preds
+    .data[object$levels[[2]]] <- 1 - preds
+  }
+  .data
+}
+
 #---------------------------- Adjust implementations ---------------------------
 
 cal_add_predict_impl <- function(object, .data) {
