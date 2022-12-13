@@ -197,33 +197,31 @@ cal_estimate_beta.data.frame <- function(.data,
   levels <- truth_estimate_map(.data, {{ truth }}, {{ estimate }})
 
   if (length(levels) == 2) {
-
-    x_factor <- dplyr::pull(.data, !! truth)
+    x_factor <- dplyr::pull(.data, !!truth)
     x <- x_factor == names(levels[1])
-    y <- dplyr::pull(.data, !! levels[[1]])
+    y <- dplyr::pull(.data, !!levels[[1]])
 
     parameters <- NULL
 
-    if(shape_params == 1) {
+    if (shape_params == 1) {
       parameters <- "a"
-      }
+    }
 
-    if(shape_params == 2) {
+    if (shape_params == 2) {
       parameters <- "ab"
-      }
+    }
 
-    if(location_params == 1) {
+    if (location_params == 1) {
       parameters <- paste0(parameters, "m")
-      }
+    }
 
-    if(location_params > 1) {
+    if (location_params > 1) {
       rlang::abort("Invalid `location_params`, allowed values are 1 and 0")
     }
 
-    if(is.null(parameters)) {
+    if (is.null(parameters)) {
       rlang::abort("Invalid `sharpe_params`, allowed values are 1 and 2")
     }
-
 
     prevent_output <- utils::capture.output(
       beta_model <- invisible(betacal::beta_calibration(
@@ -231,7 +229,6 @@ cal_estimate_beta.data.frame <- function(.data,
         y = x,
         parameters = parameters
       ))
-
     )
 
     res <- as_binary_cal_object(
