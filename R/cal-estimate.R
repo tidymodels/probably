@@ -220,7 +220,7 @@ cal_estimate_beta.data.frame <- function(.data,
     }
 
     if (is.null(parameters)) {
-      rlang::abort("Invalid `sharpe_params`, allowed values are 1 and 2")
+      rlang::abort("Invalid `shape_params`, allowed values are 1 and 2")
     }
 
     prevent_output <- utils::capture.output(
@@ -230,6 +230,8 @@ cal_estimate_beta.data.frame <- function(.data,
         parameters = parameters
       ))
     )
+
+    beta_model$model <- butcher::butcher(beta_model$model)
 
     res <- as_binary_cal_object(
       estimate = beta_model,
