@@ -32,7 +32,7 @@
 #' @param conf_level Confidence level to use in the visualization. It defaults
 #' to 0.9.
 #' @param smooth Applies to the logistic models. It switches between logistic
-#' spline when `TRUE`, and regular logistic when `FALSE`.
+#' spline when `TRUE`, and simple logistic regression when `FALSE`.
 #' @param include_ribbon Flag that indicates if the ribbon layer is to be
 #' included. It defaults to `TRUE`.
 #' @param include_rug Flag that indicates if the Rug layer is to be included.
@@ -70,7 +70,7 @@
 #' preds <- predict(model, segment_logistic, type = "response")
 #'
 #' gl <- segment_logistic %>%
-#'   mutate(.pred_good = 1- preds, source = "glm")
+#'   mutate(.pred_good = 1 - preds, source = "glm")
 #'
 #' combined <- bind_rows(mutate(segment_logistic, source = "original"), gl)
 #'
@@ -396,8 +396,8 @@ binary_plot_impl <- function(tbl, x, y,
 
   gp_vars <- dplyr::group_vars(.data)
 
-  if(length(gp_vars)) {
-    if(length(gp_vars) > 1) {
+  if (length(gp_vars)) {
+    if (length(gp_vars) > 1) {
       rlang::abort("Plot does not support more than one grouping variable")
     }
     has_groups <- TRUE
@@ -418,9 +418,10 @@ binary_plot_impl <- function(tbl, x, y,
   if (include_ribbon) {
     res <- res +
       geom_ribbon(
-        aes(y = !!y, ymin = lower, ymax = upper), color = "#ffffff00",
+        aes(y = !!y, ymin = lower, ymax = upper),
+        color = "#ffffff00",
         alpha = 0.08
-        )
+      )
   }
 
   if (include_rug & !has_groups) {
@@ -541,19 +542,19 @@ binary_plot_impl <- function(tbl, x, y,
 }
 
 .cal_binary_table_breaks_grp <- function(.data,
-                                          truth,
-                                          estimate,
-                                          group,
-                                          num_breaks = 10,
-                                          conf_level = 0.90,
-                                          event_level = c("first", "second"),
-                                          ...) {
+                                         truth,
+                                         estimate,
+                                         group,
+                                         num_breaks = 10,
+                                         conf_level = 0.90,
+                                         event_level = c("first", "second"),
+                                         ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   lev <- process_level(event_level)
 
-  side <-  seq(0, 1, by = 1 / num_breaks)
+  side <- seq(0, 1, by = 1 / num_breaks)
 
   cuts <- list(
     lower_cut = side[1:length(side) - 1],
@@ -840,7 +841,6 @@ binary_plot_impl <- function(tbl, x, y,
   )
 }
 
-
 #------------------------------- >> Utils --------------------------------------
 
 process_midpoint <- function(.data,
@@ -870,7 +870,7 @@ process_midpoint <- function(.data,
       events = sum(.is_val, na.rm = TRUE),
       total = dplyr::n()
     ) %>%
-    #dplyr::ungroup() %>%
+    # dplyr::ungroup() %>%
     dplyr::filter(total > 0)
 
   if (!quo_is_null(.bin)) tbl <- dplyr::select(tbl, -.bin)
