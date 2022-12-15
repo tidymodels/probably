@@ -2,7 +2,7 @@
 
 * Adds `cal_apply()` function. It uses the output of a calibration function, and applies it to a data frame. 
 
-* Adds 4 model calibration remediation methods: Logistic, Logistic Spline, Isotonic, and Isotonic Bootstrapped. They currently support data.frame only, and binary models.
+* Adds 5 model calibration remediation methods: Logistic, Logistic Spline, Isotonic, and Isotonic Bootstrapped, and Beta. They currently support data frames, and binary models only.
 
 * Adds model calibration diagnostic functions. They implement three methods: binning probabilities, fitting a logistic spline model against the probabilities, and with creating a running percentage of the data. There are three new plotting functions, and three table functions.  It supports data.frames and tune_results objects.
 
