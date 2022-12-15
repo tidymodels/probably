@@ -40,7 +40,6 @@ test_that("Beta estimates work", {
   expect_snapshot(print(sl_beta))
 })
 
-
 test_that("Non-default names used for estimate columns", {
   new_segment <- segment_logistic
   colnames(new_segment) <- c("poor", "good", "Class")
