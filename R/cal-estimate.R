@@ -21,6 +21,11 @@
 #' cal_estimate_logistic(segment_logistic, Class, c(.pred_poor, .pred_good))
 #' # dplyr selector functions are also supported
 #' cal_estimate_logistic(segment_logistic, Class, dplyr::starts_with(".pred_"))
+#' @details
+#' This function uses existing modeling functions from other packages to create
+#' the calibration:
+#' - `stats::glm()` is used when `smooth` is set to `FALSE`
+#' - `mgcv::gam()` is used when `smooth` is set to `TRUE`
 #' @export
 cal_estimate_logistic <- function(.data,
                                   truth = NULL,
@@ -61,6 +66,8 @@ cal_estimate_logistic.data.frame <- function(.data,
 #----------------------------- >> Isotonic -------------------------------------
 #' Uses an Isotonic regression model to calibrate probabilities
 #' @inheritParams cal_estimate_logistic
+#' @details This function uses `stats::isoreg()` to create obtain the calibration
+#' values.
 #' @examples
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
@@ -113,6 +120,9 @@ cal_estimate_isotonic.data.frame <- function(.data,
 #' Uses a bootstrapped Isotonic regression model to calibrate probabilities
 #' @param times Number of bootstraps.
 #' @inheritParams cal_estimate_logistic
+#' @details This function uses `stats::isoreg()` to create obtain the calibration
+#' values. It runs `isoreg()` multiple times, and each time with a different
+#' seed. The results are saved inside the returned `cal_object`.
 #' @examples
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
@@ -171,6 +181,8 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
 #' @param location_params Number of location parameters to use. Accepted values
 #' 1 and 0. Defaults to 1.
 #' @inheritParams cal_estimate_logistic
+#' @details  This function uses the `betcal::beta_calibration()` function, and
+#' retains the resulting model.
 #' @examples
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels

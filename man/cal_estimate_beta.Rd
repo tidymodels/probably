@@ -37,6 +37,10 @@ calculate the new probabilities.}
 \description{
 Uses a Beta calibration model to calculate new probabilities
 }
+\details{
+This function uses the \code{betcal::beta_calibration()} function, and
+retains the resulting model.
+}
 \examples{
 # It will automatically identify the probability columns
 # if passed a model fitted with tidymodels

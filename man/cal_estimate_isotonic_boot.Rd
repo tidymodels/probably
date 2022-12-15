@@ -32,6 +32,11 @@ calculate the new probabilities.}
 \description{
 Uses a bootstrapped Isotonic regression model to calibrate probabilities
 }
+\details{
+This function uses \code{stats::isoreg()} to create obtain the calibration
+values. It runs \code{isoreg()} multiple times, and each time with a different
+seed. The results are saved inside the returned \code{cal_object}.
+}
 \examples{
 # It will automatically identify the probability columns
 # if passed a model fitted with tidymodels

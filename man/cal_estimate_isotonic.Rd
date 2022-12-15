@@ -29,6 +29,10 @@ calculate the new probabilities.}
 \description{
 Uses an Isotonic regression model to calibrate probabilities
 }
+\details{
+This function uses \code{stats::isoreg()} to create obtain the calibration
+values.
+}
 \examples{
 # It will automatically identify the probability columns
 # if passed a model fitted with tidymodels
