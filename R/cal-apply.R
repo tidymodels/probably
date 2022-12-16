@@ -5,28 +5,36 @@
 #' the estimate columns names, and levels, from the calibration object.
 #' @param .data An object that can process a calibration object.
 #' @param object The calibration object (`cal_object`).
+#' @param prediction (Optional) Column identifier with the prediction.
+#' @param threshold (Optional) Applies to binary models only. A number between
+#' 0 and 1. It contains the cut off for the prediction
 #' @param ... Optional arguments; currently unused.
 #' @examples
 #' w_calibration <- cal_estimate_logistic(segment_logistic, Class)
 #'
 #' cal_apply(segment_logistic, w_calibration)
 #' @export
-cal_apply <- function(.data, object, ...) {
+cal_apply <- function(.data, object, prediction = NULL, threshold = NULL, ...) {
   rlang::check_dots_empty()
   UseMethod("cal_apply")
 }
 
 #' @export
-cal_apply.data.frame <- function(.data, object, ...) {
+cal_apply.data.frame <- function(.data, object, prediction = NULL, threshold = NULL, ...) {
   if (object$type == "binary") {
-    cal_add_adjust(object, .data)
+    cal_add_adjust(
+      object = object,
+      .data = .data,
+      prediction = {{prediction}},
+      threshold = threshold
+      )
   } else {
     stop_multiclass()
   }
 }
 
 #' @export
-cal_apply.cal_object <- function(.data, object, ...) {
+cal_apply.cal_object <- function(.data, object, prediction = NULL, threshold = NULL, ...) {
   rlang::abort(paste0("`cal_apply()` expects the data as the first argument,",
                  "and the object object as the second argument."
                  ))
@@ -34,32 +42,76 @@ cal_apply.cal_object <- function(.data, object, ...) {
 
 # ------------------------------- Adjust ---------------------------------------
 
-cal_add_adjust <- function(object, .data) {
+cal_add_adjust <- function(object, .data, prediction, threshold) {
   UseMethod("cal_add_adjust")
 }
 
-cal_add_adjust.cal_estimate_logistic <- function(object, .data) {
-  cal_add_predict_impl(
+cal_add_adjust.cal_estimate_logistic <- function(object,
+                                                 .data,
+                                                 prediction = NULL,
+                                                 threshold = NULL,
+                                                 ...) {
+  prediction <- enquo(prediction)
+
+  new_data <- cal_add_predict_impl(
     object = object,
     .data = .data
   )
+
+  if(!quo_is_null(prediction)) {
+    if(object$type == "binary") {
+      level1_gt <- new_data[[object$levels[[1]]]] > new_data[[object$levels[[2]]]]
+      new_data[level1_gt, as_name(!! prediction)] <- names(object$levels[1])
+      new_data[!level1_gt, as_name(!! prediction)] <- names(object$levels[2])
+    }
+  }
+
+  new_data
 }
 
-cal_add_adjust.cal_estimate_logistic_spline <- function(object, .data) {
-  cal_add_predict_impl(
+cal_add_adjust.cal_estimate_logistic_spline <- function(object,
+                                                        .data,
+                                                        prediction = NULL,
+                                                        threshold = NULL,
+                                                        ...
+                                                        ) {
+  prediction <- enquo(prediction)
+
+  new_data <- cal_add_predict_impl(
     object = object,
     .data = .data
   )
+
+  if(!quo_is_null(prediction)) {
+    if(object$type == "binary") {
+      pred_name <- as_name(prediction)
+      level1_gt <- new_data[[object$levels[[1]]]] > new_data[[object$levels[[2]]]]
+      new_data[level1_gt, pred_name] <- names(object$levels[1])
+      new_data[!level1_gt, pred_name] <- names(object$levels[2])
+    }
+  }
+
+  new_data
 }
 
-cal_add_adjust.cal_estimate_isotonic_boot <- function(object, .data) {
+cal_add_adjust.cal_estimate_isotonic_boot <- function(object,
+                                                      .data,
+                                                      prediction = NULL,
+                                                      threshold = NULL,
+                                                      ...
+                                                      ) {
   cal_add_interval_impl(
     object = object,
     .data = .data
   )
 }
 
-cal_add_adjust.cal_estimate_isotonic <- function(object, .data) {
+cal_add_adjust.cal_estimate_isotonic <- function(object,
+                                                 .data,
+                                                 prediction = NULL,
+                                                 threshold = NULL,
+                                                 ...
+                                                 ) {
   cal_add_interval_impl(
     object = object,
     .data = .data

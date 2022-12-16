@@ -4,12 +4,17 @@
 \alias{cal_apply}
 \title{Applies a calibration to a set of prediction probabilities}
 \usage{
-cal_apply(.data, object, ...)
+cal_apply(.data, object, prediction = NULL, threshold = NULL, ...)
 }
 \arguments{
 \item{.data}{An object that can process a calibration object.}
 
 \item{object}{The calibration object (\code{cal_object}).}
+
+\item{prediction}{(Optional) Column identifier with the prediction.}
+
+\item{threshold}{(Optional) Applies to binary models only. A number between
+0 and 1. It contains the cut off for the prediction}
 
 \item{...}{Optional arguments; currently unused.}
 }
