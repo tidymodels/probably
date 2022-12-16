@@ -36,28 +36,43 @@ cal_estimate_logistic.data.frame <- function(.data,
                                              estimate = dplyr::starts_with(".pred_"),
                                              smooth = TRUE,
                                              ...) {
-  if(smooth) {
-    model <- "logistic_spline"
-    method <- "Logistic Spline"
-    additional_class <- "cal_estimate_logistic_spline"
-  } else {
-    model <- "glm"
-    method <- "Logistic"
-    additional_class <- "cal_estimate_logistic"
-  }
+
 
 
   cal_estimate_logistic_impl(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    model = model,
-    method = method,
-    additional_class = additional_class,
+    smooth = smooth,
     ...
   )
 }
 
+#' @export
+cal_estimate_logistic.tune_results<- function(.data,
+                                              truth = NULL,
+                                              estimate = dplyr::starts_with(".pred_"),
+                                              smooth = TRUE,
+                                              ...) {
+
+  tune_args <- tune_results_args(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = NULL,
+    event_level = "first",
+    ...
+  )
+
+  tune_args$predictions %>%
+    dplyr::group_by(!! tune_args$group) %>%
+    cal_estimate_logistic_impl(
+      truth = !! tune_args$truth,
+      estimate = !! tune_args$estimate,
+      smooth = smooth,
+      ...
+    )
+}
 
 #----------------------------- >> Isotonic -------------------------------------
 #' Uses an Isotonic regression model to calibrate probabilities
@@ -171,10 +186,19 @@ cal_estimate_logistic_impl <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
                                        type,
-                                       model,
-                                       method,
-                                       additional_class,
+                                       smooth,
                                        ...) {
+
+  if(smooth) {
+    model <- "logistic_spline"
+    method <- "Logistic Spline"
+    additional_class <- "cal_estimate_logistic_spline"
+  } else {
+    model <- "glm"
+    method <- "Logistic"
+    additional_class <- "cal_estimate_logistic"
+  }
+
   truth <- enquo(truth)
 
   levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
