@@ -34,6 +34,35 @@ cal_apply.data.frame <- function(.data, object, prediction = NULL, threshold = N
 }
 
 #' @export
+cal_apply.tune_results<- function(.data, object, prediction = NULL, threshold = NULL, ...) {
+  if (object$type == "binary") {
+    if (!(".predictions" %in% colnames(.data))) {
+      rlang::abort(
+        paste0(
+          "The `tune_results` object does not contain the `.predictions` column.",
+          " Refit with the control argument `save_pred = TRUE` to save predictions."
+        )
+      )
+    }
+
+    prediction <- enquo(prediction)
+
+    if(rlang::quo_is_null(prediction)) prediction <- expr(.config)
+
+    predictions <- tune::collect_predictions(.data, summarize = TRUE, ...)
+
+    cal_add_adjust(
+      object = object,
+      .data = predictions,
+      prediction = !! prediction,
+      threshold = threshold
+    )
+  } else {
+    stop_multiclass()
+  }
+}
+
+#' @export
 cal_apply.cal_object <- function(.data, object, prediction = NULL, threshold = NULL, ...) {
   rlang::abort(paste0("`cal_apply()` expects the data as the first argument,",
                  "and the object object as the second argument."
