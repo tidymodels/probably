@@ -53,7 +53,8 @@ cal_estimate_logistic.data.frame <- function(.data,
     estimate = {{ estimate }},
     model = model,
     method = method,
-    additional_class = additional_class
+    additional_class = additional_class,
+    ...
   )
 }
 
@@ -202,12 +203,36 @@ cal_estimate_logistic_impl <- function(.data,
   res
 }
 
-cal_model_impl <- function(.data, truth, estimate, run_model, ...) {
+cal_model_impl <- function(.data, truth, estimate, run_model, group, ...) {
+  truth <- enquo(truth)
+  group <- enquo(group)
+  vars <- enquos(...)
+
+  tbls <- .data %>%
+    dplyr::group_by(!!group, .add = TRUE) %>%
+    dplyr::group_map(~ {
+      grp <- cal_model_impl_single(
+        .data = .x,
+        truth = !!truth,
+        estimate = estimate,
+        run_model = run_model,
+        v2 = !!vars
+      )
+     # dplyr::bind_cols(.y, grp)
+      grp
+    })
+  #dplyr::bind_rows(tbls)
+  tbls
+}
+
+cal_model_impl_single <- function(.data, truth, estimate, run_model, v2) {
   truth <- ensym(truth)
+  v2 <- enquos(v2)
 
   if (run_model == "logistic_spline") {
     f_model <- expr(!!truth ~ s(!!estimate))
-    init_model <- mgcv::gam(f_model, data = .data, family = "binomial", ...)
+    #init_model <- mgcv::gam(f_model, data = .data, family = "binomial", ...)
+    init_model <- call2(mgcv::gam, f_model, data = .data, family = "binomial", !!! v2)
     model <- butcher::butcher(init_model)
   }
 
