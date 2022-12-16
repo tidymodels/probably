@@ -47,7 +47,9 @@ cal_apply.tune_results<- function(.data, object, prediction = NULL, threshold = 
 
     prediction <- enquo(prediction)
 
-    if(rlang::quo_is_null(prediction)) prediction <- expr(.config)
+    if(rlang::quo_is_null(prediction)) {
+      prediction <- rlang::parse_expr(paste0(".pred_", object$truth))
+    }
 
     predictions <- tune::collect_predictions(.data, summarize = TRUE, ...)
 
