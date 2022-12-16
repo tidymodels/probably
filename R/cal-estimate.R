@@ -204,27 +204,24 @@ cal_estimate_logistic_impl <- function(.data,
 }
 
 cal_model_impl <- function(.data, truth, estimate, run_model, group, ...) {
-  truth <- enquo(truth)
-  group <- enquo(group)
-
-  tbls <- .data %>%
-    dplyr::group_by(!!group, .add = TRUE) %>%
-    split_dplyr_groups()
-
-  lapply(
-    tbls,
-    function(x) {
-      cal_model_impl_single(
-        .data = x,
-        truth = !! truth,
-        estimate = estimate,
-        run_model = run_model,
-        ... = ...
-      )
-    }
-  )
-
-
+  .data %>%
+    dplyr::group_by({{ group }}, .add = TRUE) %>%
+    split_dplyr_groups() %>%
+    lapply(
+      function(x) {
+        estimate <- cal_model_impl_single(
+          .data = x$data,
+          truth = {{ truth }},
+          estimate = estimate,
+          run_model = run_model,
+          ... = ...
+        )
+        list(
+          filter = x$filter,
+          estimate = estimate
+        )
+      }
+    )
 }
 
 cal_model_impl_single <- function(.data, truth, estimate, run_model, ...) {
@@ -427,11 +424,14 @@ split_dplyr_groups <- function(.data) {
           purrr::reduce(function(x, y) expr(!! x & !! y))
       })%>%
       purrr::map(~{
-        .data %>%
-          dplyr::filter(, !! .x) %>%
-          dplyr::ungroup()
+        list(
+          data = .data %>%
+            dplyr::filter(, !! .x) %>%
+            dplyr::ungroup(),
+          filter = .x
+        )
         })
   } else {
-    list(.data)
+    list(list(data = .data))
   }
 }
