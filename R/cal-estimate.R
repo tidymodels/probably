@@ -68,6 +68,10 @@ cal_estimate_logistic.data.frame <- function(.data,
 #' @inheritParams cal_estimate_logistic
 #' @details This function uses `stats::isoreg()` to create obtain the calibration
 #' values.
+#' @references
+#' Zadrozny, Bianca and Elkan, Charles. (2002). Transforming Classifier Scores
+#' into Accurate Multiclass Probability Estimates. _Proceedings of the ACM SIGKDD
+#' International Conference on Knowledge Discovery and Data Mining._
 #' @examples
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
@@ -183,6 +187,9 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
 #' @inheritParams cal_estimate_logistic
 #' @details  This function uses the `betcal::beta_calibration()` function, and
 #' retains the resulting model.
+#' @references Meelis Kull, Telmo M. Silva Filho, Peter Flach "Beyond sigmoids:
+#' How to obtain well-calibrated probabilities from binary classifiers with beta
+#' calibration," _Electronic Journal of Statistics_ 11(2), 5052-5080, (2017)
 #' @examples
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
@@ -348,9 +355,7 @@ cal_isoreg_dataframe <- function(.data,
 }
 
 # cal_isoreg_boot() runs boot_iso() as many times specified by `times`.
-# Each time it runs, it passes a different seed. boot_iso() then runs a
-# single Isotonic model with using withr to set a new seed.
-
+# Each time it runs, it passes a different seed.
 cal_isoreg_boot <- function(.data,
                             truth,
                             estimate,
@@ -369,8 +374,7 @@ cal_isoreg_boot <- function(.data,
 
 boot_iso <- function(.data, truth, estimate, seed) {
   withr::with_seed(
-    seed,
-    {
+    seed, {
       cal_isoreg_dataframe(
         .data = .data,
         truth = {{ truth }},

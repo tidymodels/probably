@@ -46,3 +46,8 @@ retains the resulting model.
 # if passed a model fitted with tidymodels
 cal_estimate_beta(segment_logistic, Class)
 }
+\references{
+Meelis Kull, Telmo M. Silva Filho, Peter Flach "Beyond sigmoids:
+How to obtain well-calibrated probabilities from binary classifiers with beta
+calibration," \emph{Electronic Journal of Statistics} 11(2), 5052-5080, (2017)
+}
