@@ -21,6 +21,11 @@
 #' cal_estimate_logistic(segment_logistic, Class, c(.pred_poor, .pred_good))
 #' # dplyr selector functions are also supported
 #' cal_estimate_logistic(segment_logistic, Class, dplyr::starts_with(".pred_"))
+#' @details
+#' This function uses existing modeling functions from other packages to create
+#' the calibration:
+#' - `stats::glm()` is used when `smooth` is set to `FALSE`
+#' - `mgcv::gam()` is used when `smooth` is set to `TRUE`
 #' @export
 cal_estimate_logistic <- function(.data,
                                   truth = NULL,
@@ -61,6 +66,12 @@ cal_estimate_logistic.data.frame <- function(.data,
 #----------------------------- >> Isotonic -------------------------------------
 #' Uses an Isotonic regression model to calibrate probabilities
 #' @inheritParams cal_estimate_logistic
+#' @details This function uses `stats::isoreg()` to create obtain the calibration
+#' values.
+#' @references
+#' Zadrozny, Bianca and Elkan, Charles. (2002). Transforming Classifier Scores
+#' into Accurate Multiclass Probability Estimates. _Proceedings of the ACM SIGKDD
+#' International Conference on Knowledge Discovery and Data Mining._
 #' @examples
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
@@ -113,6 +124,9 @@ cal_estimate_isotonic.data.frame <- function(.data,
 #' Uses a bootstrapped Isotonic regression model to calibrate probabilities
 #' @param times Number of bootstraps.
 #' @inheritParams cal_estimate_logistic
+#' @details This function uses `stats::isoreg()` to create obtain the calibration
+#' values. It runs `isoreg()` multiple times, and each time with a different
+#' seed. The results are saved inside the returned `cal_object`.
 #' @examples
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
@@ -156,6 +170,95 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
       rows = nrow(.data),
       method = "Bootstrapped Isotonic Regression",
       additional_class = "cal_estimate_isotonic_boot"
+    )
+  } else {
+    stop_multiclass()
+  }
+
+  res
+}
+
+#------------------------------- >> Beta --------------------------------------
+#' Uses a Beta calibration model to calculate new probabilities
+#' @param shape_params Number of shape parameters to use. Accepted values are
+#' 1 and 2. Defaults to 2.
+#' @param location_params Number of location parameters to use. Accepted values
+#' 1 and 0. Defaults to 1.
+#' @inheritParams cal_estimate_logistic
+#' @details  This function uses the `betcal::beta_calibration()` function, and
+#' retains the resulting model.
+#' @references Meelis Kull, Telmo M. Silva Filho, Peter Flach "Beyond sigmoids:
+#' How to obtain well-calibrated probabilities from binary classifiers with beta
+#' calibration," _Electronic Journal of Statistics_ 11(2), 5052-5080, (2017)
+#' @examples
+#' # It will automatically identify the probability columns
+#' # if passed a model fitted with tidymodels
+#' cal_estimate_beta(segment_logistic, Class)
+#' @export
+cal_estimate_beta <- function(.data,
+                              truth = NULL,
+                              shape_params = 2,
+                              location_params = 1,
+                              estimate = dplyr::starts_with(".pred_"),
+                              ...) {
+  UseMethod("cal_estimate_beta")
+}
+
+#' @export
+cal_estimate_beta.data.frame <- function(.data,
+                                         truth = NULL,
+                                         shape_params = 2,
+                                         location_params = 1,
+                                         estimate = dplyr::starts_with(".pred_"),
+                                         ...) {
+  truth <- enquo(truth)
+
+  levels <- truth_estimate_map(.data, {{ truth }}, {{ estimate }})
+
+  if (length(levels) == 2) {
+    x_factor <- dplyr::pull(.data, !!truth)
+    x <- x_factor == names(levels[1])
+    y <- dplyr::pull(.data, !!levels[[1]])
+
+    parameters <- NULL
+
+    if (shape_params == 1) {
+      parameters <- "a"
+    }
+
+    if (shape_params == 2) {
+      parameters <- "ab"
+    }
+
+    if (location_params == 1) {
+      parameters <- paste0(parameters, "m")
+    }
+
+    if (location_params > 1) {
+      rlang::abort("Invalid `location_params`, allowed values are 1 and 0")
+    }
+
+    if (is.null(parameters)) {
+      rlang::abort("Invalid `shape_params`, allowed values are 1 and 2")
+    }
+
+    prevent_output <- utils::capture.output(
+      beta_model <- invisible(betacal::beta_calibration(
+        p = y,
+        y = x,
+        parameters = parameters
+      ))
+    )
+
+    beta_model$model <- butcher::butcher(beta_model$model)
+
+    res <- as_binary_cal_object(
+      estimate = beta_model,
+      levels = levels,
+      truth = !!truth,
+      method = "Beta",
+      rows = nrow(.data),
+      additional_class = "cal_estimate_beta"
     )
   } else {
     stop_multiclass()
@@ -252,9 +355,7 @@ cal_isoreg_dataframe <- function(.data,
 }
 
 # cal_isoreg_boot() runs boot_iso() as many times specified by `times`.
-# Each time it runs, it passes a different seed. boot_iso() then runs a
-# single Isotonic model with using withr to set a new seed.
-
+# Each time it runs, it passes a different seed.
 cal_isoreg_boot <- function(.data,
                             truth,
                             estimate,
@@ -273,8 +374,7 @@ cal_isoreg_boot <- function(.data,
 
 boot_iso <- function(.data, truth, estimate, seed) {
   withr::with_seed(
-    seed,
-    {
+    seed, {
       cal_isoreg_dataframe(
         .data = .data,
         truth = {{ truth }},

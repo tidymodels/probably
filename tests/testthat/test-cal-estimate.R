@@ -32,6 +32,14 @@ test_that("Isotonic Bootstrapped estimates work", {
   expect_snapshot(print(sl_boot))
 })
 
+test_that("Beta estimates work", {
+  sl_beta <- cal_estimate_beta(segment_logistic, Class, smooth = FALSE)
+  expect_cal_type(sl_beta, "binary")
+  expect_cal_method(sl_beta, "Beta")
+  expect_cal_rows(sl_beta)
+  expect_snapshot(print(sl_beta))
+})
+
 test_that("Non-default names used for estimate columns", {
   new_segment <- segment_logistic
   colnames(new_segment) <- c("poor", "good", "Class")

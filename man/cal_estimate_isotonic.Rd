@@ -29,6 +29,10 @@ calculate the new probabilities.}
 \description{
 Uses an Isotonic regression model to calibrate probabilities
 }
+\details{
+This function uses \code{stats::isoreg()} to create obtain the calibration
+values.
+}
 \examples{
 # It will automatically identify the probability columns
 # if passed a model fitted with tidymodels
@@ -37,4 +41,9 @@ cal_estimate_isotonic(segment_logistic, Class)
 cal_estimate_isotonic(segment_logistic, Class, c(.pred_poor, .pred_good))
 # dplyr selector functions are also supported
 cal_estimate_isotonic(segment_logistic, Class, dplyr::starts_with(".pred_"))
+}
+\references{
+Zadrozny, Bianca and Elkan, Charles. (2002). Transforming Classifier Scores
+into Accurate Multiclass Probability Estimates. \emph{Proceedings of the ACM SIGKDD
+International Conference on Knowledge Discovery and Data Mining.}
 }

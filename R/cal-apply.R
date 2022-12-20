@@ -27,9 +27,15 @@ cal_apply.data.frame <- function(.data, object, ...) {
 
 #' @export
 cal_apply.cal_object <- function(.data, object, ...) {
+  if("data.frame" %in% class(object)) {
+    rlang::abort(paste0("`cal_apply()` expects the data as the first argument,",
+                        " and the object as the second argument. Please reverse",
+                        " the order of the arguments and try again."
+    ))
+  }
   rlang::abort(paste0("`cal_apply()` expects the data as the first argument,",
-                 "and the object object as the second argument."
-                 ))
+                      " and the object as the second argument."
+  ))
 }
 
 # ------------------------------- Adjust ---------------------------------------
@@ -64,6 +70,20 @@ cal_add_adjust.cal_estimate_isotonic <- function(object, .data) {
     object = object,
     .data = .data
   )
+}
+
+cal_add_adjust.cal_estimate_beta <- function(object, .data) {
+  if (object$type == "binary") {
+    p <- dplyr::pull(.data, !!object$levels[[1]])
+    model <- object$estimates
+    preds <- betacal::beta_predict(
+      p = p,
+      calib = model
+    )
+    .data[object$levels[[1]]] <- preds
+    .data[object$levels[[2]]] <- 1 - preds
+  }
+  .data
 }
 
 #---------------------------- Adjust implementations ---------------------------

@@ -59,6 +59,21 @@
       `.pred_good` ==> good
       `.pred_poor` ==> poor
 
+# Beta estimates work
+
+    Code
+      print(sl_beta)
+    Message
+      
+      -- Probability Calibration 
+      Method: Beta
+      Type: Binary
+      Train set size: 1,010
+      Truth variable: `Class`
+      Estimate variables:
+      `.pred_good` ==> good
+      `.pred_poor` ==> poor
+
 # Non-default names used for estimate columns
 
     Code
