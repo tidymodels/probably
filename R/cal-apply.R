@@ -136,7 +136,8 @@ cal_add_adjust.cal_estimate_isotonic_boot <- function(object,
                                                       ) {
   cal_add_interval_impl(
     object = object,
-    .data = .data
+    .data = .data,
+    multi = TRUE
   )
 }
 
@@ -194,26 +195,50 @@ cal_add_predict_impl <- function(object, .data) {
   .data
 }
 
-cal_add_interval_impl <- function(object, .data) {
+cal_add_interval_impl <- function(object, .data, multi = FALSE) {
+
   if (object$type == "binary") {
-    estimates_table <- object$estimates
     level_1 <- object$levels[[1]]
     level_2 <- object$levels[[2]]
-    if("data.frame" %in% class(estimates_table)) {
-      intervals <- cal_get_intervals(
-        estimates_table = estimates_table,
-        .data = .data,
-        estimate = level_1
-      )
-    } else {
-      intervals <- estimates_table %>%
-        map(cal_get_intervals, .data, level_1) %>%
-        unlist() %>%
-        matrix(nrow = nrow(.data)) %>%
-        apply(1, mean)
-    }
-    .data[level_1] <- intervals
-    .data[level_2] <- 1 - intervals
+
+    .data <- object$estimates %>%
+      purrr::map(
+        ~ {
+          if(is.null(names(.x))) {
+            curr_estimate <- .x[[1]]$estimate
+            curr_filter <- .x[[1]]$filter
+          } else {
+            curr_estimate <- .x$estimate
+            curr_filter <- .x$filter
+          }
+
+          if(is.null(curr_filter)) {
+            new_data <- .data
+          } else {
+            new_data <- dplyr::filter(.data, !! curr_filter)
+          }
+
+          if(!multi) {
+            intervals <- cal_get_intervals(
+              estimates_table = curr_estimate,
+              .data = new_data,
+              estimate = level_1
+            )
+          } else {
+            intervals <- cal_get_intervals(
+              estimates_table = curr_estimate,
+              .data = new_data,
+              estimate = level_1
+              ) %>%
+              unlist() %>%
+              matrix(nrow = nrow(new_data)) %>%
+              apply(1, mean)
+          }
+          new_data[level_1] <- intervals
+          new_data[level_2] <- 1 - intervals
+          new_data
+        }) %>%
+      purrr::reduce(dplyr::bind_rows)
   }
   .data
 }
