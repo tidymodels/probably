@@ -33,6 +33,14 @@ calculate the new probabilities.}
 \description{
 Uses a logistic regression model to calibrate probabilities
 }
+\details{
+This function uses existing modeling functions from other packages to create
+the calibration:
+\itemize{
+\item \code{stats::glm()} is used when \code{smooth} is set to \code{FALSE}
+\item \code{mgcv::gam()} is used when \code{smooth} is set to \code{TRUE}
+}
+}
 \examples{
 # It will automatically identify the probability columns
 # if passed a model fitted with tidymodels
