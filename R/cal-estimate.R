@@ -41,9 +41,6 @@ cal_estimate_logistic.data.frame <- function(.data,
                                              estimate = dplyr::starts_with(".pred_"),
                                              smooth = TRUE,
                                              ...) {
-
-
-
   cal_estimate_logistic_impl(
     .data = .data,
     truth = {{ truth }},
@@ -54,12 +51,11 @@ cal_estimate_logistic.data.frame <- function(.data,
 }
 
 #' @export
-cal_estimate_logistic.tune_results<- function(.data,
-                                              truth = NULL,
-                                              estimate = dplyr::starts_with(".pred_"),
-                                              smooth = TRUE,
-                                              ...) {
-
+cal_estimate_logistic.tune_results <- function(.data,
+                                               truth = NULL,
+                                               estimate = dplyr::starts_with(".pred_"),
+                                               smooth = TRUE,
+                                               ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -70,10 +66,10 @@ cal_estimate_logistic.tune_results<- function(.data,
   )
 
   tune_args$predictions %>%
-    dplyr::group_by(!! tune_args$group) %>%
+    dplyr::group_by(!!tune_args$group) %>%
     cal_estimate_logistic_impl(
-      truth = !! tune_args$truth,
-      estimate = !! tune_args$estimate,
+      truth = !!tune_args$truth,
+      estimate = !!tune_args$estimate,
       smooth = smooth,
       ...
     )
@@ -109,31 +105,35 @@ cal_estimate_isotonic.data.frame <- function(.data,
                                              truth = NULL,
                                              estimate = dplyr::starts_with(".pred_"),
                                              ...) {
-  truth <- enquo(truth)
+  cal_isoreg_impl(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    ...
+  )
+}
 
-  levels <- truth_estimate_map(.data, {{ truth }}, {{ estimate }})
+#' @export
+cal_estimate_isotonic.tune_results <- function(.data,
+                                               truth = NULL,
+                                               estimate = dplyr::starts_with(".pred_"),
+                                               ...) {
+  tune_args <- tune_results_args(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = NULL,
+    event_level = "first",
+    ...
+  )
 
-  if (length(levels) == 2) {
-    iso_model <- cal_isoreg_dataframe(
-      .data = .data,
-      truth = !!truth,
-      estimate = levels[[1]],
+  tune_args$predictions %>%
+    dplyr::group_by(!!tune_args$group) %>%
+    cal_isoreg_impl(
+      truth = !!tune_args$truth,
+      estimate = !!tune_args$estimate,
       ...
     )
-
-    res <- as_binary_cal_object(
-      estimate = iso_model,
-      levels = levels,
-      truth = !!truth,
-      method = "Isotonic",
-      rows = nrow(.data),
-      additional_class = "cal_estimate_isotonic"
-    )
-  } else {
-    stop_multiclass()
-  }
-
-  res
 }
 
 #------------------ >>  Bootstrapped Isotonic Regression------------------------
@@ -291,8 +291,7 @@ cal_estimate_logistic_impl <- function(.data,
                                        type,
                                        smooth,
                                        ...) {
-
-  if(smooth) {
+  if (smooth) {
     model <- "logistic_spline"
     method <- "Logistic Spline"
     additional_class <- "cal_estimate_logistic_spline"
@@ -307,7 +306,7 @@ cal_estimate_logistic_impl <- function(.data,
   levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
 
   if (length(levels) == 2) {
-    log_model <- cal_model_impl(
+    log_model <- cal_model_impl_grp(
       .data = .data,
       truth = !!truth,
       estimate = levels[[1]],
@@ -330,7 +329,7 @@ cal_estimate_logistic_impl <- function(.data,
   res
 }
 
-cal_model_impl <- function(.data, truth, estimate, run_model, group, ...) {
+cal_model_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
   .data %>%
     dplyr::group_by({{ group }}, .add = TRUE) %>%
     split_dplyr_groups() %>%
@@ -370,11 +369,67 @@ cal_model_impl_single <- function(.data, truth, estimate, run_model, ...) {
 }
 
 #------------------------------ >> Isotonic ------------------------------------
-cal_isoreg_dataframe <- function(.data,
+cal_isoreg_impl <- function(.data,
                                  truth,
                                  estimate,
                                  sampled = FALSE,
                                  ...) {
+
+  truth <- enquo(truth)
+
+  levels <- truth_estimate_map(.data, {{ truth }}, {{ estimate }})
+
+  if (length(levels) == 2) {
+    if(!sampled) {
+      iso_model <- cal_isoreg_grp(
+        .data = .data,
+        truth = !! truth,
+        estimate = levels[[1]],
+        sampled = sampled,
+        ...
+      )
+    }
+
+    res <- as_binary_cal_object(
+      estimate = iso_model,
+      levels = levels,
+      truth = !!truth,
+      method = "Isotonic",
+      rows = nrow(.data),
+      additional_class = "cal_estimate_isotonic"
+    )
+  } else {
+    stop_multiclass()
+  }
+
+  res
+}
+
+cal_isoreg_grp <- function(.data, truth, estimate, sampled, ...) {
+  .data %>%
+    split_dplyr_groups() %>%
+    lapply(
+      function(x) {
+        estimate <- cal_isoreg_impl_single(
+          .data = x$data,
+          truth = {{ truth }},
+          estimate =  estimate,
+          sampled = sampled,
+          ... = ...
+        )
+        list(
+          filter = x$filter,
+          estimate = estimate
+        )
+      }
+    )
+}
+
+cal_isoreg_impl_single <- function(.data,
+                                        truth,
+                                        estimate,
+                                        sampled = FALSE,
+                                        ...) {
   sorted_data <- dplyr::arrange(.data, !!estimate)
 
   if (sampled) {
@@ -407,21 +462,22 @@ cal_isoreg_boot <- function(.data,
                             estimate,
                             times,
                             ...) {
-    purrr::map(
-      sample.int(10000, times),
-      ~ boot_iso(
-        .data = .data,
-        truth = {{ truth }},
-        estimate = {{ estimate }},
-        seed = .x
-      )
+  purrr::map(
+    sample.int(10000, times),
+    ~ boot_iso(
+      .data = .data,
+      truth = {{ truth }},
+      estimate = {{ estimate }},
+      seed = .x
     )
+  )
 }
 
 boot_iso <- function(.data, truth, estimate, seed) {
   withr::with_seed(
-    seed, {
-      cal_isoreg_dataframe(
+    seed,
+    {
+      cal_isoreg_grp(
         .data = .data,
         truth = {{ truth }},
         estimate = estimate,
@@ -454,8 +510,8 @@ print_cal_binary <- function(x, upv = FALSE, ...) {
   cli::cli_text("Method: {.val2 {x$method}}")
   cli::cli_text("Type: {.val2 Binary}")
   cli::cli_text("Train set size: {.val2 {rows}}")
-  if(upv) {
-    upv_no <- prettyNum(nrow(x$estimates), ",")
+  if (upv) {
+    upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate), ",")
     cli::cli_text("Unique Probability Values: {.val2 {upv_no}}")
   }
   cli::cli_text("Truth variable: `{.val0 {x$truth}}`")
@@ -539,22 +595,22 @@ tidyselect_cols <- function(.data, x) {
 # data set by all the combination of the grouped variables. It will respect
 # any tidyeval variable calls made prior to calling the calibration
 split_dplyr_groups <- function(.data) {
-  if(dplyr::is_grouped_df(.data)) {
+  if (dplyr::is_grouped_df(.data)) {
     .data %>%
       dplyr::summarise(.groups = "drop") %>%
       purrr::transpose() %>%
-      purrr::map(~{
-        purrr::imap(.x, ~ expr(!! parse_expr(.y) == !!.x)) %>%
-          purrr::reduce(function(x, y) expr(!! x & !! y))
-      })%>%
-      purrr::map(~{
+      purrr::map(~ {
+        purrr::imap(.x, ~ expr(!!parse_expr(.y) == !!.x)) %>%
+          purrr::reduce(function(x, y) expr(!!x & !!y))
+      }) %>%
+      purrr::map(~ {
         list(
           data = .data %>%
-            dplyr::filter(, !! .x) %>%
+            dplyr::filter(, !!.x) %>%
             dplyr::ungroup(),
           filter = .x
         )
-        })
+      })
   } else {
     list(list(data = .data))
   }
