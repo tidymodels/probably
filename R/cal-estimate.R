@@ -41,7 +41,7 @@ cal_estimate_logistic.data.frame <- function(.data,
                                              estimate = dplyr::starts_with(".pred_"),
                                              smooth = TRUE,
                                              ...) {
-  cal_estimate_logistic_impl(
+  cal_logistic_impl(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
@@ -67,7 +67,7 @@ cal_estimate_logistic.tune_results <- function(.data,
 
   tune_args$predictions %>%
     dplyr::group_by(!!tune_args$group) %>%
-    cal_estimate_logistic_impl(
+    cal_logistic_impl(
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
       smooth = smooth,
@@ -291,7 +291,7 @@ cal_estimate_beta.data.frame <- function(.data,
 
 #------------------------- Estimate implementation -----------------------------
 #------------------------------ >> Logistic ------------------------------------
-cal_estimate_logistic_impl <- function(.data,
+cal_logistic_impl <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
                                        type,
@@ -312,7 +312,7 @@ cal_estimate_logistic_impl <- function(.data,
   levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
 
   if (length(levels) == 2) {
-    log_model <- cal_model_impl_grp(
+    log_model <- cal_logistic_impl_grp(
       .data = .data,
       truth = !!truth,
       estimate = levels[[1]],
@@ -335,13 +335,13 @@ cal_estimate_logistic_impl <- function(.data,
   res
 }
 
-cal_model_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
+cal_logistic_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
   .data %>%
     dplyr::group_by({{ group }}, .add = TRUE) %>%
     split_dplyr_groups() %>%
     lapply(
       function(x) {
-        estimate <- cal_model_impl_single(
+        estimate <- cal_logistic_impl_single(
           .data = x$data,
           truth = {{ truth }},
           estimate = estimate,
@@ -356,7 +356,7 @@ cal_model_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
     )
 }
 
-cal_model_impl_single <- function(.data, truth, estimate, run_model, ...) {
+cal_logistic_impl_single <- function(.data, truth, estimate, run_model, ...) {
   truth <- ensym(truth)
 
   if (run_model == "logistic_spline") {
@@ -398,11 +398,16 @@ cal_isoreg_impl <- function(.data,
     } else {
       iso_model <- purrr::map(
         sample.int(10000, times),
-        ~ cal_isoreg_impl_boot(
-          .data = .data,
-          truth = !! truth,
-          estimate = !!levels[[1]],
-          seed = .x
+        ~ withr::with_seed(
+          .x,
+          {
+            cal_isoreg_impl_grp(
+              .data = .data,
+              truth = !! truth,
+              estimate = !!levels[[1]],
+              sampled = TRUE
+            )
+          }
         )
       )
     }
@@ -472,21 +477,6 @@ cal_isoreg_impl_single <- function(.data,
     .estimate = environment(model_stepfun)$x,
     .adj_estimate = environment(model_stepfun)$y
   )
-}
-
-cal_isoreg_impl_boot <- function(.data, truth, estimate, seed) {
-  x <- withr::with_seed(
-    seed,
-    {
-      cal_isoreg_impl_grp(
-        .data = .data,
-        truth = {{ truth }},
-        estimate = {{ estimate }},
-        sampled = TRUE
-      )
-    }
-  )
-  x
 }
 
 #-------------------------- Binary Objects -------------------------------------
