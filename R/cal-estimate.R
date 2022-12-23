@@ -166,32 +166,38 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
                                                   estimate = dplyr::starts_with(".pred_"),
                                                   times = 10,
                                                   ...) {
-  truth <- enquo(truth)
+  cal_isoreg_impl(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    times = times,
+    ...
+  )
+}
 
-  levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
+#' @export
+cal_estimate_isotonic_boot.tune_results <- function(.data,
+                                                    truth = NULL,
+                                                    estimate = dplyr::starts_with(".pred_"),
+                                                    times = 10,
+                                                    ...) {
+  tune_args <- tune_results_args(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = NULL,
+    event_level = "first",
+    ...
+  )
 
-  if (length(levels) == 2) {
-    log_model <- cal_isoreg_boot(
-      .data = .data,
-      truth = !!truth,
-      estimate = levels[[1]],
+  tune_args$predictions %>%
+    dplyr::group_by(!!tune_args$group) %>%
+    cal_isoreg_impl(
+      truth = !!tune_args$truth,
+      estimate = !!tune_args$estimate,
       times = times,
       ...
     )
-
-    res <- as_binary_cal_object(
-      estimate = log_model,
-      levels = levels,
-      truth = !!truth,
-      rows = nrow(.data),
-      method = "Bootstrapped Isotonic Regression",
-      additional_class = "cal_estimate_isotonic_boot"
-    )
-  } else {
-    stop_multiclass()
-  }
-
-  res
 }
 
 #------------------------------- >> Beta --------------------------------------
@@ -370,22 +376,31 @@ cal_model_impl_single <- function(.data, truth, estimate, run_model, ...) {
 
 #------------------------------ >> Isotonic ------------------------------------
 cal_isoreg_impl <- function(.data,
-                                 truth,
-                                 estimate,
-                                 sampled = FALSE,
-                                 ...) {
-
+                            truth,
+                            estimate,
+                            sampled = FALSE,
+                            times = NULL,
+                            ...) {
   truth <- enquo(truth)
+  estimate <- enquo(estimate)
 
-  levels <- truth_estimate_map(.data, {{ truth }}, {{ estimate }})
+  levels <- truth_estimate_map(.data, !! truth , !! estimate)
 
   if (length(levels) == 2) {
-    if(!sampled) {
+    if (is.null(times)) {
       iso_model <- cal_isoreg_grp(
         .data = .data,
-        truth = !! truth,
-        estimate = levels[[1]],
+        truth = !!truth,
+        estimate = !! levels[[1]],
         sampled = sampled,
+        ...
+      )
+    } else {
+      iso_model <- cal_isoreg_boot(
+        .data = .data,
+        truth = !!truth,
+        estimate = !! levels[[1]],
+        times = times,
         ...
       )
     }
@@ -410,26 +425,28 @@ cal_isoreg_grp <- function(.data, truth, estimate, sampled, ...) {
     split_dplyr_groups() %>%
     lapply(
       function(x) {
-        estimate <- cal_isoreg_impl_single(
+        iso_model <- cal_isoreg_impl_single(
           .data = x$data,
           truth = {{ truth }},
-          estimate =  estimate,
+          estimate = {{estimate}},
           sampled = sampled,
           ... = ...
         )
         list(
           filter = x$filter,
-          estimate = estimate
+          estimate = iso_model
         )
       }
     )
 }
 
 cal_isoreg_impl_single <- function(.data,
-                                        truth,
-                                        estimate,
-                                        sampled = FALSE,
-                                        ...) {
+                                   truth,
+                                   estimate,
+                                   sampled = FALSE,
+                                   ...) {
+  estimate <- enquo(estimate)
+
   sorted_data <- dplyr::arrange(.data, !!estimate)
 
   if (sampled) {
@@ -462,29 +479,31 @@ cal_isoreg_boot <- function(.data,
                             estimate,
                             times,
                             ...) {
-  purrr::map(
+  x <- purrr::map(
     sample.int(10000, times),
     ~ boot_iso(
       .data = .data,
       truth = {{ truth }},
-      estimate = {{ estimate }},
+      estimate = {{estimate}},
       seed = .x
     )
   )
+  x
 }
 
 boot_iso <- function(.data, truth, estimate, seed) {
-  withr::with_seed(
+  x <- withr::with_seed(
     seed,
     {
       cal_isoreg_grp(
         .data = .data,
         truth = {{ truth }},
-        estimate = estimate,
+        estimate = {{estimate}},
         sampled = TRUE
       )
     }
   )
+  x
 }
 
 #-------------------------- Binary Objects -------------------------------------
