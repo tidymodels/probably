@@ -384,24 +384,26 @@ cal_isoreg_impl <- function(.data,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  levels <- truth_estimate_map(.data, !! truth , !! estimate)
+  levels <- truth_estimate_map(.data, !!truth, !!estimate)
 
   if (length(levels) == 2) {
     if (is.null(times)) {
-      iso_model <- cal_isoreg_grp(
+      iso_model <- cal_isoreg_impl_grp(
         .data = .data,
         truth = !!truth,
-        estimate = !! levels[[1]],
+        estimate = !!levels[[1]],
         sampled = sampled,
         ...
       )
     } else {
-      iso_model <- cal_isoreg_boot(
-        .data = .data,
-        truth = !!truth,
-        estimate = !! levels[[1]],
-        times = times,
-        ...
+      iso_model <- purrr::map(
+        sample.int(10000, times),
+        ~ cal_isoreg_impl_boot(
+          .data = .data,
+          truth = !! truth,
+          estimate = !!levels[[1]],
+          seed = .x
+        )
       )
     }
 
@@ -420,7 +422,7 @@ cal_isoreg_impl <- function(.data,
   res
 }
 
-cal_isoreg_grp <- function(.data, truth, estimate, sampled, ...) {
+cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
   .data %>%
     split_dplyr_groups() %>%
     lapply(
@@ -428,7 +430,7 @@ cal_isoreg_grp <- function(.data, truth, estimate, sampled, ...) {
         iso_model <- cal_isoreg_impl_single(
           .data = x$data,
           truth = {{ truth }},
-          estimate = {{estimate}},
+          estimate = {{ estimate }},
           sampled = sampled,
           ... = ...
         )
@@ -472,33 +474,14 @@ cal_isoreg_impl_single <- function(.data,
   )
 }
 
-# cal_isoreg_boot() runs boot_iso() as many times specified by `times`.
-# Each time it runs, it passes a different seed.
-cal_isoreg_boot <- function(.data,
-                            truth,
-                            estimate,
-                            times,
-                            ...) {
-  x <- purrr::map(
-    sample.int(10000, times),
-    ~ boot_iso(
-      .data = .data,
-      truth = {{ truth }},
-      estimate = {{estimate}},
-      seed = .x
-    )
-  )
-  x
-}
-
-boot_iso <- function(.data, truth, estimate, seed) {
+cal_isoreg_impl_boot <- function(.data, truth, estimate, seed) {
   x <- withr::with_seed(
     seed,
     {
-      cal_isoreg_grp(
+      cal_isoreg_impl_grp(
         .data = .data,
         truth = {{ truth }},
-        estimate = {{estimate}},
+        estimate = {{ estimate }},
         sampled = TRUE
       )
     }
