@@ -292,11 +292,11 @@ cal_estimate_beta.data.frame <- function(.data,
 #------------------------- Estimate implementation -----------------------------
 #------------------------------ >> Logistic ------------------------------------
 cal_logistic_impl <- function(.data,
-                                       truth = NULL,
-                                       estimate = dplyr::starts_with(".pred_"),
-                                       type,
-                                       smooth,
-                                       ...) {
+                              truth = NULL,
+                              estimate = dplyr::starts_with(".pred_"),
+                              type,
+                              smooth,
+                              ...) {
   if (smooth) {
     model <- "logistic_spline"
     method <- "Logistic Spline"
@@ -379,7 +379,7 @@ cal_isoreg_impl <- function(.data,
                             truth,
                             estimate,
                             sampled = FALSE,
-                            times = NULL,
+                            times = 1,
                             ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -387,33 +387,42 @@ cal_isoreg_impl <- function(.data,
   levels <- truth_estimate_map(.data, !!truth, !!estimate)
 
   if (length(levels) == 2) {
-    if (is.null(times)) {
-      iso_model <- cal_isoreg_impl_grp(
-        .data = .data,
-        truth = !!truth,
-        estimate = !!levels[[1]],
-        sampled = sampled,
-        ...
+    iso_model <- purrr::map(
+      sample.int(10000, times),
+      ~ withr::with_seed(
+        .x,
+        {
+          cal_isoreg_impl_grp(
+            .data = .data,
+            truth = !!truth,
+            estimate = !!levels[[1]],
+            sampled = TRUE
+          )
+        }
       )
-    } else {
-      iso_model <- purrr::map(
-        sample.int(10000, times),
-        ~ withr::with_seed(
-          .x,
-          {
-            cal_isoreg_impl_grp(
-              .data = .data,
-              truth = !! truth,
-              estimate = !!levels[[1]],
-              sampled = TRUE
-            )
-          }
-        )
+    )
+
+    len_iso <- length(iso_model[[1]])
+
+    iso_flip <- map(
+      seq_len(len_iso),
+      ~ {
+        x <- .x
+        map(iso_model, ~ .x[[x]])
+      }
+    ) %>%
+      map(
+        ~ {
+          x <- .x
+          list(
+            filter = x[[1]]$filter,
+            estimates = map(x, ~ .x[[2]])
+          )
+        }
       )
-    }
 
     res <- as_binary_cal_object(
-      estimate = iso_model,
+      estimate = iso_flip,
       levels = levels,
       truth = !!truth,
       method = "Isotonic",
