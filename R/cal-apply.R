@@ -96,8 +96,8 @@ cal_add_adjust.cal_estimate_logistic <- function(object,
   if (!quo_is_null(prediction)) {
     if (object$type == "binary") {
       level1_gt <- new_data[[object$levels[[1]]]] > new_data[[object$levels[[2]]]]
-      new_data[level1_gt, as_name(!!prediction)] <- names(object$levels[1])
-      new_data[!level1_gt, as_name(!!prediction)] <- names(object$levels[2])
+      new_data[level1_gt, as_name(prediction)] <- names(object$levels[1])
+      new_data[!level1_gt, as_name(prediction)] <- names(object$levels[2])
     }
   }
 
