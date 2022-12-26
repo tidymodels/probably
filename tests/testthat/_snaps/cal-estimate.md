@@ -38,7 +38,7 @@
       Method: Isotonic
       Type: Binary
       Train set size: 1,010
-      Unique Probability Values: 78
+      Unique Probability Values: 66
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -84,7 +84,7 @@
       Method: Isotonic
       Type: Binary
       Train set size: 1,010
-      Unique Probability Values: 78
+      Unique Probability Values: 72
       Truth variable: `Class`
       Estimate variables:
       `good` ==> good

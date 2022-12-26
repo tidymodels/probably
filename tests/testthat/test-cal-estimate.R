@@ -17,6 +17,7 @@ test_that("Logistic spline estimates work", {
 })
 
 test_that("Isotonic estimates work", {
+  set.seed(100)
   sl_isotonic <- cal_estimate_isotonic(segment_logistic, Class)
   expect_cal_type(sl_isotonic, "binary")
   expect_cal_method(sl_isotonic, "Isotonic")

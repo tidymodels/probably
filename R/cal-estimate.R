@@ -387,25 +387,38 @@ cal_isoreg_impl <- function(.data,
   levels <- truth_estimate_map(.data, !!truth, !!estimate)
 
   if (length(levels) == 2) {
-    iso_model <- purrr::map(
-      sample.int(10000, times),
-      ~ withr::with_seed(
-        .x,
-        {
-          cal_isoreg_impl_grp(
-            .data = .data,
-            truth = !!truth,
-            estimate = !!levels[[1]],
-            sampled = TRUE
-          )
-        }
+    if(times == 1) {
+      iso_model <- cal_isoreg_impl_grp(
+        .data = .data,
+        truth = !!truth,
+        estimate = !!levels[[1]],
+        sampled = TRUE
       )
-    )
+      iso_model <- list(iso_model)
+      addl_class <- "cal_estimate_isotonic"
+      method <- "Isotonic"
+    } else {
+      iso_model <- purrr::map(
+        sample.int(10000, times),
+        ~ withr::with_seed(
+          .x,
+          {
+            cal_isoreg_impl_grp(
+              .data = .data,
+              truth = !!truth,
+              estimate = !!levels[[1]],
+              sampled = TRUE
+            )
+          }
+        )
+      )
+      addl_class <- "cal_estimate_isotonic_boot"
+      method <- "Bootstrapped Isotonic Regression"
+    }
 
-    len_iso <- length(iso_model[[1]])
 
     iso_flip <- map(
-      seq_len(len_iso),
+      seq_len(length(iso_model[[1]])),
       ~ {
         x <- .x
         map(iso_model, ~ .x[[x]])
@@ -425,9 +438,9 @@ cal_isoreg_impl <- function(.data,
       estimate = iso_flip,
       levels = levels,
       truth = !!truth,
-      method = "Isotonic",
+      method = method,
       rows = nrow(.data),
-      additional_class = "cal_estimate_isotonic"
+      additional_class = addl_class
     )
   } else {
     stop_multiclass()
@@ -512,7 +525,7 @@ print_cal_binary <- function(x, upv = FALSE, ...) {
   cli::cli_text("Type: {.val2 Binary}")
   cli::cli_text("Train set size: {.val2 {rows}}")
   if (upv) {
-    upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate), ",")
+    upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]]), ",")
     cli::cli_text("Unique Probability Values: {.val2 {upv_no}}")
   }
   cli::cli_text("Truth variable: `{.val0 {x$truth}}`")
