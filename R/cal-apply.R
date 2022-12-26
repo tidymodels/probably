@@ -158,7 +158,7 @@ cal_add_adjust.cal_estimate_beta <- function(object,
                                              ...) {
   if (object$type == "binary") {
     p <- dplyr::pull(.data, !!object$levels[[1]])
-    model <- object$estimates
+    model <- object$estimates[[1]]$estimate
     preds <- betacal::beta_predict(
       p = p,
       calib = model
