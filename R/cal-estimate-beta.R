@@ -41,6 +41,34 @@ cal_estimate_beta.data.frame <- function(.data,
   )
 }
 
+#' @export
+cal_estimate_beta.tune_results<- function(.data,
+                                         truth = NULL,
+                                         shape_params = 2,
+                                         location_params = 1,
+                                         estimate = dplyr::starts_with(".pred_"),
+                                         ...) {
+  tune_args <- tune_results_args(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = NULL,
+    event_level = "first",
+    ...
+  )
+
+  tune_args$predictions %>%
+    dplyr::group_by(!!tune_args$group) %>%
+    cal_beta_impl(
+      truth = !!tune_args$truth,
+      estimate = !!tune_args$estimate,
+      shape_params = shape_params,
+      location_params = location_params,
+      ...
+    )
+}
+
+
 # ----------------------------- Implementation ---------------------------------
 
 cal_beta_impl <- function(.data,
@@ -50,13 +78,16 @@ cal_beta_impl <- function(.data,
                               estimate = dplyr::starts_with(".pred_"),
                               ...) {
 
-  levels <- truth_estimate_map(.data, {{ truth }}, {{ estimate }})
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  levels <- truth_estimate_map(.data, !!truth, !!estimate)
 
   if (length(levels) == 2) {
 
     beta_model <- cal_beta_impl_grp(
       .data = .data,
-      truth = {{ truth }},
+      truth = !! truth,
       shape_params = shape_params,
       location_params = location_params,
       estimate = !! levels[[1]],
