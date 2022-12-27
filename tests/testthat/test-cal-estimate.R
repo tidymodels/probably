@@ -13,11 +13,6 @@ test_that("Logistic estimates work - tune_results", {
   expect_cal_method(tl_logistic, "Logistic")
   expect_cal_estimate(tl_logistic, "butchered_glm")
   expect_snapshot(print(tl_logistic))
-
-  expect_equal(
-    testthat_cal_tune_results_count(),
-    nrow(cal_apply(testthat_cal_tune_results(), tl_logistic))
-  )
 })
 
 
