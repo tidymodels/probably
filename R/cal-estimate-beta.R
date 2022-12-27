@@ -42,12 +42,12 @@ cal_estimate_beta.data.frame <- function(.data,
 }
 
 #' @export
-cal_estimate_beta.tune_results<- function(.data,
-                                         truth = NULL,
-                                         shape_params = 2,
-                                         location_params = 1,
-                                         estimate = dplyr::starts_with(".pred_"),
-                                         ...) {
+cal_estimate_beta.tune_results <- function(.data,
+                                           truth = NULL,
+                                           shape_params = 2,
+                                           location_params = 1,
+                                           estimate = dplyr::starts_with(".pred_"),
+                                           ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -72,25 +72,23 @@ cal_estimate_beta.tune_results<- function(.data,
 # ----------------------------- Implementation ---------------------------------
 
 cal_beta_impl <- function(.data,
-                              truth = NULL,
-                              shape_params = 2,
-                              location_params = 1,
-                              estimate = dplyr::starts_with(".pred_"),
-                              ...) {
-
+                          truth = NULL,
+                          shape_params = 2,
+                          location_params = 1,
+                          estimate = dplyr::starts_with(".pred_"),
+                          ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
   levels <- truth_estimate_map(.data, !!truth, !!estimate)
 
   if (length(levels) == 2) {
-
     beta_model <- cal_beta_impl_grp(
       .data = .data,
-      truth = !! truth,
+      truth = !!truth,
       shape_params = shape_params,
       location_params = location_params,
-      estimate = !! levels[[1]],
+      estimate = !!levels[[1]],
       levels = levels,
       ...
     )
@@ -98,7 +96,7 @@ cal_beta_impl <- function(.data,
     res <- as_binary_cal_object(
       estimate = beta_model,
       levels = levels,
-      truth = {{truth}},
+      truth = {{ truth }},
       method = "Beta",
       rows = nrow(.data),
       additional_class = "cal_estimate_beta"
@@ -145,44 +143,41 @@ cal_beta_impl_single <- function(.data,
                                  estimate = NULL,
                                  levels = NULL,
                                  ...) {
+  x_factor <- dplyr::pull(.data, {{ truth }})
+  x <- x_factor == names(levels[1])
+  y <- dplyr::pull(.data, {{ estimate }})
 
+  parameters <- NULL
 
+  if (shape_params == 1) {
+    parameters <- "a"
+  }
 
-    x_factor <- dplyr::pull(.data, {{truth}})
-    x <- x_factor == names(levels[1])
-    y <- dplyr::pull(.data, {{estimate}})
+  if (shape_params == 2) {
+    parameters <- "ab"
+  }
 
-    parameters <- NULL
+  if (location_params == 1) {
+    parameters <- paste0(parameters, "m")
+  }
 
-    if (shape_params == 1) {
-      parameters <- "a"
-    }
+  if (location_params > 1) {
+    rlang::abort("Invalid `location_params`, allowed values are 1 and 0")
+  }
 
-    if (shape_params == 2) {
-      parameters <- "ab"
-    }
+  if (is.null(parameters)) {
+    rlang::abort("Invalid `shape_params`, allowed values are 1 and 2")
+  }
 
-    if (location_params == 1) {
-      parameters <- paste0(parameters, "m")
-    }
+  prevent_output <- utils::capture.output(
+    beta_model <- invisible(betacal::beta_calibration(
+      p = y,
+      y = x,
+      parameters = parameters
+    ))
+  )
 
-    if (location_params > 1) {
-      rlang::abort("Invalid `location_params`, allowed values are 1 and 0")
-    }
+  beta_model$model <- butcher::butcher(beta_model$model)
 
-    if (is.null(parameters)) {
-      rlang::abort("Invalid `shape_params`, allowed values are 1 and 2")
-    }
-
-    prevent_output <- utils::capture.output(
-      beta_model <- invisible(betacal::beta_calibration(
-        p = y,
-        y = x,
-        parameters = parameters
-      ))
-    )
-
-    beta_model$model <- butcher::butcher(beta_model$model)
-
-    beta_model
+  beta_model
 }

@@ -1,6 +1,6 @@
 # probably (development version)
 
-* Adds `cal_apply()` function. It uses the output of a calibration function, and applies it to a data frame. 
+* Adds `cal_apply()` function. It uses the output of a calibration function, and applies it to a data frame, or a tune_results object. 
 
 * Adds 5 model calibration remediation methods: Logistic, Logistic Spline, Isotonic, and Isotonic Bootstrapped, and Beta. They currently support data frames, and binary models only.
 

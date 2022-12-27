@@ -1,6 +1,7 @@
 #------------------------------- Methods ---------------------------------------
 #' Uses a logistic regression model to calibrate probabilities
-#' @param .data A data.frame object containing predictions and probability columns.
+#' @param .data A `data.frame` object, or `tune_results` object, that contains
+#' predictions and probability columns.
 #' @param truth The column identifier for the true class results
 #' (that is a factor). This should be an unquoted column name.
 #' @param estimate A vector of column identifiers, or one of `dplyr` selector
