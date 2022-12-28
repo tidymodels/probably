@@ -33,6 +33,7 @@ cal_estimate_beta.data.frame <- function(.data,
                                          estimate = dplyr::starts_with(".pred_"),
                                          parameters = NULL,
                                          ...) {
+  stop_null_parameters(parameters)
   cal_beta_impl(
     .data = .data,
     truth = {{ truth }},

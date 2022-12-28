@@ -126,3 +126,9 @@ split_dplyr_groups <- function(.data) {
     list(list(data = .data))
   }
 }
+
+stop_null_parameters <- function(x) {
+  if(!is.null(x)) {
+    rlang::abort("The `parameters` argument is only valid for `tune_results`.")
+  }
+}

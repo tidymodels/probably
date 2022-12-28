@@ -31,6 +31,7 @@ cal_estimate_isotonic.data.frame <- function(.data,
                                              estimate = dplyr::starts_with(".pred_"),
                                              parameters = NULL,
                                              ...) {
+  stop_null_parameters(parameters)
   cal_isoreg_impl(
     .data = .data,
     truth = {{ truth }},
@@ -96,6 +97,7 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
                                                   times = 10,
                                                   parameters = NULL,
                                                   ...) {
+  stop_null_parameters(parameters)
   cal_isoreg_impl(
     .data = .data,
     truth = {{ truth }},

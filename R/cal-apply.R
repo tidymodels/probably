@@ -33,6 +33,7 @@ cal_apply.data.frame <- function(.data,
                                  parameters = NULL,
                                  ...
                                  ) {
+  stop_null_parameters(parameters)
   if (object$type == "binary") {
     cal_add_adjust(
       object = object,

@@ -46,6 +46,7 @@ cal_estimate_logistic.data.frame <- function(.data,
                                              smooth = TRUE,
                                              parameters = NULL,
                                              ...) {
+  stop_null_parameters(parameters)
   cal_logistic_impl(
     .data = .data,
     truth = {{ truth }},
