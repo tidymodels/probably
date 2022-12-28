@@ -1,32 +1,43 @@
 #---------------------------------- Apply --------------------------------------
 
-#' Applies a calibration to a set of prediction probabilities
+#' Applies a calibration to a set of pred_class probabilities
 #' @details It currently supports data.frames only. It extracts the `truth` and
 #' the estimate columns names, and levels, from the calibration object.
 #' @param .data An object that can process a calibration object.
 #' @param object The calibration object (`cal_object`).
-#' @param prediction (Optional) Column identifier with the prediction.
-#' @param threshold (Optional) Applies to binary models only. A number between
-#' 0 and 1. It contains the cut off for the prediction
+#' @param pred_class (Optional) Column identifier with the predictions.
+#' 0 and 1. It contains the cut off for the predictions.
+#' @param parameters (Optional)  An optional tibble of tuning parameter values
+#' that can be used to filter the predicted values before processing. Applies
+#' only to `tune_results` objects.
 #' @param ... Optional arguments; currently unused.
 #' @examples
 #' w_calibration <- cal_estimate_logistic(segment_logistic, Class)
 #'
 #' cal_apply(segment_logistic, w_calibration)
 #' @export
-cal_apply <- function(.data, object, prediction = NULL, threshold = NULL, ...) {
+cal_apply <- function(.data,
+                      object,
+                      pred_class = NULL,
+                      parameters = NULL,
+                      ...
+                      ) {
   rlang::check_dots_empty()
   UseMethod("cal_apply")
 }
 
 #' @export
-cal_apply.data.frame <- function(.data, object, prediction = NULL, threshold = NULL, ...) {
+cal_apply.data.frame <- function(.data,
+                                 object,
+                                 pred_class = NULL,
+                                 parameters = NULL,
+                                 ...
+                                 ) {
   if (object$type == "binary") {
     cal_add_adjust(
       object = object,
       .data = .data,
-      prediction = {{ prediction }},
-      threshold = threshold
+      pred_class = {{ pred_class }}
     )
   } else {
     stop_multiclass()
@@ -34,30 +45,39 @@ cal_apply.data.frame <- function(.data, object, prediction = NULL, threshold = N
 }
 
 #' @export
-cal_apply.tune_results <- function(.data, object, prediction = NULL, threshold = NULL, ...) {
+cal_apply.tune_results <- function(.data,
+                                   object,
+                                   pred_class = NULL,
+                                   parameters = NULL,
+                                   ...
+                                   ) {
   if (object$type == "binary") {
     if (!(".predictions" %in% colnames(.data))) {
       rlang::abort(
         paste0(
           "The `tune_results` object does not contain the `.predictions` column.",
-          " Refit with the control argument `save_pred = TRUE` to save predictions."
+          " Refit with the control argument `save_pred = TRUE` to save pred_classs."
         )
       )
     }
 
-    prediction <- enquo(prediction)
+    pred_class <- enquo(pred_class)
 
-    if (rlang::quo_is_null(prediction)) {
-      prediction <- rlang::parse_expr(paste0(".pred_", object$truth))
+    if (rlang::quo_is_null(pred_class)) {
+      pred_class <- rlang::parse_expr(".pred_class")
     }
 
-    predictions <- tune::collect_predictions(.data, summarize = TRUE, ...)
+    pred_classs <- tune::collect_predictions(
+      x = .data,
+      summarize = TRUE,
+      parameters = parameters,
+      ...
+      )
 
     cal_add_adjust(
       object = object,
-      .data = predictions,
-      prediction = !!prediction,
-      threshold = threshold
+      .data = pred_classs,
+      pred_class = !!pred_class
     )
   } else {
     stop_multiclass()
@@ -65,7 +85,12 @@ cal_apply.tune_results <- function(.data, object, prediction = NULL, threshold =
 }
 
 #' @export
-cal_apply.cal_object <- function(.data, object, prediction = NULL, threshold = NULL, ...) {
+cal_apply.cal_object <- function(.data,
+                                 object,
+                                 pred_class = NULL,
+                                 parameters = NULL,
+                                 ...
+                                 ) {
   if ("data.frame" %in% class(object)) {
     rlang::abort(paste0(
       "`cal_apply()` expects the data as the first argument,",
@@ -77,27 +102,26 @@ cal_apply.cal_object <- function(.data, object, prediction = NULL, threshold = N
 
 # ------------------------------- Adjust ---------------------------------------
 
-cal_add_adjust <- function(object, .data, prediction, threshold) {
+cal_add_adjust <- function(object, .data, pred_class) {
   UseMethod("cal_add_adjust")
 }
 
 cal_add_adjust.cal_estimate_logistic <- function(object,
                                                  .data,
-                                                 prediction = NULL,
-                                                 threshold = NULL,
+                                                 pred_class = NULL,
                                                  ...) {
-  prediction <- enquo(prediction)
+  pred_class <- enquo(pred_class)
 
   new_data <- cal_add_predict_impl(
     object = object,
     .data = .data
   )
 
-  if (!quo_is_null(prediction)) {
+  if (!quo_is_null(pred_class)) {
     if (object$type == "binary") {
       level1_gt <- new_data[[object$levels[[1]]]] > new_data[[object$levels[[2]]]]
-      new_data[level1_gt, as_name(prediction)] <- names(object$levels[1])
-      new_data[!level1_gt, as_name(prediction)] <- names(object$levels[2])
+      new_data[level1_gt, as_name(pred_class)] <- names(object$levels[1])
+      new_data[!level1_gt, as_name(pred_class)] <- names(object$levels[2])
     }
   }
 
@@ -106,19 +130,18 @@ cal_add_adjust.cal_estimate_logistic <- function(object,
 
 cal_add_adjust.cal_estimate_logistic_spline <- function(object,
                                                         .data,
-                                                        prediction = NULL,
-                                                        threshold = NULL,
+                                                        pred_class = NULL,
                                                         ...) {
-  prediction <- enquo(prediction)
+  pred_class <- enquo(pred_class)
 
   new_data <- cal_add_predict_impl(
     object = object,
     .data = .data
   )
 
-  if (!quo_is_null(prediction)) {
+  if (!quo_is_null(pred_class)) {
     if (object$type == "binary") {
-      pred_name <- as_name(prediction)
+      pred_name <- as_name(pred_class)
       level1_gt <- new_data[[object$levels[[1]]]] > new_data[[object$levels[[2]]]]
       new_data[level1_gt, pred_name] <- names(object$levels[1])
       new_data[!level1_gt, pred_name] <- names(object$levels[2])
@@ -130,8 +153,7 @@ cal_add_adjust.cal_estimate_logistic_spline <- function(object,
 
 cal_add_adjust.cal_estimate_isotonic_boot <- function(object,
                                                       .data,
-                                                      prediction = NULL,
-                                                      threshold = NULL,
+                                                      pred_class = NULL,
                                                       ...) {
   cal_add_interval_impl(
     object = object,
@@ -142,8 +164,7 @@ cal_add_adjust.cal_estimate_isotonic_boot <- function(object,
 
 cal_add_adjust.cal_estimate_isotonic <- function(object,
                                                  .data,
-                                                 prediction = NULL,
-                                                 threshold = NULL,
+                                                 pred_class = NULL,
                                                  ...) {
   cal_add_interval_impl(
     object = object,
@@ -153,8 +174,7 @@ cal_add_adjust.cal_estimate_isotonic <- function(object,
 
 cal_add_adjust.cal_estimate_beta <- function(object,
                                              .data,
-                                             prediction = NULL,
-                                             threshold = NULL,
+                                             pred_class = NULL,
                                              ...) {
   if (object$type == "binary") {
     p <- dplyr::pull(.data, !!object$levels[[1]])

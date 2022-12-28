@@ -2,24 +2,26 @@
 % Please edit documentation in R/cal-apply.R
 \name{cal_apply}
 \alias{cal_apply}
-\title{Applies a calibration to a set of prediction probabilities}
+\title{Applies a calibration to a set of pred_class probabilities}
 \usage{
-cal_apply(.data, object, prediction = NULL, threshold = NULL, ...)
+cal_apply(.data, object, pred_class = NULL, parameters = NULL, ...)
 }
 \arguments{
 \item{.data}{An object that can process a calibration object.}
 
 \item{object}{The calibration object (\code{cal_object}).}
 
-\item{prediction}{(Optional) Column identifier with the prediction.}
+\item{pred_class}{(Optional) Column identifier with the predictions.
+0 and 1. It contains the cut off for the predictions.}
 
-\item{threshold}{(Optional) Applies to binary models only. A number between
-0 and 1. It contains the cut off for the prediction}
+\item{parameters}{(Optional)  An optional tibble of tuning parameter values
+that can be used to filter the predicted values before processing. Applies
+only to \code{tune_results} objects.}
 
 \item{...}{Optional arguments; currently unused.}
 }
 \description{
-Applies a calibration to a set of prediction probabilities
+Applies a calibration to a set of pred_class probabilities
 }
 \details{
 It currently supports data.frames only. It extracts the \code{truth} and

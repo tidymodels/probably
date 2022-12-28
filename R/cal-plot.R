@@ -932,7 +932,14 @@ assert_truth_two_levels <- function(.data, truth) {
   }
 }
 
-tune_results_args <- function(.data, truth, estimate, group, event_level, ...) {
+tune_results_args <- function(.data,
+                              truth,
+                              estimate,
+                              group,
+                              event_level,
+                              parameters = NULL,
+                              ...
+                              ) {
   if (!(".predictions" %in% colnames(.data))) {
     rlang::abort(
       paste0(
@@ -942,7 +949,11 @@ tune_results_args <- function(.data, truth, estimate, group, event_level, ...) {
     )
   }
 
-  predictions <- tune::collect_predictions(.data, summarize = TRUE, ...)
+  predictions <- tune::collect_predictions(x = .data,
+                                           summarize = TRUE,
+                                           parameters = parameters,
+                                           ...
+                                           )
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)

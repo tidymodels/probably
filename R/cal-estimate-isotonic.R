@@ -20,6 +20,7 @@
 cal_estimate_isotonic <- function(.data,
                                   truth = NULL,
                                   estimate = dplyr::starts_with(".pred_"),
+                                  parameters = NULL,
                                   ...) {
   UseMethod("cal_estimate_isotonic")
 }
@@ -28,6 +29,7 @@ cal_estimate_isotonic <- function(.data,
 cal_estimate_isotonic.data.frame <- function(.data,
                                              truth = NULL,
                                              estimate = dplyr::starts_with(".pred_"),
+                                             parameters = NULL,
                                              ...) {
   cal_isoreg_impl(
     .data = .data,
@@ -41,6 +43,7 @@ cal_estimate_isotonic.data.frame <- function(.data,
 cal_estimate_isotonic.tune_results <- function(.data,
                                                truth = NULL,
                                                estimate = dplyr::starts_with(".pred_"),
+                                               parameters = NULL,
                                                ...) {
   tune_args <- tune_results_args(
     .data = .data,
@@ -48,6 +51,7 @@ cal_estimate_isotonic.tune_results <- function(.data,
     estimate = {{ estimate }},
     group = NULL,
     event_level = "first",
+    parameters = parameters,
     ...
   )
 
@@ -80,6 +84,7 @@ cal_estimate_isotonic_boot <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
                                        times = 10,
+                                       parameters = NULL,
                                        ...) {
   UseMethod("cal_estimate_isotonic_boot")
 }
@@ -89,6 +94,7 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
                                                   truth = NULL,
                                                   estimate = dplyr::starts_with(".pred_"),
                                                   times = 10,
+                                                  parameters = NULL,
                                                   ...) {
   cal_isoreg_impl(
     .data = .data,
@@ -104,6 +110,7 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
                                                     truth = NULL,
                                                     estimate = dplyr::starts_with(".pred_"),
                                                     times = 10,
+                                                    parameters = NULL,
                                                     ...) {
   tune_args <- tune_results_args(
     .data = .data,
@@ -111,6 +118,7 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
     estimate = {{ estimate }},
     group = NULL,
     event_level = "first",
+    parameters = parameters,
     ...
   )
 
@@ -123,8 +131,6 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
       ...
     )
 }
-
-
 
 #------------------------------ Implementation ---------------------------------
 cal_isoreg_impl <- function(.data,

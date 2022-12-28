@@ -9,6 +9,9 @@
 #' defaults to the prefix used by tidymodels (`.pred_`). The order of the
 #' identifiers will be considered the same as the order of the levels of the
 #' `truth` variable.
+#' @param parameters (Optional)  An optional tibble of tuning parameter values
+#' that can be used to filter the predicted values before processing. Applies
+#' only to `tune_results` objects.
 #' @param ... Additional arguments passed to the models or routines used to
 #' calculate the new probabilities.
 #' @param smooth Applies to the logistic models. It switches between logistic
@@ -31,6 +34,7 @@ cal_estimate_logistic <- function(.data,
                                   truth = NULL,
                                   estimate = dplyr::starts_with(".pred_"),
                                   smooth = TRUE,
+                                  parameters = NULL,
                                   ...) {
   UseMethod("cal_estimate_logistic")
 }
@@ -40,6 +44,7 @@ cal_estimate_logistic.data.frame <- function(.data,
                                              truth = NULL,
                                              estimate = dplyr::starts_with(".pred_"),
                                              smooth = TRUE,
+                                             parameters = NULL,
                                              ...) {
   cal_logistic_impl(
     .data = .data,
@@ -55,6 +60,7 @@ cal_estimate_logistic.tune_results <- function(.data,
                                                truth = NULL,
                                                estimate = dplyr::starts_with(".pred_"),
                                                smooth = TRUE,
+                                               parameters = NULL,
                                                ...) {
   tune_args <- tune_results_args(
     .data = .data,
@@ -62,6 +68,7 @@ cal_estimate_logistic.tune_results <- function(.data,
     estimate = {{ estimate }},
     group = NULL,
     event_level = "first",
+    parameters = parameters,
     ...
   )
 

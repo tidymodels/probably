@@ -20,6 +20,7 @@ cal_estimate_beta <- function(.data,
                               shape_params = 2,
                               location_params = 1,
                               estimate = dplyr::starts_with(".pred_"),
+                              parameters = NULL,
                               ...) {
   UseMethod("cal_estimate_beta")
 }
@@ -30,6 +31,7 @@ cal_estimate_beta.data.frame <- function(.data,
                                          shape_params = 2,
                                          location_params = 1,
                                          estimate = dplyr::starts_with(".pred_"),
+                                         parameters = NULL,
                                          ...) {
   cal_beta_impl(
     .data = .data,
@@ -47,6 +49,7 @@ cal_estimate_beta.tune_results <- function(.data,
                                            shape_params = 2,
                                            location_params = 1,
                                            estimate = dplyr::starts_with(".pred_"),
+                                           parameters = NULL,
                                            ...) {
   tune_args <- tune_results_args(
     .data = .data,
@@ -54,6 +57,7 @@ cal_estimate_beta.tune_results <- function(.data,
     estimate = {{ estimate }},
     group = NULL,
     event_level = "first",
+    parameters = parameters,
     ...
   )
 

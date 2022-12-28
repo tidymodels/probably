@@ -10,6 +10,7 @@ cal_estimate_beta(
   shape_params = 2,
   location_params = 1,
   estimate = dplyr::starts_with(".pred_"),
+  parameters = NULL,
   ...
 )
 }
@@ -31,6 +32,10 @@ functions to choose which variables contains the class probabilities. It
 defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
+
+\item{parameters}{(Optional)  An optional tibble of tuning parameter values
+that can be used to filter the predicted values before processing. Applies
+only to \code{tune_results} objects.}
 
 \item{...}{Additional arguments passed to the models or routines used to
 calculate the new probabilities.}
