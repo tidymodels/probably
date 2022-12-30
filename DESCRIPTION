@@ -28,6 +28,7 @@ Imports:
     ggplot2,
     butcher,    
     tibble,
+    pillar,
     withr,
     purrr,
     tune,

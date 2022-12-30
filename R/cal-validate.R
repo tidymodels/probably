@@ -75,13 +75,20 @@ cal_validate <- function(rset,
         stats_after = stats_after,
         stats_before = stats_before
       )
-    })
+    }) %>%
+    purrr::transpose()
 
   dplyr::mutate(
     rset,
-    estimate = cals,
-    validation = map(applied, ~.x$val),
-    stats_after = map(applied, ~.x$stats_after),
-    stats_before = map(applied, ~.x$stats_before)
+    calibration = cals,
+    validation = applied$val,
+    stats_after = applied$stats_after,
+    stats_before = applied$stats_before
   )
+}
+
+#' @importFrom pillar type_sum
+#' @export
+type_sum.cal_binary <- function(x, ...) {
+  paste0(x$method, " [", x$rows, "]")
 }
