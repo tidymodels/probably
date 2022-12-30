@@ -11,6 +11,7 @@ cal_validate_logistic(
   smooth = TRUE,
   parameters = NULL,
   metrics = NULL,
+  summarize = TRUE,
   ...
 )
 }
@@ -35,6 +36,10 @@ that can be used to filter the predicted values before processing. Applies
 only to \code{tune_results} objects.}
 
 \item{metrics}{A set of metrics passed created via \code{yardstick::metric_set()}}
+
+\item{summarize}{Indicates to pass tibble with the metrics averaged, or
+if to return the same sampled object but with new columns containing the
+calibration y validation list columns.}
 
 \item{...}{Additional arguments passed to the models or routines used to
 calculate the new probabilities.}
