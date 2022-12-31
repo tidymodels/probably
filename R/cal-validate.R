@@ -32,9 +32,42 @@ cal_validate_logistic.rset <- function(.data,
     cal_function = "logistic",
     metrics = metrics,
     summarize = summarize,
+    smooth = smooth,
+    parameters = parameters,
     ...
   )
 }
+
+#' @export
+cal_validate_isotonic <- function(.data,
+                                  truth = NULL,
+                                  estimate = dplyr::starts_with(".pred_"),
+                                  parameters = NULL,
+                                  metrics = NULL,
+                                  summarize = TRUE,
+                                  ...) {
+  UseMethod("cal_validate_isotonic")
+}
+
+#' @export
+cal_validate_isotonic.rset <- function(.data,
+                                  truth = NULL,
+                                  estimate = dplyr::starts_with(".pred_"),
+                                  parameters = NULL,
+                                  metrics = NULL,
+                                  summarize = TRUE,
+                                  ...) {
+  cal_validate(
+    rset = .data,
+    truth = {{truth}},
+    estimate = {{estimate}},
+    cal_function = "isotonic",
+    metrics = metrics,
+    summarize = summarize,
+    ...
+  )
+}
+
 
 
 
@@ -66,6 +99,16 @@ cal_validate <- function(rset,
       estimate = {{estimate}},
       ...
       )
+  }
+
+  if(cal_function == "isotonic") {
+    cals <- map(
+      data_tr,
+      cal_estimate_isotonic,
+      truth = {{ truth }},
+      estimate = {{estimate}},
+      ...
+    )
   }
 
   estimate_col <- cals[[1]]$levels[[1]]
@@ -108,6 +151,8 @@ type_sum.cal_binary <- function(x, ...) {
 summarize_validation <- function(x) {
 
   fs <- x$stats_after[[1]]
+
+  fs$.estimate <- NULL
 
   seq_len(nrow(fs)) %>%
     map(~ {
