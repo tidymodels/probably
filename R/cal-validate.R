@@ -18,17 +18,17 @@ cal_validate_logistic <- function(.data,
 
 #' @export
 cal_validate_logistic.rset <- function(.data,
-                                  truth = NULL,
-                                  estimate = dplyr::starts_with(".pred_"),
-                                  smooth = TRUE,
-                                  parameters = NULL,
-                                  metrics = NULL,
-                                  summarize = TRUE,
-                                  ...) {
+                                       truth = NULL,
+                                       estimate = dplyr::starts_with(".pred_"),
+                                       smooth = TRUE,
+                                       parameters = NULL,
+                                       metrics = NULL,
+                                       summarize = TRUE,
+                                       ...) {
   cal_validate(
     rset = .data,
-    truth = {{truth}},
-    estimate = {{estimate}},
+    truth = {{ truth }},
+    estimate = {{ estimate }},
     cal_function = "logistic",
     metrics = metrics,
     summarize = summarize,
@@ -38,6 +38,7 @@ cal_validate_logistic.rset <- function(.data,
   )
 }
 
+#' @rdname cal_validate_logistic
 #' @export
 cal_validate_isotonic <- function(.data,
                                   truth = NULL,
@@ -51,16 +52,16 @@ cal_validate_isotonic <- function(.data,
 
 #' @export
 cal_validate_isotonic.rset <- function(.data,
-                                  truth = NULL,
-                                  estimate = dplyr::starts_with(".pred_"),
-                                  parameters = NULL,
-                                  metrics = NULL,
-                                  summarize = TRUE,
-                                  ...) {
+                                       truth = NULL,
+                                       estimate = dplyr::starts_with(".pred_"),
+                                       parameters = NULL,
+                                       metrics = NULL,
+                                       summarize = TRUE,
+                                       ...) {
   cal_validate(
     rset = .data,
-    truth = {{truth}},
-    estimate = {{estimate}},
+    truth = {{ truth }},
+    estimate = {{ estimate }},
     cal_function = "isotonic",
     metrics = metrics,
     summarize = summarize,
@@ -68,8 +69,43 @@ cal_validate_isotonic.rset <- function(.data,
   )
 }
 
+#' @rdname cal_validate_logistic
+#' @inheritParams cal_estimate_beta
+#' @export
+cal_validate_beta <- function(.data,
+                              truth = NULL,
+                              shape_params = 2,
+                              location_params = 1,
+                              estimate = dplyr::starts_with(".pred_"),
+                              parameters = NULL,
+                              metrics = NULL,
+                              summarize = TRUE,
+                              ...) {
+  UseMethod("cal_validate_beta")
+}
 
-
+#' @export
+cal_validate_beta.rset <- function(.data,
+                                   truth = NULL,
+                                   shape_params = 2,
+                                   location_params = 1,
+                                   estimate = dplyr::starts_with(".pred_"),
+                                   parameters = NULL,
+                                   metrics = NULL,
+                                   summarize = TRUE,
+                                   ...) {
+  cal_validate(
+    rset = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    cal_function = "beta",
+    metrics = metrics,
+    summarize = summarize,
+    shape_params = shape_params,
+    location_params = location_params,
+    ...
+  )
+}
 
 cal_validate <- function(rset,
                          truth = NULL,
@@ -77,58 +113,67 @@ cal_validate <- function(rset,
                          cal_function = NULL,
                          metrics = NULL,
                          summarize = TRUE,
-                         ...
-                         ) {
-  if(is.null(cal_function)) rlang::abort("No calibration function provided")
+                         ...) {
+  if (is.null(cal_function)) rlang::abort("No calibration function provided")
 
   if (is.null(metrics)) {
     metrics <- yardstick::metric_set(
-      yardstick::brier_class,
-      yardstick::roc_auc
-      )
+      yardstick::brier_class
+    )
   }
 
   data_tr <- map(rset$splits, rsample::training)
   data_as <- map(rset$splits, rsample::assessment)
 
-  if(cal_function == "logistic") {
+  if (cal_function == "logistic") {
     cals <- map(
       data_tr,
       cal_estimate_logistic,
       truth = {{ truth }},
-      estimate = {{estimate}},
+      estimate = {{ estimate }},
       ...
-      )
+    )
   }
 
-  if(cal_function == "isotonic") {
+  if (cal_function == "isotonic") {
     cals <- map(
       data_tr,
       cal_estimate_isotonic,
       truth = {{ truth }},
-      estimate = {{estimate}},
+      estimate = {{ estimate }},
+      ...
+    )
+  }
+
+  if (cal_function == "beta") {
+    cals <- map(
+      data_tr,
+      cal_estimate_beta,
+      truth = {{ truth }},
+      estimate = {{ estimate }},
       ...
     )
   }
 
   estimate_col <- cals[[1]]$levels[[1]]
 
-  applied <- map(
-    seq_along(data_as),
+  applied <- seq_along(data_as) %>%
+    map(
     ~ {
       val <- cal_apply(data_as[[.x]], cals[[.x]])
-      stats_after <- metrics(val, truth = {{truth}}, estimate_col)
-      stats_before <- metrics(data_as[[.x]], truth = {{truth}}, estimate_col)
+      stats_after <- metrics(val, truth = {{ truth }}, estimate_col)
+      stats_before <- metrics(data_as[[.x]], truth = {{ truth }}, estimate_col)
 
       list(
         val = val,
         stats_after = stats_after,
         stats_before = stats_before
       )
-    }) %>%
+    }
+  ) %>%
     purrr::transpose()
 
-  x <- dplyr::mutate(
+  ret <- dplyr::mutate(
     rset,
     calibration = cals,
     validation = applied$val,
@@ -136,9 +181,9 @@ cal_validate <- function(rset,
     stats_before = applied$stats_before
   )
 
-  if(summarize) x <- summarize_validation(x)
+  if (summarize) ret <- summarize_validation(ret)
 
-   x
+  ret
 }
 
 #' @importFrom pillar type_sum
@@ -149,7 +194,6 @@ type_sum.cal_binary <- function(x, ...) {
 
 
 summarize_validation <- function(x) {
-
   fs <- x$stats_after[[1]]
 
   fs$.estimate <- NULL

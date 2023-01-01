@@ -2,6 +2,8 @@
 % Please edit documentation in R/cal-validate.R
 \name{cal_validate_logistic}
 \alias{cal_validate_logistic}
+\alias{cal_validate_isotonic}
+\alias{cal_validate_beta}
 \title{Obtain and validate performance metrics from calibration}
 \usage{
 cal_validate_logistic(
@@ -9,6 +11,28 @@ cal_validate_logistic(
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
   smooth = TRUE,
+  parameters = NULL,
+  metrics = NULL,
+  summarize = TRUE,
+  ...
+)
+
+cal_validate_isotonic(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  parameters = NULL,
+  metrics = NULL,
+  summarize = TRUE,
+  ...
+)
+
+cal_validate_beta(
+  .data,
+  truth = NULL,
+  shape_params = 2,
+  location_params = 1,
+  estimate = dplyr::starts_with(".pred_"),
   parameters = NULL,
   metrics = NULL,
   summarize = TRUE,
@@ -43,6 +67,12 @@ calibration y validation list columns.}
 
 \item{...}{Additional arguments passed to the models or routines used to
 calculate the new probabilities.}
+
+\item{shape_params}{Number of shape parameters to use. Accepted values are
+1 and 2. Defaults to 2.}
+
+\item{location_params}{Number of location parameters to use. Accepted values
+1 and 0. Defaults to 1.}
 }
 \description{
 Obtain and validate performance metrics from calibration
