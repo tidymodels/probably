@@ -11,8 +11,9 @@ cal_apply(.data, object, pred_class = NULL, parameters = NULL, ...)
 
 \item{object}{The calibration object (\code{cal_object}).}
 
-\item{pred_class}{(Optional) Column identifier with the predictions.
-0 and 1. It contains the cut off for the predictions.}
+\item{pred_class}{(Optional) Column identifier for the hard class predictions
+(a factor vector). This column will be adjusted based on changes to the
+calibrated probability columns.}
 
 \item{parameters}{(Optional)  An optional tibble of tuning parameter values
 that can be used to filter the predicted values before processing. Applies
