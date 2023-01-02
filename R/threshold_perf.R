@@ -14,6 +14,9 @@
 #' - [yardstick::spec()]
 #' - `distance = (1 - sens) ^ 2 + (1 - spec) ^ 2`
 #'
+#' If a custom metric is passed that does not compute sensitivity and
+#' specificity, the distance metric is not computed.
+#'
 #' @param .data A tibble, potentially grouped.
 #'
 #' @param truth The column identifier for the true two-class results
@@ -103,7 +106,10 @@ threshold_perf.data.frame <- function(.data,
     thresholds <- seq(0.5, 1, length = 21)
   }
   if (is.null(metrics)) {
-    metrics <- yardstick::metric_set(sens, spec, j_index)
+    metrics <-
+      yardstick::metric_set(yardstick::sensitivity,
+                            yardstick::specificity,
+                            yardstick::j_index)
   }
   measure_sens_spec <- check_thresholded_metrics(metrics)
 
@@ -222,7 +228,7 @@ expand_preds <- function(.data, threshold, inc = NULL) {
 check_thresholded_metrics <- function(x) {
   y <- tibble::as_tibble(x)
   if (!all(y$class == "class_metric")) {
-    rlang::abort("All metrics must be of type 'class_metric' (e.g. `sens()`, ect)")
+    rlang::abort("All metrics must be of type 'class_metric' (e.g. `sensitivity()`, ect)")
   }
   # check to see if sensitivity and specificity are in the lists
   has_sens <-

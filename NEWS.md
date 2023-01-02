@@ -6,6 +6,8 @@
 
 * Adds model calibration diagnostic functions. They implement three methods: binning probabilities, fitting a logistic spline model against the probabilities, and with creating a running percentage of the data. There are three new plotting functions, and three table functions.  It supports data.frames and tune_results objects.
 
+* Based on the initial PR (#37) by Antonio R. Vargas, `threshold_perf()` now accepts a custom metric set (#)
+
 # probably 0.1.0
 
 * Max Kuhn is now the maintainer (#49).

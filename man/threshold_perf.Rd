@@ -67,6 +67,9 @@ The defualt calculated metrics are:
 \item \code{\link[yardstick:spec]{yardstick::spec()}}
 \item \code{distance = (1 - sens) ^ 2 + (1 - spec) ^ 2}
 }
+
+If a custom metric is passed that does not compute sensitivity and
+specificity, the distance metric is not computed.
 }
 \examples{
 library(dplyr)
