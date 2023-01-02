@@ -12,7 +12,7 @@ the predictions and probability columns. The output is a ggplot2 graph."><meta n
     
     <a class="navbar-brand me-2" href="../index.html">probably</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9003</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,6 +75,36 @@ the predictions and probability columns. The output is a <code>ggplot2</code> gr
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for data.frame</span></span>
+<span><span class="fu">cal_plot_breaks</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  num_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for tune_results</span></span>
+<span><span class="fu">cal_plot_breaks</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  num_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">cal_plot_logistic</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -88,6 +118,66 @@ the predictions and probability columns. The output is a <code>ggplot2</code> gr
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for data.frame</span></span>
+<span><span class="fu">cal_plot_logistic</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for tune_results</span></span>
+<span><span class="fu">cal_plot_logistic</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">cal_plot_windowed</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  window_size <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  step_size <span class="op">=</span> <span class="va">window_size</span><span class="op">/</span><span class="fl">2</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for data.frame</span></span>
+<span><span class="fu">cal_plot_windowed</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  window_size <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  step_size <span class="op">=</span> <span class="va">window_size</span><span class="op">/</span><span class="fl">2</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for tune_results</span></span>
 <span><span class="fu">cal_plot_windowed</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>

@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">probably</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9003</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9004</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Uses an Isotonic regression model to calibrate probabilities</h1>
-      <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/R/cal-estimate.R" class="external-link"><code>R/cal-estimate.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/R/cal-estimate-isotonic.R" class="external-link"><code>R/cal-estimate-isotonic.R</code></a></small>
       <div class="d-none name"><code>cal_estimate_isotonic.Rd</code></div>
     </div>
 
@@ -62,6 +62,25 @@
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
+<span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for data.frame</span></span>
+<span><span class="fu">cal_estimate_isotonic</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
+<span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for tune_results</span></span>
+<span><span class="fu">cal_estimate_isotonic</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
+<span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -69,7 +88,8 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>A data.frame object containing predictions and probability columns.</p></dd>
+<dd><p>A <code>data.frame</code> object, or <code>tune_results</code> object, that contains
+predictions and probability columns.</p></dd>
 
 
 <dt>truth</dt>
@@ -83,6 +103,12 @@ functions to choose which variables contains the class probabilities. It
 defaults to the prefix used by tidymodels (<code>.pred_</code>). The order of the
 identifiers will be considered the same as the order of the levels of the
 <code>truth</code> variable.</p></dd>
+
+
+<dt>parameters</dt>
+<dd><p>(Optional)  An optional tibble of tuning parameter values
+that can be used to filter the predicted values before processing. Applies
+only to <code>tune_results</code> objects.</p></dd>
 
 
 <dt>...</dt>
@@ -112,7 +138,7 @@ International Conference on Knowledge Discovery and Data Mining.</em></p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Method: <span style="color: #008700;">Isotonic</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Type: <span style="color: #008700;">Binary</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Train set size: <span style="color: #008700;">1,010</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Probability Values: <span style="color: #008700;">78</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Probability Values: <span style="color: #008700;">86</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Truth variable: `<span style="color: #0000BB;">Class</span>`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimate variables:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">`.pred_good`</span> ==&gt; <span style="color: #0000BB;">good</span></span>
@@ -124,7 +150,7 @@ International Conference on Knowledge Discovery and Data Mining.</em></p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Method: <span style="color: #008700;">Isotonic</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Type: <span style="color: #008700;">Binary</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Train set size: <span style="color: #008700;">1,010</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Probability Values: <span style="color: #008700;">78</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Probability Values: <span style="color: #008700;">97</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Truth variable: `<span style="color: #0000BB;">Class</span>`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimate variables:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">`.pred_good`</span> ==&gt; <span style="color: #0000BB;">good</span></span>
@@ -136,7 +162,7 @@ International Conference on Knowledge Discovery and Data Mining.</em></p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Method: <span style="color: #008700;">Isotonic</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Type: <span style="color: #008700;">Binary</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Train set size: <span style="color: #008700;">1,010</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Probability Values: <span style="color: #008700;">78</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Probability Values: <span style="color: #008700;">89</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Truth variable: `<span style="color: #0000BB;">Class</span>`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimate variables:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">`.pred_good`</span> ==&gt; <span style="color: #0000BB;">good</span></span>
