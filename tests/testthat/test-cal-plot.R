@@ -270,3 +270,14 @@ test_that("Groupings that may not match work", {
   )
 
 })
+
+test_that("Numeric groups are supported", {
+  grp_df <- segment_logistic
+  grp_df$num_group <- rep(c(1,2), times = 505)
+
+  p <- grp_df %>%
+    dplyr::group_by(num_group) %>%
+    cal_plot_breaks(Class, .pred_good)
+
+  expect_s3_class(p, "ggplot")
+})
