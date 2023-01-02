@@ -12,6 +12,7 @@ threshold_perf(.data, ...)
   truth,
   estimate,
   thresholds = NULL,
+  metrics = NULL,
   na_rm = TRUE,
   event_level = "first",
   ...
@@ -33,6 +34,13 @@ threshold. If unspecified, a series
 of values between 0.5 and 1.0 are used. \strong{Note}: if this
 argument is used, it must be named.}
 
+\item{metrics}{Either \code{NULL} or a \code{\link[yardstick:metric_set]{yardstick::metric_set()}} with a list of
+performance metrics to calculate. The metrics should all be oriented towards
+hard class predictions (e.g. \code{\link[yardstick:sens]{yardstick::sensitivity()}},
+\code{\link[yardstick:accuracy]{yardstick::accuracy()}}, \code{\link[yardstick:recall]{yardstick::recall()}}, etc.) and not
+class probabilities. A set of default metrics is used when \code{NULL} (see
+Details below).}
+
 \item{na_rm}{A single logical: should missing data be removed?}
 
 \item{event_level}{A single string. Either \code{"first"} or \code{"second"} to specify
@@ -52,7 +60,7 @@ Note that that the global option \code{yardstick.event_first} will be
 used to determine which level is the event of interest. For more details,
 see the Relevant level section of \code{\link[yardstick:sens]{yardstick::sens()}}.
 
-The currently calculated metrics are:
+The defualt calculated metrics are:
 \itemize{
 \item \code{\link[yardstick:j_index]{yardstick::j_index()}}
 \item \code{\link[yardstick:sens]{yardstick::sens()}}

@@ -8,7 +8,7 @@
 #' used to determine which level is the event of interest. For more details,
 #' see the Relevant level section of [yardstick::sens()].
 #'
-#' The currently calculated metrics are:
+#' The defualt calculated metrics are:
 #' - [yardstick::j_index()]
 #' - [yardstick::sens()]
 #' - [yardstick::spec()]
@@ -30,6 +30,13 @@
 #' threshold. If unspecified, a series
 #' of values between 0.5 and 1.0 are used. **Note**: if this
 #' argument is used, it must be named.
+#'
+#' @param metrics Either `NULL` or a [yardstick::metric_set()] with a list of
+#' performance metrics to calculate. The metrics should all be oriented towards
+#' hard class predictions (e.g. [yardstick::sensitivity()],
+#' [yardstick::accuracy()], [yardstick::recall()], etc.) and not
+#' class probabilities. A set of default metrics is used when `NULL` (see
+#' Details below).
 #'
 #' @param event_level A single string. Either `"first"` or `"second"` to specify
 #' which level of `truth` to consider as the "event".
@@ -87,6 +94,7 @@ threshold_perf.data.frame <- function(.data,
                                       truth,
                                       estimate,
                                       thresholds = NULL,
+                                      metrics = NULL,
                                       na_rm = TRUE,
                                       event_level = "first",
                                       ...) {
@@ -94,6 +102,10 @@ threshold_perf.data.frame <- function(.data,
   if (is.null(thresholds)) {
     thresholds <- seq(0.5, 1, length = 21)
   }
+  if (is.null(metrics)) {
+    metrics <- yardstick::metric_set(sens, spec, j_index)
+  }
+  measure_sens_spec <- check_thresholded_metrics(metrics)
 
   obs_sel <- tidyselect::eval_select(
     expr = enquo(truth),
@@ -166,30 +178,31 @@ threshold_perf.data.frame <- function(.data,
     .data <- .data %>% dplyr::group_by(.threshold)
   }
 
-  two_class <- yardstick::metric_set(sens, spec, j_index)
 
-  .data_metrics <- two_class(
+  .data_metrics <- metrics(
     .data,
     truth = truth,
     estimate = alt_pred,
     event_level = event_level
   )
 
-  # Create the `distance` metric data frame
-  # and add it on
-  sens_vec <- .data_metrics %>%
-    dplyr::filter(.metric == "sens") %>%
-    dplyr::pull(.estimate)
+  if (measure_sens_spec) {
+    # Create the `distance` metric data frame
+    # and add it on
+    sens_vec <- .data_metrics %>%
+      dplyr::filter(.metric == "sens") %>%
+      dplyr::pull(.estimate)
 
-  dist <- .data_metrics %>%
-    dplyr::filter(.metric == "spec") %>%
-    dplyr::mutate(
-      .metric = "distance",
-      # .estimate is spec currently. this recodes as distance
-      .estimate = (1 - sens_vec) ^ 2 + (1 - .estimate) ^ 2
-    )
+    dist <- .data_metrics %>%
+      dplyr::filter(.metric == "spec") %>%
+      dplyr::mutate(
+        .metric = "distance",
+        # .estimate is spec currently. this recodes as distance
+        .estimate = (1 - sens_vec) ^ 2 + (1 - .estimate) ^ 2
+      )
 
-  .data_metrics <- dplyr::bind_rows(.data_metrics, dist)
+    .data_metrics <- dplyr::bind_rows(.data_metrics, dist)
+  }
 
   .data_metrics
 }
@@ -203,6 +216,19 @@ expand_preds <- function(.data, threshold, inc = NULL) {
   .data <- .data[rep(1:nrow(.data), times = nth), ]
   .data$.threshold <- rep(threshold, each = n_data)
   .data
+}
+
+
+check_thresholded_metrics <- function(x) {
+  y <- tibble::as_tibble(x)
+  if (!all(y$class == "class_metric")) {
+    rlang::abort("All metrics must be of type 'class_metric' (e.g. `sens()`, ect)")
+  }
+  # check to see if sensitivity and specificity are in the lists
+  has_sens <-
+    any(y$metric %in% c("sens", "sensitivity")) &
+    any(y$metric %in% c("spec", "specificity"))
+  has_sens
 }
 
 utils::globalVariables(
