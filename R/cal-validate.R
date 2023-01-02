@@ -1,8 +1,33 @@
 #' Obtain and validate performance metrics from calibration
+#' @details These functions take an re-sampled object, created via `rsample`,
+#' and for each re-sample, it calculates the calibration on the training set, and
+#' then applies the calibration on the assessment set. By default the average of
+#' Brier scores is returned. It compares the average of the metrics before, and
+#' after the calibration.
 #' @param metrics A set of metrics passed created via `yardstick::metric_set()`
 #' @param summarize Indicates to pass tibble with the metrics averaged, or
 #' if to return the same sampled object but with new columns containing the
 #' calibration y validation list columns.
+#' @examples
+#'
+#' library(magrittr)
+#'
+#' segment_logistic %>%
+#' rsample::vfold_cv() %>%
+#'   cal_validate_isotonic(Class)
+#'
+#' segment_logistic %>%
+#'   rsample::mc_cv() %>%
+#'   cal_validate_beta(Class)
+#'
+#' segment_logistic %>%
+#'   rsample::bootstraps() %>%
+#'   cal_validate_logistic(Class)
+#'
+#' segment_logistic %>%
+#'   rsample::bootstraps() %>%
+#'  cal_validate_isotonic(Class, summarize = FALSE)
+#'
 #' @inheritParams cal_estimate_logistic
 #' @export
 cal_validate_logistic <- function(.data,
@@ -122,11 +147,11 @@ cal_validate <- function(rset,
     )
   }
 
-  data_tr <- map(rset$splits, rsample::training)
-  data_as <- map(rset$splits, rsample::assessment)
+  data_tr <- purrr::map(rset$splits, rsample::training)
+  data_as <- purrr::map(rset$splits, rsample::assessment)
 
   if (cal_function == "logistic") {
-    cals <- map(
+    cals <- purrr::map(
       data_tr,
       cal_estimate_logistic,
       truth = {{ truth }},
@@ -136,7 +161,7 @@ cal_validate <- function(rset,
   }
 
   if (cal_function == "isotonic") {
-    cals <- map(
+    cals <- purrr::map(
       data_tr,
       cal_estimate_isotonic,
       truth = {{ truth }},
@@ -146,7 +171,7 @@ cal_validate <- function(rset,
   }
 
   if (cal_function == "beta") {
-    cals <- map(
+    cals <- purrr::map(
       data_tr,
       cal_estimate_beta,
       truth = {{ truth }},
@@ -159,18 +184,18 @@ cal_validate <- function(rset,
 
   applied <- seq_along(data_as) %>%
     map(
-    ~ {
-      val <- cal_apply(data_as[[.x]], cals[[.x]])
-      stats_after <- metrics(val, truth = {{ truth }}, estimate_col)
-      stats_before <- metrics(data_as[[.x]], truth = {{ truth }}, estimate_col)
+      ~ {
+        val <- cal_apply(data_as[[.x]], cals[[.x]])
+        stats_after <- metrics(val, truth = {{ truth }}, estimate_col)
+        stats_before <- metrics(data_as[[.x]], truth = {{ truth }}, estimate_col)
 
-      list(
-        val = val,
-        stats_after = stats_after,
-        stats_before = stats_before
-      )
-    }
-  ) %>%
+        list(
+          val = val,
+          stats_after = stats_after,
+          stats_before = stats_before
+        )
+      }
+    ) %>%
     purrr::transpose()
 
   ret <- dplyr::mutate(

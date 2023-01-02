@@ -77,3 +77,31 @@ calculate the new probabilities.}
 \description{
 Obtain and validate performance metrics from calibration
 }
+\details{
+These functions take an re-sampled object, created via \code{rsample},
+and for each re-sample, it calculates the calibration on the training set, and
+then applies the calibration on the assessment set. By default the average of
+Brier scores is returned. It compares the average of the metrics before, and
+after the calibration.
+}
+\examples{
+
+library(magrittr)
+
+segment_logistic \%>\%
+rsample::vfold_cv() \%>\%
+  cal_validate_isotonic(Class)
+
+segment_logistic \%>\%
+  rsample::mc_cv() \%>\%
+  cal_validate_beta(Class)
+
+segment_logistic \%>\%
+  rsample::bootstraps() \%>\%
+  cal_validate_logistic(Class)
+
+segment_logistic \%>\%
+  rsample::bootstraps() \%>\%
+ cal_validate_isotonic(Class, summarize = FALSE)
+
+}
