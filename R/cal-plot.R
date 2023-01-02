@@ -410,7 +410,7 @@ binary_plot_impl <- function(tbl, x, y,
     dplyr_group <- parse_expr(gp_vars)
     grouping_var <- tbl[, gp_vars][[1]]
     if(is.numeric(grouping_var)) {
-      tbl[, gp_vars] <- as.factor(grouping_var)
+      tbl[, gp_vars] <- as.factor(format(grouping_var))
     }
   } else {
     has_groups <- FALSE
