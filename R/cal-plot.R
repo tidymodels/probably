@@ -192,8 +192,8 @@ cal_plot_breaks.tune_results <- function(.data,
 #'
 #' If the predictions are well calibrated, the fitted curve should align with
 #' the diagonal line.
-#' @param smooth Applies to the logistic models. It switches between logistic
-#' spline when `TRUE`, and simple logistic regression when `FALSE`.
+#' @param smooth A logical for using a generalized additive model with smooth
+#' terms for the predictor via [mgcv::gam()] and [mgcv::s()].
 #' @return A ggplot object.
 #' @examples
 #'

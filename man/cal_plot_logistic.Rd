@@ -59,8 +59,8 @@ This should be an unquoted column name}
 \item{conf_level}{Confidence level to use in the visualization. It defaults
 to 0.9.}
 
-\item{smooth}{Applies to the logistic models. It switches between logistic
-spline when \code{TRUE}, and simple logistic regression when \code{FALSE}.}
+\item{smooth}{A logical for using a generalized additive model with smooth
+terms for the predictor via \code{\link[mgcv:gam]{mgcv::gam()}} and \code{\link[mgcv:s]{mgcv::s()}}.}
 
 \item{include_rug}{Flag that indicates if the Rug layer is to be included.
 It defaults to \code{TRUE}. In the plot, the top side shows the frequency the
