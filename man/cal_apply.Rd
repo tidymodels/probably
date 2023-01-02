@@ -2,9 +2,18 @@
 % Please edit documentation in R/cal-apply.R
 \name{cal_apply}
 \alias{cal_apply}
+\alias{cal_apply.data.frame}
+\alias{cal_apply.tune_results}
+\alias{cal_apply.cal_object}
 \title{Applies a calibration to a set of pred_class probabilities}
 \usage{
 cal_apply(.data, object, pred_class = NULL, parameters = NULL, ...)
+
+\method{cal_apply}{data.frame}(.data, object, pred_class = NULL, parameters = NULL, ...)
+
+\method{cal_apply}{tune_results}(.data, object, pred_class = NULL, parameters = NULL, ...)
+
+\method{cal_apply}{cal_object}(.data, object, pred_class = NULL, parameters = NULL, ...)
 }
 \arguments{
 \item{.data}{An object that can process a calibration object.}

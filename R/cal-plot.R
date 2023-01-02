@@ -144,9 +144,11 @@ cal_plot_breaks_impl <- function(.data,
 }
 
 #' @export
+#' @rdname cal_plot_breaks
 cal_plot_breaks.data.frame <- cal_plot_breaks_impl
 
 #' @export
+#' @rdname cal_plot_breaks
 cal_plot_breaks.tune_results <- function(.data,
                                          truth = NULL,
                                          estimate = NULL,
@@ -242,9 +244,11 @@ cal_plot_logistic_impl <- function(.data,
 }
 
 #' @export
+#' @rdname cal_plot_breaks
 cal_plot_logistic.data.frame <- cal_plot_logistic_impl
 
 #' @export
+#' @rdname cal_plot_breaks
 cal_plot_logistic.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = NULL,
@@ -342,9 +346,11 @@ cal_plot_windowed_impl <- function(.data,
 }
 
 #' @export
+#' @rdname cal_plot_breaks
 cal_plot_windowed.data.frame <- cal_plot_windowed_impl
 
 #' @export
+#' @rdname cal_plot_breaks
 cal_plot_windowed.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = NULL,

@@ -2,9 +2,29 @@
 % Please edit documentation in R/cal-estimate-isotonic.R
 \name{cal_estimate_isotonic_boot}
 \alias{cal_estimate_isotonic_boot}
+\alias{cal_estimate_isotonic_boot.data.frame}
+\alias{cal_estimate_isotonic_boot.tune_results}
 \title{Uses a bootstrapped Isotonic regression model to calibrate probabilities}
 \usage{
 cal_estimate_isotonic_boot(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  times = 10,
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_isotonic_boot}{data.frame}(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  times = 10,
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_isotonic_boot}{tune_results}(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),

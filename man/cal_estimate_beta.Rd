@@ -2,9 +2,31 @@
 % Please edit documentation in R/cal-estimate-beta.R
 \name{cal_estimate_beta}
 \alias{cal_estimate_beta}
+\alias{cal_estimate_beta.data.frame}
+\alias{cal_estimate_beta.tune_results}
 \title{Uses a Beta calibration model to calculate new probabilities}
 \usage{
 cal_estimate_beta(
+  .data,
+  truth = NULL,
+  shape_params = 2,
+  location_params = 1,
+  estimate = dplyr::starts_with(".pred_"),
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_beta}{data.frame}(
+  .data,
+  truth = NULL,
+  shape_params = 2,
+  location_params = 1,
+  estimate = dplyr::starts_with(".pred_"),
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_beta}{tune_results}(
   .data,
   truth = NULL,
   shape_params = 2,

@@ -28,6 +28,7 @@ cal_apply <- function(.data,
 }
 
 #' @export
+#' @rdname cal_apply
 cal_apply.data.frame <- function(.data,
                                  object,
                                  pred_class = NULL,
@@ -47,6 +48,7 @@ cal_apply.data.frame <- function(.data,
 }
 
 #' @export
+#' @rdname cal_apply
 cal_apply.tune_results <- function(.data,
                                    object,
                                    pred_class = NULL,
@@ -87,6 +89,7 @@ cal_apply.tune_results <- function(.data,
 }
 
 #' @export
+#' @rdname cal_apply
 cal_apply.cal_object <- function(.data,
                                  object,
                                  pred_class = NULL,

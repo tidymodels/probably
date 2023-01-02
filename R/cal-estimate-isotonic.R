@@ -26,6 +26,7 @@ cal_estimate_isotonic <- function(.data,
 }
 
 #' @export
+#' @rdname cal_estimate_isotonic
 cal_estimate_isotonic.data.frame <- function(.data,
                                              truth = NULL,
                                              estimate = dplyr::starts_with(".pred_"),
@@ -41,6 +42,7 @@ cal_estimate_isotonic.data.frame <- function(.data,
 }
 
 #' @export
+#' @rdname cal_estimate_isotonic
 cal_estimate_isotonic.tune_results <- function(.data,
                                                truth = NULL,
                                                estimate = dplyr::starts_with(".pred_"),
@@ -91,6 +93,7 @@ cal_estimate_isotonic_boot <- function(.data,
 }
 
 #' @export
+#' @rdname cal_estimate_isotonic_boot
 cal_estimate_isotonic_boot.data.frame <- function(.data,
                                                   truth = NULL,
                                                   estimate = dplyr::starts_with(".pred_"),
@@ -108,6 +111,7 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
 }
 
 #' @export
+#' @rdname cal_estimate_isotonic_boot
 cal_estimate_isotonic_boot.tune_results <- function(.data,
                                                     truth = NULL,
                                                     estimate = dplyr::starts_with(".pred_"),

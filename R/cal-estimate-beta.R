@@ -26,6 +26,7 @@ cal_estimate_beta <- function(.data,
 }
 
 #' @export
+#' @rdname cal_estimate_beta
 cal_estimate_beta.data.frame <- function(.data,
                                          truth = NULL,
                                          shape_params = 2,
@@ -45,6 +46,7 @@ cal_estimate_beta.data.frame <- function(.data,
 }
 
 #' @export
+#' @rdname cal_estimate_beta
 cal_estimate_beta.tune_results <- function(.data,
                                            truth = NULL,
                                            shape_params = 2,

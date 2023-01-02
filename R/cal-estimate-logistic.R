@@ -40,6 +40,7 @@ cal_estimate_logistic <- function(.data,
 }
 
 #' @export
+#' @rdname cal_estimate_logistic
 cal_estimate_logistic.data.frame <- function(.data,
                                              truth = NULL,
                                              estimate = dplyr::starts_with(".pred_"),
@@ -57,6 +58,7 @@ cal_estimate_logistic.data.frame <- function(.data,
 }
 
 #' @export
+#' @rdname cal_estimate_logistic
 cal_estimate_logistic.tune_results <- function(.data,
                                                truth = NULL,
                                                estimate = dplyr::starts_with(".pred_"),
