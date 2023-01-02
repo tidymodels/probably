@@ -2,11 +2,45 @@
 % Please edit documentation in R/cal-plot.R
 \name{cal_plot_breaks}
 \alias{cal_plot_breaks}
+\alias{cal_plot_breaks.data.frame}
+\alias{cal_plot_breaks.tune_results}
 \alias{cal_plot_logistic}
+\alias{cal_plot_logistic.data.frame}
+\alias{cal_plot_logistic.tune_results}
 \alias{cal_plot_windowed}
+\alias{cal_plot_windowed.data.frame}
+\alias{cal_plot_windowed.tune_results}
 \title{Probability Calibration plots}
 \usage{
 cal_plot_breaks(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  group = NULL,
+  num_breaks = 10,
+  conf_level = 0.9,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("first", "second"),
+  ...
+)
+
+\method{cal_plot_breaks}{data.frame}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  group = NULL,
+  num_breaks = 10,
+  conf_level = 0.9,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("first", "second"),
+  ...
+)
+
+\method{cal_plot_breaks}{tune_results}(
   .data,
   truth = NULL,
   estimate = NULL,
@@ -33,7 +67,63 @@ cal_plot_logistic(
   ...
 )
 
+\method{cal_plot_logistic}{data.frame}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  group = NULL,
+  conf_level = 0.9,
+  smooth = TRUE,
+  include_rug = TRUE,
+  include_ribbon = TRUE,
+  event_level = c("first", "second"),
+  ...
+)
+
+\method{cal_plot_logistic}{tune_results}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  group = NULL,
+  conf_level = 0.9,
+  smooth = TRUE,
+  include_rug = TRUE,
+  include_ribbon = TRUE,
+  event_level = c("first", "second"),
+  ...
+)
+
 cal_plot_windowed(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  group = NULL,
+  window_size = 0.1,
+  step_size = window_size/2,
+  conf_level = 0.9,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("first", "second"),
+  ...
+)
+
+\method{cal_plot_windowed}{data.frame}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  group = NULL,
+  window_size = 0.1,
+  step_size = window_size/2,
+  conf_level = 0.9,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("first", "second"),
+  ...
+)
+
+\method{cal_plot_windowed}{tune_results}(
   .data,
   truth = NULL,
   estimate = NULL,

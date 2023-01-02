@@ -19,8 +19,18 @@ testthat_cal_tune_results <- function() {
     )
 
     .cal_env$tune_results <- ret
+    .cal_env$tune_results_count <- nrow(tune::collect_predictions(ret, summarize = TRUE))
   }
 
+  ret
+}
+
+testthat_cal_tune_results_count <- function() {
+  ret <- .cal_env$tune_results_count
+  if(is.null(ret)) {
+    invisible(testthat_cal_tune_results())
+    ret <- .cal_env$tune_results_count
+  }
   ret
 }
 
@@ -33,7 +43,7 @@ expect_cal_method <- function(x, method) {
 }
 
 expect_cal_estimate <- function(x, class) {
-  expect_s3_class(x$estimates, class)
+  expect_s3_class(x$estimates[[1]]$estimate, class)
 }
 
 expect_cal_rows <- function(x, n = 1010) {
