@@ -5,8 +5,9 @@
 #' the estimate columns names, and levels, from the calibration object.
 #' @param .data An object that can process a calibration object.
 #' @param object The calibration object (`cal_object`).
-#' @param pred_class (Optional) Column identifier with the predictions.
-#' 0 and 1. It contains the cut off for the predictions.
+#' @param pred_class (Optional) Column identifier for the hard class predictions
+#' (a factor vector). This column will be adjusted based on changes to the
+#' calibrated probability columns.
 #' @param parameters (Optional)  An optional tibble of tuning parameter values
 #' that can be used to filter the predicted values before processing. Applies
 #' only to `tune_results` objects.
@@ -27,6 +28,7 @@ cal_apply <- function(.data,
 }
 
 #' @export
+#' @rdname cal_apply
 cal_apply.data.frame <- function(.data,
                                  object,
                                  pred_class = NULL,
@@ -46,6 +48,7 @@ cal_apply.data.frame <- function(.data,
 }
 
 #' @export
+#' @rdname cal_apply
 cal_apply.tune_results <- function(.data,
                                    object,
                                    pred_class = NULL,
@@ -86,6 +89,7 @@ cal_apply.tune_results <- function(.data,
 }
 
 #' @export
+#' @rdname cal_apply
 cal_apply.cal_object <- function(.data,
                                  object,
                                  pred_class = NULL,

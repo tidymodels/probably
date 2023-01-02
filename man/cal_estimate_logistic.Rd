@@ -2,9 +2,29 @@
 % Please edit documentation in R/cal-estimate-logistic.R
 \name{cal_estimate_logistic}
 \alias{cal_estimate_logistic}
+\alias{cal_estimate_logistic.data.frame}
+\alias{cal_estimate_logistic.tune_results}
 \title{Uses a logistic regression model to calibrate probabilities}
 \usage{
 cal_estimate_logistic(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_logistic}{data.frame}(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_logistic}{tune_results}(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
