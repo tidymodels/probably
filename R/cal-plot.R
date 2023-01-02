@@ -6,10 +6,10 @@
 #' A plot is created to assess whether the observed rate of the event is about
 #' the same as the predicted probability of the event from some model.
 #'
-#' A sequence of evenly, mutually exclusive bins are created from zero to one.
+#' A sequence of even, mutually exclusive bins are created from zero to one.
 #' For each bin, the data whose predicted probability falls within the range
 #' of the bin is used to calculate the observed event rate (along with confidence
-#' intervals).
+#' intervals for the event rate).
 
 #' If the predictions are well calibrated, the fitted curve should align with
 #' the diagonal line.
@@ -191,7 +191,8 @@ cal_plot_breaks.tune_results <- function(.data,
 #' logistic regression is used.
 #'
 #' If the predictions are well calibrated, the fitted curve should align with
-#' the diagonal line.
+#' the diagonal line. Confidence intervals for the fitted line are also
+#' shown.
 #' @param smooth A logical for using a generalized additive model with smooth
 #' terms for the predictor via [mgcv::gam()] and [mgcv::s()].
 #' @return A ggplot object.
@@ -319,7 +320,7 @@ cal_plot_logistic.tune_results <- function(.data,
 #'
 #' A sequence of bins are created from zero to one. For each bin, the data whose
 #' predicted probability falls within the range of the bin is used to calculate
-#' the observed event rate (along with confidence intervals).
+#' the observed event rate (along with confidence intervals for the event rate).
 #'
 #' If the predictions are well calibrated, the fitted curve should align with
 #' the diagonal line.

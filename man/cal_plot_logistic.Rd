@@ -85,7 +85,8 @@ using \code{\link[mgcv:gam]{mgcv::gam()}} and the default smoothing method. Othe
 logistic regression is used.
 
 If the predictions are well calibrated, the fitted curve should align with
-the diagonal line.
+the diagonal line. Confidence intervals for the fitted line are also
+shown.
 }
 \examples{
 

@@ -95,7 +95,7 @@ is similar to \code{\link[=cal_plot_breaks]{cal_plot_breaks()}}, except that the
 
 A sequence of bins are created from zero to one. For each bin, the data whose
 predicted probability falls within the range of the bin is used to calculate
-the observed event rate (along with confidence intervals).
+the observed event rate (along with confidence intervals for the event rate).
 
 If the predictions are well calibrated, the fitted curve should align with
 the diagonal line.
