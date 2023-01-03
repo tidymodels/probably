@@ -40,6 +40,8 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
+\item{times}{Number of bootstraps.}
+
 \item{parameters}{(Optional)  An optional tibble of tuning parameter values
 that can be used to filter the predicted values before processing. Applies
 only to \code{tune_results} objects.}

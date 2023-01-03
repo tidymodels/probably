@@ -99,7 +99,7 @@ cal_validate_isotonic.rset <- function(.data,
 # ----------------------------- Isotonic Boot ----------------------------------
 #' Measure performance of a Isotonic regression calibration
 #' @inherit cal_validate_logistic
-#' @inheritParams cal_estimate_isotonic
+#' @inheritParams cal_estimate_isotonic_boot
 #' @examples
 #'
 #' library(magrittr)
@@ -144,7 +144,7 @@ cal_validate_isotonic_boot.rset <- function(.data,
 # ---------------------------------- Beta --------------------------------------
 #' Measure performance of Beta calibration
 #' @inherit cal_validate_logistic
-#' @inheritParams cal_estimate_isotonic
+#' @inheritParams cal_estimate_beta
 #' @examples
 #'
 #' library(magrittr)

@@ -36,6 +36,12 @@ predictions and probability columns.}
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}
 
+\item{shape_params}{Number of shape parameters to use. Accepted values are
+1 and 2. Defaults to 2.}
+
+\item{location_params}{Number of location parameters to use. Accepted values
+1 and 0. Defaults to 1.}
+
 \item{estimate}{A vector of column identifiers, or one of \code{dplyr} selector
 functions to choose which variables contains the class probabilities. It
 defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
