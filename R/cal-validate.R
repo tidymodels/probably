@@ -147,7 +147,7 @@ cal_validate <- function(rset,
     )
   }
 
-  data_tr <- purrr::map(rset$splits, rsample::training)
+  data_tr <- purrr::map(rset$splits, rsample::analysis)
   data_as <- purrr::map(rset$splits, rsample::assessment)
 
   if (cal_function == "logistic") {
