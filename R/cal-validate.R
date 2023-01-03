@@ -282,7 +282,9 @@ cal_validate <- function(rset,
     stats_before = applied$stats_before
   )
 
-  if (summarize) ret <- summarize_validation(ret)
+  if (summarize) {
+    ret <- summarize_validation(ret)
+  }
 
   ret
 }
@@ -302,14 +304,19 @@ summarize_validation <- function(x) {
   seq_len(nrow(fs)) %>%
     map(~ {
       y <- .x
-      sa <- purrr::map_dbl(x$stats_after, ~ .x[y, ]$.estimate)
-      mean_sa <- mean(sa)
-      sb <- purrr::map_dbl(x$stats_before, ~ .x[y, ]$.estimate)
-      mean_sb <- mean(sb)
       ret <- fs[y, ]
-      ret$.before <- mean_sb
-      ret$.after <- mean_sa
-      ret
+
+      sb <- purrr::map_dbl(x$stats_before, ~ .x[y, ]$.estimate)
+      ret1 <- ret
+      ret1$stage <- "uncalibrated"
+      ret1$.estimate <- mean(sb)
+
+      sa <- purrr::map_dbl(x$stats_after, ~ .x[y, ]$.estimate)
+      ret2 <- ret
+      ret2$stage <- "calibrated"
+      ret2$.estimate <- mean(sa)
+
+      dplyr::bind_rows(ret1, ret2)
     }) %>%
     dplyr::bind_rows()
 }
