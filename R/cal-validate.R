@@ -1,4 +1,5 @@
-#' Obtain and validate performance metrics from calibration
+# -------------------------------- Logistic ------------------------------------
+#' Measure performance of a logistic regression calibration
 #' @details These functions take an re-sampled object, created via `rsample`,
 #' and for each re-sample, it calculates the calibration on the training set, and
 #' then applies the calibration on the assessment set. By default the average of
@@ -13,20 +14,8 @@
 #' library(magrittr)
 #'
 #' segment_logistic %>%
-#' rsample::vfold_cv() %>%
-#'   cal_validate_isotonic(Class)
-#'
-#' segment_logistic %>%
-#'   rsample::mc_cv() %>%
-#'   cal_validate_beta(Class)
-#'
-#' segment_logistic %>%
-#'   rsample::bootstraps() %>%
+#'   rsample::vfold_cv() %>%
 #'   cal_validate_logistic(Class)
-#'
-#' segment_logistic %>%
-#'   rsample::bootstraps() %>%
-#'  cal_validate_isotonic(Class, summarize = FALSE)
 #'
 #' @inheritParams cal_estimate_logistic
 #' @export
@@ -42,6 +31,7 @@ cal_validate_logistic <- function(.data,
 }
 
 #' @export
+#' @rdname cal_validate_logistic
 cal_validate_logistic.rset <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
@@ -63,7 +53,18 @@ cal_validate_logistic.rset <- function(.data,
   )
 }
 
-#' @rdname cal_validate_logistic
+# -------------------------------- Isotonic ------------------------------------
+#' Measure performance of a Isotonic regression calibration
+#' @inherit cal_validate_logistic
+#' @inheritParams cal_estimate_isotonic
+#' @examples
+#'
+#' library(magrittr)
+#'
+#' segment_logistic %>%
+#'   rsample::vfold_cv() %>%
+#'   cal_validate_isotonic(Class)
+#'
 #' @export
 cal_validate_isotonic <- function(.data,
                                   truth = NULL,
@@ -76,6 +77,7 @@ cal_validate_isotonic <- function(.data,
 }
 
 #' @export
+#' @rdname cal_validate_isotonic
 cal_validate_isotonic.rset <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
@@ -94,8 +96,63 @@ cal_validate_isotonic.rset <- function(.data,
   )
 }
 
-#' @rdname cal_validate_logistic
-#' @inheritParams cal_estimate_beta
+# ----------------------------- Isotonic Boot ----------------------------------
+#' Measure performance of a Isotonic regression calibration
+#' @inherit cal_validate_logistic
+#' @inheritParams cal_estimate_isotonic
+#' @examples
+#'
+#' library(magrittr)
+#'
+#' segment_logistic %>%
+#'   rsample::vfold_cv() %>%
+#'   cal_validate_isotonic_boot(Class)
+#'
+#' @export
+cal_validate_isotonic_boot <- function(.data,
+                                       truth = NULL,
+                                       estimate = dplyr::starts_with(".pred_"),
+                                       times = 10,
+                                       parameters = NULL,
+                                       metrics = NULL,
+                                       summarize = TRUE,
+                                       ...) {
+  UseMethod("cal_validate_isotonic_boot")
+}
+
+#' @export
+#' @rdname cal_validate_isotonic_boot
+cal_validate_isotonic_boot.rset <- function(.data,
+                                            truth = NULL,
+                                            estimate = dplyr::starts_with(".pred_"),
+                                            times = 10,
+                                            parameters = NULL,
+                                            metrics = NULL,
+                                            summarize = TRUE,
+                                            ...) {
+  cal_validate(
+    rset = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    cal_function = "isotonic_boot",
+    metrics = metrics,
+    summarize = summarize,
+    ...
+  )
+}
+
+# ---------------------------------- Beta --------------------------------------
+#' Measure performance of Beta calibration
+#' @inherit cal_validate_logistic
+#' @inheritParams cal_estimate_isotonic
+#' @examples
+#'
+#' library(magrittr)
+#'
+#' segment_logistic %>%
+#'   rsample::vfold_cv() %>%
+#'   cal_validate_beta(Class)
+#'
 #' @export
 cal_validate_beta <- function(.data,
                               truth = NULL,
@@ -110,6 +167,7 @@ cal_validate_beta <- function(.data,
 }
 
 #' @export
+#' @rdname cal_validate_beta
 cal_validate_beta.rset <- function(.data,
                                    truth = NULL,
                                    shape_params = 2,
@@ -131,7 +189,7 @@ cal_validate_beta.rset <- function(.data,
     ...
   )
 }
-
+# ------------------------------ Implementation --------------------------------
 cal_validate <- function(rset,
                          truth = NULL,
                          estimate = NULL,
@@ -164,6 +222,16 @@ cal_validate <- function(rset,
     cals <- purrr::map(
       data_tr,
       cal_estimate_isotonic,
+      truth = {{ truth }},
+      estimate = {{ estimate }},
+      ...
+    )
+  }
+
+  if (cal_function == "isotonic_boot") {
+    cals <- purrr::map(
+      data_tr,
+      cal_estimate_isotonic_boot,
       truth = {{ truth }},
       estimate = {{ estimate }},
       ...
