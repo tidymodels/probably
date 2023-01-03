@@ -20,7 +20,15 @@ print_cal_binary <- function(x, upv = FALSE, ...) {
   cli::cli_h3("Probability Calibration")
   cli::cli_text("Method: {.val2 {x$method}}")
   cli::cli_text("Type: {.val2 Binary}")
-  cli::cli_text("Train set size: {.val2 {rows}}")
+  cli::cli_text("Source class: {.val2 {x$source_class}}")
+  if(length(x$estimates) == 1) {
+    cli::cli_text("Train set size: {.val2 {rows}}")
+  } else {
+    no_ests <- length(x$estimates)
+    grps <- "Train set size: {.val2 {rows}}, split in {.val2 {no_ests}} groups"
+    cli::cli_text(grps)
+  }
+
   if (upv) {
     upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]]), ",")
     cli::cli_text("Unique Probability Values: {.val2 {upv_no}}")
@@ -36,8 +44,10 @@ as_binary_cal_object <- function(estimate,
                                  truth,
                                  levels,
                                  method,
+                                 rows,
                                  additional_class = NULL,
-                                 rows) {
+                                 source_class = NULL
+                                 ) {
   truth_name <- as_name(enquo(truth))
 
   structure(
@@ -47,6 +57,7 @@ as_binary_cal_object <- function(estimate,
       truth = truth_name,
       levels = levels,
       rows = rows,
+      source_class = source_class,
       estimates = estimate
     ),
     class = c(additional_class, "cal_binary", "cal_object")
@@ -115,11 +126,14 @@ split_dplyr_groups <- function(.data) {
           purrr::reduce(function(x, y) expr(!!x & !!y))
       }) %>%
       purrr::map(~ {
+        df <- .data %>%
+          dplyr::filter(, !!.x) %>%
+          dplyr::ungroup()
+
         list(
-          data = .data %>%
-            dplyr::filter(, !!.x) %>%
-            dplyr::ungroup(),
-          filter = .x
+          data = df,
+          filter = .x,
+          rows = nrow(df)
         )
       })
   } else {
@@ -131,4 +145,24 @@ stop_null_parameters <- function(x) {
   if(!is.null(x)) {
     rlang::abort("The `parameters` argument is only valid for `tune_results`.")
   }
+}
+
+cal_class_name <- function(x) {
+  UseMethod("cal_class_name")
+}
+
+cal_class_name.data.frame <- function(x) {
+  "Data Frame"
+}
+
+cal_class_name.tune_results <- function(x) {
+  "Tune Results"
+}
+
+cal_class_name.tune_results <- function(x) {
+  "Tune Results"
+}
+
+cal_class_name.rset<- function(x) {
+  "Re-sampled data set"
 }
