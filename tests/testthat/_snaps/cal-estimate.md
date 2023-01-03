@@ -8,7 +8,7 @@
       Method: Logistic
       Type: Binary
       Source class: Data Frame
-      Train set size: 1,010
+      Data points: 1,010
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -24,7 +24,7 @@
       Method: Logistic
       Type: Binary
       Source class: Tune Results
-      Train set size: 4,000, split in 8 groups
+      Data points: 4,000, split in 8 groups
       Truth variable: `class`
       Estimate variables:
       `.pred_class_1` ==> class_1
@@ -40,7 +40,7 @@
       Method: Logistic Spline
       Type: Binary
       Source class: Data Frame
-      Train set size: 1,010
+      Data points: 1,010
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -56,7 +56,7 @@
       Method: Logistic Spline
       Type: Binary
       Source class: Tune Results
-      Train set size: 4,000, split in 8 groups
+      Data points: 4,000, split in 8 groups
       Truth variable: `class`
       Estimate variables:
       `.pred_class_1` ==> class_1
@@ -72,7 +72,7 @@
       Method: Isotonic
       Type: Binary
       Source class: Data Frame
-      Train set size: 1,010
+      Data points: 1,010
       Unique Probability Values: 66
       Truth variable: `Class`
       Estimate variables:
@@ -89,7 +89,7 @@
       Method: Isotonic
       Type: Binary
       Source class:
-      Train set size: 4,000, split in 8 groups
+      Data points: 4,000, split in 8 groups
       Unique Probability Values: 86
       Truth variable: `class`
       Estimate variables:
@@ -106,7 +106,7 @@
       Method: Bootstrapped Isotonic Regression
       Type: Binary
       Source class: Data Frame
-      Train set size: 1,010
+      Data points: 1,010
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -122,7 +122,7 @@
       Method: Beta
       Type: Binary
       Source class: Data Frame
-      Train set size: 1,010
+      Data points: 1,010
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -138,7 +138,7 @@
       Method: Beta
       Type: Binary
       Source class: Tune Results
-      Train set size: 4,000, split in 8 groups
+      Data points: 4,000, split in 8 groups
       Truth variable: `class`
       Estimate variables:
       `.pred_class_1` ==> class_1
@@ -154,7 +154,7 @@
       Method: Isotonic
       Type: Binary
       Source class: Data Frame
-      Train set size: 1,010
+      Data points: 1,010
       Unique Probability Values: 66
       Truth variable: `Class`
       Estimate variables:
