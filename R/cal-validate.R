@@ -203,6 +203,42 @@ cal_validate_beta.rset <- function(.data,
     ...
   )
 }
+
+# --------------------------------- Summary ------------------------------------
+#' Summarizes the metrics of a Calibrated Re-sampled set
+#' @param x Calibrated Re-sampled set
+#' @export
+cal_validate_summarize <- function(x) {
+  UseMethod("cal_validate_summarize")
+}
+
+#' @rdname cal_validate_summarize
+#' @export
+cal_validate_summarize.cal_rset <- function(x) {
+  fs <- x$stats_after[[1]]
+
+  fs$.estimate <- NULL
+
+  seq_len(nrow(fs)) %>%
+    map(~ {
+      y <- .x
+      ret <- fs[y, ]
+
+      sb <- purrr::map_dbl(x$stats_before, ~ .x[y, ]$.estimate)
+      ret1 <- ret
+      ret1$stage <- "uncalibrated"
+      ret1$.estimate <- mean(sb)
+
+      sa <- purrr::map_dbl(x$stats_after, ~ .x[y, ]$.estimate)
+      ret2 <- ret
+      ret2$stage <- "calibrated"
+      ret2$.estimate <- mean(sa)
+
+      dplyr::bind_rows(ret1, ret2)
+    }) %>%
+    dplyr::bind_rows()
+}
+
 # ------------------------------ Implementation --------------------------------
 cal_validate <- function(rset,
                          truth = NULL,
@@ -270,7 +306,7 @@ cal_validate <- function(rset,
   applied <- seq_along(data_as) %>%
     purrr::map(
       ~ {
-        val <- cal_apply(data_as[[.x]], cals[[.x]])
+        val <- cal_apply(data_as[[.x]], cals[[.x]], pred_class = {{ truth }})
         stats_after <- metrics(val, truth = {{ truth }}, estimate_col)
         stats_before <- metrics(data_as[[.x]], truth = {{ truth }}, estimate_col)
 
@@ -306,7 +342,7 @@ cal_validate <- function(rset,
   class(ret) <- c("cal_rset", class(ret))
 
   if (summarize) {
-    ret <- summarize_validation(ret)
+    ret <- cal_validate_summarize(ret)
   }
 
   ret
@@ -316,30 +352,4 @@ cal_validate <- function(rset,
 #' @export
 type_sum.cal_binary <- function(x, ...) {
   paste0(x$method, " [", x$rows, "]")
-}
-
-
-summarize_validation <- function(x) {
-  fs <- x$stats_after[[1]]
-
-  fs$.estimate <- NULL
-
-  seq_len(nrow(fs)) %>%
-    map(~ {
-      y <- .x
-      ret <- fs[y, ]
-
-      sb <- purrr::map_dbl(x$stats_before, ~ .x[y, ]$.estimate)
-      ret1 <- ret
-      ret1$stage <- "uncalibrated"
-      ret1$.estimate <- mean(sb)
-
-      sa <- purrr::map_dbl(x$stats_after, ~ .x[y, ]$.estimate)
-      ret2 <- ret
-      ret2$stage <- "calibrated"
-      ret2$.estimate <- mean(sa)
-
-      dplyr::bind_rows(ret1, ret2)
-    }) %>%
-    dplyr::bind_rows()
 }
