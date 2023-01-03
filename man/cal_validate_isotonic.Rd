@@ -11,6 +11,7 @@ cal_validate_isotonic(
   estimate = dplyr::starts_with(".pred_"),
   parameters = NULL,
   metrics = NULL,
+  save_details = FALSE,
   summarize = TRUE,
   ...
 )
@@ -21,6 +22,7 @@ cal_validate_isotonic(
   estimate = dplyr::starts_with(".pred_"),
   parameters = NULL,
   metrics = NULL,
+  save_details = FALSE,
   summarize = TRUE,
   ...
 )
@@ -43,6 +45,9 @@ that can be used to filter the predicted values before processing. Applies
 only to \code{tune_results} objects.}
 
 \item{metrics}{A set of metrics passed created via \code{yardstick::metric_set()}}
+
+\item{save_details}{Indicates whether to include the \code{calibration} and
+\code{validation} columns when the \code{summarize} argument is set to FALSE.}
 
 \item{summarize}{Indicates to pass tibble with the metrics averaged, or
 if to return the same sampled object but with new columns containing the

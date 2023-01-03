@@ -9,6 +9,8 @@
 #' @param summarize Indicates to pass tibble with the metrics averaged, or
 #' if to return the same sampled object but with new columns containing the
 #' calibration y validation list columns.
+#' @param save_details Indicates whether to include the `calibration` and
+#' `validation` columns when the `summarize` argument is set to FALSE.
 #' @examples
 #'
 #' library(magrittr)
@@ -25,6 +27,7 @@ cal_validate_logistic <- function(.data,
                                   smooth = TRUE,
                                   parameters = NULL,
                                   metrics = NULL,
+                                  save_details = FALSE,
                                   summarize = TRUE,
                                   ...) {
   UseMethod("cal_validate_logistic")
@@ -38,6 +41,7 @@ cal_validate_logistic.rset <- function(.data,
                                        smooth = TRUE,
                                        parameters = NULL,
                                        metrics = NULL,
+                                       save_details = FALSE,
                                        summarize = TRUE,
                                        ...) {
   cal_validate(
@@ -49,6 +53,7 @@ cal_validate_logistic.rset <- function(.data,
     summarize = summarize,
     smooth = smooth,
     parameters = parameters,
+    save_details = save_details,
     ...
   )
 }
@@ -71,6 +76,7 @@ cal_validate_isotonic <- function(.data,
                                   estimate = dplyr::starts_with(".pred_"),
                                   parameters = NULL,
                                   metrics = NULL,
+                                  save_details = FALSE,
                                   summarize = TRUE,
                                   ...) {
   UseMethod("cal_validate_isotonic")
@@ -83,6 +89,7 @@ cal_validate_isotonic.rset <- function(.data,
                                        estimate = dplyr::starts_with(".pred_"),
                                        parameters = NULL,
                                        metrics = NULL,
+                                       save_details = FALSE,
                                        summarize = TRUE,
                                        ...) {
   cal_validate(
@@ -92,6 +99,7 @@ cal_validate_isotonic.rset <- function(.data,
     cal_function = "isotonic",
     metrics = metrics,
     summarize = summarize,
+    save_details = save_details,
     ...
   )
 }
@@ -115,6 +123,7 @@ cal_validate_isotonic_boot <- function(.data,
                                        times = 10,
                                        parameters = NULL,
                                        metrics = NULL,
+                                       save_details = FALSE,
                                        summarize = TRUE,
                                        ...) {
   UseMethod("cal_validate_isotonic_boot")
@@ -128,6 +137,7 @@ cal_validate_isotonic_boot.rset <- function(.data,
                                             times = 10,
                                             parameters = NULL,
                                             metrics = NULL,
+                                            save_details = FALSE,
                                             summarize = TRUE,
                                             ...) {
   cal_validate(
@@ -137,6 +147,7 @@ cal_validate_isotonic_boot.rset <- function(.data,
     cal_function = "isotonic_boot",
     metrics = metrics,
     summarize = summarize,
+    save_details = save_details,
     ...
   )
 }
@@ -162,6 +173,7 @@ cal_validate_beta <- function(.data,
                               parameters = NULL,
                               metrics = NULL,
                               summarize = TRUE,
+                              save_details = FALSE,
                               ...) {
   UseMethod("cal_validate_beta")
 }
@@ -176,6 +188,7 @@ cal_validate_beta.rset <- function(.data,
                                    parameters = NULL,
                                    metrics = NULL,
                                    summarize = TRUE,
+                                   save_details = FALSE,
                                    ...) {
   cal_validate(
     rset = .data,
@@ -186,6 +199,7 @@ cal_validate_beta.rset <- function(.data,
     summarize = summarize,
     shape_params = shape_params,
     location_params = location_params,
+    save_details = save_details,
     ...
   )
 }
@@ -196,6 +210,7 @@ cal_validate <- function(rset,
                          cal_function = NULL,
                          metrics = NULL,
                          summarize = TRUE,
+                         save_details = FALSE,
                          ...) {
   if (is.null(cal_function)) rlang::abort("No calibration function provided")
 
@@ -274,13 +289,21 @@ cal_validate <- function(rset,
     ) %>%
     purrr::transpose()
 
+  if(save_details) {
+    rset <- dplyr::mutate(
+      rset,
+      calibration = cals,
+      validation = applied$val
+    )
+  }
+
   ret <- dplyr::mutate(
     rset,
-    calibration = cals,
-    validation = applied$val,
     stats_after = applied$stats_after,
     stats_before = applied$stats_before
   )
+
+  class(ret) <- c("cal_rset", class(ret))
 
   if (summarize) {
     ret <- summarize_validation(ret)

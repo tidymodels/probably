@@ -14,6 +14,7 @@ cal_validate_beta(
   parameters = NULL,
   metrics = NULL,
   summarize = TRUE,
+  save_details = FALSE,
   ...
 )
 
@@ -26,6 +27,7 @@ cal_validate_beta(
   parameters = NULL,
   metrics = NULL,
   summarize = TRUE,
+  save_details = FALSE,
   ...
 )
 }
@@ -57,6 +59,9 @@ only to \code{tune_results} objects.}
 \item{summarize}{Indicates to pass tibble with the metrics averaged, or
 if to return the same sampled object but with new columns containing the
 calibration y validation list columns.}
+
+\item{save_details}{Indicates whether to include the \code{calibration} and
+\code{validation} columns when the \code{summarize} argument is set to FALSE.}
 
 \item{...}{Additional arguments passed to the models or routines used to
 calculate the new probabilities.}
