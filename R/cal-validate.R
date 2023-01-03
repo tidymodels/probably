@@ -205,6 +205,8 @@ cal_validate <- function(rset,
     )
   }
 
+  direction <- dplyr::select(tibble::as_tibble(metrics), "direction")[[1]]
+
   data_tr <- purrr::map(rset$splits, rsample::analysis)
   data_as <- purrr::map(rset$splits, rsample::assessment)
 
@@ -256,6 +258,12 @@ cal_validate <- function(rset,
         val <- cal_apply(data_as[[.x]], cals[[.x]])
         stats_after <- metrics(val, truth = {{ truth }}, estimate_col)
         stats_before <- metrics(data_as[[.x]], truth = {{ truth }}, estimate_col)
+
+        stats_cols <- c(".metric", ".estimator", "direction", ".estimate")
+        stats_after$direction <- direction
+        stats_after <- stats_after[, stats_cols]
+        stats_before$direction <- direction
+        stats_before <- stats_before[, stats_cols]
 
         list(
           val = val,
