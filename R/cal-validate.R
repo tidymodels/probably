@@ -183,7 +183,7 @@ cal_validate <- function(rset,
   estimate_col <- cals[[1]]$levels[[1]]
 
   applied <- seq_along(data_as) %>%
-    map(
+    purrr::map(
       ~ {
         val <- cal_apply(data_as[[.x]], cals[[.x]])
         stats_after <- metrics(val, truth = {{ truth }}, estimate_col)
