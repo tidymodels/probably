@@ -22,10 +22,10 @@ print_cal_binary <- function(x, upv = FALSE, ...) {
   cli::cli_text("Type: {.val2 Binary}")
   cli::cli_text("Source class: {.val2 {x$source_class}}")
   if(length(x$estimates) == 1) {
-    cli::cli_text("Train set size: {.val2 {rows}}")
+    cli::cli_text("Data points: {.val2 {rows}}")
   } else {
     no_ests <- length(x$estimates)
-    grps <- "Train set size: {.val2 {rows}}, split in {.val2 {no_ests}} groups"
+    grps <- "Data points: {.val2 {rows}}, split in {.val2 {no_ests}} groups"
     cli::cli_text(grps)
   }
 
