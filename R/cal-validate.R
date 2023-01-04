@@ -248,6 +248,9 @@ cal_validate <- function(rset,
                          summarize = TRUE,
                          save_details = FALSE,
                          ...) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
   if (is.null(cal_function)) rlang::abort("No calibration function provided")
 
   if (is.null(metrics)) {
@@ -256,7 +259,11 @@ cal_validate <- function(rset,
     )
   }
 
-  direction <- dplyr::select(tibble::as_tibble(metrics), "direction")[[1]]
+  direction <- metrics %>%
+    tibble::as_tibble() %>%
+    dplyr::select("direction") %>%
+    head(1) %>%
+    dplyr::pull()
 
   data_tr <- purrr::map(rset$splits, rsample::analysis)
   data_as <- purrr::map(rset$splits, rsample::assessment)
@@ -265,8 +272,8 @@ cal_validate <- function(rset,
     cals <- purrr::map(
       data_tr,
       cal_estimate_logistic,
-      truth = {{ truth }},
-      estimate = {{ estimate }},
+      truth = !!truth,
+      estimate = !!estimate,
       ...
     )
   }
@@ -275,8 +282,8 @@ cal_validate <- function(rset,
     cals <- purrr::map(
       data_tr,
       cal_estimate_isotonic,
-      truth = {{ truth }},
-      estimate = {{ estimate }},
+      truth = !!truth,
+      estimate = !!estimate,
       ...
     )
   }
@@ -285,8 +292,8 @@ cal_validate <- function(rset,
     cals <- purrr::map(
       data_tr,
       cal_estimate_isotonic_boot,
-      truth = {{ truth }},
-      estimate = {{ estimate }},
+      truth = !!truth,
+      estimate = !!estimate,
       ...
     )
   }
@@ -295,8 +302,8 @@ cal_validate <- function(rset,
     cals <- purrr::map(
       data_tr,
       cal_estimate_beta,
-      truth = {{ truth }},
-      estimate = {{ estimate }},
+      truth = !!truth,
+      estimate = !!estimate,
       ...
     )
   }
@@ -306,9 +313,14 @@ cal_validate <- function(rset,
   applied <- seq_along(data_as) %>%
     purrr::map(
       ~ {
-        val <- cal_apply(data_as[[.x]], cals[[.x]], pred_class = {{ truth }})
-        stats_after <- metrics(val, truth = {{ truth }}, estimate_col)
-        stats_before <- metrics(data_as[[.x]], truth = {{ truth }}, estimate_col)
+        ap <- cal_apply(
+          .data = data_as[[.x]],
+          object = cals[[.x]],
+          pred_class = rlang::parse_expr(".pred_class")
+          )
+
+        stats_after <- metrics(ap, truth = !!truth, estimate_col)
+        stats_before <- metrics(data_as[[.x]], truth = !!truth, estimate_col)
 
         stats_cols <- c(".metric", ".estimator", "direction", ".estimate")
         stats_after$direction <- direction
@@ -317,7 +329,7 @@ cal_validate <- function(rset,
         stats_before <- stats_before[, stats_cols]
 
         list(
-          val = val,
+          ap = ap,
           stats_after = stats_after,
           stats_before = stats_before
         )
@@ -329,7 +341,7 @@ cal_validate <- function(rset,
     rset <- dplyr::mutate(
       rset,
       calibration = cals,
-      validation = applied$val
+      validation = applied$ap
     )
   }
 
