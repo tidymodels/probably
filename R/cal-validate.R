@@ -5,6 +5,8 @@
 #' then applies the calibration on the assessment set. By default the average of
 #' Brier scores is returned. It compares the average of the metrics before, and
 #' after the calibration.
+#' Please note that this function does not apply to `tune_result` objects. It
+#' only processes re-sampled data.
 #' @param metrics A set of metrics passed created via `yardstick::metric_set()`
 #' @param summarize Indicates to pass tibble with the metrics averaged, or
 #' if to return the same sampled object but with new columns containing the

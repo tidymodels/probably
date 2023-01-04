@@ -69,6 +69,8 @@ and for each re-sample, it calculates the calibration on the training set, and
 then applies the calibration on the assessment set. By default the average of
 Brier scores is returned. It compares the average of the metrics before, and
 after the calibration.
+Please note that this function does not apply to \code{tune_result} objects. It
+only processes re-sampled data.
 }
 \examples{
 
