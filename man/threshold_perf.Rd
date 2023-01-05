@@ -60,7 +60,7 @@ Note that that the global option \code{yardstick.event_first} will be
 used to determine which level is the event of interest. For more details,
 see the Relevant level section of \code{\link[yardstick:sens]{yardstick::sens()}}.
 
-The defualt calculated metrics are:
+The default calculated metrics are:
 \itemize{
 \item \code{\link[yardstick:j_index]{yardstick::j_index()}}
 \item \code{\link[yardstick:sens]{yardstick::sens()}}

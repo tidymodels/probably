@@ -8,7 +8,7 @@
 #' used to determine which level is the event of interest. For more details,
 #' see the Relevant level section of [yardstick::sens()].
 #'
-#' The defualt calculated metrics are:
+#' The default calculated metrics are:
 #' - [yardstick::j_index()]
 #' - [yardstick::sens()]
 #' - [yardstick::spec()]
@@ -203,7 +203,7 @@ threshold_perf.data.frame <- function(.data,
       dplyr::filter(.metric == "spec") %>%
       dplyr::mutate(
         .metric = "distance",
-        # .estimate is spec currently. this recodes as distance
+        # .estimate is specificity currently. This recodes as distance
         .estimate = (1 - sens_vec) ^ 2 + (1 - .estimate) ^ 2
       )
 
