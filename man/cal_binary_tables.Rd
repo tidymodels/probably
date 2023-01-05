@@ -60,12 +60,6 @@ to 0.9.}
 level of truth to consider as the "event".}
 
 \item{...}{Additional arguments passed to the \code{tune_results} object.}
-
-\item{window_size}{The size of segments. Used for the windowed probability
-calculations. It defaults to 10\% of segments.}
-
-\item{step_size}{The gap between segments. Used for the windowed probability
-calculations. It defaults to half the size of \code{window_size}}
 }
 \description{
 Calibration table functions. They require a data.frame that

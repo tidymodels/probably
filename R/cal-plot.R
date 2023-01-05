@@ -1,19 +1,18 @@
 #--------------------------------- Plots ---------------------------------------
 #------------------------------- >> Breaks -------------------------------------
-#' Probability Calibration plots
+#' Probability calibration plots via binning
 #'
-#' @description Calibration plot functions. They require a data.frame that contains
-#' the predictions and probability columns. The output is a `ggplot2` graph.
+#' @description
+#' A plot is created to assess whether the observed rate of the event is about
+#' the same as the predicted probability of the event from some model.
 #'
-#' @details
-#' - `cal_plot_breaks()` - Splits the data into bins, based on the
-#' number of breaks provided (`num_breaks`). The bins are even ranges, starting
-#' at 0, and ending at 1.
-#' - `cal_plot_logistic()` - Fits a logistic spline regression (GAM)
-#' against the data. It then creates a table with the predictions based on 100
-#' probabilities starting at 0, and ending at1.
-#' - `cal_plot_windowed()` - Creates a running percentage of the probability
-#' that moves across the proportion of events.
+#' A sequence of even, mutually exclusive bins are created from zero to one.
+#' For each bin, the data whose predicted probability falls within the range
+#' of the bin is used to calculate the observed event rate (along with confidence
+#' intervals for the event rate).
+
+#' If the predictions are well calibrated, the fitted curve should align with
+#' the diagonal line.
 #'
 #' @param .data A data.frame object containing predictions and probability columns.
 #' @param truth The column identifier for the true class results
@@ -25,14 +24,8 @@
 #' level of truth to consider as the "event".
 #' @param num_breaks The number of segments to group the probabilities. It
 #' defaults to 10.
-#' @param window_size The size of segments. Used for the windowed probability
-#' calculations. It defaults to 10% of segments.
-#' @param step_size The gap between segments. Used for the windowed probability
-#' calculations. It defaults to half the size of `window_size`
 #' @param conf_level Confidence level to use in the visualization. It defaults
 #' to 0.9.
-#' @param smooth Applies to the logistic models. It switches between logistic
-#' spline when `TRUE`, and simple logistic regression when `FALSE`.
 #' @param include_ribbon Flag that indicates if the ribbon layer is to be
 #' included. It defaults to `TRUE`.
 #' @param include_rug Flag that indicates if the Rug layer is to be included.
@@ -40,6 +33,7 @@
 #' event occurring, and the bottom the frequency of the event not occurring.
 #' @param include_points Flag that indicates if the point layer is to be included.
 #' @param ... Additional arguments passed to the `tune_results` object.
+#' @return A ggplot object.
 #' @examples
 #'
 #' library(ggplot2)
@@ -84,7 +78,7 @@
 #'   cal_plot_logistic(Class, .pred_good) +
 #'   facet_wrap(~source) +
 #'   theme(legend.position = "")
-#'
+#' @seealso [cal_plot_logistic()], [cal_plot_windowed()]
 #' @export
 cal_plot_breaks <- function(.data,
                             truth = NULL,
@@ -185,7 +179,41 @@ cal_plot_breaks.tune_results <- function(.data,
 
 #------------------------------ >> Logistic ------------------------------------
 
-#' @rdname cal_plot_breaks
+#' Probability calibration plots via logistic regression
+#'
+#' @inheritParams cal_plot_breaks
+#'
+#' @description
+#' A logistic regression model is fit where the original outcome data are used
+#' as the outcome and the estimated class probabilities for one class are used
+#' as the predictor. If `smooth = TRUE`, a generalized additive model is fit
+#' using [mgcv::gam()] and the default smoothing method. Otherwise, a simple
+#' logistic regression is used.
+#'
+#' If the predictions are well calibrated, the fitted curve should align with
+#' the diagonal line. Confidence intervals for the fitted line are also
+#' shown.
+#' @param smooth A logical for using a generalized additive model with smooth
+#' terms for the predictor via [mgcv::gam()] and [mgcv::s()].
+#' @return A ggplot object.
+#' @examples
+#'
+#' library(ggplot2)
+#' library(dplyr)
+#'
+#' cal_plot_logistic(
+#'   segment_logistic,
+#'   Class,
+#'   .pred_good
+#' )
+#'
+#' cal_plot_logistic(
+#'   segment_logistic,
+#'   Class,
+#'   .pred_good,
+#'   smooth = FALSE
+#' )
+#' @seealso [cal_plot_breaks()], [cal_plot_windowed()]
 #' @export
 cal_plot_logistic <- function(.data,
                               truth = NULL,
@@ -244,11 +272,11 @@ cal_plot_logistic_impl <- function(.data,
 }
 
 #' @export
-#' @rdname cal_plot_breaks
+#' @rdname cal_plot_logistic
 cal_plot_logistic.data.frame <- cal_plot_logistic_impl
 
 #' @export
-#' @rdname cal_plot_breaks
+#' @rdname cal_plot_logistic
 cal_plot_logistic.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = NULL,
@@ -283,7 +311,44 @@ cal_plot_logistic.tune_results <- function(.data,
 
 #----------------------------- >> Windowed -------------------------------------
 
-#' @rdname cal_plot_breaks
+#' Probability calibration plots via moving windows
+#'
+#' @description
+#' A plot is created to assess whether the observed rate of the event is about
+#' the sample as the predicted probability of the event from some model. This
+#' is similar to [cal_plot_breaks()], except that the bins are overlapping.
+#'
+#' A sequence of bins are created from zero to one. For each bin, the data whose
+#' predicted probability falls within the range of the bin is used to calculate
+#' the observed event rate (along with confidence intervals for the event rate).
+#'
+#' If the predictions are well calibrated, the fitted curve should align with
+#' the diagonal line.
+#' @param window_size The size of segments. Used for the windowed probability
+#' calculations. It defaults to 10% of segments.
+#' @param step_size The gap between segments. Used for the windowed probability
+#' calculations. It defaults to half the size of `window_size`
+#' @return A ggplot object.
+#' @examples
+#'
+#' library(ggplot2)
+#' library(dplyr)
+#'
+#' cal_plot_windowed(
+#'   segment_logistic,
+#'   Class,
+#'   .pred_good
+#' )
+#'
+#' # More breaks
+#' cal_plot_windowed(
+#'   segment_logistic,
+#'   Class,
+#'   .pred_good,
+#'   window_size = 0.05
+#' )
+#' @inheritParams cal_plot_breaks
+#' @seealso [cal_plot_breaks()], [cal_plot_logistic()]
 #' @export
 cal_plot_windowed <- function(.data,
                               truth = NULL,
@@ -346,11 +411,11 @@ cal_plot_windowed_impl <- function(.data,
 }
 
 #' @export
-#' @rdname cal_plot_breaks
+#' @rdname cal_plot_windowed
 cal_plot_windowed.data.frame <- cal_plot_windowed_impl
 
 #' @export
-#' @rdname cal_plot_breaks
+#' @rdname cal_plot_windowed
 cal_plot_windowed.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = NULL,
