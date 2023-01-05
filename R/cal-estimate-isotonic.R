@@ -37,6 +37,7 @@ cal_estimate_isotonic.data.frame <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
+    source_class = cal_class_name(.data),
     ...
   )
 }
@@ -106,6 +107,7 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     times = times,
+    source_class = cal_class_name(.data),
     ...
   )
 }
@@ -134,6 +136,7 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
       times = times,
+      source_class = cal_class_name(.data),
       ...
     )
 }
@@ -144,6 +147,7 @@ cal_isoreg_impl <- function(.data,
                             estimate,
                             sampled = FALSE,
                             times = 1,
+                            source_class = NULL,
                             ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -204,6 +208,7 @@ cal_isoreg_impl <- function(.data,
       truth = !!truth,
       method = method,
       rows = nrow(.data),
+      source_class = source_class,
       additional_class = addl_class
     )
   } else {
