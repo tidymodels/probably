@@ -22,6 +22,8 @@
 #'   cal_validate_logistic(Class)
 #'
 #' @inheritParams cal_estimate_logistic
+#' @param .data A `data.frame` object, or `rset` object, that contains
+#' predictions and probability columns.
 #' @export
 cal_validate_logistic <- function(.data,
                                   truth = NULL,

@@ -28,7 +28,7 @@ cal_validate_isotonic(
 )
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{tune_results} object, that contains
+\item{.data}{A \code{data.frame} object, or \code{rset} object, that contains
 predictions and probability columns.}
 
 \item{truth}{The column identifier for the true class results
