@@ -33,6 +33,7 @@ Imports:
     purrr,
     tune,
     mgcv,
+    nnet,
     cli
 Suggests:
     covr,
