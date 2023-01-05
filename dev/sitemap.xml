@@ -61,6 +61,21 @@
     <loc>https://probably.tidymodels.org/dev/reference/cal_plot_windowed.html</loc>
   </url>
   <url>
+    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_beta.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_isotonic.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_isotonic_boot.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_logistic.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_summarize.html</loc>
+  </url>
+  <url>
     <loc>https://probably.tidymodels.org/dev/reference/class_pred.html</loc>
   </url>
   <url>
