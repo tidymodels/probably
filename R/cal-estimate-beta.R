@@ -41,6 +41,7 @@ cal_estimate_beta.data.frame <- function(.data,
     shape_params = shape_params,
     location_params = location_params,
     estimate = {{ estimate }},
+    source_class = cal_class_name(.data),
     ...
   )
 }
@@ -71,6 +72,7 @@ cal_estimate_beta.tune_results <- function(.data,
       estimate = !!tune_args$estimate,
       shape_params = shape_params,
       location_params = location_params,
+      source_class = cal_class_name(.data),
       ...
     )
 }
@@ -83,6 +85,7 @@ cal_beta_impl <- function(.data,
                           shape_params = 2,
                           location_params = 1,
                           estimate = dplyr::starts_with(".pred_"),
+                          source_class = NULL,
                           ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -106,6 +109,7 @@ cal_beta_impl <- function(.data,
       truth = {{ truth }},
       method = "Beta",
       rows = nrow(.data),
+      source_class = source_class,
       additional_class = "cal_estimate_beta"
     )
   } else {

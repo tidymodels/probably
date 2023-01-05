@@ -7,7 +7,8 @@
       -- Probability Calibration 
       Method: Logistic
       Type: Binary
-      Train set size: 1,010
+      Source class: Data Frame
+      Data points: 1,010
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -22,7 +23,8 @@
       -- Probability Calibration 
       Method: Logistic
       Type: Binary
-      Train set size: 4,000
+      Source class: Tune Results
+      Data points: 4,000, split in 8 groups
       Truth variable: `class`
       Estimate variables:
       `.pred_class_1` ==> class_1
@@ -37,7 +39,8 @@
       -- Probability Calibration 
       Method: Logistic Spline
       Type: Binary
-      Train set size: 1,010
+      Source class: Data Frame
+      Data points: 1,010
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -52,7 +55,8 @@
       -- Probability Calibration 
       Method: Logistic Spline
       Type: Binary
-      Train set size: 4,000
+      Source class: Tune Results
+      Data points: 4,000, split in 8 groups
       Truth variable: `class`
       Estimate variables:
       `.pred_class_1` ==> class_1
@@ -67,7 +71,8 @@
       -- Probability Calibration 
       Method: Isotonic
       Type: Binary
-      Train set size: 1,010
+      Source class: Data Frame
+      Data points: 1,010
       Unique Probability Values: 66
       Truth variable: `Class`
       Estimate variables:
@@ -83,7 +88,8 @@
       -- Probability Calibration 
       Method: Isotonic
       Type: Binary
-      Train set size: 4,000
+      Source class:
+      Data points: 4,000, split in 8 groups
       Unique Probability Values: 86
       Truth variable: `class`
       Estimate variables:
@@ -99,7 +105,8 @@
       -- Probability Calibration 
       Method: Bootstrapped Isotonic Regression
       Type: Binary
-      Train set size: 1,010
+      Source class: Data Frame
+      Data points: 1,010
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -114,7 +121,8 @@
       -- Probability Calibration 
       Method: Beta
       Type: Binary
-      Train set size: 1,010
+      Source class: Data Frame
+      Data points: 1,010
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -129,7 +137,8 @@
       -- Probability Calibration 
       Method: Beta
       Type: Binary
-      Train set size: 4,000
+      Source class: Tune Results
+      Data points: 4,000, split in 8 groups
       Truth variable: `class`
       Estimate variables:
       `.pred_class_1` ==> class_1
@@ -144,7 +153,8 @@
       -- Probability Calibration 
       Method: Isotonic
       Type: Binary
-      Train set size: 1,010
+      Source class: Data Frame
+      Data points: 1,010
       Unique Probability Values: 66
       Truth variable: `Class`
       Estimate variables:

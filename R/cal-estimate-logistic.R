@@ -53,6 +53,7 @@ cal_estimate_logistic.data.frame <- function(.data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     smooth = smooth,
+    source_class = cal_class_name(.data),
     ...
   )
 }
@@ -81,6 +82,7 @@ cal_estimate_logistic.tune_results <- function(.data,
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
       smooth = smooth,
+      source_class = cal_class_name(.data),
       ...
     )
 }
@@ -91,6 +93,7 @@ cal_logistic_impl <- function(.data,
                               estimate = dplyr::starts_with(".pred_"),
                               type,
                               smooth,
+                              source_class = NULL,
                               ...) {
   if (smooth) {
     model <- "logistic_spline"
@@ -121,7 +124,8 @@ cal_logistic_impl <- function(.data,
       truth = !!truth,
       method = method,
       rows = nrow(.data),
-      additional_class = additional_class
+      additional_class = additional_class,
+      source_class = source_class
     )
   } else {
     stop_multiclass()
