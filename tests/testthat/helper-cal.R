@@ -34,6 +34,16 @@ testthat_cal_tune_results_count <- function() {
   ret
 }
 
+testthat_cal_sampled <- function() {
+  ret <- .cal_env$resampled_data
+  if(is.null(ret)) {
+    set.seed(100)
+    ret <- rsample::vfold_cv(segment_logistic)
+    .cal_env$resampled_data <- ret
+  }
+  ret
+}
+
 expect_cal_type <- function(x, type) {
   expect_equal(x$type, type)
 }

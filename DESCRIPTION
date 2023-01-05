@@ -1,6 +1,6 @@
 Package: probably
 Title: Tools for Post-Processing Class Probability Estimates
-Version: 0.1.0.9004
+Version: 0.1.0.9005
 Authors@R: c(
     person("Max", "Kuhn", , "max@rstudio.com", role = c("aut", "cre")),
     person("Davis", "Vaughan", , "davis@rstudio.com", role = "aut"),
@@ -23,11 +23,12 @@ Imports:
     rlang (>= 1.0.4),
     tidyselect (>= 1.1.2),
     vctrs (>= 0.4.1),
-    yardstick (>= 1.0.0),
+    yardstick (> 1.1.0),
     betacal, 
     ggplot2,
     butcher,    
     tibble,
+    pillar,
     withr,
     purrr,
     tune,
@@ -52,3 +53,5 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Remotes: 
+  tidymodels/yardstick@5f1b9ce

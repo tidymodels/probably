@@ -7,6 +7,7 @@
 #' @import ggplot2
 #' @importFrom magrittr %>%
 #' @importFrom purrr map
+#' @importFrom utils head
 #' @importFrom yardstick sens spec j_index
 #' @importFrom stats binomial median predict qnorm as.stepfun glm isoreg
 ## usethis namespace: end

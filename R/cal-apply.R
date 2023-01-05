@@ -37,11 +37,18 @@ cal_apply.data.frame <- function(.data,
                                  ) {
   stop_null_parameters(parameters)
   if (object$type == "binary") {
-    cal_add_adjust(
+    data_adjust <- cal_add_adjust(
       object = object,
       .data = .data,
       pred_class = {{ pred_class }}
     )
+
+    cal_update_prediction(
+      .data = data_adjust,
+      object = object,
+      pred_class = {{ pred_class }}
+    )
+
   } else {
     stop_multiclass()
   }
@@ -71,7 +78,7 @@ cal_apply.tune_results <- function(.data,
       pred_class <- rlang::parse_expr(".pred_class")
     }
 
-    pred_classs <- tune::collect_predictions(
+    predictions <- tune::collect_predictions(
       x = .data,
       summarize = TRUE,
       parameters = parameters,
@@ -80,7 +87,7 @@ cal_apply.tune_results <- function(.data,
 
     cal_add_adjust(
       object = object,
-      .data = pred_classs,
+      .data = predictions,
       pred_class = !!pred_class
     )
   } else {
@@ -115,45 +122,21 @@ cal_add_adjust.cal_estimate_logistic <- function(object,
                                                  .data,
                                                  pred_class = NULL,
                                                  ...) {
-  pred_class <- enquo(pred_class)
-
-  new_data <- cal_add_predict_impl(
+  cal_add_predict_impl(
     object = object,
     .data = .data
   )
-
-  if (!quo_is_null(pred_class)) {
-    if (object$type == "binary") {
-      level1_gt <- new_data[[object$levels[[1]]]] > new_data[[object$levels[[2]]]]
-      new_data[level1_gt, as_name(pred_class)] <- names(object$levels[1])
-      new_data[!level1_gt, as_name(pred_class)] <- names(object$levels[2])
-    }
-  }
-
-  new_data
 }
 
 cal_add_adjust.cal_estimate_logistic_spline <- function(object,
                                                         .data,
                                                         pred_class = NULL,
                                                         ...) {
-  pred_class <- enquo(pred_class)
 
-  new_data <- cal_add_predict_impl(
+  cal_add_predict_impl(
     object = object,
     .data = .data
   )
-
-  if (!quo_is_null(pred_class)) {
-    if (object$type == "binary") {
-      pred_name <- as_name(pred_class)
-      level1_gt <- new_data[[object$levels[[1]]]] > new_data[[object$levels[[2]]]]
-      new_data[level1_gt, pred_name] <- names(object$levels[1])
-      new_data[!level1_gt, pred_name] <- names(object$levels[2])
-    }
-  }
-
-  new_data
 }
 
 cal_add_adjust.cal_estimate_isotonic_boot <- function(object,
@@ -266,4 +249,21 @@ cal_get_intervals <- function(estimates_table, .data, estimate) {
   )
   find_interval[find_interval == 0] <- 1
   y[find_interval]
+}
+
+cal_update_prediction <- function(.data, object, pred_class) {
+  res <- .data
+  if (!is.null(pred_class)) {
+    if (object$type == "binary") {
+      pred_name <- as_name(pred_class)
+      if(pred_name %in% colnames(.data)) {
+        .data[, pred_name] <- NULL
+      }
+      level1_gt <- res[[object$levels[[1]]]] > res[[object$levels[[2]]]]
+      res[level1_gt, pred_name] <- names(object$levels[1])
+      res[!level1_gt, pred_name] <- names(object$levels[2])
+      res[, pred_name] <- as.factor(res[, pred_name][[1]])
+    }
+  }
+  res
 }
