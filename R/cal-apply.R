@@ -21,8 +21,7 @@ cal_apply <- function(.data,
                       object,
                       pred_class = NULL,
                       parameters = NULL,
-                      ...
-                      ) {
+                      ...) {
   rlang::check_dots_empty()
   UseMethod("cal_apply")
 }
@@ -33,11 +32,10 @@ cal_apply.data.frame <- function(.data,
                                  object,
                                  pred_class = NULL,
                                  parameters = NULL,
-                                 ...
-                                 ) {
+                                 ...) {
   stop_null_parameters(parameters)
   if (object$type == "binary") {
-    data_adjust <- cal_add_adjust(
+    data_adjust <- cal_adjust_binary(
       object = object,
       .data = .data,
       pred_class = {{ pred_class }}
@@ -48,9 +46,13 @@ cal_apply.data.frame <- function(.data,
       object = object,
       pred_class = {{ pred_class }}
     )
+  }
 
-  } else {
-    stop_multiclass()
+  if(object$type == "multiclass") {
+    cal_adjust_multi(
+      object = object,
+      .data = .data
+    )
   }
 }
 
@@ -60,8 +62,7 @@ cal_apply.tune_results <- function(.data,
                                    object,
                                    pred_class = NULL,
                                    parameters = NULL,
-                                   ...
-                                   ) {
+                                   ...) {
   if (object$type == "binary") {
     if (!(".predictions" %in% colnames(.data))) {
       rlang::abort(
@@ -83,9 +84,9 @@ cal_apply.tune_results <- function(.data,
       summarize = TRUE,
       parameters = parameters,
       ...
-      )
+    )
 
-    cal_add_adjust(
+    cal_adjust_binary(
       object = object,
       .data = predictions,
       pred_class = !!pred_class
@@ -101,8 +102,7 @@ cal_apply.cal_object <- function(.data,
                                  object,
                                  pred_class = NULL,
                                  parameters = NULL,
-                                 ...
-                                 ) {
+                                 ...) {
   if ("data.frame" %in% class(object)) {
     rlang::abort(paste0(
       "`cal_apply()` expects the data as the first argument,",
@@ -110,160 +110,4 @@ cal_apply.cal_object <- function(.data,
       " the order of the arguments and try again."
     ))
   }
-}
-
-# ------------------------------- Adjust ---------------------------------------
-
-cal_add_adjust <- function(object, .data, pred_class) {
-  UseMethod("cal_add_adjust")
-}
-
-cal_add_adjust.cal_estimate_logistic <- function(object,
-                                                 .data,
-                                                 pred_class = NULL,
-                                                 ...) {
-  cal_add_predict_impl(
-    object = object,
-    .data = .data
-  )
-}
-
-cal_add_adjust.cal_estimate_logistic_spline <- function(object,
-                                                        .data,
-                                                        pred_class = NULL,
-                                                        ...) {
-
-  cal_add_predict_impl(
-    object = object,
-    .data = .data
-  )
-}
-
-cal_add_adjust.cal_estimate_isotonic_boot <- function(object,
-                                                      .data,
-                                                      pred_class = NULL,
-                                                      ...) {
-  cal_add_interval_impl(
-    object = object,
-    .data = .data,
-    multi = TRUE
-  )
-}
-
-cal_add_adjust.cal_estimate_isotonic <- function(object,
-                                                 .data,
-                                                 pred_class = NULL,
-                                                 ...) {
-  cal_add_interval_impl(
-    object = object,
-    .data = .data
-  )
-}
-
-cal_add_adjust.cal_estimate_beta <- function(object,
-                                             .data,
-                                             pred_class = NULL,
-                                             ...) {
-  if (object$type == "binary") {
-    p <- dplyr::pull(.data, !!object$levels[[1]])
-    model <- object$estimates[[1]]$estimate
-    preds <- betacal::beta_predict(
-      p = p,
-      calib = model
-    )
-    .data[object$levels[[1]]] <- preds
-    .data[object$levels[[2]]] <- 1 - preds
-  }
-  .data
-}
-
-#---------------------------- Adjust implementations ---------------------------
-
-cal_add_predict_impl <- function(object, .data) {
-  if (object$type == "binary") {
-    .data <- object$estimates %>%
-      purrr::map(
-        ~ {
-          if (is.null(.x$filter)) {
-            new_data <- .data
-          } else {
-            new_data <- dplyr::filter(.data, !!.x$filter)
-          }
-          preds <- predict(.x$estimate, newdata = new_data, type = "response")
-          preds <- 1 - preds
-          new_data[object$levels[[1]]] <- preds
-          new_data[object$levels[[2]]] <- 1 - preds
-          new_data
-        }
-      ) %>%
-      purrr::reduce(dplyr::bind_rows)
-  }
-  .data
-}
-
-cal_add_interval_impl <- function(object, .data, multi = FALSE) {
-  if (object$type == "binary") {
-    level_1 <- object$levels[[1]]
-    level_2 <- object$levels[[2]]
-
-    .data <- object$estimates %>%
-      purrr::map(
-        ~ {
-          if (is.null(.x$filter)) {
-            new_data <- .data
-          } else {
-            new_data <- dplyr::filter(.data, !!.x$filter)
-          }
-
-          if (!multi) {
-            intervals <- cal_get_intervals(
-              estimates_table = .x$estimates[[1]],
-              .data = new_data,
-              estimate = level_1
-            )
-          } else {
-            intervals <- .x$estimates %>%
-              map(cal_get_intervals,
-                .data = new_data,
-                estimate = level_1
-              ) %>%
-              unlist() %>%
-              matrix(nrow = nrow(new_data)) %>%
-              apply(1, mean)
-          }
-          new_data[level_1] <- intervals
-          new_data[level_2] <- 1 - intervals
-          new_data
-        }
-      ) %>%
-      purrr::reduce(dplyr::bind_rows)
-  }
-  .data
-}
-
-cal_get_intervals <- function(estimates_table, .data, estimate) {
-  y <- estimates_table$.adj_estimate
-  find_interval <- findInterval(
-    x = .data[[estimate]],
-    vec = estimates_table$.estimate
-  )
-  find_interval[find_interval == 0] <- 1
-  y[find_interval]
-}
-
-cal_update_prediction <- function(.data, object, pred_class) {
-  res <- .data
-  if (!is.null(pred_class)) {
-    if (object$type == "binary") {
-      pred_name <- as_name(pred_class)
-      if(pred_name %in% colnames(.data)) {
-        .data[, pred_name] <- NULL
-      }
-      level1_gt <- res[[object$levels[[1]]]] > res[[object$levels[[2]]]]
-      res[level1_gt, pred_name] <- names(object$levels[1])
-      res[!level1_gt, pred_name] <- names(object$levels[2])
-      res[, pred_name] <- as.factor(res[, pred_name][[1]])
-    }
-  }
-  res
 }

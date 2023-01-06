@@ -21,7 +21,7 @@ print_cal_binary <- function(x, upv = FALSE, ...) {
   cli::cli_text("Method: {.val2 {x$method}}")
   cli::cli_text("Type: {.val2 Binary}")
   cli::cli_text("Source class: {.val2 {x$source_class}}")
-  if(length(x$estimates) == 1) {
+  if (length(x$estimates) == 1) {
     cli::cli_text("Data points: {.val2 {rows}}")
   } else {
     no_ests <- length(x$estimates)
@@ -46,25 +46,63 @@ as_binary_cal_object <- function(estimate,
                                  method,
                                  rows,
                                  additional_class = NULL,
-                                 source_class = NULL
-                                 ) {
-  truth_name <- as_name(enquo(truth))
+                                 source_class = NULL) {
+  as_cal_object(
+    estimate = estimate,
+    truth = truth,
+    levels = levels,
+    method = method,
+    rows = rows,
+    additional_classes = c(additional_class, "cal_binary"),
+    source_class = source_class,
+    type = "binary"
+  )
+}
 
+# ------------------------------- Multi ----------------------------------------
+
+as_multi_cal_object <- function(estimate,
+                                 truth,
+                                 levels,
+                                 method,
+                                 rows,
+                                 additional_class = NULL,
+                                 source_class = NULL) {
+  as_cal_object(
+    estimate = estimate,
+    truth = truth,
+    levels = levels,
+    method = method,
+    rows = rows,
+    additional_classes = c(additional_class, "cal_multi"),
+    source_class = source_class,
+    type = "multiclass"
+  )
+}
+
+# ------------------------------- Utils ----------------------------------------
+
+as_cal_object <- function(estimate,
+                          truth,
+                          levels,
+                          method,
+                          rows,
+                          additional_classes = NULL,
+                          source_class = NULL,
+                          type = NULL) {
   structure(
     list(
-      type = "binary",
+      type = type,
       method = method,
-      truth = truth_name,
+      truth = as_name(enquo(truth)),
       levels = levels,
       rows = rows,
       source_class = source_class,
       estimates = estimate
     ),
-    class = c(additional_class, "cal_binary", "cal_object")
+    class = c(additional_classes, "cal_object")
   )
 }
-
-# ------------------------------- Utils ----------------------------------------
 
 stop_multiclass <- function() {
   cli::cli_abort("Multiclass not supported...yet")
@@ -142,7 +180,7 @@ split_dplyr_groups <- function(.data) {
 }
 
 stop_null_parameters <- function(x) {
-  if(!is.null(x)) {
+  if (!is.null(x)) {
     rlang::abort("The `parameters` argument is only valid for `tune_results`.")
   }
 }
@@ -163,6 +201,6 @@ cal_class_name.tune_results <- function(x) {
   "Tune Results"
 }
 
-cal_class_name.rset<- function(x) {
+cal_class_name.rset <- function(x) {
   "Re-sampled data set"
 }
