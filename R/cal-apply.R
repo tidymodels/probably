@@ -34,16 +34,11 @@ cal_apply.data.frame <- function(.data,
                                  parameters = NULL,
                                  ...) {
   stop_null_parameters(parameters)
+
   if (object$type == "binary") {
-    data_adjust <- cal_adjust_binary(
+    res <- cal_adjust_binary(
       object = object,
       .data = .data,
-      pred_class = {{ pred_class }}
-    )
-
-    res <- cal_update_prediction(
-      .data = data_adjust,
-      object = object,
       pred_class = {{ pred_class }}
     )
   }
@@ -55,7 +50,11 @@ cal_apply.data.frame <- function(.data,
     )
   }
 
-  res
+  cal_update_prediction(
+    .data = res,
+    object = object,
+    pred_class = {{ pred_class }}
+  )
 }
 
 #' @export
