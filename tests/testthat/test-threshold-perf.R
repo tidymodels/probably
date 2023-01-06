@@ -18,13 +18,14 @@ ex_data_miss$outcome[c(49, 85, 57, 110)] <- NA
 thr <- c(0, .5, .78, 1)
 
 get_res <- function(prob, obs, cut) {
+  suppressPackageStartupMessages(require(yardstick))
   cls <- recode_data(obs, prob, cut, event_level = "first")
   dat <- data.frame(
     obs = obs,
     cls = cls
   )
 
-  mets <- yardstick::metric_set(sens, spec, j_index)
+  mets <- yardstick::metric_set(sensitivity, specificity, j_index)
 
   .data_metrics <- dat %>%
     mets(obs, estimate = cls)
@@ -118,3 +119,28 @@ test_that('single group', {
   }
 })
 
+test_that('custom metrics', {
+  suppressPackageStartupMessages(require(yardstick))
+  suppressPackageStartupMessages(require(dplyr))
+
+  cls_met_bad <-  metric_set(sens, spec, accuracy, roc_auc)
+  cls_met_good <-  metric_set(sens, spec, accuracy, mcc)
+  cls_met_other <-  metric_set(accuracy, mcc)
+
+  expect_snapshot_error(
+    segment_logistic %>%
+      threshold_perf(Class, .pred_good, metrics = cls_met_bad)
+  )
+
+  expect_snapshot(
+    segment_logistic %>%
+      threshold_perf(Class, .pred_good, metrics = cls_met_good) %>%
+      dplyr::count(.metric)
+  )
+
+  expect_snapshot(
+    segment_logistic %>%
+      threshold_perf(Class, .pred_good, metrics = cls_met_other) %>%
+      dplyr::count(.metric)
+  )
+})

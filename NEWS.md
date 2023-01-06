@@ -1,5 +1,7 @@
 # probably (development version)
 
+* Copyright holder changed to Posit Software PBC.
+
 * Adds calibration validation function for Logistic, Isotonic, and Beta. These functions take in a re-sampled data set, and run the calibration on the testing data, and the applies the calibration to the assesment set. It then returns the average of the requested metrics, it defaults on Brier score.
 
 * Adds `cal_apply()` function. It uses the output of a calibration function, and applies it to a data frame, or a tune_results object. 
@@ -7,6 +9,8 @@
 * Adds 5 model calibration remediation methods: Logistic, Logistic Spline, Isotonic, and Isotonic Bootstrapped, and Beta. They currently support data frames, and binary models only.
 
 * Adds model calibration diagnostic functions. They implement three methods: binning probabilities, fitting a logistic spline model against the probabilities, and with creating a running percentage of the data. There are three new plotting functions, and three table functions.  It supports data.frames and tune_results objects.
+
+* Based on the initial PR (#37) by Antonio R. Vargas, `threshold_perf()` now accepts a custom metric set (#25)
 
 # probably 0.1.0
 
