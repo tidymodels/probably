@@ -6,17 +6,20 @@
 cal_estimate_multinomial <- function(.data,
                                      truth = NULL,
                                      estimate = dplyr::starts_with(".pred_"),
+                                     parameters = NULL,
                                      ...) {
   UseMethod("cal_estimate_multinomial")
 }
 
 #' @export
-#' @rdname cal_estimate_beta
-cal_estimate_multinomial <- function(.data,
+#' @rdname cal_estimate_multinomial
+cal_estimate_multinomial.data.frame <- function(.data,
                                      truth = NULL,
                                      estimate = dplyr::starts_with(".pred_"),
+                                     parameters = NULL,
                                      ...) {
-  #stop_null_parameters(parameters)
+  stop_null_parameters(parameters)
+
   truth <- enquo(truth)
   cal_multinom_impl(
     .data = .data,
@@ -26,6 +29,35 @@ cal_estimate_multinomial <- function(.data,
     ...
   )
 }
+
+#' @export
+#' @rdname cal_estimate_multinomial
+cal_estimate_multinomial.tune_results <- function(.data,
+                                     truth = NULL,
+                                     estimate = dplyr::starts_with(".pred_"),
+                                     parameters = NULL,
+                                     ...) {
+  tune_args <- tune_results_args(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = NULL,
+    event_level = "first",
+    parameters = parameters,
+    ...
+  )
+
+  tune_args$predictions %>%
+    dplyr::group_by(!!tune_args$group) %>%
+    cal_multinom_impl(
+      truth = !!tune_args$truth,
+      estimate = !!tune_args$estimate,
+      source_class = cal_class_name(.data),
+      ...
+    )
+}
+
+
 
 cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
   truth <- enquo(truth)

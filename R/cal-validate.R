@@ -247,14 +247,6 @@ cal_validate_summarize.cal_rset <- function(x) {
 #' Measure performance of a Multinomial regression calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic_boot
-#' @examples
-#'
-#' library(magrittr)
-#'
-#' segment_logistic %>%
-#'   rsample::vfold_cv() %>%
-#'   cal_validate_multinomial(Class)
-#'
 #' @export
 cal_validate_multinomial <- function(.data,
                                      truth = NULL,

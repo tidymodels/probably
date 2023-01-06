@@ -41,7 +41,7 @@ cal_apply.data.frame <- function(.data,
       pred_class = {{ pred_class }}
     )
 
-    cal_update_prediction(
+    res <- cal_update_prediction(
       .data = data_adjust,
       object = object,
       pred_class = {{ pred_class }}
@@ -49,11 +49,13 @@ cal_apply.data.frame <- function(.data,
   }
 
   if(object$type == "multiclass") {
-    cal_adjust_multi(
+    res <- cal_adjust_multi(
       object = object,
       .data = .data
     )
   }
+
+  res
 }
 
 #' @export
@@ -63,7 +65,7 @@ cal_apply.tune_results <- function(.data,
                                    pred_class = NULL,
                                    parameters = NULL,
                                    ...) {
-  if (object$type == "binary") {
+
     if (!(".predictions" %in% colnames(.data))) {
       rlang::abort(
         paste0(
@@ -86,14 +88,23 @@ cal_apply.tune_results <- function(.data,
       ...
     )
 
-    cal_adjust_binary(
-      object = object,
-      .data = predictions,
-      pred_class = !!pred_class
-    )
-  } else {
-    stop_multiclass()
-  }
+    if (object$type == "binary") {
+      res <- cal_adjust_binary(
+        object = object,
+        .data = predictions,
+        pred_class = !!pred_class
+        )
+    }
+
+    if(object$type == "multiclass") {
+      res <- cal_adjust_multi(
+        object = object,
+        .data = predictions,
+        pred_class = !!pred_class
+      )
+    }
+
+    res
 }
 
 #' @export
