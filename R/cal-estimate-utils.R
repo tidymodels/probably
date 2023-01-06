@@ -47,9 +47,11 @@ as_binary_cal_object <- function(estimate,
                                  rows,
                                  additional_class = NULL,
                                  source_class = NULL) {
+  truth <- enquo(truth)
+
   as_cal_object(
     estimate = estimate,
-    truth = truth,
+    truth = !!truth,
     levels = levels,
     method = method,
     rows = rows,
@@ -68,9 +70,11 @@ as_multi_cal_object <- function(estimate,
                                  rows,
                                  additional_class = NULL,
                                  source_class = NULL) {
+  truth <- enquo(truth)
+
   as_cal_object(
     estimate = estimate,
-    truth = truth,
+    truth = !!truth,
     levels = levels,
     method = method,
     rows = rows,
@@ -90,11 +94,14 @@ as_cal_object <- function(estimate,
                           additional_classes = NULL,
                           source_class = NULL,
                           type = NULL) {
+
+  str_truth <- as_name(enquo(truth))
+
   structure(
     list(
       type = type,
       method = method,
-      truth = as_name(enquo(truth)),
+      truth = str_truth,
       levels = levels,
       rows = rows,
       source_class = source_class,

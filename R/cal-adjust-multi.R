@@ -19,7 +19,7 @@ cal_adjust_multi.cal_estimate_multinomial <- function(object,
 cal_multi_predict <- function(object, .data) {
   if (object$type == "multiclass") {
     preds <- object$estimates[[1]]$estimate %>%
-      predict(newdata = species_probs, type = "probs") %>%
+      predict(newdata = .data, type = "probs") %>%
       tibble::as_tibble()
 
 

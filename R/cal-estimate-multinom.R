@@ -17,9 +17,10 @@ cal_estimate_multinomial <- function(.data,
                                      estimate = dplyr::starts_with(".pred_"),
                                      ...) {
   #stop_null_parameters(parameters)
+  truth <- enquo(truth)
   cal_multinom_impl(
     .data = .data,
-    truth = {{ truth }},
+    truth = !!truth,
     estimate = {{ estimate }},
     source_class = cal_class_name(.data),
     ...
@@ -27,12 +28,12 @@ cal_estimate_multinomial <- function(.data,
 }
 
 cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
-  levels <- truth_estimate_map(.data, {{ truth }}, {{ estimate }})
+  truth <- enquo(truth)
 
-
+  levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
   model <- cal_multinom_impl_grp(
     .data = .data,
-    truth = {{ truth }},
+    truth = !!truth,
     levels = levels,
     ...
   )
@@ -50,13 +51,14 @@ cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
 
 
 cal_multinom_impl_grp <- function(.data, truth, levels, ...) {
+  truth <- enquo(truth)
   .data %>%
     split_dplyr_groups() %>%
     lapply(
       function(x) {
         estimate <- cal_multinom_impl_single(
           .data = x$data,
-          truth = {{ truth }},
+          truth = !!truth,
           levels = levels,
           ... = ...
         )
