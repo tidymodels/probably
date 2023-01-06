@@ -72,6 +72,7 @@ of the probability threshold and any existing groups.</p>
 <span>  <span class="va">truth</span>,</span>
 <span>  <span class="va">estimate</span>,</span>
 <span>  thresholds <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  na_rm <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  event_level <span class="op">=</span> <span class="st">"first"</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -105,6 +106,15 @@ of values between 0.5 and 1.0 are used. <strong>Note</strong>: if this
 argument is used, it must be named.</p></dd>
 
 
+<dt>metrics</dt>
+<dd><p>Either <code>NULL</code> or a <code><a href="https://yardstick.tidymodels.org/reference/metric_set.html" class="external-link">yardstick::metric_set()</a></code> with a list of
+performance metrics to calculate. The metrics should all be oriented towards
+hard class predictions (e.g. <code><a href="https://yardstick.tidymodels.org/reference/sens.html" class="external-link">yardstick::sensitivity()</a></code>,
+<code><a href="https://yardstick.tidymodels.org/reference/accuracy.html" class="external-link">yardstick::accuracy()</a></code>, <code><a href="https://yardstick.tidymodels.org/reference/recall.html" class="external-link">yardstick::recall()</a></code>, etc.) and not
+class probabilities. A set of default metrics is used when <code>NULL</code> (see
+Details below).</p></dd>
+
+
 <dt>na_rm</dt>
 <dd><p>A single logical: should missing data be removed?</p></dd>
 
@@ -126,11 +136,13 @@ which level of <code>truth</code> to consider as the "event".</p></dd>
     <p>Note that that the global option <code>yardstick.event_first</code> will be
 used to determine which level is the event of interest. For more details,
 see the Relevant level section of <code><a href="https://yardstick.tidymodels.org/reference/sens.html" class="external-link">yardstick::sens()</a></code>.</p>
-<p>The currently calculated metrics are:</p><ul><li><p><code><a href="https://yardstick.tidymodels.org/reference/j_index.html" class="external-link">yardstick::j_index()</a></code></p></li>
+<p>The default calculated metrics are:</p><ul><li><p><code><a href="https://yardstick.tidymodels.org/reference/j_index.html" class="external-link">yardstick::j_index()</a></code></p></li>
 <li><p><code><a href="https://yardstick.tidymodels.org/reference/sens.html" class="external-link">yardstick::sens()</a></code></p></li>
 <li><p><code><a href="https://yardstick.tidymodels.org/reference/spec.html" class="external-link">yardstick::spec()</a></code></p></li>
 <li><p><code>distance = (1 - sens) ^ 2 + (1 - spec) ^ 2</code></p></li>
-</ul></div>
+</ul><p>If a custom metric is passed that does not compute sensitivity and
+specificity, the distance metric is not computed.</p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -141,42 +153,36 @@ see the Relevant level section of <code><a href="https://yardstick.tidymodels.or
 <span class="r-in"><span><span class="co"># &gt; 0.6 = good</span></span></span>
 <span class="r-in"><span><span class="co"># &lt; 0.6 = poor</span></span></span>
 <span class="r-in"><span><span class="fu">threshold_perf</span><span class="op">(</span><span class="va">segment_logistic</span>, <span class="va">Class</span>, <span class="va">.pred_good</span>, thresholds <span class="op">=</span> <span class="fl">0.6</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .threshold .metric  .estimator .estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>        0.6 sens     binary         0.639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>        0.6 spec     binary         0.869</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>        0.6 j_index  binary         0.508</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>        0.6 distance binary         0.148</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   .threshold .metric     .estimator .estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>        0.6 sensitivity binary         0.639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>        0.6 specificity binary         0.869</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>        0.6 j_index     binary         0.508</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Set the threshold to multiple values</span></span></span>
 <span class="r-in"><span><span class="va">thresholds</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.9</span>, by <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">segment_logistic</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">threshold_perf</span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_good</span>, <span class="va">thresholds</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    .threshold .metric  .estimator .estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>        0.5 sens     binary         0.714</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>        0.6 sens     binary         0.639</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>        0.7 sens     binary         0.561</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>        0.8 sens     binary         0.451</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>        0.9 sens     binary         0.249</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>        0.5 spec     binary         0.825</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>        0.6 spec     binary         0.869</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>        0.7 spec     binary         0.911</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>        0.8 spec     binary         0.937</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>        0.9 spec     binary         0.977</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>        0.5 j_index  binary         0.539</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>        0.6 j_index  binary         0.508</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>        0.7 j_index  binary         0.472</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>        0.8 j_index  binary         0.388</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>        0.9 j_index  binary         0.226</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span>        0.5 distance binary         0.112</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span>        0.6 distance binary         0.148</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span>        0.7 distance binary         0.201</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span>        0.8 distance binary         0.306</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span>        0.9 distance binary         0.565</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 15 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    .threshold .metric     .estimator .estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>        0.5 sensitivity binary         0.714</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>        0.6 sensitivity binary         0.639</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>        0.7 sensitivity binary         0.561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>        0.8 sensitivity binary         0.451</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>        0.9 sensitivity binary         0.249</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>        0.5 specificity binary         0.825</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>        0.6 specificity binary         0.869</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>        0.7 specificity binary         0.911</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>        0.8 specificity binary         0.937</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>        0.9 specificity binary         0.977</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span>        0.5 j_index     binary         0.539</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span>        0.6 j_index     binary         0.508</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span>        0.7 j_index     binary         0.472</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span>        0.8 j_index     binary         0.388</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span>        0.9 j_index     binary         0.226</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># ---------------------------------------------------------------------------</span></span></span>
 <span class="r-in"><span></span></span>
@@ -196,20 +202,20 @@ see the Relevant level section of <code><a href="https://yardstick.tidymodels.or
 <span class="r-in"><span>  <span class="fu">threshold_perf</span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_good</span>, <span class="va">thresholds</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">resampled_threshold_perf</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 100 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    resample .threshold .metric .estimator .estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 1               0.5 sens    binary         0.7  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 1               0.6 sens    binary         0.633</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 1               0.7 sens    binary         0.467</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 1               0.8 sens    binary         0.333</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 1               0.9 sens    binary         0.167</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2               0.5 sens    binary         0.636</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2               0.6 sens    binary         0.515</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2               0.7 sens    binary         0.455</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2               0.8 sens    binary         0.394</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2               0.9 sens    binary         0.273</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 90 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 75 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    resample .threshold .metric     .estimator .estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 1               0.5 sensitivity binary         0.757</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 1               0.6 sensitivity binary         0.622</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 1               0.7 sensitivity binary         0.622</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 1               0.8 sensitivity binary         0.541</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 1               0.9 sensitivity binary         0.243</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 2               0.5 sensitivity binary         0.838</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 2               0.6 sensitivity binary         0.757</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 2               0.7 sensitivity binary         0.649</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 2               0.8 sensitivity binary         0.568</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 2               0.9 sensitivity binary         0.243</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 65 more rows</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Average over the resamples</span></span></span>
 <span class="r-in"><span><span class="va">resampled_threshold_perf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
@@ -217,30 +223,25 @@ see the Relevant level section of <code><a href="https://yardstick.tidymodels.or
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>.estimate <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">.estimate</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `summarise()` has grouped output by '.metric'. You can override using the</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `.groups` argument.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 20 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   .metric [4]</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    .metric  .threshold .estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> distance        0.5     0.146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> distance        0.6     0.176</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> distance        0.7     0.234</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> distance        0.8     0.346</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> distance        0.9     0.540</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> j_index         0.5     0.481</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> j_index         0.6     0.465</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> j_index         0.7     0.436</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> j_index         0.8     0.349</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> j_index         0.9     0.231</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> sens            0.5     0.672</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> sens            0.6     0.613</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> sens            0.7     0.533</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> sens            0.8     0.419</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> sens            0.9     0.271</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">16</span> spec            0.5     0.809</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">17</span> spec            0.6     0.852</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">18</span> spec            0.7     0.903</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">19</span> spec            0.8     0.930</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">20</span> spec            0.9     0.960</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 15 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># Groups:   .metric [3]</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    .metric     .threshold .estimate</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> j_index            0.5     0.598</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> j_index            0.6     0.525</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> j_index            0.7     0.482</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> j_index            0.8     0.411</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> j_index            0.9     0.209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> sensitivity        0.5     0.774</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> sensitivity        0.6     0.651</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> sensitivity        0.7     0.564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> sensitivity        0.8     0.48 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> sensitivity        0.9     0.247</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">11</span> specificity        0.5     0.824</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">12</span> specificity        0.6     0.874</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">13</span> specificity        0.7     0.918</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">14</span> specificity        0.8     0.931</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">15</span> specificity        0.9     0.963</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -251,7 +252,7 @@ see the Relevant level section of <code><a href="https://yardstick.tidymodels.or
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p></p><p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://github.com/DavisVaughan" class="external-link">Davis Vaughan</a>, <a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
+  <p></p><p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://github.com/DavisVaughan" class="external-link">Davis Vaughan</a>, Posit Software, PBC.</p>
 </div>
 
 <div class="pkgdown-footer-right">

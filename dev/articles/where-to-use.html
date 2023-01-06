@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Davis
 Vaughan</h4>
             
-            <h4 data-toc-skip class="date">2023-01-05</h4>
+            <h4 data-toc-skip class="date">2023-01-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/vignettes/where-to-use.Rmd" class="external-link"><code>vignettes/where-to-use.Rmd</code></a></small>
       <div class="d-none name"><code>where-to-use.Rmd</code></div>
@@ -394,21 +394,18 @@ across varying thresholds. One of these is <code>j_index</code>.</p>
 <span></span>
 <span><span class="va">threshold_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.threshold</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.6</span>, <span class="fl">0.7</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 4</span></span></span>
-<span><span class="co">#&gt;    .threshold .metric  .estimator .estimate</span></span>
-<span><span class="co">#&gt;         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>        0.5 sens     binary        1     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>        0.6 sens     binary        0.999 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>        0.7 sens     binary        0.998 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>        0.5 spec     binary        0     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>        0.6 spec     binary        0.022<span style="text-decoration: underline;">6</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>        0.7 spec     binary        0.022<span style="text-decoration: underline;">6</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>        0.5 j_index  binary        0     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>        0.6 j_index  binary        0.021<span style="text-decoration: underline;">7</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>        0.7 j_index  binary        0.020<span style="text-decoration: underline;">8</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>        0.5 distance binary        1     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>        0.6 distance binary        0.955 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>        0.7 distance binary        0.955</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 × 4</span></span></span>
+<span><span class="co">#&gt;   .threshold .metric     .estimator .estimate</span></span>
+<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>        0.5 sensitivity binary        1     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>        0.6 sensitivity binary        0.999 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>        0.7 sensitivity binary        0.998 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span>        0.5 specificity binary        0     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span>        0.6 specificity binary        0.022<span style="text-decoration: underline;">6</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span>        0.7 specificity binary        0.022<span style="text-decoration: underline;">6</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span>        0.5 j_index     binary        0     </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span>        0.6 j_index     binary        0.021<span style="text-decoration: underline;">7</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span>        0.7 j_index     binary        0.020<span style="text-decoration: underline;">8</span></span></span></code></pre></div>
 <p>With <code>ggplot2</code>, we can easily visualize this varying
 performance to find our optimal threshold for maximizing
 <code>j_index</code>.</p>
@@ -448,11 +445,11 @@ metrics for that threshold value.</p>
 <code class="sourceCode R"><span><span class="va">threshold_data</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">.threshold</span> <span class="op">==</span> <span class="va">max_j_index_threshold</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 3 × 5</span></span></span>
-<span><span class="co">#&gt;   .threshold .metric .estimator .estimate group</span></span>
-<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0.945 sens    binary         0.687 1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      0.945 spec    binary         0.692 1    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      0.945 j_index binary         0.379 2</span></span></code></pre></div>
+<span><span class="co">#&gt;   .threshold .metric     .estimator .estimate group</span></span>
+<span><span class="co">#&gt;        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>      0.945 sensitivity binary         0.687 2    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span>      0.945 specificity binary         0.692 2    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span>      0.945 j_index     binary         0.379 2</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
@@ -464,7 +461,7 @@ metrics for that threshold value.</p>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://github.com/DavisVaughan" class="external-link">Davis Vaughan</a>, <a href="https://www.rstudio.com" class="external-link"><img src="https://www.tidyverse.org/rstudio-logo.svg" alt="RStudio" width="72"></a>.</p>
+<p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://github.com/DavisVaughan" class="external-link">Davis Vaughan</a>, Posit Software, PBC.</p>
 </div>
 
 <div class="pkgdown-footer-right">
