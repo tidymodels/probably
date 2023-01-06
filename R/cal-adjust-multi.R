@@ -21,7 +21,6 @@ cal_multi_predict <- function(object, .data) {
       predict(newdata = .data, type = "probs") %>%
       tibble::as_tibble()
 
-
     for (i in seq_along(object$levels)) {
       lev <- object$levels[i]
       .data[, as.character(lev)] <- preds[, names(lev)]

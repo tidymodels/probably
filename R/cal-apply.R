@@ -121,3 +121,29 @@ cal_apply.cal_object <- function(.data,
     ))
   }
 }
+
+cal_update_prediction <- function(.data, object, pred_class) {
+  res <- .data
+  if (!is.null(pred_class)) {
+
+    pred_name <- as_name(pred_class)
+    if (pred_name %in% colnames(.data)) {
+      .data[, pred_name] <- NULL
+    }
+
+    if (object$type == "binary") {
+      level1_gt <- res[[object$levels[[1]]]] > res[[object$levels[[2]]]]
+      res[level1_gt, pred_name] <- names(object$levels[1])
+      res[!level1_gt, pred_name] <- names(object$levels[2])
+      res[, pred_name] <- as.factor(res[, pred_name][[1]])
+    }
+
+    if (object$type == "multiclass") {
+      max_cols <- max.col(res[, as.character(object$levels)])
+      factor_cols <- as.factor(max_cols)
+      levels(factor_cols) <-names(object$levels)
+      res[, pred_name] <- factor_cols
+    }
+  }
+  res
+}
