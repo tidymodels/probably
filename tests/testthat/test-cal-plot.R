@@ -131,7 +131,7 @@ test_that("Binary windowed functions work", {
       .pred_good >= 0.94 & .pred_good <= 1 ~ 10,
     )) %>%
     dplyr::filter(!is.na(x)) %>%
-    count(x)
+    dplyr::count(x)
 
   expect_equal(
     x30$total,
@@ -231,7 +231,7 @@ test_that("Groupings that may not match work", {
   )
 
   x50 <- combined %>%
-    group_by(source) %>%
+    dplyr::group_by(source) %>%
     .cal_binary_table_breaks(Class, .pred_good)
 
   expect_equal(
@@ -240,7 +240,7 @@ test_that("Groupings that may not match work", {
   )
 
   x51 <- combined %>%
-    group_by(source) %>%
+    dplyr::group_by(source) %>%
     .cal_binary_table_windowed(
       truth = Class,
       estimate = .pred_good,
@@ -262,7 +262,7 @@ test_that("Groupings that may not match work", {
       .pred_good >= 0.94 & .pred_good <= 1 ~ 10,
     )) %>%
     dplyr::filter(!is.na(x)) %>%
-    count(source, x)
+    dplyr::count(source, x)
 
   expect_equal(
     x51$total,

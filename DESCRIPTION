@@ -32,15 +32,9 @@ Imports:
     tune,
     vctrs (>= 0.4.1),
     yardstick (> 1.0.0),
-    betacal, 
-    ggplot2,
-    butcher,    
-    tibble,
     pillar,
     withr,
-    mgcv,
-    nnet,
-    cli
+    nnet
 Suggests:
     covr,
     knitr,

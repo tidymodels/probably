@@ -4,22 +4,35 @@ testthat_cal_tune_results <- function() {
   ret <- .cal_env$tune_results
 
   if(is.null(ret)) {
-    set.seed(111)
 
-    sim_data <- modeldata::sim_classification(500)
+    ret_file <- test_path("cal_files/binary_sim.rds")
 
-    rec <- recipes::recipe(class ~ ., data = sim_data) %>%
-      recipes::step_ns(linear_01, deg_free = tune::tune("linear_01"))
+    if(!file.exists(ret_file)) {
 
-    ret <- tune::tune_grid(
-      object = parsnip::set_engine(parsnip::logistic_reg(), "glm"),
-      preprocessor = rec,
-      resamples = rsample::vfold_cv(sim_data, v = 2, repeats = 3),
-      control = tune::control_resamples(save_pred = TRUE)
-    )
+      if(!dir.exists(test_path("cal_files"))) {
+        dir.create(test_path("cal_files"))
+      }
 
+      set.seed(111)
+
+      sim_data <- modeldata::sim_classification(500)
+
+      rec <- recipes::recipe(class ~ ., data = sim_data) %>%
+        recipes::step_ns(linear_01, deg_free = tune::tune("linear_01"))
+
+      ret <- tune::tune_grid(
+        object = parsnip::set_engine(parsnip::logistic_reg(), "glm"),
+        preprocessor = rec,
+        resamples = rsample::vfold_cv(sim_data, v = 2, repeats = 3),
+        control = tune::control_resamples(save_pred = TRUE)
+      )
+      saveRDS(ret, ret_file)
+    } else {
+      ret <- readRDS(ret_file)
+    }
     .cal_env$tune_results <- ret
-    .cal_env$tune_results_count <- nrow(tune::collect_predictions(ret, summarize = TRUE))
+    cp <- tune::collect_predictions(ret, summarize = TRUE)
+    .cal_env$tune_results_count <- nrow(cp)
   }
 
   ret
