@@ -108,7 +108,12 @@ cal_multinom_impl_single <- function(.data,
                                      ...) {
   truth <- enquo(truth)
 
-  levels_formula <- purrr::reduce(levels, function(x, y) expr(!!x + !!y))
+  levels <- levels[1:length(levels) - 1]
+
+  levels_formula <- purrr::reduce(
+    levels,
+    function(x, y) expr(!!x + !!y)
+    )
 
   f_model <- expr(!!ensym(truth) ~ !!levels_formula)
 

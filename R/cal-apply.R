@@ -101,15 +101,32 @@ cal_adjust_update <- function(.data,
                               pred_class = NULL,
                               parameters = NULL,
                               ...) {
-  cal_adjust(
+  pred_class <- enquo(pred_class)
+
+  res <- cal_adjust(
     object = object,
     .data = .data,
-    pred_class = {{ pred_class }}
-  ) %>%
-    cal_update_prediction(
-      object = object,
-      pred_class = {{ pred_class }}
-    )
+    pred_class = !!pred_class
+  )
+
+  if (!rlang::quo_is_null(pred_class)) {
+    pred_name <- as_name(pred_class)
+
+    if (pred_name %in% colnames(res)) {
+      res[, pred_name] <- NULL
+    }
+
+    col_names <- as.character(object$levels)
+    factor_levels <- names(object$levels)
+
+    predictions <- res[, col_names] %>%
+      max.col(ties.method = "first") %>%
+      factor_levels[.] %>%
+      factor(levels = factor_levels)
+
+    res[, pred_name] <- predictions
+  }
+  res
 }
 
 cal_adjust <- function(object, .data, pred_class) {
@@ -130,26 +147,4 @@ cal_adjust.cal_binary <- function(object, .data, pred_class) {
     .data = .data,
     pred_class = {{ pred_class }}
   )
-}
-
-cal_update_prediction <- function(.data, object, pred_class) {
-  pred_class <- enquo(pred_class)
-  if (!rlang::quo_is_null(pred_class)) {
-    pred_name <- as_name(pred_class)
-
-    if (pred_name %in% colnames(.data)) {
-      .data[, pred_name] <- NULL
-    }
-
-    col_names <- as.character(object$levels)
-    factor_levels <- names(object$levels)
-
-    predictions <- .data[, col_names] %>%
-      max.col(ties.method = "first") %>%
-      factor_levels[.] %>%
-      factor(levels = factor_levels)
-
-    .data[, pred_name] <- predictions
-  }
-  .data
 }
