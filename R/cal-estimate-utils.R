@@ -2,42 +2,12 @@
 
 #' @export
 print.cal_binary <- function(x, ...) {
-  print_cal_binary(x, ...)
+  print_cal(x, ...)
 }
 
 #' @export
 print.cal_estimate_isotonic <- function(x, ...) {
-  print_cal_binary(x, upv = TRUE, ...)
-}
-
-print_cal_binary <- function(x, upv = FALSE, ...) {
-  cli::cli_div(theme = list(
-    span.val0 = list(color = "blue"),
-    span.val1 = list(color = "yellow"),
-    span.val2 = list(color = "darkgreen")
-  ))
-  rows <- prettyNum(x$rows, ",")
-  cli::cli_h3("Probability Calibration")
-  cli::cli_text("Method: {.val2 {x$method}}")
-  cli::cli_text("Type: {.val2 Binary}")
-  cli::cli_text("Source class: {.val2 {x$source_class}}")
-  if (length(x$estimates) == 1) {
-    cli::cli_text("Data points: {.val2 {rows}}")
-  } else {
-    no_ests <- length(x$estimates)
-    grps <- "Data points: {.val2 {rows}}, split in {.val2 {no_ests}} groups"
-    cli::cli_text(grps)
-  }
-
-  if (upv) {
-    upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]]), ",")
-    cli::cli_text("Unique Probability Values: {.val2 {upv_no}}")
-  }
-  cli::cli_text("Truth variable: `{.val0 {x$truth}}`")
-  cli::cli_text("Estimate variables:")
-  cli::cli_text("{.val1 `{x$levels[[1]]}`} ==> {.val0 {names(x$levels[1])}}")
-  cli::cli_text("{.val1 `{x$levels[[2]]}`} ==> {.val0 {names(x$levels[2])}}")
-  cli::cli_end()
+  print_cal(x, upv = TRUE, ...)
 }
 
 as_binary_cal_object <- function(estimate,
@@ -63,6 +33,12 @@ as_binary_cal_object <- function(estimate,
 
 # ------------------------------- Multi ----------------------------------------
 
+#' @export
+print.cal_multi <- function(x, ...) {
+  print_cal(x, ...)
+}
+
+
 as_multi_cal_object <- function(estimate,
                                  truth,
                                  levels,
@@ -85,6 +61,48 @@ as_multi_cal_object <- function(estimate,
 }
 
 # ------------------------------- Utils ----------------------------------------
+
+print_cal <- function(x, upv = FALSE, ...) {
+
+  if(x$type == "binary") {
+    type <- "Binary"
+  }
+
+  if(x$type == "multiclass") {
+    type <- "Multiclass"
+  }
+
+  cli::cli_div(theme = list(
+    span.val0 = list(color = "blue"),
+    span.val1 = list(color = "yellow"),
+    span.val2 = list(color = "darkgreen")
+  ))
+  rows <- prettyNum(x$rows, ",")
+  cli::cli_h3("Probability Calibration")
+  cli::cli_text("Method: {.val2 {x$method}}")
+  cli::cli_text("Type: {.val2 {type}}")
+  cli::cli_text("Source class: {.val2 {x$source_class}}")
+  if (length(x$estimates) == 1) {
+    cli::cli_text("Data points: {.val2 {rows}}")
+  } else {
+    no_ests <- length(x$estimates)
+    grps <- "Data points: {.val2 {rows}}, split in {.val2 {no_ests}} groups"
+    cli::cli_text(grps)
+  }
+
+  if (upv) {
+    upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]]), ",")
+    cli::cli_text("Unique Probability Values: {.val2 {upv_no}}")
+  }
+  cli::cli_text("Truth variable: `{.val0 {x$truth}}`")
+  cli::cli_text("Estimate variables:")
+
+  for(i in seq_along(x$levels)) {
+    cli::cli_text("{.val1 `{x$levels[[i]]}`} ==> {.val0 {names(x$levels[i])}}")
+  }
+
+  cli::cli_end()
+}
 
 as_cal_object <- function(estimate,
                           truth,
