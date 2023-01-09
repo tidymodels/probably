@@ -113,7 +113,7 @@ cal_multinom_impl_single <- function(.data,
   f_model <- expr(!!ensym(truth) ~ !!levels_formula)
 
   prevent_output <- utils::capture.output(
-    model <- nnet::multinom(formula = f_model, data = .data)
+    model <- nnet::multinom(formula = f_model, data = .data, ...)
   )
 
   model

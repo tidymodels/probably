@@ -1,4 +1,4 @@
-#---------------------------------- Apply --------------------------------------
+#---------------------------------- Methods ------------------------------------
 
 #' Applies a calibration to a set of pred_class probabilities
 #' @details It currently supports data.frames only. It extracts the `truth` and
@@ -35,24 +35,9 @@ cal_apply.data.frame <- function(.data,
                                  ...) {
   stop_null_parameters(parameters)
 
-  if (object$type == "binary") {
-    res <- cal_adjust_binary(
-      object = object,
-      .data = .data,
-      pred_class = {{ pred_class }}
-    )
-  }
-
-  if(object$type == "multiclass") {
-    res <- cal_adjust_multi(
-      object = object,
-      .data = .data
-    )
-  }
-
-  cal_update_prediction(
-    .data = res,
+  cal_adjust_update(
     object = object,
+    .data = .data,
     pred_class = {{ pred_class }}
   )
 }
@@ -64,46 +49,33 @@ cal_apply.tune_results <- function(.data,
                                    pred_class = NULL,
                                    parameters = NULL,
                                    ...) {
-
-    if (!(".predictions" %in% colnames(.data))) {
-      rlang::abort(
-        paste0(
-          "The `tune_results` object does not contain the `.predictions` column.",
-          " Refit with the control argument `save_pred = TRUE` to save pred_classs."
-        )
+  if (!(".predictions" %in% colnames(.data))) {
+    rlang::abort(
+      paste0(
+        "The `tune_results` object does not contain the `.predictions` column.",
+        " Refit with the control argument `save_pred = TRUE` to save pred_classs."
       )
-    }
-
-    pred_class <- enquo(pred_class)
-
-    if (rlang::quo_is_null(pred_class)) {
-      pred_class <- rlang::parse_expr(".pred_class")
-    }
-
-    predictions <- tune::collect_predictions(
-      x = .data,
-      summarize = TRUE,
-      parameters = parameters,
-      ...
     )
+  }
 
-    if (object$type == "binary") {
-      res <- cal_adjust_binary(
-        object = object,
-        .data = predictions,
-        pred_class = !!pred_class
-        )
-    }
+  pred_class <- enquo(pred_class)
 
-    if(object$type == "multiclass") {
-      res <- cal_adjust_multi(
-        object = object,
-        .data = predictions,
-        pred_class = !!pred_class
-      )
-    }
+  if (rlang::quo_is_null(pred_class)) {
+    pred_class <- rlang::parse_expr(".pred_class")
+  }
 
-    res
+  cp <- tune::collect_predictions(
+    x = .data,
+    summarize = TRUE,
+    parameters = parameters,
+    ...
+  )
+
+  cal_adjust_update(
+    object = object,
+    .data = cp,
+    pred_class = !!pred_class
+  )
 }
 
 #' @export
@@ -122,28 +94,62 @@ cal_apply.cal_object <- function(.data,
   }
 }
 
-cal_update_prediction <- function(.data, object, pred_class) {
-  res <- .data
-  if (!is.null(pred_class)) {
+#---------------------------------- Adjust -------------------------------------
 
+cal_adjust_update <- function(.data,
+                              object,
+                              pred_class = NULL,
+                              parameters = NULL,
+                              ...) {
+  cal_adjust(
+    object = object,
+    .data = .data,
+    pred_class = {{ pred_class }}
+  ) %>%
+    cal_update_prediction(
+      object = object,
+      pred_class = {{ pred_class }}
+    )
+}
+
+cal_adjust <- function(object, .data, pred_class) {
+  UseMethod("cal_adjust")
+}
+
+cal_adjust.cal_multi <- function(object, .data, pred_class) {
+  cal_adjust_multi(
+    object = object,
+    .data = .data,
+    pred_class = {{ pred_class }}
+  )
+}
+
+cal_adjust.cal_binary <- function(object, .data, pred_class) {
+  cal_adjust_binary(
+    object = object,
+    .data = .data,
+    pred_class = {{ pred_class }}
+  )
+}
+
+cal_update_prediction <- function(.data, object, pred_class) {
+  pred_class <- enquo(pred_class)
+  if (!rlang::quo_is_null(pred_class)) {
     pred_name <- as_name(pred_class)
+
     if (pred_name %in% colnames(.data)) {
       .data[, pred_name] <- NULL
     }
 
-    if (object$type == "binary") {
-      level1_gt <- res[[object$levels[[1]]]] > res[[object$levels[[2]]]]
-      res[level1_gt, pred_name] <- names(object$levels[1])
-      res[!level1_gt, pred_name] <- names(object$levels[2])
-      res[, pred_name] <- as.factor(res[, pred_name][[1]])
-    }
+    col_names <- as.character(object$levels)
+    factor_levels <- names(object$levels)
 
-    if (object$type == "multiclass") {
-      max_cols <- max.col(res[, as.character(object$levels)])
-      factor_cols <- as.factor(max_cols)
-      levels(factor_cols) <-names(object$levels)
-      res[, pred_name] <- factor_cols
-    }
+    predictions <- .data[, col_names] %>%
+      max.col(ties.method = "first") %>%
+      factor_levels[.] %>%
+      factor(levels = factor_levels)
+
+    .data[, pred_name] <- predictions
   }
-  res
+  .data
 }

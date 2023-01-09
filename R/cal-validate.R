@@ -375,7 +375,7 @@ cal_validate <- function(rset,
         ap <- cal_apply(
           .data = data_as[[.x]],
           object = cals[[.x]],
-          pred_class = rlang::parse_expr(".pred_class")
+          pred_class = !! rlang::parse_expr(".pred_class")
         )
 
         stats_after <- metrics(ap, truth = !!truth, estimate_cols)
