@@ -22,6 +22,7 @@ cal_apply <- function(.data,
                       pred_class = NULL,
                       parameters = NULL,
                       ...) {
+  cal_pkg_check(required_pkgs(object))
   rlang::check_dots_empty()
   UseMethod("cal_apply")
 }

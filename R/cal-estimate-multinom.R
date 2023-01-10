@@ -57,7 +57,11 @@ cal_estimate_multinomial.tune_results <- function(.data,
     )
 }
 
-
+#' @rdname required_pkgs.cal_object
+#' @export
+required_pkgs.cal_estimate_multinomial <- function(x, ...) {
+  c("nnet")
+}
 
 cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
   truth <- enquo(truth)
