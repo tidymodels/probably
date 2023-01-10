@@ -30,6 +30,7 @@ cal_pkg_check <- function(pkgs = NULL) {
 }
 
 #' @importFrom generics required_pkgs
+#' @keywords internal
 #' @export
 generics::required_pkgs
 
