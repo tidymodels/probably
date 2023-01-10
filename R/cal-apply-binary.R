@@ -1,10 +1,10 @@
 # ------------------------------- Methods --------------------------------------
 
-cal_adjust_binary <- function(object, .data, pred_class) {
-  UseMethod("cal_adjust_binary")
+cal_apply_binary <- function(object, .data, pred_class) {
+  UseMethod("cal_apply_binary")
 }
 
-cal_adjust_binary.cal_estimate_logistic <- function(object,
+cal_apply_binary.cal_estimate_logistic <- function(object,
                                                     .data,
                                                     pred_class = NULL,
                                                     ...) {
@@ -14,7 +14,7 @@ cal_adjust_binary.cal_estimate_logistic <- function(object,
   )
 }
 
-cal_adjust_binary.cal_estimate_logistic_spline <- function(object,
+cal_apply_binary.cal_estimate_logistic_spline <- function(object,
                                                            .data,
                                                            pred_class = NULL,
                                                            ...) {
@@ -24,7 +24,7 @@ cal_adjust_binary.cal_estimate_logistic_spline <- function(object,
   )
 }
 
-cal_adjust_binary.cal_estimate_isotonic_boot <- function(object,
+cal_apply_binary.cal_estimate_isotonic_boot <- function(object,
                                                          .data,
                                                          pred_class = NULL,
                                                          ...) {
@@ -35,7 +35,7 @@ cal_adjust_binary.cal_estimate_isotonic_boot <- function(object,
   )
 }
 
-cal_adjust_binary.cal_estimate_isotonic <- function(object,
+cal_apply_binary.cal_estimate_isotonic <- function(object,
                                                     .data,
                                                     pred_class = NULL,
                                                     ...) {
@@ -45,7 +45,7 @@ cal_adjust_binary.cal_estimate_isotonic <- function(object,
   )
 }
 
-cal_adjust_binary.cal_estimate_beta <- function(object,
+cal_apply_binary.cal_estimate_beta <- function(object,
                                                 .data,
                                                 pred_class = NULL,
                                                 ...) {

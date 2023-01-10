@@ -135,7 +135,7 @@ cal_adjust <- function(object, .data, pred_class) {
 }
 
 cal_adjust.cal_multi <- function(object, .data, pred_class) {
-  cal_adjust_multi(
+  cal_apply_multi(
     object = object,
     .data = .data,
     pred_class = {{ pred_class }}
@@ -143,7 +143,7 @@ cal_adjust.cal_multi <- function(object, .data, pred_class) {
 }
 
 cal_adjust.cal_binary <- function(object, .data, pred_class) {
-  cal_adjust_binary(
+  cal_apply_binary(
     object = object,
     .data = .data,
     pred_class = {{ pred_class }}

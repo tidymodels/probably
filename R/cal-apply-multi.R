@@ -1,10 +1,10 @@
 # ------------------------------- Methods --------------------------------------
 
-cal_adjust_multi <- function(object, .data, pred_class) {
-  UseMethod("cal_adjust_multi")
+cal_apply_multi <- function(object, .data, pred_class) {
+  UseMethod("cal_apply_multi")
 }
 
-cal_adjust_multi.cal_estimate_multinomial <- function(object,
+cal_apply_multi.cal_estimate_multinomial <- function(object,
                                                       .data,
                                                       pred_class = NULL,
                                                       ...) {
