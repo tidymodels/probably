@@ -62,3 +62,16 @@ test_that("Multinomial validation works", {
   expect_equal(nrow(res_not_sum), 10)
 
 })
+
+test_that("Setting summarize to FALSE returns new columns", {
+  df <- testthat_cal_sampled()
+
+  no_res <- cal_validate_beta(
+    df, Class,
+    summarize = FALSE,
+    save_details = TRUE
+    )
+
+  expect_snapshot(no_res)
+
+})

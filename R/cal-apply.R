@@ -22,7 +22,6 @@ cal_apply <- function(.data,
                       pred_class = NULL,
                       parameters = NULL,
                       ...) {
-  cal_pkg_check(required_pkgs(object))
   rlang::check_dots_empty()
   UseMethod("cal_apply")
 }
@@ -34,6 +33,8 @@ cal_apply.data.frame <- function(.data,
                                  pred_class = NULL,
                                  parameters = NULL,
                                  ...) {
+  cal_pkg_check(required_pkgs(object))
+
   stop_null_parameters(parameters)
 
   cal_adjust_update(
@@ -50,6 +51,8 @@ cal_apply.tune_results <- function(.data,
                                    pred_class = NULL,
                                    parameters = NULL,
                                    ...) {
+  cal_pkg_check(required_pkgs(object))
+
   if (!(".predictions" %in% colnames(.data))) {
     rlang::abort(
       paste0(

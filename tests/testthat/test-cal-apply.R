@@ -107,3 +107,8 @@ test_that("Passing a tune_results without saved predictions causes error", {
   expect_error(cal_apply(tune::ames_grid_search, tl_beta))
 })
 
+test_that("Passing a calibration object as the first arg fails", {
+  sl_beta <- cal_estimate_beta(segment_logistic, Class)
+  expect_error(cal_apply(sl_beta, segment_logistic))
+})
+

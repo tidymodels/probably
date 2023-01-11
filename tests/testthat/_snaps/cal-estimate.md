@@ -112,6 +112,22 @@
       `.pred_good` ==> good
       `.pred_poor` ==> poor
 
+# Isotonic Bootstrapped estimates work - tune_results
+
+    Code
+      print(tl_isotonic)
+    Message
+      
+      -- Probability Calibration 
+      Method: Bootstrapped Isotonic Regression
+      Type: Binary
+      Source class: Tune Results
+      Data points: 4,000, split in 8 groups
+      Truth variable: `class`
+      Estimate variables:
+      `.pred_class_1` ==> class_1
+      `.pred_class_2` ==> class_2
+
 # Beta estimates work - data.frame
 
     Code
@@ -128,6 +144,23 @@
       `.pred_good` ==> good
       `.pred_poor` ==> poor
 
+---
+
+    Code
+      print(sp_multi)
+    Message
+      
+      -- Probability Calibration 
+      Method: Multinomial
+      Type: Multiclass
+      Source class: Data Frame
+      Data points: 110
+      Truth variable: `Species`
+      Estimate variables:
+      `.pred_bobcat` ==> bobcat
+      `.pred_coyote` ==> coyote
+      `.pred_gray_fox` ==> gray_fox
+
 # Beta estimates work - tune_results
 
     Code
@@ -143,6 +176,25 @@
       Estimate variables:
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
+
+---
+
+    Code
+      print(tl_multi)
+    Message
+      
+      -- Probability Calibration 
+      Method: Multinomial
+      Type: Multiclass
+      Source class: Tune Results
+      Data points: 2,930, split in 10 groups
+      Truth variable: `Bldg_Type`
+      Estimate variables:
+      `.pred_OneFam` ==> OneFam
+      `.pred_TwoFmCon` ==> TwoFmCon
+      `.pred_Duplex` ==> Duplex
+      `.pred_Twnhs` ==> Twnhs
+      `.pred_TwnhsE` ==> TwnhsE
 
 # Non-default names used for estimate columns
 

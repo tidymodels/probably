@@ -68,6 +68,13 @@ cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
   truth <- enquo(truth)
 
   levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
+
+  if(length(levels) == 2) {
+    rlang::abort(
+      "This function is meant to be used with a multi-class outcomes only"
+      )
+  }
+
   model <- cal_multinom_impl_grp(
     .data = .data,
     truth = !!truth,
