@@ -23,6 +23,7 @@ Useful links:
 Authors:
 \itemize{
   \item Davis Vaughan \email{davis@rstudio.com}
+  \item Edgar Ruiz \email{edgar@rstudio.com}
 }
 
 Other contributors:

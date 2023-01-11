@@ -2,7 +2,11 @@
 
 * Copyright holder changed to Posit Software PBC.
 
-* Adds calibration validation function for Logistic, Isotonic, and Beta. These functions take in a re-sampled data set, and run the calibration on the testing data, and the applies the calibration to the assesment set. It then returns the average of the requested metrics, it defaults on Brier score.
+* Adds support for multi-class calibration objects.
+
+* Implements multinomial calibration via `nnet::multinom()`.
+
+* Adds calibration validation function for Logistic, Isotonic, and Beta. These functions take in a re-sampled data set, and run the calibration on the testing data, and the applies the calibration to the assessment set. It then returns the average of the requested metrics, it defaults on Brier score.
 
 * Adds `cal_apply()` function. It uses the output of a calibration function, and applies it to a data frame, or a tune_results object. 
 
