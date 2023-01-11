@@ -17,7 +17,7 @@ test_that("Binary breaks functions work", {
     "'Species' does not have 2 levels"
   )
 
-  x11 <- .cal_binary_table_breaks(testthat_cal_tune_results())
+  x11 <- .cal_binary_table_breaks(testthat_cal_binary())
 
   expect_equal(
     x11$predicted_midpoint,
@@ -25,7 +25,7 @@ test_that("Binary breaks functions work", {
     )
 
   expect_s3_class(
-    cal_plot_breaks(testthat_cal_tune_results()),
+    cal_plot_breaks(testthat_cal_binary()),
     "ggplot"
     )
 })
@@ -55,10 +55,10 @@ test_that("Binary logistic functions work", {
     "'Species' does not have 2 levels"
   )
 
-  x22 <- .cal_binary_table_logistic(testthat_cal_tune_results())
+  x22 <- .cal_binary_table_logistic(testthat_cal_binary())
 
 
-  x22_1 <- testthat_cal_tune_results() %>%
+  x22_1 <- testthat_cal_binary() %>%
     tune::collect_predictions(summarize = TRUE) %>%
     dplyr::group_by(.config) %>%
     dplyr::group_map(~{
@@ -78,7 +78,7 @@ test_that("Binary logistic functions work", {
   expect_equal(sd(x22$prob), sd(x22_1), tolerance = 0.000001)
   expect_equal(mean(x22$prob), mean(x22_1), tolerance = 0.000001)
 
-  x23 <- cal_plot_logistic(testthat_cal_tune_results())
+  x23 <- cal_plot_logistic(testthat_cal_binary())
 
   expect_s3_class(x23, "ggplot")
 
@@ -148,12 +148,12 @@ test_that("Binary windowed functions work", {
   )
 
   x32 <- .cal_binary_table_windowed(
-    testthat_cal_tune_results(),
+    testthat_cal_binary(),
     step_size = 0.11,
     window_size = 0.10
     )
 
-  x32_1 <- testthat_cal_tune_results() %>%
+  x32_1 <- testthat_cal_binary() %>%
     tune::collect_predictions(summarize = TRUE) %>%
     dplyr::mutate(x = dplyr::case_when(
       .pred_class_1 <= 0.05 ~ 1,
@@ -175,7 +175,7 @@ test_that("Binary windowed functions work", {
     x32_1$n
   )
 
-  x33 <- cal_plot_windowed(testthat_cal_tune_results())
+  x33 <- cal_plot_windowed(testthat_cal_binary())
 
   expect_s3_class(x33, "ggplot")
 })

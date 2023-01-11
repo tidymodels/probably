@@ -8,11 +8,11 @@ test_that("Logistic apply works - data.frame", {
 })
 
 test_that("Logistic apply works - tune_results", {
-  tct <- testthat_cal_tune_results()
+  tct <- testthat_cal_binary()
   tl_logistic <- cal_estimate_logistic(tct, smooth = FALSE)
   tap_logistic <- cal_apply(tct, tl_logistic)
   expect_equal(
-    testthat_cal_tune_results_count(),
+    testthat_cal_binary_count(),
     nrow(tap_logistic)
   )
 })
@@ -27,11 +27,11 @@ test_that("Logistic spline apply works", {
 })
 
 test_that("Logistic spline apply works - tune_results", {
-  tct <- testthat_cal_tune_results()
+  tct <- testthat_cal_binary()
   tl_gam <- cal_estimate_logistic(tct)
   tap_gam <- cal_apply(tct, tl_gam)
   expect_equal(
-    testthat_cal_tune_results_count(),
+    testthat_cal_binary_count(),
     nrow(tap_gam)
   )
 })
@@ -48,11 +48,11 @@ test_that("Isotonic apply works - data.frame", {
 })
 
 test_that("Isotonic apply works - tune_results", {
-  tct <- testthat_cal_tune_results()
+  tct <- testthat_cal_binary()
   tl_isotonic <- cal_estimate_isotonic(tct)
   tap_isotonic <- cal_apply(tct, tl_isotonic)
   expect_equal(
-    testthat_cal_tune_results_count(),
+    testthat_cal_binary_count(),
     nrow(tap_isotonic)
   )
 })
@@ -65,11 +65,11 @@ test_that("Isotonic Bootstrapped apply works - data.frame", {
 })
 
 test_that("Isotonic Bootstrapped apply works - tune_results", {
-  tct <- testthat_cal_tune_results()
+  tct <- testthat_cal_binary()
   tl_boot <- cal_estimate_isotonic_boot(tct)
   tap_boot <- cal_apply(tct, tl_boot)
   expect_equal(
-    testthat_cal_tune_results_count(),
+    testthat_cal_binary_count(),
     nrow(tap_boot)
   )
 })
@@ -84,11 +84,11 @@ test_that("Beta apply works - data.frame", {
 })
 
 test_that("Beta apply works - tune_results", {
-  tct <- testthat_cal_tune_results()
+  tct <- testthat_cal_binary()
   tl_beta <- cal_estimate_beta(tct)
   tap_beta <- cal_apply(tct, tl_beta)
   expect_equal(
-    testthat_cal_tune_results_count(),
+    testthat_cal_binary_count(),
     nrow(tap_beta)
   )
 })
@@ -102,7 +102,7 @@ test_that("Passing the data frame first returns expected abort message", {
 })
 
 test_that("Passing a tune_results without saved predictions causes error", {
-  tct <- testthat_cal_tune_results()
+  tct <- testthat_cal_binary()
   tl_beta <- cal_estimate_beta(tct)
   expect_error(cal_apply(tune::ames_grid_search, tl_beta))
 })

@@ -8,7 +8,7 @@ test_that("Logistic estimates work - data.frame", {
 })
 
 test_that("Logistic estimates work - tune_results", {
-  tl_logistic <- cal_estimate_logistic(testthat_cal_tune_results(), smooth = FALSE)
+  tl_logistic <- cal_estimate_logistic(testthat_cal_binary(), smooth = FALSE)
   expect_cal_type(tl_logistic, "binary")
   expect_cal_method(tl_logistic, "Logistic")
   expect_cal_estimate(tl_logistic, "butchered_glm")
@@ -26,15 +26,15 @@ test_that("Logistic spline estimates work - data.frame", {
 })
 
 test_that("Logistic spline estimates work - tune_results", {
-  tl_gam <- cal_estimate_logistic(testthat_cal_tune_results())
+  tl_gam <- cal_estimate_logistic(testthat_cal_binary())
   expect_cal_type(tl_gam, "binary")
   expect_cal_method(tl_gam, "Logistic Spline")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
 
   expect_equal(
-    testthat_cal_tune_results_count(),
-    nrow(cal_apply(testthat_cal_tune_results(), tl_gam))
+    testthat_cal_binary_count(),
+    nrow(cal_apply(testthat_cal_binary(), tl_gam))
   )
 })
 
@@ -49,14 +49,14 @@ test_that("Isotonic estimates work - data.frame", {
 
 test_that("Isotonic estimates work - tune_results", {
   set.seed(100)
-  tl_isotonic <- cal_estimate_isotonic(testthat_cal_tune_results())
+  tl_isotonic <- cal_estimate_isotonic(testthat_cal_binary())
   expect_cal_type(tl_isotonic, "binary")
   expect_cal_method(tl_isotonic, "Isotonic")
   expect_snapshot(print(tl_isotonic))
 
   expect_equal(
-    testthat_cal_tune_results_count(),
-    nrow(cal_apply(testthat_cal_tune_results(), tl_isotonic))
+    testthat_cal_binary_count(),
+    nrow(cal_apply(testthat_cal_binary(), tl_isotonic))
   )
 })
 
@@ -76,14 +76,14 @@ test_that("Beta estimates work - data.frame", {
 })
 
 test_that("Beta estimates work - tune_results", {
-  tl_beta <- cal_estimate_beta(testthat_cal_tune_results())
+  tl_beta <- cal_estimate_beta(testthat_cal_binary())
   expect_cal_type(tl_beta, "binary")
   expect_cal_method(tl_beta, "Beta")
   expect_snapshot(print(tl_beta))
 
   expect_equal(
-    testthat_cal_tune_results_count(),
-    nrow(cal_apply(testthat_cal_tune_results(), tl_beta))
+    testthat_cal_binary_count(),
+    nrow(cal_apply(testthat_cal_binary(), tl_beta))
   )
 })
 
