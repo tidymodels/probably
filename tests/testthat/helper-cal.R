@@ -80,14 +80,11 @@ testthat_cal_multiclass <- function() {
         parsnip::set_mode("classification") %>%
         parsnip::set_engine("ranger")
 
-      ranger_workflow <- workflows::workflow() %>%
-        workflows::add_recipe(ranger_recipe) %>%
-        workflows::add_model(ranger_spec)
-
       ret <- tune::tune_grid(
-          ranger_workflow,
-          resamples = rsample::vfold_cv(df, v = 2, repeats = 3),
-          control = tune::control_resamples(save_pred = TRUE)
+        object = ranger_spec,
+        preprocessor = ranger_recipe,
+        resamples = rsample::vfold_cv(df, v = 2, repeats = 3),
+        control = tune::control_resamples(save_pred = TRUE)
         )
 
       saveRDS(ret, ret_file)

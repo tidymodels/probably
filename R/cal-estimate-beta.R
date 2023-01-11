@@ -78,6 +78,7 @@ cal_estimate_beta.tune_results <- function(.data,
 }
 
 #' @rdname required_pkgs.cal_object
+#' @keywords internal
 #' @export
 required_pkgs.cal_estimate_beta <- function(x, ...) {
   c("betacal")

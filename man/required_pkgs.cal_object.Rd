@@ -26,3 +26,4 @@ calibrations}
 S3 methods to track which additional packages are needed for specific
 calibrations
 }
+\keyword{internal}

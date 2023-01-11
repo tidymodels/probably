@@ -212,6 +212,14 @@ cal_validate_beta.rset <- function(.data,
 #' Measure performance of a Multinomial regression calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic_boot
+#' @examples
+#'
+#' library(magrittr)
+#'
+#' species_probs %>%
+#'   rsample::vfold_cv() %>%
+#'   cal_validate_multinomial(Species)
+#'
 #' @export
 cal_validate_multinomial <- function(.data,
                                      truth = NULL,
@@ -248,6 +256,18 @@ cal_validate_multinomial.rset <- function(.data,
 
 # --------------------------------- Summary ------------------------------------
 #' Summarizes the metrics of a Calibrated Re-sampled set
+#' @examples
+#'
+#' library(magrittr)
+#'
+#' sl_val <- segment_logistic %>%
+#'   rsample::vfold_cv() %>%
+#'   cal_validate_beta(Class, summarize = FALSE, save_details = TRUE)
+#'
+#' sl_val
+#'
+#' cal_validate_summarize(sl_val)
+#'
 #' @param x Calibrated Re-sampled set
 #' @export
 cal_validate_summarize <- function(x) {

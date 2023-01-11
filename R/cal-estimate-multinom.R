@@ -58,6 +58,7 @@ cal_estimate_multinomial.tune_results <- function(.data,
 }
 
 #' @rdname required_pkgs.cal_object
+#' @keywords internal
 #' @export
 required_pkgs.cal_estimate_multinomial <- function(x, ...) {
   c("nnet")

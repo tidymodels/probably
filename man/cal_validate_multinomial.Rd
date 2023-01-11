@@ -72,8 +72,8 @@ only processes re-sampled data.
 
 library(magrittr)
 
-segment_logistic \%>\%
+species_probs \%>\%
   rsample::vfold_cv() \%>\%
-  cal_validate_logistic(Class)
+  cal_validate_multinomial(Species)
 
 }

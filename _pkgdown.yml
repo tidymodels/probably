@@ -40,4 +40,14 @@ reference:
 
 - title: Calibration
   contents:
-  - starts_with("cal_")
+  - starts_with("cal_estimate")
+  - cal_apply
+
+- title: Calibration Validation
+  contents:
+  - starts_with("cal_validate")
+
+- title: Calibration Plots
+  contents:
+  - starts_with("cal_plot")
+

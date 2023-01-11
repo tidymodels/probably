@@ -88,6 +88,7 @@ cal_estimate_logistic.tune_results <- function(.data,
 }
 
 #' @rdname required_pkgs.cal_object
+#' @keywords internal
 #' @export
 required_pkgs.cal_estimate_logistic_spline <- function(x, ...) {
   c("mgcv")
