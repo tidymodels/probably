@@ -40,5 +40,5 @@ generics::required_pkgs
 #' @inheritParams generics::required_pkgs
 #' @export
 required_pkgs.cal_object <- function(x, ...) {
-  NULL
+  c("probably")
 }

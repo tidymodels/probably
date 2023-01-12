@@ -81,7 +81,7 @@ cal_estimate_beta.tune_results <- function(.data,
 #' @keywords internal
 #' @export
 required_pkgs.cal_estimate_beta <- function(x, ...) {
-  c("betacal")
+  c("betacal", "probably")
 }
 
 # ----------------------------- Implementation ---------------------------------

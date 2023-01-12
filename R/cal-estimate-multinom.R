@@ -61,7 +61,7 @@ cal_estimate_multinomial.tune_results <- function(.data,
 #' @keywords internal
 #' @export
 required_pkgs.cal_estimate_multinomial <- function(x, ...) {
-  c("nnet")
+  c("nnet", "probably")
 }
 
 cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
