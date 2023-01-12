@@ -18,12 +18,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Max Kuhn \email{max@rstudio.com}
+\strong{Maintainer}: Max Kuhn \email{max@posit.co}
 
 Authors:
 \itemize{
-  \item Davis Vaughan \email{davis@rstudio.com}
-  \item Edgar Ruiz \email{edgar@rstudio.com}
+  \item Davis Vaughan \email{davis@posit.co}
+  \item Edgar Ruiz \email{edgar@posit.co}
 }
 
 Other contributors:
