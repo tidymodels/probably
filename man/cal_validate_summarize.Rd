@@ -15,3 +15,16 @@ cal_validate_summarize(x)
 \description{
 Summarizes the metrics of a Calibrated Re-sampled set
 }
+\examples{
+
+library(magrittr)
+
+sl_val <- segment_logistic \%>\%
+  rsample::vfold_cv() \%>\%
+  cal_validate_beta(Class, summarize = FALSE, save_details = TRUE)
+
+sl_val
+
+cal_validate_summarize(sl_val)
+
+}

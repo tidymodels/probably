@@ -208,8 +208,66 @@ cal_validate_beta.rset <- function(.data,
   )
 }
 
+# ------------------------------- Multinomial ----------------------------------
+#' Measure performance of a Multinomial regression calibration
+#' @inherit cal_validate_logistic
+#' @inheritParams cal_estimate_isotonic_boot
+#' @examples
+#'
+#' library(magrittr)
+#'
+#' species_probs %>%
+#'   rsample::vfold_cv() %>%
+#'   cal_validate_multinomial(Species)
+#'
+#' @export
+cal_validate_multinomial <- function(.data,
+                                     truth = NULL,
+                                     estimate = dplyr::starts_with(".pred_"),
+                                     parameters = NULL,
+                                     metrics = NULL,
+                                     save_details = FALSE,
+                                     summarize = TRUE,
+                                     ...) {
+  UseMethod("cal_validate_multinomial")
+}
+
+#' @export
+#' @rdname cal_validate_multinomial
+cal_validate_multinomial.rset <- function(.data,
+                                          truth = NULL,
+                                          estimate = dplyr::starts_with(".pred_"),
+                                          parameters = NULL,
+                                          metrics = NULL,
+                                          save_details = FALSE,
+                                          summarize = TRUE,
+                                          ...) {
+  cal_validate(
+    rset = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    cal_function = "multinomial",
+    metrics = metrics,
+    summarize = summarize,
+    save_details = save_details,
+    ...
+  )
+}
+
 # --------------------------------- Summary ------------------------------------
 #' Summarizes the metrics of a Calibrated Re-sampled set
+#' @examples
+#'
+#' library(magrittr)
+#'
+#' sl_val <- segment_logistic %>%
+#'   rsample::vfold_cv() %>%
+#'   cal_validate_beta(Class, summarize = FALSE, save_details = TRUE)
+#'
+#' sl_val
+#'
+#' cal_validate_summarize(sl_val)
+#'
 #' @param x Calibrated Re-sampled set
 #' @export
 cal_validate_summarize <- function(x) {
@@ -242,6 +300,7 @@ cal_validate_summarize.cal_rset <- function(x) {
     }) %>%
     dplyr::bind_rows()
 }
+
 
 # ------------------------------ Implementation --------------------------------
 cal_validate <- function(rset,
@@ -312,7 +371,23 @@ cal_validate <- function(rset,
     )
   }
 
-  estimate_col <- cals[[1]]$levels[[1]]
+  if (cal_function == "multinomial") {
+    cals <- purrr::map(
+      data_tr,
+      cal_estimate_multinomial,
+      truth = !!truth,
+      estimate = !!estimate,
+      ...
+    )
+  }
+
+  if(cals[[1]]$type == "binary") {
+    estimate_cols <- cals[[1]]$levels[[1]]
+  } else {
+    estimate_cols <- cals[[1]]$levels %>%
+      purrr::map(as_name) %>%
+      purrr::reduce(c)
+  }
 
   applied <- seq_along(data_as) %>%
     purrr::map(
@@ -320,11 +395,11 @@ cal_validate <- function(rset,
         ap <- cal_apply(
           .data = data_as[[.x]],
           object = cals[[.x]],
-          pred_class = rlang::parse_expr(".pred_class")
-          )
+          pred_class = !! rlang::parse_expr(".pred_class")
+        )
 
-        stats_after <- metrics(ap, truth = !!truth, estimate_col)
-        stats_before <- metrics(data_as[[.x]], truth = !!truth, estimate_col)
+        stats_after <- metrics(ap, truth = !!truth, estimate_cols)
+        stats_before <- metrics(data_as[[.x]], truth = !!truth, estimate_cols)
 
         stats_cols <- c(".metric", ".estimator", "direction", ".estimate")
         stats_after$direction <- direction
@@ -341,7 +416,7 @@ cal_validate <- function(rset,
     ) %>%
     purrr::transpose()
 
-  if(save_details) {
+  if (save_details) {
     rset <- dplyr::mutate(
       rset,
       calibration = cals,

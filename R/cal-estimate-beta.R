@@ -77,6 +77,12 @@ cal_estimate_beta.tune_results <- function(.data,
     )
 }
 
+#' @rdname required_pkgs.cal_object
+#' @keywords internal
+#' @export
+required_pkgs.cal_estimate_beta <- function(x, ...) {
+  c("betacal", "probably")
+}
 
 # ----------------------------- Implementation ---------------------------------
 
@@ -87,6 +93,9 @@ cal_beta_impl <- function(.data,
                           estimate = dplyr::starts_with(".pred_"),
                           source_class = NULL,
                           ...) {
+
+  cal_pkg_check(required_pkgs.cal_estimate_beta())
+
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
