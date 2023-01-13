@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">probably</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9005</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">0.1.0.9006</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -162,11 +162,6 @@
 
       <dl><dt>
           
-          <code><a href="cal_apply.html">cal_apply()</a></code> 
-        </dt>
-        <dd>Applies a calibration to a set of pred_class probabilities</dd>
-      </dl><dl><dt>
-          
           <code><a href="cal_estimate_beta.html">cal_estimate_beta()</a></code> 
         </dt>
         <dd>Uses a Beta calibration model to calculate new probabilities</dd>
@@ -187,20 +182,26 @@
         <dd>Uses a logistic regression model to calibrate probabilities</dd>
       </dl><dl><dt>
           
-          <code><a href="cal_plot_breaks.html">cal_plot_breaks()</a></code> 
+          <code><a href="cal_estimate_multinomial.html">cal_estimate_multinomial()</a></code> 
         </dt>
-        <dd>Probability calibration plots via binning</dd>
+        <dd>Uses a Multinomial calibration model to calculate new probabilities</dd>
       </dl><dl><dt>
           
-          <code><a href="cal_plot_logistic.html">cal_plot_logistic()</a></code> 
+          <code><a href="cal_apply.html">cal_apply()</a></code> 
         </dt>
-        <dd>Probability calibration plots via logistic regression</dd>
-      </dl><dl><dt>
-          
-          <code><a href="cal_plot_windowed.html">cal_plot_windowed()</a></code> 
-        </dt>
-        <dd>Probability calibration plots via moving windows</dd>
-      </dl><dl><dt>
+        <dd>Applies a calibration to a set of pred_class probabilities</dd>
+      </dl></div><div class="section level2">
+      <h2 id="calibration-validation">Calibration Validation<a class="anchor" aria-label="anchor" href="#calibration-validation"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="cal_validate_beta.html">cal_validate_beta()</a></code> 
         </dt>
@@ -222,9 +223,40 @@
         <dd>Measure performance of a logistic regression calibration</dd>
       </dl><dl><dt>
           
+          <code><a href="cal_validate_multinomial.html">cal_validate_multinomial()</a></code> 
+        </dt>
+        <dd>Measure performance of a Multinomial regression calibration</dd>
+      </dl><dl><dt>
+          
           <code><a href="cal_validate_summarize.html">cal_validate_summarize()</a></code> 
         </dt>
         <dd>Summarizes the metrics of a Calibrated Re-sampled set</dd>
+      </dl></div><div class="section level2">
+      <h2 id="calibration-plots">Calibration Plots<a class="anchor" aria-label="anchor" href="#calibration-plots"></a></h2>
+      
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="cal_plot_breaks.html">cal_plot_breaks()</a></code> 
+        </dt>
+        <dd>Probability calibration plots via binning</dd>
+      </dl><dl><dt>
+          
+          <code><a href="cal_plot_logistic.html">cal_plot_logistic()</a></code> 
+        </dt>
+        <dd>Probability calibration plots via logistic regression</dd>
+      </dl><dl><dt>
+          
+          <code><a href="cal_plot_windowed.html">cal_plot_windowed()</a></code> 
+        </dt>
+        <dd>Probability calibration plots via moving windows</dd>
       </dl></div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
@@ -233,7 +265,7 @@
    </div>
   <footer><div class="container">
   <div class="pkgdown-footer-left">
-  <p></p><p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://github.com/DavisVaughan" class="external-link">Davis Vaughan</a>, Posit Software, PBC.</p>
+  <p></p><p>Developed by <a href="https://github.com/topepo" class="external-link">Max Kuhn</a>, <a href="https://github.com/DavisVaughan" class="external-link">Davis Vaughan</a>, Edgar Ruiz, Posit Software, PBC.</p>
 </div>
 
 <div class="pkgdown-footer-right">

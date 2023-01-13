@@ -52,6 +52,9 @@
     <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_logistic.html</loc>
   </url>
   <url>
+    <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_multinomial.html</loc>
+  </url>
+  <url>
     <loc>https://probably.tidymodels.org/dev/reference/cal_plot_breaks.html</loc>
   </url>
   <url>
@@ -71,6 +74,9 @@
   </url>
   <url>
     <loc>https://probably.tidymodels.org/dev/reference/cal_validate_logistic.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_multinomial.html</loc>
   </url>
   <url>
     <loc>https://probably.tidymodels.org/dev/reference/cal_validate_summarize.html</loc>
@@ -101,6 +107,9 @@
   </url>
   <url>
     <loc>https://probably.tidymodels.org/dev/reference/reportable_rate.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/required_pkgs.cal_object.html</loc>
   </url>
   <url>
     <loc>https://probably.tidymodels.org/dev/reference/segment_naive_bayes.html</loc>
