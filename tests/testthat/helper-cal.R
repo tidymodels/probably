@@ -28,7 +28,7 @@ testthat_cal_binary <- function() {
         resamples = rsample::vfold_cv(sim_data, v = 2, repeats = 3),
         control = tune::control_resamples(save_pred = TRUE)
       )
-      saveRDS(ret, ret_file)
+      saveRDS(ret, ret_file, version = 2)
     } else {
       ret <- readRDS(ret_file)
     }
@@ -87,7 +87,7 @@ testthat_cal_multiclass <- function() {
         control = tune::control_resamples(save_pred = TRUE)
         )
 
-      saveRDS(ret, ret_file)
+      saveRDS(ret, ret_file, version = 2)
     } else {
       ret <- readRDS(ret_file)
     }

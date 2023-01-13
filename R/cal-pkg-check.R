@@ -1,18 +1,8 @@
 cal_pkg_check <- function(pkgs = NULL) {
 
-  not_installed <- pkgs %>%
-    purrr::map(
-      ~{
-        fp <- find.package(.x, quiet = TRUE)
-        if(length(fp)) {
-          NULL
-        } else {
-          .x
-        }
-      }
-    ) %>%
-    purrr::keep(~ !is.null(.x)) %>%
-    as.character()
+  installed <- purrr::map_lgl(pkgs, rlang::is_installed)
+
+  not_installed <- pkgs[!installed]
 
   if(length(not_installed)) {
     n_pkgs <- length(not_installed)
