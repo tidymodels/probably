@@ -317,6 +317,7 @@ cal_validate <- function(rset,
   if (is.null(cal_function)) rlang::abort("No calibration function provided")
 
   if (is.null(metrics)) {
+    # TODO regression
     metrics <- yardstick::metric_set(
       yardstick::brier_class
     )
@@ -331,6 +332,7 @@ cal_validate <- function(rset,
   data_tr <- purrr::map(rset$splits, rsample::analysis)
   data_as <- purrr::map(rset$splits, rsample::assessment)
 
+  # TODO clean these up
   if (cal_function == "logistic") {
     cals <- purrr::map(
       data_tr,
@@ -381,6 +383,7 @@ cal_validate <- function(rset,
     )
   }
 
+  # TODO include regression and/or make sub-functions since different cols
   if(cals[[1]]$type == "binary") {
     estimate_cols <- cals[[1]]$levels[[1]]
   } else {

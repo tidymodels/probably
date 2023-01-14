@@ -990,7 +990,7 @@ process_level <- function(x) {
   if (x == "second") {
     ret <- 2
   }
-  if (is.null(ret)) {
+  if (is.null(ret)) { # TODO null for regression?
     rlang::abort("Invalid event_level entry. Valid entries are 'first' and 'second'")
   }
   ret
@@ -1002,7 +1002,7 @@ assert_truth_two_levels <- function(.data, truth) {
     truth_name <- as_name(truth)
     truth_levels <- levels(.data[truth_name][[1]])
     if (length(truth_levels) != 2) {
-      rlang::abort(paste0("'", truth_name, "' does not have 2 levels"))
+      rlang::abort(paste0("'", truth_name, "' should be a factor with 2 levels"))
     }
   }
 }

@@ -56,7 +56,7 @@ cal_apply.tune_results <- function(.data,
   if (!(".predictions" %in% colnames(.data))) {
     rlang::abort(
       paste0(
-        "The `tune_results` object does not contain the `.predictions` column.",
+        "The `tune_results` object does not contain columns with predictions",
         " Refit with the control argument `save_pred = TRUE` to save pred_classs."
       )
     )
