@@ -1,5 +1,7 @@
 #---------------------------------- Methods ------------------------------------
 
+# TODO for regression; update a lot of help pages to talk more generally about multiple types
+
 #' Applies a calibration to a set of pred_class probabilities
 #' @details It currently supports data.frames only. It extracts the `truth` and
 #' the estimate columns names, and levels, from the calibration object.
@@ -57,7 +59,7 @@ cal_apply.tune_results <- function(.data,
     rlang::abort(
       paste0(
         "The `tune_results` object does not contain columns with predictions",
-        " Refit with the control argument `save_pred = TRUE` to save pred_classs."
+        " Refit with the control argument `save_pred = TRUE` to save these columns."
       )
     )
   }

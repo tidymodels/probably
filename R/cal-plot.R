@@ -1018,8 +1018,8 @@ tune_results_args <- function(.data,
   if (!(".predictions" %in% colnames(.data))) {
     rlang::abort(
       paste0(
-        "The `tune_results` object does not contain the `.predictions` column.",
-        " Refit with the control argument `save_pred = TRUE` to save predictions."
+        "The `tune_results` object does not contain columns with predictions",
+        " Refit with the control argument `save_pred = TRUE` to save these columns."
       )
     )
   }
@@ -1041,7 +1041,7 @@ tune_results_args <- function(.data,
 
   if (quo_is_null(estimate)) {
     truth_str <- as_name(truth)
-    lev <- process_level(event_level)
+    lev <- process_level(event_level) # TODO changes for regression?
     fc_truth <- levels(predictions[[truth_str]])
     estimate_str <- paste0(".pred_", fc_truth[[lev]])
     estimate <- parse_expr(estimate_str)

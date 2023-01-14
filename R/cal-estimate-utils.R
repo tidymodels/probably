@@ -31,6 +31,28 @@ as_binary_cal_object <- function(estimate,
   )
 }
 
+
+as_regression_cal_object <- function(estimate,
+                                 truth,
+                                 levels,
+                                 method,
+                                 rows,
+                                 additional_class = NULL,
+                                 source_class = NULL) {
+  truth <- enquo(truth)
+
+  as_cal_object(
+    estimate = estimate,
+    truth = !!truth,
+    levels = levels,
+    method = method,
+    rows = rows,
+    additional_classes = c(additional_class, "cal_regression"),
+    source_class = source_class,
+    type = "regression"
+  )
+}
+
 # ------------------------------- Multi ----------------------------------------
 
 #' @export
@@ -144,8 +166,6 @@ stop_multiclass <- function() {
 truth_estimate_map <- function(.data, truth, estimate) {
   truth_str <- tidyselect_cols(.data, {{ truth }})
 
-  truth_levels <- levels(.data[[truth_str]])
-
   estimate_str <- tidyselect_cols(.data, {{ estimate }}) %>%
     names()
 
@@ -153,19 +173,28 @@ truth_estimate_map <- function(.data, truth, estimate) {
     cli::cli_abort("{.arg estimate} must select at least one column.")
   }
 
-  if (all(substr(estimate_str, 1, 6) == ".pred_")) {
-    est_map <- purrr::map(
-      truth_levels,
-      ~ sym(estimate_str[paste0(".pred_", .x) == estimate_str])
-    )
-  } else {
-    est_map <- purrr::map(
-      seq_along(truth_levels),
-      ~ sym(estimate_str[[.x]])
-    )
-  }
+  truth_levels <- levels(.data[[truth_str]])
 
-  set_names(est_map, truth_levels)
+  if (length(truth_levels) > 0) {
+
+    if (all(substr(estimate_str, 1, 6) == ".pred_")) {
+      est_map <- purrr::map(
+        truth_levels,
+        ~ sym(estimate_str[paste0(".pred_", .x) == estimate_str])
+      )
+    } else {
+      est_map <- purrr::map(
+        seq_along(truth_levels),
+        ~ sym(estimate_str[[.x]])
+      )
+    }
+
+    res <- set_names(est_map, truth_levels)
+  } else {
+    res <- list(sym(estimate_str))
+    names(res) <- "predictions"
+  }
+  res
 }
 
 # Wraps tidyselect call to avoid code duplication in the function above
