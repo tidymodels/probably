@@ -360,7 +360,7 @@ cal_validate <- function(rset,
     rlang::abort("No calibration function provided")
   }
 
-  outcomes <- dplyr::select(.data$splits[[1]]$data, {{ truth}}) %>% purrr::pluck(1)
+  outcomes <- dplyr::select(rset$splits[[1]]$data, {{ truth }}) %>% purrr::pluck(1)
   model_mode <- get_problem_type(outcomes)
 
   metrics <- check_validation_metrics(metrics, model_mode)
