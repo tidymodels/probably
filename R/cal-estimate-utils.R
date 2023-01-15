@@ -32,27 +32,6 @@ as_binary_cal_object <- function(estimate,
 }
 
 
-as_regression_cal_object <- function(estimate,
-                                 truth,
-                                 levels,
-                                 method,
-                                 rows,
-                                 additional_class = NULL,
-                                 source_class = NULL) {
-  truth <- enquo(truth)
-
-  as_cal_object(
-    estimate = estimate,
-    truth = !!truth,
-    levels = levels,
-    method = method,
-    rows = rows,
-    additional_classes = c(additional_class, "cal_regression"),
-    source_class = source_class,
-    type = "regression"
-  )
-}
-
 # ------------------------------- Multi ----------------------------------------
 
 #' @export
@@ -87,6 +66,28 @@ as_multi_cal_object <- function(estimate,
 #' @export
 print.cal_regression <- function(x, ...) {
   print_reg_cal(x, ...)
+}
+
+
+as_regression_cal_object <- function(estimate,
+                                     truth,
+                                     levels,
+                                     method,
+                                     rows,
+                                     additional_class = NULL,
+                                     source_class = NULL) {
+  truth <- enquo(truth)
+
+  as_cal_object(
+    estimate = estimate,
+    truth = !!truth,
+    levels = levels,
+    method = method,
+    rows = rows,
+    additional_classes = c(additional_class, "cal_regression"),
+    source_class = source_class,
+    type = "regression"
+  )
 }
 
 # ------------------------------- Utils ----------------------------------------
@@ -134,7 +135,6 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
 
   cli::cli_end()
 }
-
 
 
 print_reg_cal <- function(x, upv = FALSE, ...) {
