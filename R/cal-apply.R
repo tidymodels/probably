@@ -2,19 +2,26 @@
 
 # TODO for regression; update a lot of help pages to talk more generally about multiple types
 
-#' Applies a calibration to a set of pred_class probabilities
-#' @details It currently supports data.frames only. It extracts the `truth` and
-#' the estimate columns names, and levels, from the calibration object.
+#' Applies a calibration to a set of existing predictions
+#' @details
+#'
+#' `cal_apply()` currently supports data.frames only. It extracts the `truth` and
+#' the estimate columns names from the calibration object.
+#'
 #' @param .data An object that can process a calibration object.
 #' @param object The calibration object (`cal_object`).
-#' @param pred_class (Optional) Column identifier for the hard class predictions
-#' (a factor vector). This column will be adjusted based on changes to the
-#' calibrated probability columns.
+#' @param pred_class (Optional, classification only) Column identifier for the
+#' hard class predictions (a factor vector). This column will be adjusted based
+#' on changes to the calibrated probability columns.
 #' @param parameters (Optional)  An optional tibble of tuning parameter values
 #' that can be used to filter the predicted values before processing. Applies
 #' only to `tune_results` objects.
 #' @param ... Optional arguments; currently unused.
 #' @examples
+#'
+#' # ------------------------------------------------------------------------------
+#' # classification example
+#'
 #' w_calibration <- cal_estimate_logistic(segment_logistic, Class)
 #'
 #' cal_apply(segment_logistic, w_calibration)

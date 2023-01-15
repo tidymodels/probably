@@ -5,7 +5,7 @@
 \alias{cal_apply.data.frame}
 \alias{cal_apply.tune_results}
 \alias{cal_apply.cal_object}
-\title{Applies a calibration to a set of pred_class probabilities}
+\title{Applies a calibration to a set of existing predictions}
 \usage{
 cal_apply(.data, object, pred_class = NULL, parameters = NULL, ...)
 
@@ -20,9 +20,9 @@ cal_apply(.data, object, pred_class = NULL, parameters = NULL, ...)
 
 \item{object}{The calibration object (\code{cal_object}).}
 
-\item{pred_class}{(Optional) Column identifier for the hard class predictions
-(a factor vector). This column will be adjusted based on changes to the
-calibrated probability columns.}
+\item{pred_class}{(Optional, classification only) Column identifier for the
+hard class predictions (a factor vector). This column will be adjusted based
+on changes to the calibrated probability columns.}
 
 \item{parameters}{(Optional)  An optional tibble of tuning parameter values
 that can be used to filter the predicted values before processing. Applies
@@ -31,13 +31,17 @@ only to \code{tune_results} objects.}
 \item{...}{Optional arguments; currently unused.}
 }
 \description{
-Applies a calibration to a set of pred_class probabilities
+Applies a calibration to a set of existing predictions
 }
 \details{
-It currently supports data.frames only. It extracts the \code{truth} and
-the estimate columns names, and levels, from the calibration object.
+\code{cal_apply()} currently supports data.frames only. It extracts the \code{truth} and
+the estimate columns names from the calibration object.
 }
 \examples{
+
+# ------------------------------------------------------------------------------
+# classification example
+
 w_calibration <- cal_estimate_logistic(segment_logistic, Class)
 
 cal_apply(segment_logistic, w_calibration)
