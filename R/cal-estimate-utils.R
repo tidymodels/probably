@@ -2,12 +2,12 @@
 
 #' @export
 print.cal_binary <- function(x, ...) {
-  print_cal(x, ...)
+  print_cls_cal(x, ...)
 }
 
 #' @export
 print.cal_estimate_isotonic <- function(x, ...) {
-  print_cal(x, upv = TRUE, ...)
+  print_cls_cal(x, upv = TRUE, ...)
 }
 
 as_binary_cal_object <- function(estimate,
@@ -57,7 +57,7 @@ as_regression_cal_object <- function(estimate,
 
 #' @export
 print.cal_multi <- function(x, ...) {
-  print_cal(x, ...)
+  print_cls_cal(x, ...)
 }
 
 
@@ -82,11 +82,18 @@ as_multi_cal_object <- function(estimate,
   )
 }
 
+# ------------------------------- Regression -----------------------------------
+
+#' @export
+print.cal_regression <- function(x, ...) {
+  print_reg_cal(x, ...)
+}
+
 # ------------------------------- Utils ----------------------------------------
 
 # TODO for regression; split up into separate sub-functions by mode
 
-print_cal <- function(x, upv = FALSE, ...) {
+print_cls_cal <- function(x, upv = FALSE, ...) {
 
   if(x$type == "binary") {
     type <- "Binary"
@@ -127,6 +134,38 @@ print_cal <- function(x, upv = FALSE, ...) {
 
   cli::cli_end()
 }
+
+
+
+print_reg_cal <- function(x, upv = FALSE, ...) {
+
+  cli::cli_div(theme = list(
+    span.val0 = list(color = "blue"),
+    span.val1 = list(color = "yellow"),
+    span.val2 = list(color = "darkgreen")
+  ))
+  rows <- prettyNum(x$rows, ",")
+  cli::cli_h3("Regression Calibration")
+  cli::cli_text("Method: {.val2 {x$method}}")
+  cli::cli_text("Source class: {.val2 {x$source_class}}")
+  if (length(x$estimates) == 1) {
+    cli::cli_text("Data points: {.val2 {rows}}")
+  } else {
+    no_ests <- length(x$estimates)
+    grps <- "Data points: {.val2 {rows}}, split in {.val2 {no_ests}} groups"
+    cli::cli_text(grps)
+  }
+
+  if (upv) {
+    upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]]), ",")
+    cli::cli_text("Unique Predicted Values: {.val2 {upv_no}}")
+  }
+  cli::cli_text("Truth variable: `{.val0 {x$truth}}`")
+  cli::cli_text("Estimate variable: {.val1 `{x$levels[[1]]}`}")
+
+  cli::cli_end()
+}
+
 
 as_cal_object <- function(estimate,
                           truth,
