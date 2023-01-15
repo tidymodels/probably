@@ -92,8 +92,6 @@ as_regression_cal_object <- function(estimate,
 
 # ------------------------------- Utils ----------------------------------------
 
-# TODO for regression; split up into separate sub-functions by mode
-
 print_cls_cal <- function(x, upv = FALSE, ...) {
 
   if(x$type == "binary") {
