@@ -31,6 +31,8 @@ probably contains tools to facilitate activities such as:
 
 * Investigating and estimating optimal probability thresholds.
 
+* Calibration assessments and remediation for classification and regression models.
+
 * Inclusion of _equivocal zones_ where the probabilities are too uncertain to report a prediction.
 
 ## Installation

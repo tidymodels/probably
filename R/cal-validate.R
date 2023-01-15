@@ -1,16 +1,19 @@
 # -------------------------------- Logistic ------------------------------------
-#' Measure performance of a calibration method
-#' @details These functions take an re-sampled object, created via `rsample`,
-#' and for each re-sample, it calculates the calibration on the analysis set, and
-#' then applies the calibration on the assessment set.
+#' Measure performance with and without using logistic calibration
+#' @description
+#' This function uses resampling to measure the effect of calibrating predicted
+#' values.
 #'
-#' By default, the average of Brier scores (classification calibration) or the
-#' root mean squared error (regression) are returned. Any appropriate
-#' [yardstick::metric_set()] can be used. The validation function compares the
-#' average of the metrics before, and after the calibration.
-#'
+#' @details
 #' Please note that this function does not apply to `tune_result` objects. It
 #' only processes resampled data.
+#'
+#' These functions take an resampling object, created via `rsample`,
+#' and for each resample, it calculates the calibration on the analysis set, and
+#' then applies the calibration on the assessment set.
+#'
+#' @template metrics_cls
+#'
 #' @param metrics A set of metrics passed created via `yardstick::metric_set()`
 #' @param summarize Indicates to pass tibble with the metrics averaged, or
 #' if to return the same sampled object but with new columns containing the
@@ -70,12 +73,13 @@ cal_validate_logistic.rset <- function(.data,
 }
 
 # -------------------------------- Isotonic ------------------------------------
-#' Measure performance of a Isotonic regression calibration
+#' Measure performance with and without using isotonic regression calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic
+#' @template metrics_both
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
 #'
 #' segment_logistic %>%
 #'   rsample::vfold_cv() %>%
@@ -116,12 +120,13 @@ cal_validate_isotonic.rset <- function(.data,
 }
 
 # ----------------------------- Isotonic Boot ----------------------------------
-#' Measure performance of a Isotonic regression calibration
+#' Measure performance with and without using bagged isotonic regression calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic_boot
+#' @template metrics_both
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
 #'
 #' segment_logistic %>%
 #'   rsample::vfold_cv() %>%
@@ -164,12 +169,12 @@ cal_validate_isotonic_boot.rset <- function(.data,
 }
 
 # ---------------------------------- Beta --------------------------------------
-#' Measure performance of Beta calibration
+#' Measure performance with and without using Beta calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_beta
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
 #'
 #' segment_logistic %>%
 #'   rsample::vfold_cv() %>%
@@ -216,12 +221,12 @@ cal_validate_beta.rset <- function(.data,
 }
 
 # ------------------------------- Multinomial ----------------------------------
-#' Measure performance of a Multinomial regression calibration
+#' Measure performance with and without using multinomial calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic_boot
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
 #'
 #' species_probs %>%
 #'   rsample::vfold_cv() %>%
@@ -262,10 +267,10 @@ cal_validate_multinomial.rset <- function(.data,
 }
 
 # --------------------------------- Summary ------------------------------------
-#' Summarizes the metrics of a Calibrated Re-sampled set
+#' Summarizes the resampling metrics associated with calibration
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
 #'
 #' sl_val <- segment_logistic %>%
 #'   rsample::vfold_cv() %>%
@@ -275,7 +280,7 @@ cal_validate_multinomial.rset <- function(.data,
 #'
 #' cal_validate_summarize(sl_val)
 #'
-#' @param x Calibrated Re-sampled set
+#' @param x The results of one of the `cal_validate_*()` functions.
 #' @export
 cal_validate_summarize <- function(x) {
   UseMethod("cal_validate_summarize")
@@ -433,15 +438,15 @@ cal_validate <- function(rset,
     )
   }
 
-  if (cal_function == "linear") {
-    cals <- purrr::map(
-      data_tr,
-      cal_estimate_linear,
-      truth = !!truth,
-      estimate = !!estimate,
-      ...
-    )
-  }
+  # if (cal_function == "linear") {
+  #   cals <- purrr::map(
+  #     data_tr,
+  #     cal_estimate_linear,
+  #     truth = !!truth,
+  #     estimate = !!estimate,
+  #     ...
+  #   )
+  # }
 
 
   if (model_mode == "classification") {

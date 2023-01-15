@@ -295,5 +295,5 @@ cal_class_name.tune_results <- function(x) {
 }
 
 cal_class_name.rset <- function(x) {
-  "Re-sampled data set"
+  "Resampled data set"
 }

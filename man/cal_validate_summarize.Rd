@@ -3,21 +3,21 @@
 \name{cal_validate_summarize}
 \alias{cal_validate_summarize}
 \alias{cal_validate_summarize.cal_rset}
-\title{Summarizes the metrics of a Calibrated Re-sampled set}
+\title{Summarizes the resampling metrics associated with calibration}
 \usage{
 cal_validate_summarize(x)
 
 \method{cal_validate_summarize}{cal_rset}(x)
 }
 \arguments{
-\item{x}{Calibrated Re-sampled set}
+\item{x}{The results of one of the \verb{cal_validate_*()} functions.}
 }
 \description{
-Summarizes the metrics of a Calibrated Re-sampled set
+Summarizes the resampling metrics associated with calibration
 }
 \examples{
 
-library(magrittr)
+library(dplyr)
 
 sl_val <- segment_logistic \%>\%
   rsample::vfold_cv() \%>\%

@@ -3,7 +3,7 @@
 \name{cal_validate_beta}
 \alias{cal_validate_beta}
 \alias{cal_validate_beta.rset}
-\title{Measure performance of Beta calibration}
+\title{Measure performance with and without using Beta calibration}
 \usage{
 cal_validate_beta(
   .data,
@@ -67,24 +67,28 @@ calibration y validation list columns.}
 calculate the new probabilities.}
 }
 \description{
-Measure performance of Beta calibration
+This function uses resampling to measure the effect of calibrating predicted
+values.
 }
 \details{
-These functions take an re-sampled object, created via \code{rsample},
-and for each re-sample, it calculates the calibration on the analysis set, and
-then applies the calibration on the assessment set.
-
-By default, the average of Brier scores (classification calibration) or the
-root mean squared error (regression) are returned. Any appropriate
-\code{\link[yardstick:metric_set]{yardstick::metric_set()}} can be used. The validation function compares the
-average of the metrics before, and after the calibration.
-
 Please note that this function does not apply to \code{tune_result} objects. It
 only processes resampled data.
+
+These functions take an resampling object, created via \code{rsample},
+and for each resample, it calculates the calibration on the analysis set, and
+then applies the calibration on the assessment set.
 }
+\section{Performance Metrics}{
+
+
+By default, the average of the Brier scores is returned. Any appropriate
+\code{\link[yardstick:metric_set]{yardstick::metric_set()}} can be used. The validation function compares the
+average of the metrics before, and after the calibration.
+}
+
 \examples{
 
-library(magrittr)
+library(dplyr)
 
 segment_logistic \%>\%
   rsample::vfold_cv() \%>\%
