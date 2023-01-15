@@ -12,6 +12,10 @@ cal_apply_regression.cal_estimate_linear_spline <-
     )
   }
 
+cal_apply_regression.cal_estimate_linear <-
+  cal_apply_regression.cal_estimate_linear_spline
+
+
 #---------------------------- Adjust implementations ---------------------------
 
 cal_add_reg_predict_impl <- function(object, .data) {
