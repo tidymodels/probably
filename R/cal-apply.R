@@ -154,3 +154,13 @@ cal_adjust.cal_binary <- function(object, .data, pred_class) {
     pred_class = {{ pred_class }}
   )
 }
+
+
+cal_adjust.cal_regression <- function(object, .data, pred_class) {
+  cal_apply_regression(
+    object = object,
+    .data = .data,
+    pred_class = NULL
+  )
+}
+
