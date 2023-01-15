@@ -1,5 +1,5 @@
 # -------------------------------- Logistic ------------------------------------
-#' Measure performance of a logistic regression calibration
+#' Measure performance of calibration method
 #' @details These functions take an re-sampled object, created via `rsample`,
 #' and for each re-sample, it calculates the calibration on the training set, and
 #' then applies the calibration on the assessment set. By default the average of
@@ -303,6 +303,48 @@ cal_validate_summarize.cal_rset <- function(x) {
 
 
 # ------------------------------ Implementation --------------------------------
+
+get_problem_type <- function(x) {
+  if (is.factor(x)) {
+    res <- "classification"
+  } else if (is.numeric(x)) {
+    res <- "regression"
+  } else if (inherits(x, "Surv")) {
+    res <- "censored regression"
+  } else {
+    rlang::abort("Cannot determine the type of calibration problem.")
+  }
+  res
+}
+
+check_validation_metrics <- function(metrics, model_mode) {
+
+  if (is.null(metrics)) {
+    if (model_mode == "regression") {
+      metrics <- yardstick::metric_set(yardstick::rmse)
+    } else if (model_mode == "classification") {
+      metrics <- yardstick::metric_set(yardstick::brier_class)
+    } else {
+      rlang::abort("unknown mode")
+    }
+  } else {
+    metric_info <- tibble::as_tibble(metrics)
+    if (model_mode == "regression") {
+      if (any(metric_info$class != "numeric_metric")) {
+        rlang::abort("Metric type should be 'numeric_metric'")
+      }
+    } else if (model_mode == "classification") {
+      if (any(metric_info$class != "prob_metric")) {
+        rlang::abort("Metric type should be 'prob_metric'")
+      }
+    } else {
+      rlang::abort("unknown mode")
+    }
+  }
+  metrics
+}
+
+
 cal_validate <- function(rset,
                          truth = NULL,
                          estimate = NULL,
@@ -314,14 +356,14 @@ cal_validate <- function(rset,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  if (is.null(cal_function)) rlang::abort("No calibration function provided")
-
-  if (is.null(metrics)) {
-    # TODO regression
-    metrics <- yardstick::metric_set(
-      yardstick::brier_class
-    )
+  if (is.null(cal_function)) {
+    rlang::abort("No calibration function provided")
   }
+
+  outcomes <- dplyr::select(.data$splits[[1]]$data, {{ truth}}) %>% purrr::pluck(1)
+  model_mode <- get_problem_type(outcomes)
+
+  metrics <- check_validation_metrics(metrics, model_mode)
 
   direction <- metrics %>%
     tibble::as_tibble() %>%
@@ -383,13 +425,17 @@ cal_validate <- function(rset,
     )
   }
 
-  # TODO include regression and/or make sub-functions since different cols
-  if(cals[[1]]$type == "binary") {
-    estimate_cols <- cals[[1]]$levels[[1]]
-  } else {
-    estimate_cols <- cals[[1]]$levels %>%
-      purrr::map(as_name) %>%
-      purrr::reduce(c)
+
+  if (model_mode == "classification") {
+    if(cals[[1]]$type == "binary") {
+      estimate_cols <- cals[[1]]$levels[[1]]
+    } else {
+      estimate_cols <- cals[[1]]$levels %>%
+        purrr::map(as_name) %>%
+        purrr::reduce(c)
+    }
+  } else if (model_mode == "classification") {
+    estimate_cols <- NULL
   }
 
   applied <- seq_along(data_as) %>%
