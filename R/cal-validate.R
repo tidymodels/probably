@@ -1,12 +1,16 @@
 # -------------------------------- Logistic ------------------------------------
-#' Measure performance of calibration method
+#' Measure performance of a calibration method
 #' @details These functions take an re-sampled object, created via `rsample`,
-#' and for each re-sample, it calculates the calibration on the training set, and
-#' then applies the calibration on the assessment set. By default the average of
-#' Brier scores is returned. It compares the average of the metrics before, and
-#' after the calibration.
+#' and for each re-sample, it calculates the calibration on the analysis set, and
+#' then applies the calibration on the assessment set.
+#'
+#' By default, the average of Brier scores (classification calibration) or the
+#' root mean squared error (regression) are returned. Any appropriate
+#' [yardstick::metric_set()] can be used. The validation function compares the
+#' average of the metrics before, and after the calibration.
+#'
 #' Please note that this function does not apply to `tune_result` objects. It
-#' only processes re-sampled data.
+#' only processes resampled data.
 #' @param metrics A set of metrics passed created via `yardstick::metric_set()`
 #' @param summarize Indicates to pass tibble with the metrics averaged, or
 #' if to return the same sampled object but with new columns containing the
@@ -15,7 +19,10 @@
 #' `validation` columns when the `summarize` argument is set to FALSE.
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
+#'
+#' # ---------------------------------------------------------------------------
+#' # classification example
 #'
 #' segment_logistic %>%
 #'   rsample::vfold_cv() %>%
@@ -23,7 +30,7 @@
 #'
 #' @inheritParams cal_estimate_logistic
 #' @param .data A `data.frame` object, or `rset` object, that contains
-#' predictions and probability columns.
+#' prediction columns.
 #' @export
 cal_validate_logistic <- function(.data,
                                   truth = NULL,

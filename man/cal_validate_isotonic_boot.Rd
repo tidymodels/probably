@@ -31,7 +31,7 @@ cal_validate_isotonic_boot(
 }
 \arguments{
 \item{.data}{A \code{data.frame} object, or \code{rset} object, that contains
-predictions and probability columns.}
+prediction columns.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}
@@ -65,12 +65,16 @@ Measure performance of a Isotonic regression calibration
 }
 \details{
 These functions take an re-sampled object, created via \code{rsample},
-and for each re-sample, it calculates the calibration on the training set, and
-then applies the calibration on the assessment set. By default the average of
-Brier scores is returned. It compares the average of the metrics before, and
-after the calibration.
+and for each re-sample, it calculates the calibration on the analysis set, and
+then applies the calibration on the assessment set.
+
+By default, the average of Brier scores (classification calibration) or the
+root mean squared error (regression) are returned. Any appropriate
+\code{\link[yardstick:metric_set]{yardstick::metric_set()}} can be used. The validation function compares the
+average of the metrics before, and after the calibration.
+
 Please note that this function does not apply to \code{tune_result} objects. It
-only processes re-sampled data.
+only processes resampled data.
 }
 \examples{
 
