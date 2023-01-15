@@ -8,7 +8,7 @@ cal_apply_binary.cal_estimate_logistic <- function(object,
                                                     .data,
                                                     pred_class = NULL,
                                                     ...) {
-  cal_add_predict_impl(
+  cal_add_cls_predict_impl(
     object = object,
     .data = .data
   )
@@ -18,7 +18,7 @@ cal_apply_binary.cal_estimate_logistic_spline <- function(object,
                                                            .data,
                                                            pred_class = NULL,
                                                            ...) {
-  cal_add_predict_impl(
+  cal_add_cls_predict_impl(
     object = object,
     .data = .data
   )
@@ -28,7 +28,7 @@ cal_apply_binary.cal_estimate_isotonic_boot <- function(object,
                                                          .data,
                                                          pred_class = NULL,
                                                          ...) {
-  cal_add_interval_impl(
+  cal_add_cls_interval_impl(
     object = object,
     .data = .data,
     multi = TRUE
@@ -39,7 +39,7 @@ cal_apply_binary.cal_estimate_isotonic <- function(object,
                                                     .data,
                                                     pred_class = NULL,
                                                     ...) {
-  cal_add_interval_impl(
+  cal_add_cls_interval_impl(
     object = object,
     .data = .data
   )
@@ -64,7 +64,7 @@ cal_apply_binary.cal_estimate_beta <- function(object,
 
 #---------------------------- Adjust implementations ---------------------------
 
-cal_add_predict_impl <- function(object, .data) {
+cal_add_cls_predict_impl <- function(object, .data) {
   if (object$type == "binary") {
     .data <- object$estimates %>%
       purrr::map(
@@ -86,7 +86,7 @@ cal_add_predict_impl <- function(object, .data) {
   .data
 }
 
-cal_add_interval_impl <- function(object, .data, multi = FALSE) {
+cal_add_cls_interval_impl <- function(object, .data, multi = FALSE) {
   if (object$type == "binary") {
     level_1 <- object$levels[[1]]
     level_2 <- object$levels[[2]]
@@ -101,14 +101,14 @@ cal_add_interval_impl <- function(object, .data, multi = FALSE) {
           }
 
           if (!multi) {
-            intervals <- cal_get_intervals(
+            intervals <- cal_get_cls_intervals(
               estimates_table = .x$estimates[[1]],
               .data = new_data,
               estimate = level_1
             )
           } else {
             intervals <- .x$estimates %>%
-              map(cal_get_intervals,
+              map(cal_get_cls_intervals,
                   .data = new_data,
                   estimate = level_1
               ) %>%
@@ -126,7 +126,7 @@ cal_add_interval_impl <- function(object, .data, multi = FALSE) {
   .data
 }
 
-cal_get_intervals <- function(estimates_table, .data, estimate) {
+cal_get_cls_intervals <- function(estimates_table, .data, estimate) {
   y <- estimates_table$.adj_estimate
   find_interval <- findInterval(
     x = .data[[estimate]],
