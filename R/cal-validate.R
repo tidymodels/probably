@@ -426,6 +426,16 @@ cal_validate <- function(rset,
     )
   }
 
+  if (cal_function == "linear") {
+    cals <- purrr::map(
+      data_tr,
+      cal_estimate_linear,
+      truth = !!truth,
+      estimate = !!estimate,
+      ...
+    )
+  }
+
 
   if (model_mode == "classification") {
     if(cals[[1]]$type == "binary") {
@@ -435,8 +445,8 @@ cal_validate <- function(rset,
         purrr::map(as_name) %>%
         purrr::reduce(c)
     }
-  } else if (model_mode == "classification") {
-    estimate_cols <- NULL
+  } else if (model_mode == "regression") {
+    estimate_cols <- rlang::expr_deparse(cals[[1]]$levels$predictions)
   }
 
   applied <- seq_along(data_as) %>%
@@ -445,7 +455,7 @@ cal_validate <- function(rset,
         ap <- cal_apply(
           .data = data_as[[.x]],
           object = cals[[.x]],
-          pred_class = !! rlang::parse_expr(".pred_class")
+          pred_class = !!rlang::parse_expr(".pred_class")
         )
 
         stats_after <- metrics(ap, truth = !!truth, estimate_cols)
