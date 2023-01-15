@@ -334,8 +334,9 @@ check_validation_metrics <- function(metrics, model_mode) {
         rlang::abort("Metric type should be 'numeric_metric'")
       }
     } else if (model_mode == "classification") {
-      if (any(metric_info$class != "prob_metric")) {
-        rlang::abort("Metric type should be 'prob_metric'")
+      allowed <- c("prob_metric", "class_metric")
+      if (any(!(metric_info$class %in% allowed))) {
+        rlang::abort("Metric type should be 'prob_metric' or 'class_metric'")
       }
     } else {
       rlang::abort("unknown mode")
