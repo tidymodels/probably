@@ -123,7 +123,7 @@ testthat_cal_reg <- function() {
 
       set.seed(111)
 
-      sim_data <- modeldata::sim_regression(500)
+      sim_data <- modeldata::sim_regression(100)[, 1:3]
 
       rec <- recipes::recipe(outcome ~ ., data = sim_data) %>%
         recipes::step_ns(predictor_01, deg_free = tune::tune("predictor_01"))
@@ -131,7 +131,7 @@ testthat_cal_reg <- function() {
       ret <- tune::tune_grid(
         object = parsnip::linear_reg(),
         preprocessor = rec,
-        resamples = rsample::vfold_cv(sim_data, v = 2, repeats = 3),
+        resamples = rsample::bootstraps(sim_data, times = 3),
         control = tune::control_resamples(save_pred = TRUE)
       )
       saveRDS(ret, ret_file, version = 2)
