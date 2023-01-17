@@ -40,3 +40,25 @@ NULL
 #' data(segment_naive_bayes)
 #' data(segment_logistic)
 NULL
+
+
+#' Boosted regression trees predictions
+#'
+#' @details These data have a set of holdout predictions from 10-fold
+#' cross-validation and a separate collection of test set predictions from the
+#' same boosted tree model. The data were generated using the `sim_regression`
+#' function in the \pkg{modeldata} package.
+#'
+#' @name boosting_predictions
+#' @aliases boosting_predictions_oob boosting_predictions_test
+#' @docType data
+#' @return \item{boosting_predictions_oob,boosting_predictions_test}{tibbles}
+#'
+#' @keywords datasets
+#' @examples
+#' data(boosting_predictions_oob)
+#' str(boosting_predictions_oob)
+#' str(boosting_predictions_test)
+NULL
+
+
