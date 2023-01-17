@@ -1,18 +1,27 @@
 #---------------------------------- Methods ------------------------------------
 
-#' Applies a calibration to a set of pred_class probabilities
-#' @details It currently supports data.frames only. It extracts the `truth` and
-#' the estimate columns names, and levels, from the calibration object.
+# TODO for regression; update a lot of help pages to talk more generally about multiple types
+
+#' Applies a calibration to a set of existing predictions
+#' @details
+#'
+#' `cal_apply()` currently supports data.frames only. It extracts the `truth` and
+#' the estimate columns names from the calibration object.
+#'
 #' @param .data An object that can process a calibration object.
 #' @param object The calibration object (`cal_object`).
-#' @param pred_class (Optional) Column identifier for the hard class predictions
-#' (a factor vector). This column will be adjusted based on changes to the
-#' calibrated probability columns.
+#' @param pred_class (Optional, classification only) Column identifier for the
+#' hard class predictions (a factor vector). This column will be adjusted based
+#' on changes to the calibrated probability columns.
 #' @param parameters (Optional)  An optional tibble of tuning parameter values
 #' that can be used to filter the predicted values before processing. Applies
 #' only to `tune_results` objects.
 #' @param ... Optional arguments; currently unused.
 #' @examples
+#'
+#' # ------------------------------------------------------------------------------
+#' # classification example
+#'
 #' w_calibration <- cal_estimate_logistic(segment_logistic, Class)
 #'
 #' cal_apply(segment_logistic, w_calibration)
@@ -56,8 +65,8 @@ cal_apply.tune_results <- function(.data,
   if (!(".predictions" %in% colnames(.data))) {
     rlang::abort(
       paste0(
-        "The `tune_results` object does not contain the `.predictions` column.",
-        " Refit with the control argument `save_pred = TRUE` to save pred_classs."
+        "The `tune_results` object does not contain columns with predictions",
+        " Refit with the control argument `save_pred = TRUE` to save these columns."
       )
     )
   }
@@ -152,3 +161,13 @@ cal_adjust.cal_binary <- function(object, .data, pred_class) {
     pred_class = {{ pred_class }}
   )
 }
+
+
+cal_adjust.cal_regression <- function(object, .data, pred_class) {
+  cal_apply_regression(
+    object = object,
+    .data = .data,
+    pred_class = NULL
+  )
+}
+

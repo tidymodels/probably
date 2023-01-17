@@ -2,17 +2,17 @@
 
 * Copyright holder changed to Posit Software PBC.
 
-* Adds support for multi-class calibration objects.
+* A set of calibration tools were added: 
 
-* Implements multinomial calibration via `nnet::multinom()`.
+  * The need for calibration can be visualized using the collection of `cal_plot_*()` functions.
+  * Calibration methods can be estimated with a family of `cal_estimate_*()` functions.
+  * To validate the calibrations using resampling, see the `cal_validate_*()` functions.
+  * `cal_apply()` can take a calibration model and apply it to a set of existing predictions.
+  
+* Possible calibration tools:  
 
-* Adds calibration validation function for Logistic, Isotonic, and Beta. These functions take in a re-sampled data set, and run the calibration on the testing data, and the applies the calibration to the assessment set. It then returns the average of the requested metrics, it defaults on Brier score.
-
-* Adds `cal_apply()` function. It uses the output of a calibration function, and applies it to a data frame, or a tune_results object. 
-
-* Adds 5 model calibration remediation methods: Logistic, Logistic Spline, Isotonic, and Isotonic Bootstrapped, and Beta. They currently support data frames, and binary models only.
-
-* Adds model calibration diagnostic functions. They implement three methods: binning probabilities, fitting a logistic spline model against the probabilities, and with creating a running percentage of the data. There are three new plotting functions, and three table functions.  It supports data.frames and tune_results objects.
+  * Binary classification methods: logistic regression, isotonic regression, and Beta calibration.
+  * Multiclass classification: multinomial
 
 * Based on the initial PR (#37) by Antonio R. Vargas, `threshold_perf()` now accepts a custom metric set (#25)
 

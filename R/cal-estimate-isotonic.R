@@ -93,6 +93,11 @@ cal_estimate_isotonic_boot <- function(.data,
   UseMethod("cal_estimate_isotonic_boot")
 }
 
+# TODO for regression
+#  - figure out type of problem by class of `truth`
+#  - set default for `estimate` as null and move logic inside with trith info
+
+
 #' @export
 #' @rdname cal_estimate_isotonic_boot
 cal_estimate_isotonic_boot.data.frame <- function(.data,
@@ -125,7 +130,7 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     group = NULL,
-    event_level = "first",
+    event_level = "first",   # or null for regression
     parameters = parameters,
     ...
   )
@@ -159,11 +164,11 @@ cal_isoreg_impl <- function(.data,
       iso_model <- cal_isoreg_impl_grp(
         .data = .data,
         truth = !!truth,
-        estimate = !!levels[[1]],
+        estimate = !!levels[[1]],   # for regression?
         sampled = TRUE
       )
       iso_model <- list(iso_model)
-      addl_class <- "cal_estimate_isotonic"
+      addl_class <- "cal_estimate_isotonic" # maybe add cls or reg class here
       method <- "Isotonic"
     } else {
       iso_model <- purrr::map(
@@ -258,7 +263,7 @@ cal_isoreg_impl_single <- function(.data,
   x <- dplyr::pull(sorted_data, !!estimate)
 
   truth <- dplyr::pull(sorted_data, {{ truth }})
-  y <- as.integer(as.integer(truth) == 1)
+  y <- as.integer(as.integer(truth) == 1) # not for for regression?
 
   model <- stats::isoreg(x = x, y = y)
 

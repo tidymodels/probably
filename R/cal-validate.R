@@ -1,12 +1,19 @@
 # -------------------------------- Logistic ------------------------------------
-#' Measure performance of a logistic regression calibration
-#' @details These functions take an re-sampled object, created via `rsample`,
-#' and for each re-sample, it calculates the calibration on the training set, and
-#' then applies the calibration on the assessment set. By default the average of
-#' Brier scores is returned. It compares the average of the metrics before, and
-#' after the calibration.
+#' Measure performance with and without using logistic calibration
+#' @description
+#' This function uses resampling to measure the effect of calibrating predicted
+#' values.
+#'
+#' @details
 #' Please note that this function does not apply to `tune_result` objects. It
-#' only processes re-sampled data.
+#' only processes resampled data.
+#'
+#' These functions take an resampling object, created via `rsample`,
+#' and for each resample, it calculates the calibration on the analysis set, and
+#' then applies the calibration on the assessment set.
+#'
+#' @template metrics_cls
+#'
 #' @param metrics A set of metrics passed created via `yardstick::metric_set()`
 #' @param summarize Indicates to pass tibble with the metrics averaged, or
 #' if to return the same sampled object but with new columns containing the
@@ -15,7 +22,10 @@
 #' `validation` columns when the `summarize` argument is set to FALSE.
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
+#'
+#' # ---------------------------------------------------------------------------
+#' # classification example
 #'
 #' segment_logistic %>%
 #'   rsample::vfold_cv() %>%
@@ -23,7 +33,7 @@
 #'
 #' @inheritParams cal_estimate_logistic
 #' @param .data A `data.frame` object, or `rset` object, that contains
-#' predictions and probability columns.
+#' prediction columns.
 #' @export
 cal_validate_logistic <- function(.data,
                                   truth = NULL,
@@ -63,12 +73,13 @@ cal_validate_logistic.rset <- function(.data,
 }
 
 # -------------------------------- Isotonic ------------------------------------
-#' Measure performance of a Isotonic regression calibration
+#' Measure performance with and without using isotonic regression calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic
+#' @template metrics_both
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
 #'
 #' segment_logistic %>%
 #'   rsample::vfold_cv() %>%
@@ -109,12 +120,13 @@ cal_validate_isotonic.rset <- function(.data,
 }
 
 # ----------------------------- Isotonic Boot ----------------------------------
-#' Measure performance of a Isotonic regression calibration
+#' Measure performance with and without using bagged isotonic regression calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic_boot
+#' @template metrics_both
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
 #'
 #' segment_logistic %>%
 #'   rsample::vfold_cv() %>%
@@ -157,12 +169,12 @@ cal_validate_isotonic_boot.rset <- function(.data,
 }
 
 # ---------------------------------- Beta --------------------------------------
-#' Measure performance of Beta calibration
+#' Measure performance with and without using Beta calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_beta
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
 #'
 #' segment_logistic %>%
 #'   rsample::vfold_cv() %>%
@@ -209,12 +221,12 @@ cal_validate_beta.rset <- function(.data,
 }
 
 # ------------------------------- Multinomial ----------------------------------
-#' Measure performance of a Multinomial regression calibration
+#' Measure performance with and without using multinomial calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic_boot
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
 #'
 #' species_probs %>%
 #'   rsample::vfold_cv() %>%
@@ -255,10 +267,10 @@ cal_validate_multinomial.rset <- function(.data,
 }
 
 # --------------------------------- Summary ------------------------------------
-#' Summarizes the metrics of a Calibrated Re-sampled set
+#' Summarizes the resampling metrics associated with calibration
 #' @examples
 #'
-#' library(magrittr)
+#' library(dplyr)
 #'
 #' sl_val <- segment_logistic %>%
 #'   rsample::vfold_cv() %>%
@@ -268,7 +280,7 @@ cal_validate_multinomial.rset <- function(.data,
 #'
 #' cal_validate_summarize(sl_val)
 #'
-#' @param x Calibrated Re-sampled set
+#' @param x The results of one of the `cal_validate_*()` functions.
 #' @export
 cal_validate_summarize <- function(x) {
   UseMethod("cal_validate_summarize")
@@ -303,6 +315,49 @@ cal_validate_summarize.cal_rset <- function(x) {
 
 
 # ------------------------------ Implementation --------------------------------
+
+get_problem_type <- function(x) {
+  if (is.factor(x)) {
+    res <- "classification"
+  } else if (is.numeric(x)) {
+    res <- "regression"
+  } else if (inherits(x, "Surv")) {
+    res <- "censored regression"
+  } else {
+    rlang::abort("Cannot determine the type of calibration problem.")
+  }
+  res
+}
+
+check_validation_metrics <- function(metrics, model_mode) {
+
+  if (is.null(metrics)) {
+    if (model_mode == "regression") {
+      metrics <- yardstick::metric_set(yardstick::rmse)
+    } else if (model_mode == "classification") {
+      metrics <- yardstick::metric_set(yardstick::brier_class)
+    } else {
+      rlang::abort("unknown mode")
+    }
+  } else {
+    metric_info <- tibble::as_tibble(metrics)
+    if (model_mode == "regression") {
+      if (any(metric_info$class != "numeric_metric")) {
+        rlang::abort("Metric type should be 'numeric_metric'")
+      }
+    } else if (model_mode == "classification") {
+      allowed <- c("prob_metric", "class_metric")
+      if (any(!(metric_info$class %in% allowed))) {
+        rlang::abort("Metric type should be 'prob_metric' or 'class_metric'")
+      }
+    } else {
+      rlang::abort("unknown mode")
+    }
+  }
+  metrics
+}
+
+
 cal_validate <- function(rset,
                          truth = NULL,
                          estimate = NULL,
@@ -314,13 +369,14 @@ cal_validate <- function(rset,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  if (is.null(cal_function)) rlang::abort("No calibration function provided")
-
-  if (is.null(metrics)) {
-    metrics <- yardstick::metric_set(
-      yardstick::brier_class
-    )
+  if (is.null(cal_function)) {
+    rlang::abort("No calibration function provided")
   }
+
+  outcomes <- dplyr::select(rset$splits[[1]]$data, {{ truth }}) %>% purrr::pluck(1)
+  model_mode <- get_problem_type(outcomes)
+
+  metrics <- check_validation_metrics(metrics, model_mode)
 
   direction <- metrics %>%
     tibble::as_tibble() %>%
@@ -331,6 +387,7 @@ cal_validate <- function(rset,
   data_tr <- purrr::map(rset$splits, rsample::analysis)
   data_as <- purrr::map(rset$splits, rsample::assessment)
 
+  # TODO clean these up
   if (cal_function == "logistic") {
     cals <- purrr::map(
       data_tr,
@@ -381,12 +438,27 @@ cal_validate <- function(rset,
     )
   }
 
-  if(cals[[1]]$type == "binary") {
-    estimate_cols <- cals[[1]]$levels[[1]]
-  } else {
-    estimate_cols <- cals[[1]]$levels %>%
-      purrr::map(as_name) %>%
-      purrr::reduce(c)
+  # if (cal_function == "linear") {
+  #   cals <- purrr::map(
+  #     data_tr,
+  #     cal_estimate_linear,
+  #     truth = !!truth,
+  #     estimate = !!estimate,
+  #     ...
+  #   )
+  # }
+
+
+  if (model_mode == "classification") {
+    if(cals[[1]]$type == "binary") {
+      estimate_cols <- cals[[1]]$levels[[1]]
+    } else {
+      estimate_cols <- cals[[1]]$levels %>%
+        purrr::map(as_name) %>%
+        purrr::reduce(c)
+    }
+  } else if (model_mode == "regression") {
+    estimate_cols <- rlang::expr_deparse(cals[[1]]$levels$predictions)
   }
 
   applied <- seq_along(data_as) %>%
@@ -395,7 +467,7 @@ cal_validate <- function(rset,
         ap <- cal_apply(
           .data = data_as[[.x]],
           object = cals[[.x]],
-          pred_class = !! rlang::parse_expr(".pred_class")
+          pred_class = !!rlang::parse_expr(".pred_class")
         )
 
         stats_after <- metrics(ap, truth = !!truth, estimate_cols)

@@ -12,9 +12,8 @@ test_that("Binary breaks functions work", {
     "ggplot"
     )
 
-  expect_error(
-    cal_plot_breaks(species_probs, Species, .pred_bobcat),
-    "'Species' does not have 2 levels"
+  expect_snapshot_error(
+    cal_plot_breaks(species_probs, Species, .pred_bobcat)
   )
 
   x11 <- .cal_binary_table_breaks(testthat_cal_binary())
@@ -50,9 +49,8 @@ test_that("Binary logistic functions work", {
 
   expect_s3_class(x21, "ggplot")
 
-  expect_error(
-    cal_plot_logistic(species_probs, Species, .pred_bobcat),
-    "'Species' does not have 2 levels"
+  expect_snapshot_error(
+    cal_plot_logistic(species_probs, Species, .pred_bobcat)
   )
 
   x22 <- .cal_binary_table_logistic(testthat_cal_binary())
@@ -142,9 +140,8 @@ test_that("Binary windowed functions work", {
 
   expect_s3_class(x31, "ggplot")
 
-  expect_error(
-    cal_plot_windowed(species_probs, Species, .pred_bobcat),
-    "'Species' does not have 2 levels"
+  expect_snapshot_error(
+    cal_plot_windowed(species_probs, Species, .pred_bobcat)
   )
 
   x32 <- .cal_binary_table_windowed(
