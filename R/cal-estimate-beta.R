@@ -112,7 +112,7 @@ cal_beta_impl <- function(.data,
       ...
     )
 
-    res <- as_binary_cal_object(
+    res <- as_cal_object(
       estimate = beta_model,
       levels = levels,
       truth = {{ truth }},

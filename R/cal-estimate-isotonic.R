@@ -203,17 +203,18 @@ cal_isoreg_impl <- function(.data,
         map(iso_model, ~ .x[[x]])
       }
     ) %>%
-      map(
+      purrr:::map(
         ~ {
           x <- .x
           list(
             filter = x[[1]]$filter,
-            estimates = map(x, ~ .x[[2]])
+            estimates = map(x, ~ .x[[2]])[[1]]
           )
         }
       )
 
-    res <- as_binary_cal_object(
+
+    res <- as_cal_object(
       estimate = iso_flip,
       levels = levels,
       truth = !!truth,

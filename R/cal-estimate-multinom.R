@@ -14,10 +14,10 @@ cal_estimate_multinomial <- function(.data,
 #' @export
 #' @rdname cal_estimate_multinomial
 cal_estimate_multinomial.data.frame <- function(.data,
-                                     truth = NULL,
-                                     estimate = dplyr::starts_with(".pred_"),
-                                     parameters = NULL,
-                                     ...) {
+                                                truth = NULL,
+                                                estimate = dplyr::starts_with(".pred_"),
+                                                parameters = NULL,
+                                                ...) {
   stop_null_parameters(parameters)
 
   truth <- enquo(truth)
@@ -33,10 +33,10 @@ cal_estimate_multinomial.data.frame <- function(.data,
 #' @export
 #' @rdname cal_estimate_multinomial
 cal_estimate_multinomial.tune_results <- function(.data,
-                                     truth = NULL,
-                                     estimate = dplyr::starts_with(".pred_"),
-                                     parameters = NULL,
-                                     ...) {
+                                                  truth = NULL,
+                                                  estimate = dplyr::starts_with(".pred_"),
+                                                  parameters = NULL,
+                                                  ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -69,10 +69,10 @@ cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
 
   levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
 
-  if(length(levels) == 2) {
+  if (length(levels) == 2) {
     rlang::abort(
       "This function is meant to be used with a multi-class outcomes only"
-      )
+    )
   }
 
   model <- cal_multinom_impl_grp(
@@ -82,14 +82,15 @@ cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
     ...
   )
 
-  as_multi_cal_object(
+  as_cal_object(
     estimate = model,
     levels = levels,
     truth = !!truth,
     method = "Multinomial",
     rows = nrow(.data),
     additional_class = "cal_estimate_multinomial",
-    source_class = source_class
+    source_class = source_class,
+    type = "multiclass"
   )
 }
 
@@ -125,7 +126,7 @@ cal_multinom_impl_single <- function(.data,
   levels_formula <- purrr::reduce(
     levels,
     function(x, y) expr(!!x + !!y)
-    )
+  )
 
   f_model <- expr(!!ensym(truth) ~ !!levels_formula)
 
