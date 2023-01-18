@@ -109,7 +109,7 @@ testthat_cal_sampled <- function() {
 
 
 testthat_cal_reg <- function() {
-  ret <- .cal_env$tune_results
+  ret <- .cal_env$reg_tune_results
 
   if(is.null(ret)) {
 
@@ -138,19 +138,19 @@ testthat_cal_reg <- function() {
     } else {
       ret <- readRDS(ret_file)
     }
-    .cal_env$tune_results <- ret
+    .cal_env$reg_tune_results <- ret
     cp <- tune::collect_predictions(ret, summarize = TRUE)
-    .cal_env$tune_results_count <- nrow(cp)
+    .cal_env$reg_tune_results_count <- nrow(cp)
   }
 
   ret
 }
 
 testthat_cal_reg_count <- function() {
-  ret <- .cal_env$tune_results_count
+  ret <- .cal_env$reg_tune_results_count
   if(is.null(ret)) {
     invisible(testthat_cal_reg())
-    ret <- .cal_env$tune_results_count
+    ret <- .cal_env$reg_tune_results_count
   }
   ret
 }

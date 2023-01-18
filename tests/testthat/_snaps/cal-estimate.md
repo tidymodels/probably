@@ -209,6 +209,19 @@
       Truth variable: `outcome`
       Estimate variable: `.pred`
 
+# Linear estimates work - tune_results
+
+    Code
+      print(tl_logistic)
+    Message
+      
+      -- Regression Calibration 
+      Method: Linear
+      Source class: Tune Results
+      Data points: 750, split in 10 groups
+      Truth variable: `outcome`
+      Estimate variable: `.pred`
+
 # Linear spline estimates work - data.frame
 
     Code
@@ -219,6 +232,19 @@
       Method: Linear Spline
       Source class: Data Frame
       Data points: 2,000
+      Truth variable: `outcome`
+      Estimate variable: `.pred`
+
+# Linear spline estimates work - tune_results
+
+    Code
+      print(tl_gam)
+    Message
+      
+      -- Regression Calibration 
+      Method: Linear Spline
+      Source class: Tune Results
+      Data points: 750, split in 10 groups
       Truth variable: `outcome`
       Estimate variable: `.pred`
 
