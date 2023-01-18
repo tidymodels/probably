@@ -88,41 +88,61 @@ cal_add_cls_predict_impl <- function(object, .data) {
 
 cal_add_cls_interval_impl <- function(object, .data, multi = FALSE) {
   if (object$type == "binary") {
-    level_1 <- object$levels[[1]]
-    level_2 <- object$levels[[2]]
-
-    .data <- object$estimates %>%
-      purrr::map(
-        ~ {
-          if (is.null(.x$filter)) {
-            new_data <- .data
-          } else {
-            new_data <- dplyr::filter(.data, !!.x$filter)
-          }
-
-          if (!multi) {
-            intervals <- cal_get_cls_intervals(
-              estimates_table = .x$estimates[[1]],
-              .data = new_data,
-              estimate = level_1
-            )
-          } else {
-            intervals <- .x$estimates %>%
-              map(cal_get_cls_intervals,
-                  .data = new_data,
-                  estimate = level_1
-              ) %>%
-              unlist() %>%
-              matrix(nrow = nrow(new_data)) %>%
-              apply(1, mean)
-          }
-          new_data[level_1] <- intervals
-          new_data[level_2] <- 1 - intervals
-          new_data
-        }
-      ) %>%
-      purrr::reduce(dplyr::bind_rows)
+    proc_levels <- object$levels[1]
+  } else {
+    proc_levels <- object$levels
   }
+
+  .data <- object$estimates %>%
+    purrr::map(
+      ~ {
+        if (is.null(.x$filter)) {
+          new_data <- .data
+        } else {
+          new_data <- dplyr::filter(.data, !!.x$filter)
+        }
+
+
+        curr_estimate <- .x$estimates
+
+        intervals <- curr_estimate %>%
+              purrr::imap(
+                ~{
+                  cal_get_cls_intervals(
+                    estimates = .x,
+                    .data = new_data,
+                    estimate = .y
+                  )
+                }
+              )
+
+        if (multi) {
+          intervals <- intervals %>%
+            unlist() %>%
+            matrix(nrow = nrow(new_data)) %>%
+            apply(1, mean)
+        }
+
+        if(object$type == "binary") {
+          intervals <- intervals[[1]]
+          new_data[object$levels[[1]]] <- intervals[[1]]
+          new_data[object$levels[[2]]] <- 1 - intervals[[1]]
+        } else {
+          int_length <- seq_len(length(intervals[[1]]))
+          int_width <- seq_along(intervals)
+
+          int_sums <- rowSums(as.data.frame(intervals))
+
+          for(i in int_width) {
+            int_div <- intervals[[i]] / int_sums
+            new_data[names(intervals[i])] <- int_div
+          }
+        }
+        new_data
+      }
+    ) %>%
+    purrr::reduce(dplyr::bind_rows)
+
   .data
 }
 

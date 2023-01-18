@@ -143,6 +143,7 @@ as_cal_object <- function(estimate,
       type <- "multiclass_1va"
     }
     cl_class <- "cal_multi"
+    additional_classes <- paste0(additional_classes, "_multi")
   }
 
   str_truth <- as_name(enquo(truth))
