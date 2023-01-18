@@ -130,7 +130,7 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     group = NULL,
-    event_level = "first",   # or null for regression
+    event_level = "first", # or null for regression
     parameters = parameters,
     ...
   )
@@ -160,11 +160,17 @@ cal_isoreg_impl <- function(.data,
   levels <- truth_estimate_map(.data, !!truth, !!estimate)
 
   if (length(levels) == 2) {
+    proc_levels <- levels[1]
+  } else {
+    proc_levels <- levels
+  }
+
+  if (length(levels) > 1) {
     if (times == 1) {
       iso_model <- cal_isoreg_impl_grp(
         .data = .data,
         truth = !!truth,
-        estimate = !!levels[[1]],   # for regression?
+        estimate = proc_levels,
         sampled = TRUE
       )
       iso_model <- list(iso_model)
@@ -179,7 +185,7 @@ cal_isoreg_impl <- function(.data,
             cal_isoreg_impl_grp(
               .data = .data,
               truth = !!truth,
-              estimate = !!levels[[1]],
+              estimate = proc_levels,
               sampled = TRUE
             )
           }
@@ -228,13 +234,15 @@ cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
     split_dplyr_groups() %>%
     lapply(
       function(x) {
-        iso_model <- cal_isoreg_impl_single(
+        iso_model <- cal_isoreg_impl_estimate(
           .data = x$data,
           truth = {{ truth }},
-          estimate = {{ estimate }},
+          estimate = estimate,
           sampled = sampled,
           ... = ...
-        )
+        ) %>%
+          rlang::set_names(as.character(estimate))
+
         list(
           filter = x$filter,
           estimate = iso_model
@@ -243,13 +251,31 @@ cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
     )
 }
 
+cal_isoreg_impl_estimate <- function(.data,
+                                     truth,
+                                     estimate,
+                                     sampled = FALSE,
+                                     ...) {
+  lapply(
+    estimate,
+    function(x) {
+      cal_isoreg_impl_single(
+        .data = .data,
+        truth = {{ truth }},
+        estimate = x,
+        sampled = sampled,
+        ...
+      )
+    }
+  )
+}
+
+
 cal_isoreg_impl_single <- function(.data,
                                    truth,
                                    estimate,
                                    sampled = FALSE,
                                    ...) {
-  estimate <- enquo(estimate)
-
   sorted_data <- dplyr::arrange(.data, !!estimate)
 
   if (sampled) {
