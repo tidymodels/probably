@@ -63,6 +63,9 @@ the calibration:
 \item \code{stats::glm()} is used when \code{smooth} is set to \code{FALSE}
 \item \code{mgcv::gam()} is used when \code{smooth} is set to \code{TRUE}
 }
+
+These methods estimate the relationship in the unmodified predicted values
+and then remove that trend when \code{\link[=cal_apply]{cal_apply()}} is invoked.
 }
 \examples{
 library(dplyr)
@@ -88,8 +91,8 @@ boosting_predictions_test \%>\%
 
 smoothed_cal <-
   boosting_predictions_oob \%>\%
-  #' # It will automatically identify the predicted value columns when the
-  #' standard tidymodels naming conventions are used.
+  # It will automatically identify the predicted value columns when the
+  # standard tidymodels naming conventions are used.
   cal_estimate_linear(outcome)
 smoothed_cal
 

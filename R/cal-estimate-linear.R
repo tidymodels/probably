@@ -38,8 +38,8 @@
 #'
 #' smoothed_cal <-
 #'   boosting_predictions_oob %>%
-#'   #' # It will automatically identify the predicted value columns when the
-#'   #' standard tidymodels naming conventions are used.
+#'   # It will automatically identify the predicted value columns when the
+#'   # standard tidymodels naming conventions are used.
 #'   cal_estimate_linear(outcome)
 #' smoothed_cal
 #'
@@ -58,6 +58,9 @@
 #'
 #' - `stats::glm()` is used when `smooth` is set to `FALSE`
 #' - `mgcv::gam()` is used when `smooth` is set to `TRUE`
+#'
+#' These methods estimate the relationship in the unmodified predicted values
+#' and then remove that trend when [cal_apply()] is invoked.
 #' @export
 cal_estimate_linear <- function(.data,
                                 truth = NULL,
