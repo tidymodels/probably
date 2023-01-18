@@ -155,6 +155,17 @@ testthat_cal_reg_count <- function() {
   ret
 }
 
+testthat_cal_reg_sampled <- function() {
+  ret <- .cal_env$resampled_reg_data
+  if(is.null(ret)) {
+    set.seed(100)
+    ret <- rsample::vfold_cv(boosting_predictions_oob)
+    .cal_env$resampled_reg_data <- ret
+  }
+  ret
+}
+
+
 # --------------------------- Custom Expect Functions --------------------------
 
 expect_cal_type <- function(x, type) {
