@@ -470,13 +470,14 @@ cal_validate <- function(rset,
           pred_class = !!rlang::parse_expr(".pred_class")
         )
 
-        stats_after <- metrics(ap, truth = !!truth, estimate_cols)
-        stats_before <- metrics(data_as[[.x]], truth = !!truth, estimate_cols)
+        metric_df <- tibble::as_tibble(metrics) %>% dplyr::select(.metric = metric, direction)
+        stats_after <- metrics(ap, truth = !!truth, estimate_cols) %>%
+          dplyr::full_join(metric_df, by = ".metric")
+        stats_before <- metrics(data_as[[.x]], truth = !!truth, estimate_cols) %>%
+          dplyr::full_join(metric_df, by = ".metric")
 
         stats_cols <- c(".metric", ".estimator", "direction", ".estimate")
-        stats_after$direction <- direction
         stats_after <- stats_after[, stats_cols]
-        stats_before$direction <- direction
         stats_before <- stats_before[, stats_cols]
 
         list(
