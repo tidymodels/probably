@@ -1,6 +1,6 @@
 #--------------------------------- Methods -------------------------------------
 #------------------------------- >> Isotonic  ----------------------------------
-#' Uses an Isotonic regression model to calibrate probabilities
+#' Uses an Isotonic regression model to calibrate classificatin and regression models
 #' @inheritParams cal_estimate_logistic
 #' @details This function uses `stats::isoreg()` to create obtain the calibration
 #' values.
@@ -9,6 +9,9 @@
 #' into Accurate Multiclass Probability Estimates. _Proceedings of the ACM SIGKDD
 #' International Conference on Knowledge Discovery and Data Mining._
 #' @examples
+#' # ------------------------------------------------------------------------------
+#' # classification
+#'
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
 #' cal_estimate_isotonic(segment_logistic, Class)
@@ -158,8 +161,8 @@ cal_isoreg_impl <- function(.data,
   estimate <- enquo(estimate)
 
   levels <- truth_estimate_map(.data, !!truth, !!estimate)
-
-  if (length(levels) == 2) {
+  num_levels <- length(levels)
+  if (num_levels <= 2) {
     if (times == 1) {
       iso_model <- cal_isoreg_impl_grp(
         .data = .data,
@@ -207,15 +210,29 @@ cal_isoreg_impl <- function(.data,
         }
       )
 
-    res <- as_binary_cal_object(
-      estimate = iso_flip,
-      levels = levels,
-      truth = !!truth,
-      method = method,
-      rows = nrow(.data),
-      source_class = source_class,
-      additional_class = addl_class
-    )
+    if (num_levels == 1) {
+      res <- as_regression_cal_object(
+        estimate = iso_flip,
+        levels = levels,
+        truth = !!truth,
+        method = method,
+        rows = nrow(.data),
+        source_class = source_class,
+        additional_class = addl_class
+      )
+    } else if (num_levels == 2) {
+      res <- as_binary_cal_object(
+        estimate = iso_flip,
+        levels = levels,
+        truth = !!truth,
+        method = method,
+        rows = nrow(.data),
+        source_class = source_class,
+        additional_class = addl_class
+      )
+    } else {
+      stop_multiclass()
+    }
   } else {
     stop_multiclass()
   }
@@ -263,9 +280,11 @@ cal_isoreg_impl_single <- function(.data,
   x <- dplyr::pull(sorted_data, !!estimate)
 
   truth <- dplyr::pull(sorted_data, {{ truth }})
-  y <- as.integer(as.integer(truth) == 1) # not for for regression?
+  if (is.factor(truth)) {
+    truth <- as.integer(as.integer(truth) == 1)
+  }
 
-  model <- stats::isoreg(x = x, y = y)
+  model <- stats::isoreg(x = x, y = truth)
 
   model_stepfun <- as.stepfun(model, ...)
 
