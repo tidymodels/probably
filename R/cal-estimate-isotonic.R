@@ -165,68 +165,63 @@ cal_isoreg_impl <- function(.data,
     proc_levels <- levels
   }
 
-  if (length(levels) > 1) {
-    if (times == 1) {
-      iso_model <- cal_isoreg_impl_grp(
-        .data = .data,
-        truth = !!truth,
-        estimate = proc_levels,
-        sampled = TRUE
-      )
-      iso_model <- list(iso_model)
-      addl_class <- "cal_estimate_isotonic" # maybe add cls or reg class here
-      method <- "Isotonic"
-    } else {
-      iso_model <- purrr::map(
-        sample.int(10000, times),
-        ~ withr::with_seed(
-          .x,
-          {
-            cal_isoreg_impl_grp(
-              .data = .data,
-              truth = !!truth,
-              estimate = proc_levels,
-              sampled = TRUE
-            )
-          }
-        )
-      )
-      addl_class <- "cal_estimate_isotonic_boot"
-      method <- "Bootstrapped Isotonic Regression"
-    }
-
-
-    iso_flip <- map(
-      seq_len(length(iso_model[[1]])),
-      ~ {
-        x <- .x
-        map(iso_model, ~ .x[[x]])
-      }
-    ) %>%
-      purrr:::map(
-        ~ {
-          x <- .x
-          list(
-            filter = x[[1]]$filter,
-            estimates = map(x, ~ .x[[2]])[[1]]
+  if (times == 1) {
+    iso_model <- cal_isoreg_impl_grp(
+      .data = .data,
+      truth = !!truth,
+      estimate = proc_levels,
+      sampled = TRUE
+    )
+    iso_model <- list(iso_model)
+    addl_class <- "cal_estimate_isotonic" # maybe add cls or reg class here
+    method <- "Isotonic"
+  } else {
+    iso_model <- purrr::map(
+      sample.int(10000, times),
+      ~ withr::with_seed(
+        .x,
+        {
+          cal_isoreg_impl_grp(
+            .data = .data,
+            truth = !!truth,
+            estimate = proc_levels,
+            sampled = TRUE
           )
         }
       )
-
-    res <- as_cal_object(
-      estimate = iso_flip,
-      levels = levels,
-      truth = !!truth,
-      method = method,
-      rows = nrow(.data),
-      source_class = source_class,
-      additional_class = addl_class
     )
-  } else {
-    stop_multiclass()
+    addl_class <- "cal_estimate_isotonic_boot"
+    method <- "Bootstrapped Isotonic Regression"
   }
 
-  res
+
+  iso_flip <- map(
+    seq_len(length(iso_model[[1]])),
+    ~ {
+      x <- .x
+      map(iso_model, ~ .x[[x]])
+    }
+  ) %>%
+    purrr:::map(
+      ~ {
+        x <- .x
+        list(
+          filter = x[[1]]$filter,
+          estimates = map(x, ~ .x[[2]])[[1]]
+        )
+      }
+    )
+
+  as_cal_object(
+    estimate = iso_flip,
+    levels = levels,
+    truth = !!truth,
+    method = method,
+    rows = nrow(.data),
+    source_class = source_class,
+    additional_class = addl_class
+  )
+
 }
 
 cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
@@ -294,7 +289,6 @@ cal_isoreg_impl_single <- function(.data,
 
   truth <- dplyr::pull(sorted_data, {{ truth }})
   y <- as.integer(as.integer(truth) == level)
-  #y <- as.integer(as.integer(truth) == 1) # not for for regression?
 
   model <- stats::isoreg(x = x, y = y)
 
