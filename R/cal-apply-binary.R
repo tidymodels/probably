@@ -128,15 +128,25 @@ cal_add_cls_interval_impl <- function(object, .data, multi = FALSE) {
           new_data[object$levels[[1]]] <- intervals[[1]]
           new_data[object$levels[[2]]] <- 1 - intervals[[1]]
         } else {
-          int_length <- seq_len(length(intervals[[1]]))
-          int_width <- seq_along(intervals)
+          int_df <- as.data.frame(intervals)
 
-          int_sums <- rowSums(as.data.frame(intervals))
+          cal_df <- int_df %>%
+            purrr::transpose() %>%
+            purrr::map(~ max_sort(as.numeric(.x))) %>%
+            purrr::map(as_list) %>%
+            purrr::map(purrr::set_names, colnames(int_df)) %>%
+            purrr::reduce(dplyr::bind_rows)
 
-          for(i in int_width) {
-            int_div <- intervals[[i]] / int_sums
-            new_data[names(intervals[i])] <- int_div
-          }
+          new_data <- new_data %>%
+            dplyr::select(- !! as.character(proc_levels)) %>%
+            dplyr::bind_cols(cal_df)
+
+          # int_sums <- rowSums(int_df)
+          #
+          # for(i in seq_along(intervals)) {
+          #   int_div <- intervals[[i]] / int_sums
+          #   new_data[names(intervals[i])] <- int_div
+          # }
         }
         new_data
       }
@@ -145,6 +155,21 @@ cal_add_cls_interval_impl <- function(object, .data, multi = FALSE) {
 
   .data
 }
+
+max_sort <- function(x) {
+  c_t <- 0
+  ret <- x
+  for(i in order(x, decreasing = TRUE)) {
+    xi <- x[i]
+    if(c_t + xi >= 1) {
+      xi <- 1 - c_t
+    }
+    ret[i] <- xi
+    c_t <- c_t + xi
+  }
+  ret
+}
+
 
 cal_get_cls_intervals <- function(estimates_table, .data, estimate) {
   y <- estimates_table$.adj_estimate
