@@ -213,7 +213,6 @@ cal_isoreg_impl <- function(.data,
         }
       )
 
-
     res <- as_cal_object(
       estimate = iso_flip,
       levels = levels,
@@ -258,12 +257,13 @@ cal_isoreg_impl_estimate <- function(.data,
                                      sampled = FALSE,
                                      ...) {
   lapply(
-    estimate,
+    seq_along(estimate),
     function(x) {
       cal_isoreg_impl_single(
         .data = .data,
         truth = {{ truth }},
-        estimate = x,
+        estimate = estimate,
+        level = x,
         sampled = sampled,
         ...
       )
@@ -275,8 +275,11 @@ cal_isoreg_impl_estimate <- function(.data,
 cal_isoreg_impl_single <- function(.data,
                                    truth,
                                    estimate,
+                                   level,
                                    sampled = FALSE,
                                    ...) {
+
+  estimate <- estimate[[level]]
   sorted_data <- dplyr::arrange(.data, !!estimate)
 
   if (sampled) {
@@ -290,7 +293,8 @@ cal_isoreg_impl_single <- function(.data,
   x <- dplyr::pull(sorted_data, !!estimate)
 
   truth <- dplyr::pull(sorted_data, {{ truth }})
-  y <- as.integer(as.integer(truth) == 1) # not for for regression?
+  y <- as.integer(as.integer(truth) == level)
+  #y <- as.integer(as.integer(truth) == 1) # not for for regression?
 
   model <- stats::isoreg(x = x, y = y)
 
