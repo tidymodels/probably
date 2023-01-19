@@ -24,14 +24,14 @@ cal_apply_multi.cal_estimate_isotonic_multi <- function(object,
   )
 }
 
-
-cal_apply_multi.cal_estimate_isotonic_boot_multi <- function(object,
+cal_apply_multi.cal_estimate_isotonic_boot_multi<- function(object,
                                                         .data,
                                                         pred_class = NULL,
                                                         ...) {
   cal_add_cls_interval_impl(
     object = object,
-    .data = .data
+    .data = .data,
+    multi = TRUE
   )
 }
 #---------------------------- Adjust implementations ---------------------------

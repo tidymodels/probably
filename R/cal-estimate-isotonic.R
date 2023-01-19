@@ -207,7 +207,7 @@ cal_isoreg_impl <- function(.data,
         x <- .x
         list(
           filter = x[[1]]$filter,
-          estimates = map(x, ~ .x[[2]])[[1]]
+          estimates = map(x, ~ .x[[2]])
         )
       }
     )

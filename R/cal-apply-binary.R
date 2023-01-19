@@ -106,12 +106,12 @@ cal_add_cls_interval_impl <- function(object, .data, multi = FALSE, method = "au
         curr_estimate <- .x$estimates
 
         intervals <- curr_estimate %>%
-              purrr::imap(
+              purrr::map(
                 ~{
                   cal_get_cls_intervals(
-                    estimates = .x,
+                    estimates = .x[[1]],
                     .data = new_data,
-                    estimate = .y
+                    estimate = names(.x[1])
                   )
                 }
               )
