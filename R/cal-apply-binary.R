@@ -114,19 +114,18 @@ cal_add_cls_interval_impl <- function(object, .data, multi = FALSE, method = "au
                     estimate = names(.x[1])
                   )
                 }
-              )
+              ) %>%
+          unlist()
 
         if (multi) {
           intervals <- intervals %>%
-            unlist() %>%
             matrix(nrow = nrow(new_data)) %>%
             apply(1, mean)
         }
 
         if(object$type == "binary") {
-          intervals <- intervals[[1]]
-          new_data[object$levels[[1]]] <- intervals[[1]]
-          new_data[object$levels[[2]]] <- 1 - intervals[[1]]
+          new_data[object$levels[[1]]] <- intervals
+          new_data[object$levels[[2]]] <- 1 - intervals
         } else {
           int_df <- as.data.frame(intervals)
 
