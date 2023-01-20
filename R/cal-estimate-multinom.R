@@ -88,7 +88,7 @@ cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
     truth = !!truth,
     method = "Multinomial",
     rows = nrow(.data),
-    additional_class = "cal_estimate_multinomial",
+    additional_classes = "cal_estimate_multinomial",
     source_class = source_class,
     type = "multiclass"
   )

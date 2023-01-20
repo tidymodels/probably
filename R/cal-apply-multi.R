@@ -8,7 +8,7 @@ cal_apply_multi.cal_estimate_multinomial_multi <- function(object,
                                                            .data,
                                                            pred_class = NULL,
                                                            ...) {
-  cal_multi_predict(
+  apply_multi_predict(
     object = object,
     .data = .data
   )
@@ -36,7 +36,7 @@ cal_apply_multi.cal_estimate_isotonic_boot_multi<- function(object,
 }
 #---------------------------- Adjust implementations ---------------------------
 
-cal_multi_predict <- function(object, .data) {
+apply_multi_predict <- function(object, .data) {
   preds <- object$estimates[[1]]$estimate %>%
     predict(newdata = .data, type = "probs") %>%
     tibble::as_tibble()

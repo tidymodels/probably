@@ -119,7 +119,7 @@ cal_beta_impl <- function(.data,
       method = "Beta",
       rows = nrow(.data),
       source_class = source_class,
-      additional_class = "cal_estimate_beta"
+      additional_classes = "cal_estimate_beta"
     )
   } else {
     stop_multiclass()

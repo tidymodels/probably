@@ -6,7 +6,7 @@ cal_apply_regression <- function(object, .data, pred_class) {
 
 cal_apply_regression.cal_estimate_linear_spline <-
   function(object, .data, pred_class = NULL, ...) {
-    cal_add_reg_predict_impl(
+    apply_reg_predict(
       object = object,
       .data = .data
     )
@@ -18,7 +18,7 @@ cal_apply_regression.cal_estimate_linear <-
 
 #---------------------------- Adjust implementations ---------------------------
 
-cal_add_reg_predict_impl <- function(object, .data) {
+apply_reg_predict <- function(object, .data) {
 
   .pred_name <- rlang::expr_deparse(object$levels$predictions)
   .data <- object$estimates %>%

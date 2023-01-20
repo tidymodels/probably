@@ -202,7 +202,7 @@ cal_isoreg_impl <- function(.data,
       map(iso_model, ~ .x[[x]])
     }
   ) %>%
-    purrr:::map(
+    purrr::map(
       ~ {
         x <- .x
         list(
@@ -219,7 +219,7 @@ cal_isoreg_impl <- function(.data,
     method = method,
     rows = nrow(.data),
     source_class = source_class,
-    additional_class = addl_class
+    additional_classes = addl_class
   )
 
 }

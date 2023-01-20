@@ -81,7 +81,7 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
   }
 
   if (upv && x$type == "binary") {
-    upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]]), ",")
+    upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]][[1]]), ",")
     cli::cli_text("Unique Probability Values: {.val2 {upv_no}}")
   }
 
