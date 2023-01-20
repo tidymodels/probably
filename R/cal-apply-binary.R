@@ -89,127 +89,58 @@ cal_add_cls_predict_impl <- function(object, .data) {
 #---------------------------------- >> Interval --------------------------------
 
 apply_interval_impl <- function(object, .data, multi = FALSE, method = "auto") {
-  if (object$type == "binary") {
-    proc_levels <- object$levels[1]
-  } else {
-    proc_levels <- object$levels
-  }
 
+  # Iterates through each group
   ret <- object$estimates %>%
-    map(~ {
-      apply_interval_group(
+    purrr::map(~ {
+      apply_interval_column(
         .data = .data,
         est_filter = .x$filter,
         estimates = .x$estimates
       )
-    })
-
-  return(ret)
-
-  .data <- object$estimates %>%
-    purrr::map(
-      ~ {
-        if (is.null(.x$filter)) {
-          new_data <- .data
-        } else {
-          new_data <- dplyr::filter(.data, !!.x$filter)
-        }
-
-        intervals <- .x$estimates %>%
-          # Iterates over each estimate run (if bootstrapped)
-          purrr::map(
-            ~ {
-              cur_est <- .x
-              # Iterates over each probability column
-              est_int <- purrr::imap(
-                cur_est,
-                ~ {
-                  cal_get_cls_intervals(
-                    estimates = .x,
-                    .data = new_data,
-                    estimate = .y
-                  )
-                }
-              )
-              est_int
-            }
-          )
-
-        if (multi) {
-          cur_name <- names(intervals)
-
-          est_int <- seq_along(cur_name) %>%
-            purrr::map(
-              ~ {
-                cl <- .x
-                est_int %>%
-                  purrr::map(~ pluck(.x, cl) %>% as.data.frame()) %>%
-                  purrr::reduce(dplyr::bind_cols) %>%
-                  rowMeans()
-              }
-            ) %>%
-            purrr::set_names(cur_name)
-        }
-
-
-        if (object$type == "binary") {
-          intervals <- intervals[[1]][[1]]
-          new_data[object$levels[[1]]] <- intervals
-          new_data[object$levels[[2]]] <- 1 - intervals
-        } else {
-          int_df <- as.data.frame(intervals)
-
-          if (method != "auto") {
-            cal_df <- int_df %>%
-              purrr::transpose() %>%
-              purrr::map(~ max_sort(as.numeric(.x))) %>%
-              purrr::map(as_list) %>%
-              purrr::map(purrr::set_names, colnames(int_df)) %>%
-              purrr::reduce(dplyr::bind_rows)
-
-            new_data <- new_data %>%
-              dplyr::select(-!!as.character(proc_levels)) %>%
-              dplyr::bind_cols(cal_df)
-          } else {
-            int_sums <- rowSums(int_df)
-            intervals <- intervals[[1]]
-            for (i in seq_along(intervals)) {
-              int_div <- intervals[[i]] / int_sums
-              new_data[names(intervals[i])] <- int_div
-            }
-          }
-        }
-        new_data
-      }
-    ) %>%
+    }) %>%
     purrr::reduce(dplyr::bind_rows)
 
-  .data
+  if (object$type == "binary") {
+    ret[, object$levels[[2]]] <- 1 - ret[, object$levels[[1]]]
+  } else {
+    ols <- as.character(object$levels)
+    rs <- rowSums(ret[, ols])
+    for(i in seq_along(ols)) {
+      ret[, ols[i]] <- ret[, ols[i]] / rs
+    }
+  }
+
+  ret
 }
 
-apply_interval_group <- function(.data, est_filter, estimates) {
+# Iterates through each prediction column
+apply_interval_column <- function(.data, est_filter, estimates) {
   if (is.null(est_filter)) {
     df <- .data
   } else {
     df <- dplyr::filter(.data, !!est_filter)
   }
 
-  t_est <- estimates %>%
-    purrr::transpose()
-
-  ret <- t_est %>%
+  ret <- estimates %>%
+    purrr::transpose() %>%
     purrr::imap(~ {
-      apply_interval_column(
+      apply_interval_estimate(
         estimate = .x,
         df = df,
         est_name = .y
       )
     })
 
-  ret
+  names_ret <- names(ret)
+  for(i in seq_along(names_ret)) {
+    df[, names_ret[i]] <- ret[[names_ret[i]]]
+  }
+  df
 }
 
-apply_interval_column <- function(estimate, df, est_name) {
+# Iterates through each model run
+apply_interval_estimate <- function(estimate, df, est_name) {
   ret <- estimate %>%
     purrr::map(
       apply_interval_single,
@@ -221,6 +152,8 @@ apply_interval_column <- function(estimate, df, est_name) {
     ret <- ret %>%
       data.frame() %>%
       rowMeans()
+  } else {
+    ret <- ret[[1]]
   }
 
   ret
