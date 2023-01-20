@@ -103,27 +103,33 @@ cal_add_cls_interval_impl <- function(object, .data, multi = FALSE, method = "au
           new_data <- dplyr::filter(.data, !!.x$filter)
         }
 
-        curr_estimate <- .x$estimates
-
-        intervals <- curr_estimate %>%
+        intervals <- .x$estimates %>%
               purrr::map(
                 ~{
-                  cal_get_cls_intervals(
-                    estimates = .x[[1]],
-                    .data = new_data,
-                    estimate = names(.x[1])
+                  est <- .x
+                  est_int <- purrr::imap(
+                    est,
+                    ~ {
+                    cal_get_cls_intervals(
+                      estimates = .x,
+                      .data = new_data,
+                      estimate = .y
+                    )}
                   )
-                }
-              ) %>%
-          unlist()
 
-        if (multi) {
-          intervals <- intervals %>%
-            matrix(nrow = nrow(new_data)) %>%
-            apply(1, mean)
-        }
+                  if (multi) {
+                    est_int <- est_int %>%
+                      as.data.frame() %>%
+                      rowMeans()
+                  }
+
+                  est_int
+
+                }
+              )
 
         if(object$type == "binary") {
+          intervals <- intervals[[1]][[1]]
           new_data[object$levels[[1]]] <- intervals
           new_data[object$levels[[2]]] <- 1 - intervals
         } else {
@@ -142,6 +148,7 @@ cal_add_cls_interval_impl <- function(object, .data, multi = FALSE, method = "au
               dplyr::bind_cols(cal_df)
           } else {
             int_sums <- rowSums(int_df)
+            intervals <- intervals[[1]]
             for(i in seq_along(intervals)) {
               int_div <- intervals[[i]] / int_sums
               new_data[names(intervals[i])] <- int_div
@@ -182,5 +189,6 @@ cal_get_cls_intervals <- function(estimates_table, .data, estimate) {
     vec = estimates_table$.estimate
   )
   find_interval[find_interval == 0] <- 1
-  y[find_interval]
+  ret <- y[find_interval]
+  ret
 }
