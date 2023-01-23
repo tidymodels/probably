@@ -45,7 +45,9 @@ Suggests:
     recipes,
     rmarkdown,
     rsample,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    randomForest,
+    MASS
 VignetteBuilder: 
     knitr
 Remotes: 

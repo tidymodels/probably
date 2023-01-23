@@ -1,17 +1,15 @@
 # ---------------------------- Test data sets ----------------------------------
-
+# ------------------------------ >> Binary -------------------------------------
 .cal_env <- new.env()
 
 testthat_cal_binary <- function() {
   ret <- .cal_env$tune_results
 
-  if(is.null(ret)) {
-
+  if (is.null(ret)) {
     ret_file <- test_path("cal_files/binary_sim.rds")
 
-    if(!file.exists(ret_file)) {
-
-      if(!dir.exists(test_path("cal_files"))) {
+    if (!file.exists(ret_file)) {
+      if (!dir.exists(test_path("cal_files"))) {
         dir.create(test_path("cal_files"))
       }
 
@@ -42,23 +40,33 @@ testthat_cal_binary <- function() {
 
 testthat_cal_binary_count <- function() {
   ret <- .cal_env$tune_results_count
-  if(is.null(ret)) {
+  if (is.null(ret)) {
     invisible(testthat_cal_binary())
     ret <- .cal_env$tune_results_count
   }
   ret
 }
 
+testthat_cal_sampled <- function() {
+  ret <- .cal_env$resampled_data
+  if (is.null(ret)) {
+    set.seed(100)
+    ret <- rsample::vfold_cv(segment_logistic)
+    .cal_env$resampled_data <- ret
+  }
+  ret
+}
+
+# -------------------------- >> Multiclass (Tune) ------------------------------
+
 testthat_cal_multiclass <- function() {
   ret <- .cal_env$tune_results_multi
 
-  if(is.null(ret)) {
-
+  if (is.null(ret)) {
     ret_file <- test_path("cal_files/multiclass_ames.rds")
 
-    if(!file.exists(ret_file)) {
-
-      if(!dir.exists(test_path("cal_files"))) {
+    if (!file.exists(ret_file)) {
+      if (!dir.exists(test_path("cal_files"))) {
         dir.create(test_path("cal_files"))
       }
 
@@ -70,13 +78,13 @@ testthat_cal_multiclass <- function() {
       ranger_recipe <- recipes::recipe(
         formula = Bldg_Type ~ .,
         data = df
-        )
+      )
 
       ranger_spec <- parsnip::rand_forest(
         mtry = tune(),
         min_n = tune(),
         trees = 1000
-        ) %>%
+      ) %>%
         parsnip::set_mode("classification") %>%
         parsnip::set_engine("ranger")
 
@@ -85,7 +93,7 @@ testthat_cal_multiclass <- function() {
         preprocessor = ranger_recipe,
         resamples = rsample::vfold_cv(df, v = 2, repeats = 3),
         control = tune::control_resamples(save_pred = TRUE)
-        )
+      )
 
       saveRDS(ret, ret_file, version = 2)
     } else {
@@ -97,14 +105,80 @@ testthat_cal_multiclass <- function() {
   ret
 }
 
-testthat_cal_sampled <- function() {
-  ret <- .cal_env$resampled_data
-  if(is.null(ret)) {
-    set.seed(100)
-    ret <- rsample::vfold_cv(segment_logistic)
-    .cal_env$resampled_data <- ret
+# -------------------------- >> Multiclass (Sim) -------------------------------
+
+testthat_cal_sim_multi <- function() {
+  x <- "sim_multi"
+  ret <- .cal_env[[x]]
+
+  if (is.null(ret)) {
+    pt <- paste0("cal_files/", x, ".rds")
+
+    ret_file <- test_path(pt)
+
+    if (!file.exists(ret_file)) {
+      if (!dir.exists(test_path("cal_files"))) {
+        dir.create(test_path("cal_files"))
+      }
+
+      set.seed(1)
+      train <- sim_multinom_df()
+      test <- sim_multinom_df()
+
+      model <- randomForest::randomForest(class ~ ., train)
+
+      ret <- model %>%
+        predict(test, type = "prob") %>%
+        as.data.frame() %>%
+        dplyr::rename_all(~ paste0(".pred_", .x)) %>%
+        dplyr::mutate(class = test$class)
+
+      saveRDS(ret, ret_file, version = 2)
+    } else {
+      ret <- readRDS(ret_file)
+    }
+    .cal_env[[x]] <- ret
   }
   ret
+}
+
+sim_multinom_df <- function() {
+  sim_multinom(
+    1000,
+    ~ -0.5 + 0.6 * abs(A),
+    ~ ifelse(A > 0 & B > 0, 1.0 + 0.2 * A / B, -2),
+    ~ -0.6 * A + 0.50 * B - A * B
+  )
+}
+
+sim_multinom <- function(num_samples, eqn_1, eqn_2, eqn_3,
+                         correlation = 0, keep_truth = FALSE) {
+  sigma <- matrix(c(1, correlation, correlation, 1), 2, 2)
+  eqn_1 <- rlang::get_expr(eqn_1)
+  eqn_2 <- rlang::get_expr(eqn_2)
+  eqn_3 <- rlang::get_expr(eqn_3)
+  dat <-
+    data.frame(MASS::mvrnorm(n = num_samples, c(0, 0), sigma)) %>%
+    stats::setNames(LETTERS[1:2]) %>%
+    dplyr::mutate(
+      .formula_1 = rlang::eval_tidy(eqn_1, data = .),
+      .formula_2 = rlang::eval_tidy(eqn_2, data = .),
+      .formula_3 = rlang::eval_tidy(eqn_3, data = .),
+      across(c(dplyr::starts_with(".formula_")), ~ exp(.x))
+    )
+  probs <- as.matrix(dplyr::select(dat, dplyr::starts_with(".formula_")))
+  probs <- t(apply(probs, 1, function(x) x / sum(x)))
+  which_class <- function(x) which.max(rmultinom(1, 1, x))
+  index <- apply(probs, 1, which_class)
+  lvls <- c("one", "two", "three")
+  dat$class <- factor(lvls[index], levels = lvls)
+  dat <- dat %>% dplyr::select(-dplyr::starts_with(".formula_"))
+  if (keep_truth) {
+    colnames(probs) <- paste0(".truth_", lvls)
+    probs <- tibble::as_tibble(probs)
+    dat <- dplyr::bind_cols(dat, probs)
+  }
+  tibble::as_tibble(dat)
 }
 
 # --------------------------- Custom Expect Functions --------------------------
