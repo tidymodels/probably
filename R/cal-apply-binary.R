@@ -8,7 +8,7 @@ cal_apply_binary.cal_estimate_logistic <- function(object,
                                                    .data,
                                                    pred_class = NULL,
                                                    ...) {
-  apply_binary_predict(
+  apply_model_predict(
     object = object,
     .data = .data
   )
@@ -18,7 +18,7 @@ cal_apply_binary.cal_estimate_logistic_spline <- function(object,
                                                           .data,
                                                           pred_class = NULL,
                                                           ...) {
-  apply_binary_predict(
+  apply_model_predict(
     object = object,
     .data = .data
   )
@@ -64,7 +64,7 @@ cal_apply_binary.cal_estimate_beta <- function(object,
 
 #---------------------------- Adjust implementations ---------------------------
 
-apply_binary_predict <- function(object, .data) {
+apply_model_predict <- function(object, .data) {
   if (object$type == "binary") {
     .data <- object$estimates %>%
       purrr::map(

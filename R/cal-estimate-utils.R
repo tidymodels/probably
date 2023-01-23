@@ -58,7 +58,7 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
     type <- "Multiclass"
   }
 
-  if (x$type == "multiclass_1va") {
+  if (x$type == "one_vs_all") {
     type <- "Multiclass (1 v All)"
   }
 
@@ -140,7 +140,7 @@ as_cal_object <- function(estimate,
     cl_class <- "cal_binary"
   } else {
     if (is.null(type)) {
-      type <- "multiclass_1va"
+      type <- "one_vs_all"
     }
     cl_class <- "cal_multi"
     additional_classes <- paste0(additional_classes, "_multi")
