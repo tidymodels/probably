@@ -52,6 +52,20 @@ apply_interval_column <- function(.data, est_filter, estimates) {
 
 # Iterates through each model run
 apply_interval_estimate <- function(estimate, df, est_name) {
+
+  # Handles single quoted variable names, which are typically created
+  # when there are spaces in the original variable name
+  df_names <- names(df)
+  if(!(est_name %in% df_names)) {
+    test_name <- sub("`", "", est_name)
+    test_name <- sub("`", "", test_name)
+    if(test_name %in% df_names) {
+      est_name <- test_name
+    } else {
+      rlang::abort(paste0("Variable: ", est_name, " was not found in data"))
+    }
+  }
+
   ret <- estimate %>%
     purrr::map(
       apply_interval_single,
