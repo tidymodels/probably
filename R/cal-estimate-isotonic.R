@@ -288,7 +288,7 @@ cal_isoreg_impl_single <- function(.data,
   x <- dplyr::pull(sorted_data, !!estimate)
 
   truth <- dplyr::pull(sorted_data, {{ truth }})
-  y <- as.integer(as.integer(truth) == level)
+  y <- as.integer(as.integer(truth) == level)  # modify for regression case
 
   model <- stats::isoreg(x = x, y = y)
 
