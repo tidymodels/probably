@@ -221,3 +221,7 @@ cal_linear_impl_single <- function(.data, truth, estimate, run_model, ...) {
 }
 
 
+#' @export
+print.cal_estimate_linear <- function(x, ...) {
+  print_reg_cal(x, upv = FALSE, ...)
+}
