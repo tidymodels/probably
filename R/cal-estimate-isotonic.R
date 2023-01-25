@@ -130,7 +130,7 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     group = NULL,
-    event_level = "first",   # or null for regression
+    event_level = "first", # or null for regression
     parameters = parameters,
     ...
   )
@@ -160,67 +160,68 @@ cal_isoreg_impl <- function(.data,
   levels <- truth_estimate_map(.data, !!truth, !!estimate)
 
   if (length(levels) == 2) {
-    if (times == 1) {
-      iso_model <- cal_isoreg_impl_grp(
-        .data = .data,
-        truth = !!truth,
-        estimate = !!levels[[1]],   # for regression?
-        sampled = TRUE
-      )
-      iso_model <- list(iso_model)
-      addl_class <- "cal_estimate_isotonic" # maybe add cls or reg class here
-      method <- "Isotonic"
-    } else {
-      iso_model <- purrr::map(
-        sample.int(10000, times),
-        ~ withr::with_seed(
-          .x,
-          {
-            cal_isoreg_impl_grp(
-              .data = .data,
-              truth = !!truth,
-              estimate = !!levels[[1]],
-              sampled = TRUE
-            )
-          }
-        )
-      )
-      addl_class <- "cal_estimate_isotonic_boot"
-      method <- "Bootstrapped Isotonic Regression"
-    }
+    proc_levels <- levels[1]
+  } else {
+    proc_levels <- levels
+  }
 
-
-    iso_flip <- map(
-      seq_len(length(iso_model[[1]])),
-      ~ {
-        x <- .x
-        map(iso_model, ~ .x[[x]])
-      }
-    ) %>%
-      map(
-        ~ {
-          x <- .x
-          list(
-            filter = x[[1]]$filter,
-            estimates = map(x, ~ .x[[2]])
+  if (times == 1) {
+    iso_model <- cal_isoreg_impl_grp(
+      .data = .data,
+      truth = !!truth,
+      estimate = proc_levels,
+      sampled = TRUE
+    )
+    iso_model <- list(iso_model)
+    addl_class <- "cal_estimate_isotonic" # maybe add cls or reg class here
+    method <- "Isotonic"
+  } else {
+    iso_model <- purrr::map(
+      sample.int(10000, times),
+      ~ withr::with_seed(
+        .x,
+        {
+          cal_isoreg_impl_grp(
+            .data = .data,
+            truth = !!truth,
+            estimate = proc_levels,
+            sampled = TRUE
           )
         }
       )
-
-    res <- as_binary_cal_object(
-      estimate = iso_flip,
-      levels = levels,
-      truth = !!truth,
-      method = method,
-      rows = nrow(.data),
-      source_class = source_class,
-      additional_class = addl_class
     )
-  } else {
-    stop_multiclass()
+    addl_class <- "cal_estimate_isotonic_boot"
+    method <- "Bootstrapped Isotonic Regression"
   }
 
-  res
+
+  iso_flip <- map(
+    seq_len(length(iso_model[[1]])),
+    ~ {
+      x <- .x
+      map(iso_model, ~ .x[[x]])
+    }
+  ) %>%
+    purrr::map(
+      ~ {
+        x <- .x
+        list(
+          filter = x[[1]]$filter,
+          estimates = map(x, ~ .x[[2]])
+        )
+      }
+    )
+
+  as_cal_object(
+    estimate = iso_flip,
+    levels = levels,
+    truth = !!truth,
+    method = method,
+    rows = nrow(.data),
+    source_class = source_class,
+    additional_classes = addl_class
+  )
+
 }
 
 cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
@@ -228,13 +229,15 @@ cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
     split_dplyr_groups() %>%
     lapply(
       function(x) {
-        iso_model <- cal_isoreg_impl_single(
+        iso_model <- cal_isoreg_impl_estimate(
           .data = x$data,
           truth = {{ truth }},
-          estimate = {{ estimate }},
+          estimate = estimate,
           sampled = sampled,
           ... = ...
-        )
+        ) %>%
+          rlang::set_names(as.character(estimate))
+
         list(
           filter = x$filter,
           estimate = iso_model
@@ -243,13 +246,35 @@ cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
     )
 }
 
+cal_isoreg_impl_estimate <- function(.data,
+                                     truth,
+                                     estimate,
+                                     sampled = FALSE,
+                                     ...) {
+  lapply(
+    seq_along(estimate),
+    function(x) {
+      cal_isoreg_impl_single(
+        .data = .data,
+        truth = {{ truth }},
+        estimate = estimate,
+        level = x,
+        sampled = sampled,
+        ...
+      )
+    }
+  )
+}
+
+
 cal_isoreg_impl_single <- function(.data,
                                    truth,
                                    estimate,
+                                   level,
                                    sampled = FALSE,
                                    ...) {
-  estimate <- enquo(estimate)
 
+  estimate <- estimate[[level]]
   sorted_data <- dplyr::arrange(.data, !!estimate)
 
   if (sampled) {
@@ -263,7 +288,7 @@ cal_isoreg_impl_single <- function(.data,
   x <- dplyr::pull(sorted_data, !!estimate)
 
   truth <- dplyr::pull(sorted_data, {{ truth }})
-  y <- as.integer(as.integer(truth) == 1) # not for for regression?
+  y <- as.integer(as.integer(truth) == level)  # modify for regression case
 
   model <- stats::isoreg(x = x, y = y)
 

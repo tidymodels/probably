@@ -105,7 +105,7 @@ test_that("Beta estimates work - tune_results", {
 })
 
 # ------------------------------ Multinomial -----------------------------------
-test_that("Beta estimates work - data.frame", {
+test_that("Multinomial estimates work - data.frame", {
   sp_multi <- cal_estimate_multinomial(species_probs, Species)
   expect_cal_type(sp_multi, "multiclass")
   expect_cal_method(sp_multi, "Multinomial")
@@ -113,7 +113,7 @@ test_that("Beta estimates work - data.frame", {
   expect_snapshot(print(sp_multi))
 })
 
-test_that("Beta estimates work - tune_results", {
+test_that("Multinomial estimates work - tune_results", {
   tl_multi <- cal_estimate_multinomial(testthat_cal_multiclass())
   expect_cal_type(tl_multi, "multiclass")
   expect_cal_method(tl_multi, "Multinomial")

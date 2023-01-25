@@ -126,13 +126,13 @@ cal_logistic_impl <- function(.data,
       ...
     )
 
-    res <- as_binary_cal_object(
+    res <- as_cal_object(
       estimate = log_model,
       levels = levels,
       truth = !!truth,
       method = method,
       rows = nrow(.data),
-      additional_class = additional_class,
+      additional_classes = additional_class,
       source_class = source_class
     )
   } else {

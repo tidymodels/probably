@@ -10,28 +10,6 @@ print.cal_estimate_isotonic <- function(x, ...) {
   print_cls_cal(x, upv = TRUE, ...)
 }
 
-as_binary_cal_object <- function(estimate,
-                                 truth,
-                                 levels,
-                                 method,
-                                 rows,
-                                 additional_class = NULL,
-                                 source_class = NULL) {
-  truth <- enquo(truth)
-
-  as_cal_object(
-    estimate = estimate,
-    truth = !!truth,
-    levels = levels,
-    method = method,
-    rows = rows,
-    additional_classes = c(additional_class, "cal_binary"),
-    source_class = source_class,
-    type = "binary"
-  )
-}
-
-
 # ------------------------------- Multi ----------------------------------------
 
 #' @export
@@ -39,27 +17,6 @@ print.cal_multi <- function(x, ...) {
   print_cls_cal(x, ...)
 }
 
-
-as_multi_cal_object <- function(estimate,
-                                 truth,
-                                 levels,
-                                 method,
-                                 rows,
-                                 additional_class = NULL,
-                                 source_class = NULL) {
-  truth <- enquo(truth)
-
-  as_cal_object(
-    estimate = estimate,
-    truth = !!truth,
-    levels = levels,
-    method = method,
-    rows = rows,
-    additional_classes = c(additional_class, "cal_multi"),
-    source_class = source_class,
-    type = "multiclass"
-  )
-}
 
 # ------------------------------- Regression -----------------------------------
 
@@ -93,13 +50,16 @@ as_regression_cal_object <- function(estimate,
 # ------------------------------- Utils ----------------------------------------
 
 print_cls_cal <- function(x, upv = FALSE, ...) {
-
-  if(x$type == "binary") {
+  if (x$type == "binary") {
     type <- "Binary"
   }
 
-  if(x$type == "multiclass") {
+  if (x$type == "multiclass") {
     type <- "Multiclass"
+  }
+
+  if (x$type == "one_vs_all") {
+    type <- "Multiclass (1 v All)"
   }
 
   cli::cli_div(theme = list(
@@ -120,14 +80,15 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
     cli::cli_text(grps)
   }
 
-  if (upv) {
-    upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]]), ",")
+  if (upv && x$type == "binary") {
+    upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]][[1]]), ",")
     cli::cli_text("Unique Probability Values: {.val2 {upv_no}}")
   }
+
   cli::cli_text("Truth variable: `{.val0 {x$truth}}`")
   cli::cli_text("Estimate variables:")
 
-  for(i in seq_along(x$levels)) {
+  for (i in seq_along(x$levels)) {
     cli::cli_text("{.val1 `{x$levels[[i]]}`} ==> {.val0 {names(x$levels[i])}}")
   }
 
@@ -136,7 +97,6 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
 
 
 print_reg_cal <- function(x, upv = FALSE, ...) {
-
   cli::cli_div(theme = list(
     span.val0 = list(color = "blue"),
     span.val1 = list(color = "yellow"),
@@ -173,6 +133,18 @@ as_cal_object <- function(estimate,
                           additional_classes = NULL,
                           source_class = NULL,
                           type = NULL) {
+  if (length(levels) == 2) {
+    if (is.null(type)) {
+      type <- "binary"
+    }
+    cl_class <- "cal_binary"
+  } else {
+    if (is.null(type)) {
+      type <- "one_vs_all"
+    }
+    cl_class <- "cal_multi"
+    additional_classes <- paste0(additional_classes, "_multi")
+  }
 
   str_truth <- as_name(enquo(truth))
 
@@ -186,7 +158,7 @@ as_cal_object <- function(estimate,
       source_class = source_class,
       estimates = estimate
     ),
-    class = c(additional_classes, "cal_object")
+    class = c(additional_classes, cl_class, "cal_object")
   )
 }
 
@@ -213,7 +185,6 @@ truth_estimate_map <- function(.data, truth, estimate) {
   truth_levels <- levels(.data[[truth_str]])
 
   if (length(truth_levels) > 0) {
-
     if (all(substr(estimate_str, 1, 6) == ".pred_")) {
       est_map <- purrr::map(
         truth_levels,

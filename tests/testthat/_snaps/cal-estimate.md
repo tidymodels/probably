@@ -144,23 +144,6 @@
       `.pred_good` ==> good
       `.pred_poor` ==> poor
 
----
-
-    Code
-      print(sp_multi)
-    Message
-      
-      -- Probability Calibration 
-      Method: Multinomial
-      Type: Multiclass
-      Source class: Data Frame
-      Data points: 110
-      Truth variable: `Species`
-      Estimate variables:
-      `.pred_bobcat` ==> bobcat
-      `.pred_coyote` ==> coyote
-      `.pred_gray_fox` ==> gray_fox
-
 # Beta estimates work - tune_results
 
     Code
@@ -177,7 +160,24 @@
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
 
----
+# Multinomial estimates work - data.frame
+
+    Code
+      print(sp_multi)
+    Message
+      
+      -- Probability Calibration 
+      Method: Multinomial
+      Type: Multiclass
+      Source class: Data Frame
+      Data points: 110
+      Truth variable: `Species`
+      Estimate variables:
+      `.pred_bobcat` ==> bobcat
+      `.pred_coyote` ==> coyote
+      `.pred_gray_fox` ==> gray_fox
+
+# Multinomial estimates work - tune_results
 
     Code
       print(tl_multi)
