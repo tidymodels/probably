@@ -34,6 +34,9 @@
     <loc>https://probably.tidymodels.org/dev/reference/as_class_pred.html</loc>
   </url>
   <url>
+    <loc>https://probably.tidymodels.org/dev/reference/boosting_predictions.html</loc>
+  </url>
+  <url>
     <loc>https://probably.tidymodels.org/dev/reference/cal_apply.html</loc>
   </url>
   <url>
@@ -47,6 +50,9 @@
   </url>
   <url>
     <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_isotonic_boot.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_linear.html</loc>
   </url>
   <url>
     <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_logistic.html</loc>
@@ -71,6 +77,9 @@
   </url>
   <url>
     <loc>https://probably.tidymodels.org/dev/reference/cal_validate_isotonic_boot.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_linear.html</loc>
   </url>
   <url>
     <loc>https://probably.tidymodels.org/dev/reference/cal_validate_logistic.html</loc>
