@@ -438,15 +438,15 @@ cal_validate <- function(rset,
     )
   }
 
-  # if (cal_function == "linear") {
-  #   cals <- purrr::map(
-  #     data_tr,
-  #     cal_estimate_linear,
-  #     truth = !!truth,
-  #     estimate = !!estimate,
-  #     ...
-  #   )
-  # }
+  if (cal_function == "linear") {
+    cals <- purrr::map(
+      data_tr,
+      cal_estimate_linear,
+      truth = !!truth,
+      estimate = !!estimate,
+      ...
+    )
+  }
 
 
   if (model_mode == "classification") {
@@ -470,13 +470,14 @@ cal_validate <- function(rset,
           pred_class = !!rlang::parse_expr(".pred_class")
         )
 
-        stats_after <- metrics(ap, truth = !!truth, estimate_cols)
-        stats_before <- metrics(data_as[[.x]], truth = !!truth, estimate_cols)
+        metric_df <- tibble::as_tibble(metrics) %>% dplyr::select(.metric = metric, direction)
+        stats_after <- metrics(ap, truth = !!truth, estimate_cols) %>%
+          dplyr::full_join(metric_df, by = ".metric")
+        stats_before <- metrics(data_as[[.x]], truth = !!truth, estimate_cols) %>%
+          dplyr::full_join(metric_df, by = ".metric")
 
         stats_cols <- c(".metric", ".estimator", "direction", ".estimate")
-        stats_after$direction <- direction
         stats_after <- stats_after[, stats_cols]
-        stats_before$direction <- direction
         stats_before <- stats_before[, stats_cols]
 
         list(
@@ -515,4 +516,70 @@ cal_validate <- function(rset,
 #' @export
 type_sum.cal_binary <- function(x, ...) {
   paste0(x$method, " [", x$rows, "]")
+}
+
+# -------------------------------- Linear --------------------------------------
+#' Measure performance with and without using linear regression calibration
+#' @inheritParams cal_estimate_logistic
+#'
+#' @template metrics_reg
+#'
+#' @param metrics A set of metrics passed created via `yardstick::metric_set()`
+#' @param summarize Indicates to pass tibble with the metrics averaged, or
+#' if to return the same sampled object but with new columns containing the
+#' calibration y validation list columns.
+#' @param save_details Indicates whether to include the `calibration` and
+#' `validation` columns when the `summarize` argument is set to FALSE.
+#' @seealso [cal_apply()], [cal_estimate_linear()]
+#' @examples
+#' library(dplyr)
+#' library(yardstick)
+#' library(rsample)
+#'
+#' head(boosting_predictions_test)
+#'
+#' reg_stats <- metric_set(rmse, ccc)
+#'
+#' set.seed(828)
+#' boosting_predictions_oob %>%
+#'   # Resample with 10-fold cross-validation
+#'   vfold_cv() %>%
+#'   cal_validate_linear(truth = outcome, smooth = FALSE, metrics = reg_stats)
+#' @export
+cal_validate_linear <- function(.data,
+                                truth = NULL,
+                                estimate = dplyr::starts_with(".pred"),
+                                smooth = TRUE,
+                                parameters = NULL,
+                                metrics = NULL,
+                                save_details = FALSE,
+                                summarize = TRUE,
+                                ...) {
+  UseMethod("cal_validate_linear")
+}
+
+
+#' @export
+#' @rdname cal_validate_linear
+cal_validate_linear.rset <- function(.data,
+                                     truth = NULL,
+                                     estimate = dplyr::starts_with(".pred"),
+                                     smooth = TRUE,
+                                     parameters = NULL,
+                                     metrics = NULL,
+                                     save_details = FALSE,
+                                     summarize = TRUE,
+                                     ...) {
+  cal_validate(
+    rset = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    cal_function = "linear",
+    metrics = metrics,
+    summarize = summarize,
+    smooth = smooth,
+    parameters = parameters,
+    save_details = save_details,
+    ...
+  )
 }

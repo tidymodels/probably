@@ -196,6 +196,58 @@
       `.pred_Twnhs` ==> Twnhs
       `.pred_TwnhsE` ==> TwnhsE
 
+# Linear estimates work - data.frame
+
+    Code
+      print(sl_logistic)
+    Message
+      
+      -- Regression Calibration 
+      Method: Linear
+      Source class: Data Frame
+      Data points: 2,000
+      Truth variable: `outcome`
+      Estimate variable: `.pred`
+
+# Linear estimates work - tune_results
+
+    Code
+      print(tl_logistic)
+    Message
+      
+      -- Regression Calibration 
+      Method: Linear
+      Source class: Tune Results
+      Data points: 750, split in 10 groups
+      Truth variable: `outcome`
+      Estimate variable: `.pred`
+
+# Linear spline estimates work - data.frame
+
+    Code
+      print(sl_gam)
+    Message
+      
+      -- Regression Calibration 
+      Method: Linear Spline
+      Source class: Data Frame
+      Data points: 2,000
+      Truth variable: `outcome`
+      Estimate variable: `.pred`
+
+# Linear spline estimates work - tune_results
+
+    Code
+      print(tl_gam)
+    Message
+      
+      -- Regression Calibration 
+      Method: Linear Spline
+      Source class: Tune Results
+      Data points: 750, split in 10 groups
+      Truth variable: `outcome`
+      Estimate variable: `.pred`
+
 # Non-default names used for estimate columns
 
     Code

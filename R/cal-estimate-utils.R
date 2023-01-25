@@ -50,17 +50,16 @@ as_regression_cal_object <- function(estimate,
 # ------------------------------- Utils ----------------------------------------
 
 print_cls_cal <- function(x, upv = FALSE, ...) {
-  if (x$type == "binary") {
-    type <- "Binary"
-  }
 
-  if (x$type == "multiclass") {
-    type <- "Multiclass"
-  }
-
-  if (x$type == "one_vs_all") {
-    type <- "Multiclass (1 v All)"
-  }
+  print_type <-
+    switch(
+      x$type,
+      "binary" = "Binary",
+      "multiclass" = "Multiclass",
+      "one_vs_all" = "Multiclass (1 v All)",
+      "regression" = "Regression",
+      NA_character_
+    )
 
   cli::cli_div(theme = list(
     span.val0 = list(color = "blue"),
@@ -70,7 +69,7 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
   rows <- prettyNum(x$rows, ",")
   cli::cli_h3("Probability Calibration")
   cli::cli_text("Method: {.val2 {x$method}}")
-  cli::cli_text("Type: {.val2 {type}}")
+  cli::cli_text("Type: {.val2 {print_type}}")
   cli::cli_text("Source class: {.val2 {x$source_class}}")
   if (length(x$estimates) == 1) {
     cli::cli_text("Data points: {.val2 {rows}}")
@@ -133,17 +132,22 @@ as_cal_object <- function(estimate,
                           additional_classes = NULL,
                           source_class = NULL,
                           type = NULL) {
-  if (length(levels) == 2) {
+  if (length(levels) == 1) {
+    type <- "regression"
+    obj_class <- character(0)
+  } else if (length(levels) == 2) {
     if (is.null(type)) {
       type <- "binary"
     }
-    cl_class <- "cal_binary"
-  } else {
+    obj_class <- "cal_binary"
+  } else if (length(levels) > 2) {
     if (is.null(type)) {
       type <- "one_vs_all"
     }
-    cl_class <- "cal_multi"
+    obj_class <- "cal_multi"
     additional_classes <- paste0(additional_classes, "_multi")
+  } else {
+    rlang::abort("Can't translate 'levels' to a class.")
   }
 
   str_truth <- as_name(enquo(truth))
@@ -158,7 +162,7 @@ as_cal_object <- function(estimate,
       source_class = source_class,
       estimates = estimate
     ),
-    class = c(additional_classes, cl_class, "cal_object")
+    class = c(additional_classes, obj_class, "cal_object")
   )
 }
 

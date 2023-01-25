@@ -135,6 +135,48 @@ test_that("Passing a binary outcome causes error", {
   )
 })
 
+# --------------------------------- Linear -----------------------------------
+test_that("Linear estimates work - data.frame", {
+  sl_logistic <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
+  expect_cal_type(sl_logistic, "regression")
+  expect_cal_method(sl_logistic, "Linear")
+  expect_cal_estimate(sl_logistic, "butchered_glm")
+  expect_cal_rows(sl_logistic, 2000)
+  expect_snapshot(print(sl_logistic))
+})
+
+test_that("Linear estimates work - tune_results", {
+  tl_logistic <- cal_estimate_linear(testthat_cal_reg(), outcome, smooth = FALSE)
+  expect_cal_type(tl_logistic, "regression")
+  expect_cal_method(tl_logistic, "Linear")
+  expect_cal_estimate(tl_logistic, "butchered_glm")
+  expect_snapshot(print(tl_logistic))
+})
+
+# ----------------------------- Linear Spline --------------------------------
+test_that("Linear spline estimates work - data.frame", {
+  sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome)
+  expect_cal_type(sl_gam, "regression")
+  expect_cal_method(sl_gam, "Linear Spline")
+  expect_cal_estimate(sl_gam, "butchered_gam")
+  expect_cal_rows(sl_gam, 2000)
+  expect_snapshot(print(sl_gam))
+})
+
+test_that("Linear spline estimates work - tune_results", {
+  tl_gam <- cal_estimate_linear(testthat_cal_reg(), outcome)
+  expect_cal_type(tl_gam, "regression")
+  expect_cal_method(tl_gam, "Linear Spline")
+  expect_cal_estimate(tl_gam, "butchered_gam")
+  expect_snapshot(print(tl_gam))
+
+  expect_equal(
+    testthat_cal_reg_count(),
+    nrow(cal_apply(testthat_cal_reg(), tl_gam))
+  )
+})
+
+
 # ----------------------------------- Other ------------------------------------
 test_that("Non-default names used for estimate columns", {
   new_segment <- segment_logistic

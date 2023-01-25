@@ -37,6 +37,7 @@ reference:
   - segment_naive_bayes
   - segment_logistic
   - species_probs
+  - boosting_predictions
 
 - title: Calibration
   contents:

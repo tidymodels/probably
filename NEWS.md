@@ -13,6 +13,7 @@
 
   * Binary classification methods: logistic regression, isotonic regression, and Beta calibration.
   * Multiclass classification: multinomial
+  * Regression: linear regression, isotonic regression
 
 * Based on the initial PR (#37) by Antonio R. Vargas, `threshold_perf()` now accepts a custom metric set (#25)
 

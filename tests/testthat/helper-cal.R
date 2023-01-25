@@ -142,6 +142,64 @@ testthat_cal_sim_multi <- function() {
   ret
 }
 
+
+testthat_cal_reg <- function() {
+  ret <- .cal_env$reg_tune_results
+
+  if(is.null(ret)) {
+
+    ret_file <- test_path("cal_files/reg_sim.rds")
+
+    if(!file.exists(ret_file)) {
+
+      if(!dir.exists(test_path("cal_files"))) {
+        dir.create(test_path("cal_files"))
+      }
+
+      set.seed(111)
+
+      sim_data <- modeldata::sim_regression(100)[, 1:3]
+
+      rec <- recipes::recipe(outcome ~ ., data = sim_data) %>%
+        recipes::step_ns(predictor_01, deg_free = tune::tune("predictor_01"))
+
+      ret <- tune::tune_grid(
+        object = parsnip::linear_reg(),
+        preprocessor = rec,
+        resamples = rsample::bootstraps(sim_data, times = 3),
+        control = tune::control_resamples(save_pred = TRUE)
+      )
+      saveRDS(ret, ret_file, version = 2)
+    } else {
+      ret <- readRDS(ret_file)
+    }
+    .cal_env$reg_tune_results <- ret
+    cp <- tune::collect_predictions(ret, summarize = TRUE)
+    .cal_env$reg_tune_results_count <- nrow(cp)
+  }
+
+  ret
+}
+
+testthat_cal_reg_count <- function() {
+  ret <- .cal_env$reg_tune_results_count
+  if(is.null(ret)) {
+    invisible(testthat_cal_reg())
+    ret <- .cal_env$reg_tune_results_count
+  }
+  ret
+}
+
+testthat_cal_reg_sampled <- function() {
+  ret <- .cal_env$resampled_reg_data
+  if(is.null(ret)) {
+    set.seed(100)
+    ret <- rsample::vfold_cv(boosting_predictions_oob)
+    .cal_env$resampled_reg_data <- ret
+  }
+  ret
+}
+
 sim_multinom_df <- function() {
   sim_multinom(
     1000,
