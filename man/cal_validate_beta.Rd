@@ -10,8 +10,6 @@ cal_validate_beta(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
-  shape_params = 2,
-  location_params = 1,
   parameters = NULL,
   metrics = NULL,
   summarize = TRUE,
@@ -23,12 +21,10 @@ cal_validate_beta(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
-  shape_params = 2,
-  location_params = 1,
   parameters = NULL,
   metrics = NULL,
-  save_details = FALSE,
   summarize = TRUE,
+  save_details = FALSE,
   ...
 )
 
@@ -36,8 +32,6 @@ cal_validate_beta(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
-  shape_params = 2,
-  location_params = 1,
   parameters = NULL,
   metrics = NULL,
   summarize = TRUE,
@@ -58,12 +52,6 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
-\item{shape_params}{Number of shape parameters to use. Accepted values are
-1 and 2. Defaults to 2.}
-
-\item{location_params}{Number of location parameters to use. Accepted values
-1 and 0. Defaults to 1.}
-
 \item{parameters}{(Optional)  An optional tibble of tuning parameter values
 that can be used to filter the predicted values before processing. Applies
 only to \code{tune_results} objects.}
@@ -77,8 +65,8 @@ calibration y validation list columns.}
 \item{save_details}{Indicates whether to include the \code{calibration} and
 \code{validation} columns when the \code{summarize} argument is set to FALSE.}
 
-\item{...}{Additional arguments passed to the models or routines used to
-calculate the new probabilities.}
+\item{...}{Options to pass to \code{\link[=cal_estimate_beta]{cal_estimate_beta()}}, such as the
+\code{shape_params} and \code{location_params} arguments.}
 }
 \description{
 This function uses resampling to measure the effect of calibrating predicted
@@ -117,4 +105,7 @@ segment_logistic \%>\%
   rsample::vfold_cv() \%>\%
   cal_validate_beta(Class)
 
+}
+\seealso{
+\code{\link[=cal_apply]{cal_apply()}}, \code{\link[=cal_estimate_beta]{cal_estimate_beta()}}
 }

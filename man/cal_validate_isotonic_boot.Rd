@@ -10,7 +10,6 @@ cal_validate_isotonic_boot(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
-  times = 10,
   parameters = NULL,
   metrics = NULL,
   save_details = FALSE,
@@ -22,7 +21,6 @@ cal_validate_isotonic_boot(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
-  times = 10,
   parameters = NULL,
   metrics = NULL,
   save_details = FALSE,
@@ -34,7 +32,6 @@ cal_validate_isotonic_boot(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
-  times = 10,
   parameters = NULL,
   metrics = NULL,
   save_details = FALSE,
@@ -55,8 +52,6 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
-\item{times}{Number of bootstraps.}
-
 \item{parameters}{(Optional)  An optional tibble of tuning parameter values
 that can be used to filter the predicted values before processing. Applies
 only to \code{tune_results} objects.}
@@ -70,8 +65,8 @@ only to \code{tune_results} objects.}
 if to return the same sampled object but with new columns containing the
 calibration y validation list columns.}
 
-\item{...}{Additional arguments passed to the models or routines used to
-calculate the new probabilities.}
+\item{...}{Options to pass to \code{\link[=cal_estimate_isotonic_boot]{cal_estimate_isotonic_boot()}}, such as the
+\code{times} argument.}
 }
 \description{
 This function uses resampling to measure the effect of calibrating predicted
@@ -111,4 +106,7 @@ segment_logistic \%>\%
   rsample::vfold_cv() \%>\%
   cal_validate_isotonic_boot(Class)
 
+}
+\seealso{
+\code{\link[=cal_apply]{cal_apply()}}, \code{\link[=cal_estimate_isotonic_boot]{cal_estimate_isotonic_boot()}}
 }

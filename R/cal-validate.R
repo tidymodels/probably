@@ -29,6 +29,9 @@
 #' calibration y validation list columns.
 #' @param save_details Indicates whether to include the `calibration` and
 #' `validation` columns when the `summarize` argument is set to FALSE.
+#' @param ... Options to pass to [cal_estimate_logistic()], such as the `smooth`
+#' argument.
+#' @seealso [cal_apply()], [cal_estimate_logistic()]
 #' @examples
 #'
 #' library(dplyr)
@@ -47,7 +50,6 @@
 cal_validate_logistic <- function(.data,
                                   truth = NULL,
                                   estimate = dplyr::starts_with(".pred_"),
-                                  smooth = TRUE,
                                   parameters = NULL,
                                   metrics = NULL,
                                   save_details = FALSE,
@@ -62,7 +64,6 @@ cal_validate_logistic.resample_results <-
   function(.data,
            truth = NULL,
            estimate = dplyr::starts_with(".pred_"),
-           smooth = TRUE,
            parameters = NULL,
            metrics = NULL,
            save_details = FALSE,
@@ -91,7 +92,6 @@ cal_validate_logistic.resample_results <-
 cal_validate_logistic.rset <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
-                                       smooth = TRUE,
                                        parameters = NULL,
                                        metrics = NULL,
                                        save_details = FALSE,
@@ -104,7 +104,6 @@ cal_validate_logistic.rset <- function(.data,
     cal_function = "logistic",
     metrics = metrics,
     summarize = summarize,
-    smooth = smooth,
     parameters = parameters,
     save_details = save_details,
     ...
@@ -115,6 +114,7 @@ cal_validate_logistic.rset <- function(.data,
 #' Measure performance with and without using isotonic regression calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic
+#' @seealso [cal_apply()], [cal_estimate_isotonic()]
 #' @template metrics_both
 #' @examples
 #'
@@ -191,6 +191,9 @@ cal_validate_isotonic.rset <- function(.data,
 #' Measure performance with and without using bagged isotonic regression calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic_boot
+#' @param ... Options to pass to [cal_estimate_isotonic_boot()], such as the
+#' `times` argument.
+#' @seealso [cal_apply()], [cal_estimate_isotonic_boot()]
 #' @template metrics_both
 #' @examples
 #'
@@ -204,7 +207,6 @@ cal_validate_isotonic.rset <- function(.data,
 cal_validate_isotonic_boot <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
-                                       times = 10,
                                        parameters = NULL,
                                        metrics = NULL,
                                        save_details = FALSE,
@@ -219,7 +221,6 @@ cal_validate_isotonic_boot.resample_results <-
   function(.data,
            truth = NULL,
            estimate = dplyr::starts_with(".pred_"),
-           times = 10,
            parameters = NULL,
            metrics = NULL,
            save_details = FALSE,
@@ -248,7 +249,6 @@ cal_validate_isotonic_boot.resample_results <-
 cal_validate_isotonic_boot.rset <- function(.data,
                                             truth = NULL,
                                             estimate = dplyr::starts_with(".pred_"),
-                                            times = 10,
                                             parameters = NULL,
                                             metrics = NULL,
                                             save_details = FALSE,
@@ -270,6 +270,9 @@ cal_validate_isotonic_boot.rset <- function(.data,
 #' Measure performance with and without using Beta calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_beta
+#' @param ... Options to pass to [cal_estimate_beta()], such as the
+#' `shape_params` and `location_params` arguments.
+#' @seealso [cal_apply()], [cal_estimate_beta()]
 #' @examples
 #'
 #' library(dplyr)
@@ -282,8 +285,6 @@ cal_validate_isotonic_boot.rset <- function(.data,
 cal_validate_beta <- function(.data,
                               truth = NULL,
                               estimate = dplyr::starts_with(".pred_"),
-                              shape_params = 2,
-                              location_params = 1,
                               parameters = NULL,
                               metrics = NULL,
                               summarize = TRUE,
@@ -298,12 +299,10 @@ cal_validate_beta.resample_results <-
   function(.data,
            truth = NULL,
            estimate = dplyr::starts_with(".pred_"),
-           shape_params = 2,
-           location_params = 1,
            parameters = NULL,
            metrics = NULL,
-           save_details = FALSE,
            summarize = TRUE,
+           save_details = FALSE,
            ...) {
 
     truth <- tune::.get_tune_outcome_names(.data)
@@ -328,8 +327,6 @@ cal_validate_beta.resample_results <-
 cal_validate_beta.rset <- function(.data,
                                    truth = NULL,
                                    estimate = dplyr::starts_with(".pred_"),
-                                   shape_params = 2,
-                                   location_params = 1,
                                    parameters = NULL,
                                    metrics = NULL,
                                    summarize = TRUE,
@@ -342,8 +339,6 @@ cal_validate_beta.rset <- function(.data,
     cal_function = "beta",
     metrics = metrics,
     summarize = summarize,
-    shape_params = shape_params,
-    location_params = location_params,
     save_details = save_details,
     ...
   )
@@ -352,7 +347,8 @@ cal_validate_beta.rset <- function(.data,
 # ------------------------------- Multinomial ----------------------------------
 #' Measure performance with and without using multinomial calibration
 #' @inherit cal_validate_logistic
-#' @inheritParams cal_estimate_isotonic_boot
+#' @inheritParams cal_estimate_multinomial
+#' @seealso [cal_apply()], [cal_estimate_multinomial()]
 #' @examples
 #'
 #' library(dplyr)
@@ -688,6 +684,8 @@ type_sum.cal_binary <- function(x, ...) {
 #' calibration y validation list columns.
 #' @param save_details Indicates whether to include the `calibration` and
 #' `validation` columns when the `summarize` argument is set to FALSE.
+#' @param ... Options to pass to [cal_estimate_linear()], such as the `smooth`
+#' argument.
 #' @seealso [cal_apply()], [cal_estimate_linear()]
 #' @examples
 #' library(dplyr)
@@ -707,7 +705,6 @@ type_sum.cal_binary <- function(x, ...) {
 cal_validate_linear <- function(.data,
                                 truth = NULL,
                                 estimate = dplyr::starts_with(".pred"),
-                                smooth = TRUE,
                                 parameters = NULL,
                                 metrics = NULL,
                                 save_details = FALSE,
@@ -722,7 +719,6 @@ cal_validate_linear.resample_results <-
   function(.data,
            truth = NULL,
            estimate = dplyr::starts_with(".pred_"),
-           smooth = TRUE,
            parameters = NULL,
            metrics = NULL,
            save_details = FALSE,
@@ -742,7 +738,6 @@ cal_validate_linear.resample_results <-
       metrics = metrics,
       summarize = summarize,
       save_details = save_details,
-      smooth = smooth,
       ...
     )
   }
@@ -752,7 +747,6 @@ cal_validate_linear.resample_results <-
 cal_validate_linear.rset <- function(.data,
                                      truth = NULL,
                                      estimate = dplyr::starts_with(".pred"),
-                                     smooth = TRUE,
                                      parameters = NULL,
                                      metrics = NULL,
                                      save_details = FALSE,
@@ -765,7 +759,6 @@ cal_validate_linear.rset <- function(.data,
     cal_function = "linear",
     metrics = metrics,
     summarize = summarize,
-    smooth = smooth,
     parameters = parameters,
     save_details = save_details,
     ...

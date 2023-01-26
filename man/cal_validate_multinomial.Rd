@@ -65,8 +65,8 @@ only to \code{tune_results} objects.}
 if to return the same sampled object but with new columns containing the
 calibration y validation list columns.}
 
-\item{...}{Additional arguments passed to the models or routines used to
-calculate the new probabilities.}
+\item{...}{Options to pass to \code{\link[=cal_estimate_logistic]{cal_estimate_logistic()}}, such as the \code{smooth}
+argument.}
 }
 \description{
 This function uses resampling to measure the effect of calibrating predicted
@@ -105,4 +105,7 @@ species_probs \%>\%
   rsample::vfold_cv() \%>\%
   cal_validate_multinomial(Species)
 
+}
+\seealso{
+\code{\link[=cal_apply]{cal_apply()}}, \code{\link[=cal_estimate_multinomial]{cal_estimate_multinomial()}}
 }
