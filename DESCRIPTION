@@ -39,7 +39,7 @@ Suggests:
     covr,
     knitr,
     mgcv,
-    modeldata,
+    modeldata (>= 1.1.0),
     nnet,
     parsnip,
     recipes,
