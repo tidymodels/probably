@@ -10,7 +10,6 @@ cal_validate_linear(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  parameters = NULL,
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,
@@ -21,7 +20,6 @@ cal_validate_linear(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
-  parameters = NULL,
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,
@@ -32,7 +30,6 @@ cal_validate_linear(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  parameters = NULL,
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,
@@ -51,10 +48,6 @@ functions to choose which variables contains the class probabilities. It
 defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
-
-\item{parameters}{(Optional)  An optional tibble of tuning parameter values
-that can be used to filter the predicted values before processing. Applies
-only to \code{tune_results} objects.}
 
 \item{metrics}{A set of metrics passed created via \code{yardstick::metric_set()}}
 
