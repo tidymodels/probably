@@ -2,6 +2,7 @@
 % Please edit documentation in R/cal-validate.R
 \name{cal_validate_linear}
 \alias{cal_validate_linear}
+\alias{cal_validate_linear.resample_results}
 \alias{cal_validate_linear.rset}
 \title{Measure performance with and without using linear regression calibration}
 \usage{
@@ -9,6 +10,18 @@ cal_validate_linear(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
+  smooth = TRUE,
+  parameters = NULL,
+  metrics = NULL,
+  save_details = FALSE,
+  summarize = TRUE,
+  ...
+)
+
+\method{cal_validate_linear}{resample_results}(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
   smooth = TRUE,
   parameters = NULL,
   metrics = NULL,

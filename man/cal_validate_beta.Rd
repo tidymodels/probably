@@ -2,15 +2,16 @@
 % Please edit documentation in R/cal-validate.R
 \name{cal_validate_beta}
 \alias{cal_validate_beta}
+\alias{cal_validate_beta.resample_results}
 \alias{cal_validate_beta.rset}
 \title{Measure performance with and without using Beta calibration}
 \usage{
 cal_validate_beta(
   .data,
   truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
   shape_params = 2,
   location_params = 1,
-  estimate = dplyr::starts_with(".pred_"),
   parameters = NULL,
   metrics = NULL,
   summarize = TRUE,
@@ -18,12 +19,25 @@ cal_validate_beta(
   ...
 )
 
+\method{cal_validate_beta}{resample_results}(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  shape_params = 2,
+  location_params = 1,
+  parameters = NULL,
+  metrics = NULL,
+  save_details = FALSE,
+  summarize = TRUE,
+  ...
+)
+
 \method{cal_validate_beta}{rset}(
   .data,
   truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
   shape_params = 2,
   location_params = 1,
-  estimate = dplyr::starts_with(".pred_"),
   parameters = NULL,
   metrics = NULL,
   summarize = TRUE,
@@ -32,23 +46,23 @@ cal_validate_beta(
 )
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{rset} object, that contains
-prediction columns.}
+\item{.data}{An \code{rset} object or the results of \code{\link[tune:fit_resamples]{tune::fit_resamples()}} with
+a \code{.predictions} column.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}
-
-\item{shape_params}{Number of shape parameters to use. Accepted values are
-1 and 2. Defaults to 2.}
-
-\item{location_params}{Number of location parameters to use. Accepted values
-1 and 0. Defaults to 1.}
 
 \item{estimate}{A vector of column identifiers, or one of \code{dplyr} selector
 functions to choose which variables contains the class probabilities. It
 defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
+
+\item{shape_params}{Number of shape parameters to use. Accepted values are
+1 and 2. Defaults to 2.}
+
+\item{location_params}{Number of location parameters to use. Accepted values
+1 and 0. Defaults to 1.}
 
 \item{parameters}{(Optional)  An optional tibble of tuning parameter values
 that can be used to filter the predicted values before processing. Applies
@@ -71,12 +85,21 @@ This function uses resampling to measure the effect of calibrating predicted
 values.
 }
 \details{
-Please note that this function does not apply to \code{tune_result} objects. It
-only processes resampled data.
+These functions are designed to calculate performance with and without
+calibration. They use resampling to measure out-of-sample effectiveness.
+There are two ways to pass the data in:
+\itemize{
+\item If you have a data frame of predictions, an \code{rset} object can be created
+via \pkg{rsample} functions. See the example below.
+\item If you have already made a resampling object from the original data and
+used it with \code{\link[tune:fit_resamples]{tune::fit_resamples()}}, you can pass that object to the
+calibration function and it will use the same resampling scheme. If a
+different resampling scheme should be used, run
+\code{\link[tune:collect_predictions]{tune::collect_predictions()}} on the object and use the process in the
+previous bullet point.
+}
 
-These functions take an resampling object, created via \code{rsample},
-and for each resample, it calculates the calibration on the analysis set, and
-then applies the calibration on the assessment set.
+Please note that these functions do not apply to \code{tune_result} objects.
 }
 \section{Performance Metrics}{
 

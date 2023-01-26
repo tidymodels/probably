@@ -2,10 +2,22 @@
 % Please edit documentation in R/cal-validate.R
 \name{cal_validate_multinomial}
 \alias{cal_validate_multinomial}
+\alias{cal_validate_multinomial.resample_results}
 \alias{cal_validate_multinomial.rset}
 \title{Measure performance with and without using multinomial calibration}
 \usage{
 cal_validate_multinomial(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  parameters = NULL,
+  metrics = NULL,
+  save_details = FALSE,
+  summarize = TRUE,
+  ...
+)
+
+\method{cal_validate_multinomial}{resample_results}(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
@@ -28,8 +40,8 @@ cal_validate_multinomial(
 )
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{rset} object, that contains
-prediction columns.}
+\item{.data}{An \code{rset} object or the results of \code{\link[tune:fit_resamples]{tune::fit_resamples()}} with
+a \code{.predictions} column.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}
@@ -61,12 +73,21 @@ This function uses resampling to measure the effect of calibrating predicted
 values.
 }
 \details{
-Please note that this function does not apply to \code{tune_result} objects. It
-only processes resampled data.
+These functions are designed to calculate performance with and without
+calibration. They use resampling to measure out-of-sample effectiveness.
+There are two ways to pass the data in:
+\itemize{
+\item If you have a data frame of predictions, an \code{rset} object can be created
+via \pkg{rsample} functions. See the example below.
+\item If you have already made a resampling object from the original data and
+used it with \code{\link[tune:fit_resamples]{tune::fit_resamples()}}, you can pass that object to the
+calibration function and it will use the same resampling scheme. If a
+different resampling scheme should be used, run
+\code{\link[tune:collect_predictions]{tune::collect_predictions()}} on the object and use the process in the
+previous bullet point.
+}
 
-These functions take an resampling object, created via \code{rsample},
-and for each resample, it calculates the calibration on the analysis set, and
-then applies the calibration on the assessment set.
+Please note that these functions do not apply to \code{tune_result} objects.
 }
 \section{Performance Metrics}{
 

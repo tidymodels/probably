@@ -5,12 +5,21 @@
 #' values.
 #'
 #' @details
-#' Please note that this function does not apply to `tune_result` objects. It
-#' only processes resampled data.
+#' These functions are designed to calculate performance with and without
+#' calibration. They use resampling to measure out-of-sample effectiveness.
+#' There are two ways to pass the data in:
 #'
-#' These functions take an resampling object, created via `rsample`,
-#' and for each resample, it calculates the calibration on the analysis set, and
-#' then applies the calibration on the assessment set.
+#'  - If you have a data frame of predictions, an `rset` object can be created
+#'    via \pkg{rsample} functions. See the example below.
+#'
+#'  - If you have already made a resampling object from the original data and
+#'    used it with [tune::fit_resamples()], you can pass that object to the
+#'    calibration function and it will use the same resampling scheme. If a
+#'    different resampling scheme should be used, run
+#'    [tune::collect_predictions()] on the object and use the process in the
+#'    previous bullet point.
+#'
+#' Please note that these functions do not apply to `tune_result` objects.
 #'
 #' @template metrics_cls
 #'
@@ -32,8 +41,8 @@
 #'   cal_validate_logistic(Class)
 #'
 #' @inheritParams cal_estimate_logistic
-#' @param .data A `data.frame` object, or `rset` object, that contains
-#' prediction columns.
+#' @param .data An `rset` object or the results of [tune::fit_resamples()] with
+#' a `.predictions` column.
 #' @export
 cal_validate_logistic <- function(.data,
                                   truth = NULL,
@@ -46,6 +55,36 @@ cal_validate_logistic <- function(.data,
                                   ...) {
   UseMethod("cal_validate_logistic")
 }
+
+#' @export
+#' @rdname cal_validate_logistic
+cal_validate_logistic.resample_results <-
+  function(.data,
+           truth = NULL,
+           estimate = dplyr::starts_with(".pred_"),
+           smooth = TRUE,
+           parameters = NULL,
+           metrics = NULL,
+           save_details = FALSE,
+           summarize = TRUE,
+           ...) {
+
+    truth <- tune::.get_tune_outcome_names(.data)
+    truth <- rlang::as_quosure(truth)
+    # Change splits$data to be the predictions instead of the original
+    # training data
+    .data <- convert_resamples(.data)
+    cal_validate(
+      rset = .data,
+      truth = {{ truth }},
+      estimate = {{ estimate }},
+      cal_function = "isotonic",
+      metrics = metrics,
+      summarize = summarize,
+      save_details = save_details,
+      ...
+    )
+  }
 
 #' @export
 #' @rdname cal_validate_logistic
@@ -99,6 +138,35 @@ cal_validate_isotonic <- function(.data,
 
 #' @export
 #' @rdname cal_validate_isotonic
+cal_validate_isotonic.resample_results <-
+  function(.data,
+           truth = NULL,
+           estimate = dplyr::starts_with(".pred_"),
+           parameters = NULL,
+           metrics = NULL,
+           save_details = FALSE,
+           summarize = TRUE,
+           ...) {
+
+    truth <- tune::.get_tune_outcome_names(.data)
+    truth <- rlang::as_quosure(truth)
+    # Change splits$data to be the predictions instead of the original
+    # training data
+    .data <- convert_resamples(.data)
+    cal_validate(
+      rset = .data,
+      truth = {{ truth }},
+      estimate = {{ estimate }},
+      cal_function = "isotonic",
+      metrics = metrics,
+      summarize = summarize,
+      save_details = save_details,
+      ...
+    )
+}
+
+#' @export
+#' @rdname cal_validate_isotonic
 cal_validate_isotonic.rset <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
@@ -147,6 +215,36 @@ cal_validate_isotonic_boot <- function(.data,
 
 #' @export
 #' @rdname cal_validate_isotonic_boot
+cal_validate_isotonic_boot.resample_results <-
+  function(.data,
+           truth = NULL,
+           estimate = dplyr::starts_with(".pred_"),
+           times = 10,
+           parameters = NULL,
+           metrics = NULL,
+           save_details = FALSE,
+           summarize = TRUE,
+           ...) {
+
+    truth <- tune::.get_tune_outcome_names(.data)
+    truth <- rlang::as_quosure(truth)
+    # Change splits$data to be the predictions instead of the original
+    # training data
+    .data <- convert_resamples(.data)
+    cal_validate(
+      rset = .data,
+      truth = {{ truth }},
+      estimate = {{ estimate }},
+      cal_function = "isotonic",
+      metrics = metrics,
+      summarize = summarize,
+      save_details = save_details,
+      ...
+    )
+  }
+
+#' @export
+#' @rdname cal_validate_isotonic_boot
 cal_validate_isotonic_boot.rset <- function(.data,
                                             truth = NULL,
                                             estimate = dplyr::starts_with(".pred_"),
@@ -183,9 +281,9 @@ cal_validate_isotonic_boot.rset <- function(.data,
 #' @export
 cal_validate_beta <- function(.data,
                               truth = NULL,
+                              estimate = dplyr::starts_with(".pred_"),
                               shape_params = 2,
                               location_params = 1,
-                              estimate = dplyr::starts_with(".pred_"),
                               parameters = NULL,
                               metrics = NULL,
                               summarize = TRUE,
@@ -196,11 +294,42 @@ cal_validate_beta <- function(.data,
 
 #' @export
 #' @rdname cal_validate_beta
+cal_validate_beta.resample_results <-
+  function(.data,
+           truth = NULL,
+           estimate = dplyr::starts_with(".pred_"),
+           shape_params = 2,
+           location_params = 1,
+           parameters = NULL,
+           metrics = NULL,
+           save_details = FALSE,
+           summarize = TRUE,
+           ...) {
+
+    truth <- tune::.get_tune_outcome_names(.data)
+    truth <- rlang::as_quosure(truth)
+    # Change splits$data to be the predictions instead of the original
+    # training data
+    .data <- convert_resamples(.data)
+    cal_validate(
+      rset = .data,
+      truth = {{ truth }},
+      estimate = {{ estimate }},
+      cal_function = "isotonic",
+      metrics = metrics,
+      summarize = summarize,
+      save_details = save_details,
+      ...
+    )
+  }
+
+#' @export
+#' @rdname cal_validate_beta
 cal_validate_beta.rset <- function(.data,
                                    truth = NULL,
+                                   estimate = dplyr::starts_with(".pred_"),
                                    shape_params = 2,
                                    location_params = 1,
-                                   estimate = dplyr::starts_with(".pred_"),
                                    parameters = NULL,
                                    metrics = NULL,
                                    summarize = TRUE,
@@ -243,6 +372,35 @@ cal_validate_multinomial <- function(.data,
                                      ...) {
   UseMethod("cal_validate_multinomial")
 }
+
+#' @export
+#' @rdname cal_validate_multinomial
+cal_validate_multinomial.resample_results <-
+  function(.data,
+           truth = NULL,
+           estimate = dplyr::starts_with(".pred_"),
+           parameters = NULL,
+           metrics = NULL,
+           save_details = FALSE,
+           summarize = TRUE,
+           ...) {
+
+    truth <- tune::.get_tune_outcome_names(.data)
+    truth <- rlang::as_quosure(truth)
+    # Change splits$data to be the predictions instead of the original
+    # training data
+    .data <- convert_resamples(.data)
+    cal_validate(
+      rset = .data,
+      truth = {{ truth }},
+      estimate = {{ estimate }},
+      cal_function = "isotonic",
+      metrics = metrics,
+      summarize = summarize,
+      save_details = save_details,
+      ...
+    )
+  }
 
 #' @export
 #' @rdname cal_validate_multinomial
@@ -558,6 +716,36 @@ cal_validate_linear <- function(.data,
   UseMethod("cal_validate_linear")
 }
 
+#' @export
+#' @rdname cal_validate_linear
+cal_validate_linear.resample_results <-
+  function(.data,
+           truth = NULL,
+           estimate = dplyr::starts_with(".pred_"),
+           smooth = TRUE,
+           parameters = NULL,
+           metrics = NULL,
+           save_details = FALSE,
+           summarize = TRUE,
+           ...) {
+
+    truth <- tune::.get_tune_outcome_names(.data)
+    truth <- rlang::as_quosure(truth)
+    # Change splits$data to be the predictions instead of the original
+    # training data
+    .data <- convert_resamples(.data)
+    cal_validate(
+      rset = .data,
+      truth = {{ truth }},
+      estimate = {{ estimate }},
+      cal_function = "isotonic",
+      metrics = metrics,
+      summarize = summarize,
+      save_details = save_details,
+      smooth = smooth,
+      ...
+    )
+  }
 
 #' @export
 #' @rdname cal_validate_linear
@@ -583,3 +771,21 @@ cal_validate_linear.rset <- function(.data,
     ...
   )
 }
+
+
+# ------------------------------------------------------------------------------
+# convert rset to one that can be used by the validate function
+
+convert_resamples <- function(x) {
+  # check for predictions
+  predictions <-
+    tune::collect_predictions(x, summarize = TRUE) %>%
+    dplyr::arrange(.row) %>%
+    dplyr::select(-dplyr::starts_with("id"), -.row, -.config)
+  for (i in seq_along(x$splits)) {
+    x$splits[[i]]$data <- predictions
+  }
+  x
+}
+
+
