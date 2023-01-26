@@ -200,13 +200,62 @@ testthat_cal_reg_sampled <- function() {
   ret
 }
 
-sim_multinom_df <- function() {
+sim_multinom_df <- function(n = 1000) {
   modeldata::sim_multinomial(
-    1000,
+    n,
     ~ -0.5 + 0.6 * abs(A),
     ~ ifelse(A > 0 & B > 0, 1.0 + 0.2 * A / B, -2),
     ~ -0.6 * A + 0.50 * B - A * B
   )
+}
+
+testthat_cal_fit_rs <- function() {
+  ret <- .cal_env$resample_results
+
+  if(is.null(ret)) {
+
+    ret_file <- test_path("cal_files/fit_rs.rds")
+
+    if(!file.exists(ret_file)) {
+
+      if(!dir.exists(test_path("cal_files"))) {
+        dir.create(test_path("cal_files"))
+      }
+      suppressPackageStartupMessages(library(tune))
+      suppressPackageStartupMessages(library(parsnip))
+      suppressPackageStartupMessages(library(rsample))
+
+      ctrl <- control_resamples(save_pred = TRUE)
+
+      set.seed(111)
+      rs_bin <-
+        modeldata::sim_classification(100)[, 1:3] %>%
+        dplyr::rename(outcome = class) %>%
+        vfold_cv() %>%
+        fit_resamples(logistic_reg(), outcome ~ ., resamples = ., control = ctrl)
+      set.seed(112)
+      rs_mlt <-
+        sim_multinom_df(500) %>%
+        dplyr::rename(outcome = class) %>%
+        vfold_cv() %>%
+        fit_resamples(mlp() %>% set_mode("classification"),
+                      outcome ~ ., resamples = ., control = ctrl)
+      set.seed(113)
+      rs_reg <-
+        modeldata::sim_regression(100)[, 1:3] %>%
+        vfold_cv() %>%
+        fit_resamples(linear_reg(), outcome ~ ., resamples = ., control = ctrl)
+
+      res <- list(binary = rs_bin, multin = rs_mlt, reg = rs_reg)
+
+      saveRDS(res, file = ret_file, version = 2)
+    } else {
+      res <- readRDS(ret_file)
+    }
+    .cal_env$resample_results <- res
+  }
+
+  res
 }
 
 # --------------------------- Custom Expect Functions --------------------------

@@ -95,3 +95,14 @@ test_that("check metric direction", {
   expect_equal(res_sum, metric_df)
 
 })
+
+
+
+test_that("Linear validation with `fit_resamples`", {
+  res <- testthat_cal_fit_rs()
+
+  res_sum <- cal_validate_linear(res$reg)
+
+
+})
+
