@@ -19,3 +19,27 @@
       10 <split [909/101]> Fold10 <Beta [909]> <tibble [101 x 4]> <tibble>    <tibble>
       # ... with abbreviated variable name 1: stats_before
 
+# Logistic validation with `fit_resamples`
+
+    'truth' is automaticaly set when this type of object is used.
+
+# Isotonic regression validation with `fit_resamples`
+
+    'truth' is automaticaly set when this type of object is used.
+
+# Bootstrapped isotonic regression validation with `fit_resamples`
+
+    'truth' is automaticaly set when this type of object is used.
+
+# Beta calibration validation with `fit_resamples`
+
+    'truth' is automaticaly set when this type of object is used.
+
+# Multinomial calibration validation with `fit_resamples`
+
+    'truth' is automaticaly set when this type of object is used.
+
+# Linear validation with `fit_resamples`
+
+    'truth' is automaticaly set when this type of object is used.
+

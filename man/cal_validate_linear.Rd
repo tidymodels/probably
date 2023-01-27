@@ -2,6 +2,7 @@
 % Please edit documentation in R/cal-validate.R
 \name{cal_validate_linear}
 \alias{cal_validate_linear}
+\alias{cal_validate_linear.resample_results}
 \alias{cal_validate_linear.rset}
 \title{Measure performance with and without using linear regression calibration}
 \usage{
@@ -9,8 +10,16 @@ cal_validate_linear(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  smooth = TRUE,
-  parameters = NULL,
+  metrics = NULL,
+  save_details = FALSE,
+  summarize = TRUE,
+  ...
+)
+
+\method{cal_validate_linear}{resample_results}(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,
@@ -21,8 +30,6 @@ cal_validate_linear(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  smooth = TRUE,
-  parameters = NULL,
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,
@@ -42,13 +49,6 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
-\item{smooth}{Applies to the logistic models. It switches between logistic
-spline when \code{TRUE}, and simple logistic regression when \code{FALSE}.}
-
-\item{parameters}{(Optional)  An optional tibble of tuning parameter values
-that can be used to filter the predicted values before processing. Applies
-only to \code{tune_results} objects.}
-
 \item{metrics}{A set of metrics passed created via \code{yardstick::metric_set()}}
 
 \item{save_details}{Indicates whether to include the \code{calibration} and
@@ -58,8 +58,8 @@ only to \code{tune_results} objects.}
 if to return the same sampled object but with new columns containing the
 calibration y validation list columns.}
 
-\item{...}{Additional arguments passed to the models or routines used to
-calculate the new probabilities.}
+\item{...}{Options to pass to \code{\link[=cal_estimate_linear]{cal_estimate_linear()}}, such as the \code{smooth}
+argument.}
 }
 \description{
 Measure performance with and without using linear regression calibration

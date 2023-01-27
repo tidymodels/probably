@@ -200,43 +200,62 @@ testthat_cal_reg_sampled <- function() {
   ret
 }
 
-sim_multinom_df <- function() {
-  sim_multinom(
-    1000,
+sim_multinom_df <- function(n = 1000) {
+  modeldata::sim_multinomial(
+    n,
     ~ -0.5 + 0.6 * abs(A),
     ~ ifelse(A > 0 & B > 0, 1.0 + 0.2 * A / B, -2),
     ~ -0.6 * A + 0.50 * B - A * B
   )
 }
 
-sim_multinom <- function(num_samples, eqn_1, eqn_2, eqn_3,
-                         correlation = 0, keep_truth = FALSE) {
-  sigma <- matrix(c(1, correlation, correlation, 1), 2, 2)
-  eqn_1 <- rlang::get_expr(eqn_1)
-  eqn_2 <- rlang::get_expr(eqn_2)
-  eqn_3 <- rlang::get_expr(eqn_3)
-  dat <-
-    data.frame(MASS::mvrnorm(n = num_samples, c(0, 0), sigma)) %>%
-    stats::setNames(LETTERS[1:2]) %>%
-    dplyr::mutate(
-      .formula_1 = rlang::eval_tidy(eqn_1, data = .),
-      .formula_2 = rlang::eval_tidy(eqn_2, data = .),
-      .formula_3 = rlang::eval_tidy(eqn_3, data = .),
-      across(c(dplyr::starts_with(".formula_")), ~ exp(.x))
-    )
-  probs <- as.matrix(dplyr::select(dat, dplyr::starts_with(".formula_")))
-  probs <- t(apply(probs, 1, function(x) x / sum(x)))
-  which_class <- function(x) which.max(rmultinom(1, 1, x))
-  index <- apply(probs, 1, which_class)
-  lvls <- c("one", "two", "three")
-  dat$class <- factor(lvls[index], levels = lvls)
-  dat <- dat %>% dplyr::select(-dplyr::starts_with(".formula_"))
-  if (keep_truth) {
-    colnames(probs) <- paste0(".truth_", lvls)
-    probs <- tibble::as_tibble(probs)
-    dat <- dplyr::bind_cols(dat, probs)
+testthat_cal_fit_rs <- function() {
+  ret <- .cal_env$resample_results
+
+  if(is.null(ret)) {
+
+    ret_file <- test_path("cal_files/fit_rs.rds")
+
+    if(!file.exists(ret_file)) {
+
+      if(!dir.exists(test_path("cal_files"))) {
+        dir.create(test_path("cal_files"))
+      }
+      suppressPackageStartupMessages(library(tune))
+      suppressPackageStartupMessages(library(parsnip))
+      suppressPackageStartupMessages(library(rsample))
+
+      ctrl <- control_resamples(save_pred = TRUE)
+
+      set.seed(111)
+      rs_bin <-
+        modeldata::sim_classification(100)[, 1:3] %>%
+        dplyr::rename(outcome = class) %>%
+        vfold_cv() %>%
+        fit_resamples(logistic_reg(), outcome ~ ., resamples = ., control = ctrl)
+      set.seed(112)
+      rs_mlt <-
+        sim_multinom_df(500) %>%
+        dplyr::rename(outcome = class) %>%
+        vfold_cv() %>%
+        fit_resamples(mlp() %>% set_mode("classification"),
+                      outcome ~ ., resamples = ., control = ctrl)
+      set.seed(113)
+      rs_reg <-
+        modeldata::sim_regression(100)[, 1:3] %>%
+        vfold_cv() %>%
+        fit_resamples(linear_reg(), outcome ~ ., resamples = ., control = ctrl)
+
+      ret <- list(binary = rs_bin, multin = rs_mlt, reg = rs_reg)
+
+      saveRDS(ret, file = ret_file, version = 2)
+    } else {
+      ret <- readRDS(ret_file)
+    }
+    .cal_env$resample_results <- ret
   }
-  tibble::as_tibble(dat)
+
+  ret
 }
 
 # --------------------------- Custom Expect Functions --------------------------

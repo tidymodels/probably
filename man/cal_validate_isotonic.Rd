@@ -2,6 +2,7 @@
 % Please edit documentation in R/cal-validate.R
 \name{cal_validate_isotonic}
 \alias{cal_validate_isotonic}
+\alias{cal_validate_isotonic.resample_results}
 \alias{cal_validate_isotonic.rset}
 \title{Measure performance with and without using isotonic regression calibration}
 \usage{
@@ -9,7 +10,16 @@ cal_validate_isotonic(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
-  parameters = NULL,
+  metrics = NULL,
+  save_details = FALSE,
+  summarize = TRUE,
+  ...
+)
+
+\method{cal_validate_isotonic}{resample_results}(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,
@@ -20,7 +30,6 @@ cal_validate_isotonic(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
-  parameters = NULL,
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,
@@ -28,8 +37,8 @@ cal_validate_isotonic(
 )
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{rset} object, that contains
-prediction columns.}
+\item{.data}{An \code{rset} object or the results of \code{\link[tune:fit_resamples]{tune::fit_resamples()}} with
+a \code{.predictions} column.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}
@@ -40,10 +49,6 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
-\item{parameters}{(Optional)  An optional tibble of tuning parameter values
-that can be used to filter the predicted values before processing. Applies
-only to \code{tune_results} objects.}
-
 \item{metrics}{A set of metrics passed created via \code{yardstick::metric_set()}}
 
 \item{save_details}{Indicates whether to include the \code{calibration} and
@@ -53,20 +58,29 @@ only to \code{tune_results} objects.}
 if to return the same sampled object but with new columns containing the
 calibration y validation list columns.}
 
-\item{...}{Additional arguments passed to the models or routines used to
-calculate the new probabilities.}
+\item{...}{Options to pass to \code{\link[=cal_estimate_logistic]{cal_estimate_logistic()}}, such as the \code{smooth}
+argument.}
 }
 \description{
 This function uses resampling to measure the effect of calibrating predicted
 values.
 }
 \details{
-Please note that this function does not apply to \code{tune_result} objects. It
-only processes resampled data.
+These functions are designed to calculate performance with and without
+calibration. They use resampling to measure out-of-sample effectiveness.
+There are two ways to pass the data in:
+\itemize{
+\item If you have a data frame of predictions, an \code{rset} object can be created
+via \pkg{rsample} functions. See the example below.
+\item If you have already made a resampling object from the original data and
+used it with \code{\link[tune:fit_resamples]{tune::fit_resamples()}}, you can pass that object to the
+calibration function and it will use the same resampling scheme. If a
+different resampling scheme should be used, run
+\code{\link[tune:collect_predictions]{tune::collect_predictions()}} on the object and use the process in the
+previous bullet point.
+}
 
-These functions take an resampling object, created via \code{rsample},
-and for each resample, it calculates the calibration on the analysis set, and
-then applies the calibration on the assessment set.
+Please note that these functions do not apply to \code{tune_result} objects.
 }
 \section{Performance Metrics}{
 
@@ -85,4 +99,7 @@ segment_logistic \%>\%
   rsample::vfold_cv() \%>\%
   cal_validate_isotonic(Class)
 
+}
+\seealso{
+\code{\link[=cal_apply]{cal_apply()}}, \code{\link[=cal_estimate_isotonic]{cal_estimate_isotonic()}}
 }
