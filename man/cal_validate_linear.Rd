@@ -19,7 +19,7 @@ cal_validate_linear(
 \method{cal_validate_linear}{resample_results}(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,

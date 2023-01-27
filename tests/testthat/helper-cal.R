@@ -246,16 +246,16 @@ testthat_cal_fit_rs <- function() {
         vfold_cv() %>%
         fit_resamples(linear_reg(), outcome ~ ., resamples = ., control = ctrl)
 
-      res <- list(binary = rs_bin, multin = rs_mlt, reg = rs_reg)
+      ret <- list(binary = rs_bin, multin = rs_mlt, reg = rs_reg)
 
-      saveRDS(res, file = ret_file, version = 2)
+      saveRDS(ret, file = ret_file, version = 2)
     } else {
-      res <- readRDS(ret_file)
+      ret <- readRDS(ret_file)
     }
-    .cal_env$resample_results <- res
+    .cal_env$resample_results <- ret
   }
 
-  res
+  ret
 }
 
 # --------------------------- Custom Expect Functions --------------------------
