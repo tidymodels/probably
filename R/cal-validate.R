@@ -69,13 +69,12 @@ cal_validate_logistic.resample_results <-
            ...) {
 
     truth <- tune::.get_tune_outcome_names(.data)
-    truth <- rlang::as_quosure(truth)
     # Change splits$data to be the predictions instead of the original
-    # training data
+    # training data and save as rset
     .data <- convert_resamples(.data)
     cal_validate(
       rset = .data,
-      truth = {{ truth }},
+      truth = !!truth,
       estimate = {{ estimate }},
       cal_function = "logistic",
       metrics = metrics,
@@ -143,13 +142,12 @@ cal_validate_isotonic.resample_results <-
            ...) {
 
     truth <- tune::.get_tune_outcome_names(.data)
-    truth <- rlang::as_quosure(truth)
     # Change splits$data to be the predictions instead of the original
-    # training data
+    # training data and save as rset
     .data <- convert_resamples(.data)
     cal_validate(
       rset = .data,
-      truth = {{ truth }},
+      truth = !!truth,
       estimate = {{ estimate }},
       cal_function = "isotonic",
       metrics = metrics,
@@ -219,13 +217,12 @@ cal_validate_isotonic_boot.resample_results <-
            ...) {
 
     truth <- tune::.get_tune_outcome_names(.data)
-    truth <- rlang::as_quosure(truth)
     # Change splits$data to be the predictions instead of the original
-    # training data
+    # training data and save as rset
     .data <- convert_resamples(.data)
     cal_validate(
       rset = .data,
-      truth = {{ truth }},
+      truth = !!truth,
       estimate = {{ estimate }},
       cal_function = "isotonic_boot",
       metrics = metrics,
@@ -294,13 +291,12 @@ cal_validate_beta.resample_results <-
            ...) {
 
     truth <- tune::.get_tune_outcome_names(.data)
-    truth <- rlang::as_quosure(truth)
     # Change splits$data to be the predictions instead of the original
-    # training data
+    # training data and save as rset
     .data <- convert_resamples(.data)
     cal_validate(
       rset = .data,
-      truth = {{ truth }},
+      truth = !!truth,
       estimate = {{ estimate }},
       cal_function = "beta",
       metrics = metrics,
@@ -367,13 +363,12 @@ cal_validate_multinomial.resample_results <-
            ...) {
 
     truth <- tune::.get_tune_outcome_names(.data)
-    truth <- rlang::as_quosure(truth)
     # Change splits$data to be the predictions instead of the original
-    # training data
+    # training data and save as rset
     .data <- convert_resamples(.data)
     cal_validate(
       rset = .data,
-      truth = {{ truth }},
+      truth = !!truth,
       estimate = {{ estimate }},
       cal_function = "multinomial",
       metrics = metrics,
@@ -701,20 +696,19 @@ cal_validate_linear <- function(.data,
 cal_validate_linear.resample_results <-
   function(.data,
            truth = NULL,
-           estimate = dplyr::starts_with(".pred_"),
+           estimate = dplyr::starts_with(".pred"),
            metrics = NULL,
            save_details = FALSE,
            summarize = TRUE,
            ...) {
 
     truth <- tune::.get_tune_outcome_names(.data)
-    truth <- rlang::as_quosure(truth)
     # Change splits$data to be the predictions instead of the original
-    # training data
+    # training data and save as rset
     .data <- convert_resamples(.data)
     cal_validate(
       rset = .data,
-      truth = truth,
+      truth = !!truth,
       estimate = estimate,
       cal_function = "linear",
       metrics = metrics,
@@ -747,7 +741,7 @@ cal_validate_linear.rset <- function(.data,
 
 
 # ------------------------------------------------------------------------------
-# convert rset to one that can be used by the validate function
+# convert a resample_results to an rset that can be used by the validate function
 
 convert_resamples <- function(x) {
   predictions <-
@@ -757,6 +751,7 @@ convert_resamples <- function(x) {
   for (i in seq_along(x$splits)) {
     x$splits[[i]]$data <- predictions
   }
+  class(x) <- c("rset", "tbl_df", "tbl", "data.frame")
   x
 }
 
