@@ -110,6 +110,8 @@ test_that("Logistic validation with `fit_resamples`", {
     c(".metric", ".estimator", "direction", "stage", ".estimate")
   )
   expect_equal(nrow(res_sum), 2)
+
+  expect_snapshot_warning(cal_validate_logistic(res$binary, truth = "huh?"))
 })
 
 test_that("Isotonic regression validation with `fit_resamples`", {
@@ -121,6 +123,7 @@ test_that("Isotonic regression validation with `fit_resamples`", {
     c(".metric", ".estimator", "direction", "stage", ".estimate")
   )
   expect_equal(nrow(res_sum), 2)
+  expect_snapshot_warning(cal_validate_isotonic(res$binary, truth = "huh?"))
 })
 
 test_that("Bootstrapped isotonic regression validation with `fit_resamples`", {
@@ -132,6 +135,7 @@ test_that("Bootstrapped isotonic regression validation with `fit_resamples`", {
     c(".metric", ".estimator", "direction", "stage", ".estimate")
   )
   expect_equal(nrow(res_sum), 2)
+  expect_snapshot_warning(cal_validate_isotonic_boot(res$binary, truth = "huh?"))
 })
 
 test_that("Beta calibration validation with `fit_resamples`", {
@@ -143,6 +147,7 @@ test_that("Beta calibration validation with `fit_resamples`", {
     c(".metric", ".estimator", "direction", "stage", ".estimate")
   )
   expect_equal(nrow(res_sum), 2)
+  expect_snapshot_warning(cal_validate_beta(res$binary, truth = "huh?"))
 })
 
 test_that("Multinomial calibration validation with `fit_resamples`", {
@@ -154,6 +159,7 @@ test_that("Multinomial calibration validation with `fit_resamples`", {
     c(".metric", ".estimator", "direction", "stage", ".estimate")
   )
   expect_equal(nrow(res_sum), 2)
+  expect_snapshot_warning(cal_validate_multinomial(res$multin, truth = "huh?"))
 })
 
 test_that("Linear validation with `fit_resamples`", {
@@ -170,6 +176,7 @@ test_that("Linear validation with `fit_resamples`", {
     res_sum$direction,
     rep(c("minimize", "maximize"), each = 2)
   )
+  expect_snapshot_warning(cal_validate_linear(res$reg, truth = "huh?"))
 
   res_unsum <-
     cal_validate_linear(

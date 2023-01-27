@@ -68,6 +68,9 @@ cal_validate_logistic.resample_results <-
            summarize = TRUE,
            ...) {
 
+    if (!is.null(truth)) {
+      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+    }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
     # training data and save as rset
@@ -141,6 +144,9 @@ cal_validate_isotonic.resample_results <-
            summarize = TRUE,
            ...) {
 
+    if (!is.null(truth)) {
+      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+    }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
     # training data and save as rset
@@ -216,6 +222,9 @@ cal_validate_isotonic_boot.resample_results <-
            summarize = TRUE,
            ...) {
 
+    if (!is.null(truth)) {
+      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+    }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
     # training data and save as rset
@@ -290,6 +299,9 @@ cal_validate_beta.resample_results <-
            save_details = FALSE,
            ...) {
 
+    if (!is.null(truth)) {
+      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+    }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
     # training data and save as rset
@@ -362,6 +374,9 @@ cal_validate_multinomial.resample_results <-
            summarize = TRUE,
            ...) {
 
+    if (!is.null(truth)) {
+      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+    }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
     # training data and save as rset
@@ -702,6 +717,9 @@ cal_validate_linear.resample_results <-
            summarize = TRUE,
            ...) {
 
+    if (!is.null(truth)) {
+      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+    }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
     # training data and save as rset
