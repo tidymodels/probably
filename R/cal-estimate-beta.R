@@ -102,30 +102,32 @@ cal_beta_impl <- function(.data,
   levels <- truth_estimate_map(.data, !!truth, !!estimate)
 
   if (length(levels) == 2) {
-    beta_model <- cal_beta_impl_grp(
-      .data = .data,
-      truth = !!truth,
-      shape_params = shape_params,
-      location_params = location_params,
-      estimate = !!levels[[1]],
-      levels = levels,
-      ...
-    )
-
-    res <- as_cal_object(
-      estimate = beta_model,
-      levels = levels,
-      truth = {{ truth }},
-      method = "Beta",
-      rows = nrow(.data),
-      source_class = source_class,
-      additional_classes = "cal_estimate_beta"
-    )
+    proc_levels <- levels[1]
   } else {
-    stop_multiclass()
+    proc_levels <- levels
   }
 
-  res
+  beta_model <- cal_beta_impl_grp(
+    .data = .data,
+    truth = !!truth,
+    shape_params = shape_params,
+    location_params = location_params,
+    estimate = proc_levels,
+    levels = levels,
+    ...
+  )
+
+  as_cal_object(
+    estimate = beta_model,
+    levels = levels,
+    truth = {{ truth }},
+    method = "Beta",
+    rows = nrow(.data),
+    source_class = source_class,
+    additional_classes = "cal_estimate_beta"
+  )
+
+
 }
 
 cal_beta_impl_grp <- function(.data,
@@ -139,15 +141,16 @@ cal_beta_impl_grp <- function(.data,
     split_dplyr_groups() %>%
     lapply(
       function(x) {
-        estimate <- cal_beta_impl_single(
-          .data = .data,
+        estimate <- cal_beta_impl_estimate(
+          .data = x$data,
           truth = {{ truth }},
           shape_params = shape_params,
           location_params = location_params,
-          estimate = {{ estimate }},
-          levels = levels,
+          estimate = estimate,
           ...
-        )
+        ) %>%
+          rlang::set_names(as.character(estimate))
+
         list(
           filter = x$filter,
           estimate = estimate
@@ -156,15 +159,41 @@ cal_beta_impl_grp <- function(.data,
     )
 }
 
+cal_beta_impl_estimate <- function(.data,
+                                   truth,
+                                   estimate,
+                                   shape_params = 2,
+                                   location_params = 1,
+                                   ...) {
+  lapply(
+    seq_along(estimate),
+    function(x) {
+      cal_beta_impl_single(
+        .data = .data,
+        truth = {{ truth }},
+        estimate = estimate,
+        shape_params = shape_params,
+        location_params = location_params,
+        level = x,
+        sampled = sampled,
+        ...
+      )
+    }
+  )
+}
+
 cal_beta_impl_single <- function(.data,
                                  truth = NULL,
                                  shape_params = 2,
                                  location_params = 1,
                                  estimate = NULL,
-                                 levels = NULL,
+                                 level,
                                  ...) {
+
+  estimate <- estimate[[level]]
+
   x_factor <- dplyr::pull(.data, {{ truth }})
-  x <- x_factor == names(levels[1])
+  x <- as.integer(x_factor) == level
   y <- dplyr::pull(.data, {{ estimate }})
 
   parameters <- NULL
