@@ -65,7 +65,17 @@ values.</p>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
-<span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  save_details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  summarize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for resample_results</span></span>
+<span><span class="fu">cal_validate_isotonic</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  save_details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  summarize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -77,7 +87,6 @@ values.</p>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
-<span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  save_details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  summarize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -88,8 +97,8 @@ values.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>A <code>data.frame</code> object, or <code>rset</code> object, that contains
-prediction columns.</p></dd>
+<dd><p>An <code>rset</code> object or the results of <code><a href="https://tune.tidymodels.org/reference/fit_resamples.html" class="external-link">tune::fit_resamples()</a></code> with
+a <code>.predictions</code> column.</p></dd>
 
 
 <dt>truth</dt>
@@ -103,12 +112,6 @@ functions to choose which variables contains the class probabilities. It
 defaults to the prefix used by tidymodels (<code>.pred_</code>). The order of the
 identifiers will be considered the same as the order of the levels of the
 <code>truth</code> variable.</p></dd>
-
-
-<dt>parameters</dt>
-<dd><p>(Optional)  An optional tibble of tuning parameter values
-that can be used to filter the predicted values before processing. Applies
-only to <code>tune_results</code> objects.</p></dd>
 
 
 <dt>metrics</dt>
@@ -127,17 +130,23 @@ calibration y validation list columns.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Additional arguments passed to the models or routines used to
-calculate the new probabilities.</p></dd>
+<dd><p>Options to pass to <code><a href="cal_estimate_logistic.html">cal_estimate_logistic()</a></code>, such as the <code>smooth</code>
+argument.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Please note that this function does not apply to <code>tune_result</code> objects. It
-only processes resampled data.</p>
-<p>These functions take an resampling object, created via <code>rsample</code>,
-and for each resample, it calculates the calibration on the analysis set, and
-then applies the calibration on the assessment set.</p>
+    <p>These functions are designed to calculate performance with and without
+calibration. They use resampling to measure out-of-sample effectiveness.
+There are two ways to pass the data in:</p><ul><li><p>If you have a data frame of predictions, an <code>rset</code> object can be created
+via <span class="pkg">rsample</span> functions. See the example below.</p></li>
+<li><p>If you have already made a resampling object from the original data and
+used it with <code><a href="https://tune.tidymodels.org/reference/fit_resamples.html" class="external-link">tune::fit_resamples()</a></code>, you can pass that object to the
+calibration function and it will use the same resampling scheme. If a
+different resampling scheme should be used, run
+<code><a href="https://tune.tidymodels.org/reference/collect_predictions.html" class="external-link">tune::collect_predictions()</a></code> on the object and use the process in the
+previous bullet point.</p></li>
+</ul><p>Please note that these functions do not apply to <code>tune_result</code> objects.</p>
     </div>
     <div class="section level2">
     <h2 id="performance-metrics">Performance Metrics<a class="anchor" aria-label="anchor" href="#performance-metrics"></a></h2>
@@ -148,6 +157,10 @@ then applies the calibration on the assessment set.</p>
 root mean squared error (regression) is returned. Any appropriate
 <code><a href="https://yardstick.tidymodels.org/reference/metric_set.html" class="external-link">yardstick::metric_set()</a></code> can be used. The validation function compares the
 average of the metrics before, and after the calibration.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="cal_apply.html">cal_apply()</a></code>, <code><a href="cal_estimate_isotonic.html">cal_estimate_isotonic()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -162,7 +175,7 @@ average of the metrics before, and after the calibration.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   .metric     .estimator direction stage        .estimate</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> brier_class binary     minimize  uncalibrated     0.140</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> brier_class binary     minimize  calibrated       0.144</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> brier_class binary     minimize  calibrated       0.147</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
