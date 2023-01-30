@@ -71,7 +71,7 @@ apply_beta_impl <- function(object, .data) {
       apply_beta_column(
         .data = .data,
         est_filter = .x$filter,
-        estimates = .x$estimates
+        estimates = .x$estimate
       )
     }) %>%
     purrr::reduce(dplyr::bind_rows)
@@ -112,8 +112,6 @@ apply_beta_column <- function(.data, est_filter, estimates) {
   }
   df
 }
-
-
 
 apply_beta_single <- function(model, df, est_name) {
   p <- df[[est_name]]
