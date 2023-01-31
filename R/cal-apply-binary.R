@@ -49,17 +49,10 @@ cal_apply_binary.cal_estimate_beta <- function(object,
                                                .data,
                                                pred_class = NULL,
                                                ...) {
-  if (object$type == "binary") {
-    p <- dplyr::pull(.data, !!object$levels[[1]])
-    model <- object$estimates[[1]]$estimate
-    preds <- betacal::beta_predict(
-      p = p,
-      calib = model
-    )
-    .data[object$levels[[1]]] <- preds
-    .data[object$levels[[2]]] <- 1 - preds
-  }
-  .data
+  apply_beta_impl(
+    object = object,
+    .data = .data
+  )
 }
 
 #---------------------------- Adjust implementations ---------------------------
