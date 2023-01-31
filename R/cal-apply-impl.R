@@ -1,7 +1,7 @@
 #---------------------------------- >> Interval --------------------------------
 apply_interval_impl <- function(object, .data, multi = FALSE, method = "auto") {
   # Iterates through each group
-  ret <- object$estimates %>%
+  new_data <- object$estimates %>%
     purrr::map(~ {
       apply_interval_column(
         .data = .data,
@@ -11,17 +11,8 @@ apply_interval_impl <- function(object, .data, multi = FALSE, method = "auto") {
     }) %>%
     purrr::reduce(dplyr::bind_rows)
 
-  if (object$type == "binary") {
-    ret[, object$levels[[2]]] <- 1 - ret[, object$levels[[1]]]
-  } else {
-    ols <- as.character(object$levels)
-    rs <- rowSums(ret[, ols])
-    for (i in seq_along(ols)) {
-      ret[, ols[i]] <- ret[, ols[i]] / rs
-    }
-  }
+  apply_adjustment(new_data, object)
 
-  ret
 }
 
 # Iterates through each prediction column
@@ -98,7 +89,7 @@ apply_interval_single <- function(estimates_table, df, est_name) {
 
 apply_beta_impl <- function(object, .data) {
   # Iterates through each group
-  ret <- object$estimates %>%
+  new_data <- object$estimates %>%
     purrr::map(~ {
       apply_beta_column(
         .data = .data,
@@ -108,17 +99,7 @@ apply_beta_impl <- function(object, .data) {
     }) %>%
     purrr::reduce(dplyr::bind_rows)
 
-  if (object$type == "binary") {
-    ret[, object$levels[[2]]] <- 1 - ret[, object$levels[[1]]]
-  } else {
-    ols <- as.character(object$levels)
-    rs <- rowSums(ret[, ols])
-    for (i in seq_along(ols)) {
-      ret[, ols[i]] <- ret[, ols[i]] / rs
-    }
-  }
-
-  ret
+  apply_adjustment(new_data, object)
 }
 
 # Iterates through each prediction column
@@ -151,4 +132,19 @@ apply_beta_single <- function(model, df, est_name) {
     p = p,
     calib = model
   )
+}
+
+# ------------------------------  Adjustment -----------------------------------
+
+apply_adjustment <- function(new_data, object) {
+  if (object$type == "binary") {
+    new_data[, object$levels[[2]]] <- 1 - new_data[, object$levels[[1]]]
+  } else {
+    ols <- as.character(object$levels)
+    rs <- rowSums(new_data[, ols])
+    for (i in seq_along(ols)) {
+      new_data[, ols[i]] <- new_data[, ols[i]] / rs
+    }
+  }
+  new_data
 }
