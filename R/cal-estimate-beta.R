@@ -93,7 +93,6 @@ cal_beta_impl <- function(.data,
                           estimate = dplyr::starts_with(".pred_"),
                           source_class = NULL,
                           ...) {
-
   cal_pkg_check(required_pkgs.cal_estimate_beta())
 
   truth <- enquo(truth)
@@ -126,8 +125,6 @@ cal_beta_impl <- function(.data,
     source_class = source_class,
     additional_classes = "cal_estimate_beta"
   )
-
-
 }
 
 cal_beta_impl_grp <- function(.data,
@@ -189,7 +186,6 @@ cal_beta_impl_single <- function(.data,
                                  estimate = NULL,
                                  level,
                                  ...) {
-
   estimate <- estimate[[level]]
 
   x_factor <- dplyr::pull(.data, {{ truth }})

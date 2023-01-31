@@ -1,6 +1,5 @@
 #---------------------------------- >> Interval --------------------------------
 apply_interval_impl <- function(object, .data, multi = FALSE, method = "auto") {
-
   # Iterates through each group
   ret <- object$estimates %>%
     purrr::map(~ {
@@ -17,7 +16,7 @@ apply_interval_impl <- function(object, .data, multi = FALSE, method = "auto") {
   } else {
     ols <- as.character(object$levels)
     rs <- rowSums(ret[, ols])
-    for(i in seq_along(ols)) {
+    for (i in seq_along(ols)) {
       ret[, ols[i]] <- ret[, ols[i]] / rs
     }
   }
@@ -44,7 +43,7 @@ apply_interval_column <- function(.data, est_filter, estimates) {
     })
 
   names_ret <- names(ret)
-  for(i in seq_along(names_ret)) {
+  for (i in seq_along(names_ret)) {
     df[, names_ret[i]] <- ret[[names_ret[i]]]
   }
   df
@@ -52,14 +51,13 @@ apply_interval_column <- function(.data, est_filter, estimates) {
 
 # Iterates through each model run
 apply_interval_estimate <- function(estimate, df, est_name) {
-
   # Handles single quoted variable names, which are typically created
   # when there are spaces in the original variable name
   df_names <- names(df)
-  if(!(est_name %in% df_names)) {
+  if (!(est_name %in% df_names)) {
     test_name <- sub("`", "", est_name)
     test_name <- sub("`", "", test_name)
-    if(test_name %in% df_names) {
+    if (test_name %in% df_names) {
       est_name <- test_name
     } else {
       rlang::abort(paste0("Variable: ", est_name, " was not found in data"))
@@ -73,7 +71,7 @@ apply_interval_estimate <- function(estimate, df, est_name) {
       est_name = est_name
     )
 
-  if(length(estimate) > 1) {
+  if (length(estimate) > 1) {
     ret <- ret %>%
       data.frame() %>%
       rowMeans()
@@ -99,7 +97,6 @@ apply_interval_single <- function(estimates_table, df, est_name) {
 #---------------------------- >> Beta Predict ----------------------------------
 
 apply_beta_impl <- function(object, .data) {
-
   # Iterates through each group
   ret <- object$estimates %>%
     purrr::map(~ {
@@ -116,7 +113,7 @@ apply_beta_impl <- function(object, .data) {
   } else {
     ols <- as.character(object$levels)
     rs <- rowSums(ret[, ols])
-    for(i in seq_along(ols)) {
+    for (i in seq_along(ols)) {
       ret[, ols[i]] <- ret[, ols[i]] / rs
     }
   }
@@ -142,7 +139,7 @@ apply_beta_column <- function(.data, est_filter, estimates) {
     })
 
   names_ret <- names(ret)
-  for(i in seq_along(names_ret)) {
+  for (i in seq_along(names_ret)) {
     df[, names_ret[i]] <- ret[[names_ret[i]]]
   }
   df
