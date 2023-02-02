@@ -89,7 +89,7 @@ test_that("check metric direction", {
     dplyr::distinct(.metric, direction) %>%
     dplyr::arrange(.metric, direction) %>%
     dplyr::select(.metric, direction)
-  metric_df <- tibble::as_tibble(reg_stats)%>%
+  metric_df <- dplyr::as_tibble(reg_stats)%>%
     dplyr::distinct(.metric = metric, direction) %>%
     dplyr::arrange(.metric, direction) %>%
     dplyr::select(.metric, direction)

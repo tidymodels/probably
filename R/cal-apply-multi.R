@@ -39,7 +39,7 @@ cal_apply_multi.cal_estimate_isotonic_boot_multi<- function(object,
 apply_multi_predict <- function(object, .data) {
   preds <- object$estimates[[1]]$estimate %>%
     predict(newdata = .data, type = "probs") %>%
-    tibble::as_tibble()
+    dplyr::as_tibble()
 
   for (i in seq_along(object$levels)) {
     lev <- object$levels[i]

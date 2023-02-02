@@ -5,7 +5,7 @@
 #' @import rlang
 #' @import vctrs
 #' @import ggplot2
-#' @importFrom magrittr %>%
+#' @importFrom dplyr %>%
 #' @importFrom purrr map
 #' @importFrom utils head
 #' @importFrom yardstick sens spec j_index
