@@ -760,7 +760,7 @@ binary_plot_impl <- function(tbl, x, y,
     preds$fit <- -preds$fit
   }
 
-  res <- tibble::tibble(
+  res <- dplyr::tibble(
     prob = binomial()$linkinv(preds$fit),
     lower = binomial()$linkinv(preds$fit - qnorm(conf_level) * preds$se.fit),
     upper = binomial()$linkinv(preds$fit + qnorm(conf_level) * preds$se.fit)
@@ -768,7 +768,7 @@ binary_plot_impl <- function(tbl, x, y,
 
   res <- cbind(new_data, res)
 
-  tibble::as_tibble(res)
+  dplyr::as_tibble(res)
 }
 
 #' @export
@@ -973,7 +973,7 @@ add_conf_intervals <- function(.data,
         suppressWarnings(
           pt <- prop.test(events, total, conf.level = conf_level)
         )
-        ret <- tibble::as_tibble(.x)
+        ret <- dplyr::as_tibble(.x)
         ret$lower <- pt$conf.int[[1]]
         ret$upper <- pt$conf.int[[2]]
         ret

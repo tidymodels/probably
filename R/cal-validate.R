@@ -488,7 +488,7 @@ check_validation_metrics <- function(metrics, model_mode) {
       rlang::abort("unknown mode")
     }
   } else {
-    metric_info <- tibble::as_tibble(metrics)
+    metric_info <- dplyr::as_tibble(metrics)
     if (model_mode == "regression") {
       if (any(metric_info$class != "numeric_metric")) {
         rlang::abort("Metric type should be 'numeric_metric'")
@@ -527,7 +527,7 @@ cal_validate <- function(rset,
   metrics <- check_validation_metrics(metrics, model_mode)
 
   direction <- metrics %>%
-    tibble::as_tibble() %>%
+    dplyr::as_tibble() %>%
     dplyr::select("direction") %>%
     head(1) %>%
     dplyr::pull()
@@ -618,7 +618,7 @@ cal_validate <- function(rset,
           pred_class = !!rlang::parse_expr(".pred_class")
         )
 
-        metric_df <- tibble::as_tibble(metrics) %>% dplyr::select(.metric = metric, direction)
+        metric_df <- dplyr::as_tibble(metrics) %>% dplyr::select(.metric = metric, direction)
         stats_after <- metrics(ap, truth = !!truth, estimate_cols) %>%
           dplyr::full_join(metric_df, by = ".metric")
         stats_before <- metrics(data_as[[.x]], truth = !!truth, estimate_cols) %>%
