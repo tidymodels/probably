@@ -12,7 +12,7 @@
 * Possible calibration tools:  
 
   * Binary classification methods: logistic regression, isotonic regression, and Beta calibration.
-  * Multiclass classification: multinomial
+  * Multiclass classification: multinomial, isotonic regression, and Beta calibration
   * Regression: linear regression, isotonic regression
 
 * Based on the initial PR (#37) by Antonio R. Vargas, `threshold_perf()` now accepts a custom metric set (#25)
