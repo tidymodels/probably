@@ -24,27 +24,6 @@ cal_apply_binary.cal_estimate_logistic_spline <- function(object,
   )
 }
 
-cal_apply_binary.cal_estimate_isotonic_boot <- function(object,
-                                                        .data,
-                                                        pred_class = NULL,
-                                                        ...) {
-  apply_interval_impl(
-    object = object,
-    .data = .data,
-    multi = TRUE
-  )
-}
-
-cal_apply_binary.cal_estimate_isotonic <- function(object,
-                                                   .data,
-                                                   pred_class = NULL,
-                                                   ...) {
-  apply_interval_impl(
-    object = object,
-    .data = .data
-  )
-}
-
 cal_apply_binary.cal_estimate_beta <- function(object,
                                                .data,
                                                pred_class = NULL,

@@ -146,6 +146,22 @@ cal_adjust <- function(object, .data, pred_class) {
   UseMethod("cal_adjust")
 }
 
+cal_adjust.cal_estimate_isotonic <- function(object, .data, pred_class) {
+  apply_interval_impl(
+    object = object,
+    .data = .data,
+    multi = FALSE
+  )
+}
+
+cal_adjust.cal_estimate_isotonic_boot <- function(object, .data, pred_class) {
+  apply_interval_impl(
+    object = object,
+    .data = .data,
+    multi = TRUE
+  )
+}
+
 cal_adjust.cal_multi <- function(object, .data, pred_class) {
   cal_apply_multi(
     object = object,

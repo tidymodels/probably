@@ -145,7 +145,6 @@ as_cal_object <- function(estimate,
       type <- "one_vs_all"
     }
     obj_class <- "cal_multi"
-    additional_classes <- paste0(additional_classes, "_multi")
   } else {
     rlang::abort("Can't translate 'levels' to a class.")
   }

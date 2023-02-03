@@ -15,20 +15,6 @@ cal_apply_regression.cal_estimate_linear_spline <-
 cal_apply_regression.cal_estimate_linear <-
   cal_apply_regression.cal_estimate_linear_spline
 
-cal_apply_regression.cal_estimate_isotonic <- function(object,
-                                                       .data,
-                                                       pred_classs = NULL,
-                                                       ...) {
-  apply_interval_impl(
-    object = object,
-    .data = .data,
-    multi = FALSE
-    )
-}
-
-cal_apply_regression.cal_estimate_isotonic_boot <-
-  cal_apply_regression.cal_estimate_isotonic
-
 #---------------------------- Adjust implementations ---------------------------
 
 apply_reg_predict <- function(object, .data) {
