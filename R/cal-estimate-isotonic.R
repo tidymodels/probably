@@ -221,7 +221,6 @@ cal_isoreg_impl <- function(.data,
     source_class = source_class,
     additional_classes = addl_class
   )
-
 }
 
 cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
@@ -273,7 +272,6 @@ cal_isoreg_impl_single <- function(.data,
                                    level,
                                    sampled = FALSE,
                                    ...) {
-
   estimate <- estimate[[level]]
   sorted_data <- dplyr::arrange(.data, !!estimate)
 
@@ -289,7 +287,7 @@ cal_isoreg_impl_single <- function(.data,
 
   y <- dplyr::pull(sorted_data, {{ truth }})
 
-  if(is.factor(y)) {
+  if (is.factor(y)) {
     y <- as.integer(as.integer(y) == level)
   }
 
