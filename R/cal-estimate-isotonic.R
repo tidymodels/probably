@@ -173,7 +173,7 @@ cal_isoreg_impl <- function(.data,
       sampled = TRUE
     )
     iso_model <- list(iso_model)
-    addl_class <- "cal_estimate_isotonic" # maybe add cls or reg class here
+    addl_class <- "cal_estimate_isotonic"
     method <- "Isotonic"
   } else {
     iso_model <- purrr::map(
@@ -287,8 +287,11 @@ cal_isoreg_impl_single <- function(.data,
 
   x <- dplyr::pull(sorted_data, !!estimate)
 
-  truth <- dplyr::pull(sorted_data, {{ truth }})
-  y <- as.integer(as.integer(truth) == level)  # modify for regression case
+  y <- dplyr::pull(sorted_data, {{ truth }})
+
+  if(is.factor(y)) {
+    y <- as.integer(as.integer(y) == level)
+  }
 
   model <- stats::isoreg(x = x, y = y)
 

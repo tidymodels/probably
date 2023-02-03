@@ -41,7 +41,7 @@ as_regression_cal_object <- function(estimate,
     levels = levels,
     method = method,
     rows = rows,
-    additional_classes = c(additional_class, "cal_regression"),
+    additional_classes = additional_class,
     source_class = source_class,
     type = "regression"
   )
@@ -134,7 +134,7 @@ as_cal_object <- function(estimate,
                           type = NULL) {
   if (length(levels) == 1) {
     type <- "regression"
-    obj_class <- character(0)
+    obj_class <- "cal_regression"
   } else if (length(levels) == 2) {
     if (is.null(type)) {
       type <- "binary"
