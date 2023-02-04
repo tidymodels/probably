@@ -162,6 +162,16 @@ cal_adjust.cal_estimate_isotonic_boot <- function(object, .data, pred_class) {
   )
 }
 
+cal_adjust.cal_estimate_beta <- function(object,
+                                         .data,
+                                         pred_class = NULL,
+                                         ...) {
+  apply_beta_impl(
+    object = object,
+    .data = .data
+  )
+}
+
 cal_adjust.cal_multi <- function(object, .data, pred_class) {
   cal_apply_multi(
     object = object,

@@ -24,16 +24,6 @@ cal_apply_binary.cal_estimate_logistic_spline <- function(object,
   )
 }
 
-cal_apply_binary.cal_estimate_beta <- function(object,
-                                               .data,
-                                               pred_class = NULL,
-                                               ...) {
-  apply_beta_impl(
-    object = object,
-    .data = .data
-  )
-}
-
 #---------------------------- Adjust implementations ---------------------------
 
 apply_model_predict <- function(object, .data) {

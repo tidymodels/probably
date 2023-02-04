@@ -13,14 +13,6 @@ cal_apply_multi.cal_estimate_multinomial <-
     )
   }
 
-cal_apply_multi.cal_estimate_beta <-
-  function(object, .data, pred_class = NULL, ...) {
-    apply_beta_impl(
-      object = object,
-      .data = .data
-    )
-  }
-
 #---------------------------- Adjust implementations ---------------------------
 
 #---------------------------- >> Single Predict --------------------------------
