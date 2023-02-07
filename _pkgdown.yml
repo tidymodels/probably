@@ -35,6 +35,7 @@ reference:
 - title: Regression predictions
   contents:
   - starts_with("int_")
+  - control_conformal_infer
 
 - title: Data
   contents:
