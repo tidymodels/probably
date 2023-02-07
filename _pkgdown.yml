@@ -34,7 +34,7 @@ reference:
 
 - title: Regression predictions
   contents:
-  - starts_wth("int_")
+  - starts_with("int_")
 
 - title: Data
   contents:
