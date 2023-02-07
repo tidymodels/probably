@@ -1,8 +1,7 @@
 #' Prediction intervals via conformal inference
 #'
 #' Nonparametric prediction intervals can be computed for fitted workflow
-#' objects using the conformal inference method described by Lei, Robins, and
-#' Wasserman (2013).
+#' objects using the conformal inference method described by Lei _at al_ (2018).
 #'
 #' @param object A fitted [workflows::workflow()] object.
 #' @param new_data A data frame of predictors.
@@ -52,8 +51,9 @@
 #' @includeRmd man/rmd/parallel_intervals.Rmd details
 #'
 #' @references
-#' Jing Lei, James Robins & Larry Wasserman (2013) Distribution-Free Prediction
-#' Sets, _Journal of the American Statistical Association_, 108:501, 278-287.
+#' Jing Lei, Max G'Sell, Alessandro Rinaldo, Ryan J. Tibshirani and Larry
+#' Wasserman (2018) Distribution-Free Predictive Inference for Regression,
+#' _Journal of the American Statistical Association_, 113:523, 1094-1111
 #'
 #' Murray Aitkin, Modelling Variance Heterogeneity in Normal Regression Using
 #' GLIM, _Journal of the Royal Statistical Society Series C: Applied Statistics_,

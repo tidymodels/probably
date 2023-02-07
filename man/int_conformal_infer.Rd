@@ -43,8 +43,7 @@ the search for the prediction bound fails, a missing value is used.
 }
 \description{
 Nonparametric prediction intervals can be computed for fitted workflow
-objects using the conformal inference method described by Lei, Robins, and
-Wasserman (2013).
+objects using the conformal inference method described by Lei \emph{at al} (2018).
 }
 \details{
 This function implements what is usually called "full comformal inference"
@@ -146,8 +145,9 @@ In comparison with parametric intervals:
 }
 }
 \references{
-Jing Lei, James Robins & Larry Wasserman (2013) Distribution-Free Prediction
-Sets, \emph{Journal of the American Statistical Association}, 108:501, 278-287.
+Jing Lei, Max G'Sell, Alessandro Rinaldo, Ryan J. Tibshirani and Larry
+Wasserman (2018) Distribution-Free Predictive Inference for Regression,
+\emph{Journal of the American Statistical Association}, 113:523, 1094-1111
 
 Murray Aitkin, Modelling Variance Heterogeneity in Normal Regression Using
 GLIM, \emph{Journal of the Royal Statistical Society Series C: Applied Statistics},
