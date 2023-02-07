@@ -32,6 +32,10 @@ reference:
   - locate-equivocal
   - levels.class_pred
 
+- title: Regression predictions
+  contents:
+  - starts_wth("int_")
+
 - title: Data
   contents:
   - segment_naive_bayes
