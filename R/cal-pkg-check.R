@@ -19,11 +19,6 @@ cal_pkg_check <- function(pkgs = NULL) {
   invisible()
 }
 
-#' @importFrom generics required_pkgs
-#' @keywords internal
-#' @export
-generics::required_pkgs
-
 #' S3 methods to track which additional packages are needed for specific
 #' calibrations
 #' @param x A calibration object
