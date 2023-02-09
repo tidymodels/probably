@@ -182,6 +182,8 @@ autoplot.cal_rank <- function(x, level = 0.90, metrics = NULL, ...) {
   n_method <- length(unique(stats$method))
   n_metrics <- length(unique(stats$.metric))
 
+  stats <- dplyr::mutate(stats, method = stats::reorder(method, improvement))
+
   p <-
     ggplot2::ggplot(
       data = stats,
