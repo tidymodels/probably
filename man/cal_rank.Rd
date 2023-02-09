@@ -3,7 +3,6 @@
 \name{cal_rank}
 \alias{cal_rank}
 \alias{cal_rank.resample_results}
-\alias{cal_rank.rset}
 \title{Determine the best calibration method using resampling}
 \usage{
 cal_rank(
@@ -20,15 +19,7 @@ cal_rank(
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
   summarize = TRUE,
-  ...
-)
-
-\method{cal_rank}{rset}(
-  .data,
-  truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
-  metrics = NULL,
-  summarize = TRUE,
+  level = 0.9,
   ...
 )
 }
@@ -36,23 +27,37 @@ cal_rank(
 \item{.data}{An \code{rset} object or the results of \code{\link[tune:fit_resamples]{tune::fit_resamples()}} with
 a \code{.predictions} column.}
 
-\item{truth}{The column identifier for the true class results
-(that is a factor). This should be an unquoted column name.}
+\item{truth}{The column identifier for the true results. This should be an
+unquoted column name. The nature of the column depends on the problem type.
+\itemize{
+\item regression models: a single numeric column.
+\item classification models: a single factor column.
+}
+
+For objects produced by \code{\link[tune:fit_resamples]{tune::fit_resamples()}} is argument is ignored.}
 
 \item{estimate}{A vector of column identifiers, or one of \code{dplyr} selector
-functions to choose which variables contains the class probabilities. It
-defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
-identifiers will be considered the same as the order of the levels of the
-\code{truth} variable.}
+functions to choose which variables contains the predictions.
+\itemize{
+\item regression models: a single numeric column.
+\item classification models: multiple columns containing class probabilities. The
+order of the identifiers will be considered the same as the order of the
+levels of the \code{truth} variable.
+}
+
+For objects produced by \code{\link[tune:fit_resamples]{tune::fit_resamples()}} is argument is ignored.}
 
 \item{metrics}{A set of metrics passed created via \code{yardstick::metric_set()}}
 
-\item{...}{Options to pass to \code{\link[=cal_estimate_logistic]{cal_estimate_logistic()}}, such as the \code{smooth}
-argument.}
+\item{...}{Other options passed}
 
 \item{summarize}{Should the overall ranks be computed (the default) or should
 the resample-level results be returned?}
+
+\item{level}{Confidence level for two-sided intervals produced by
+\code{\link[stats:t.test]{stats::t.test()}} (\code{summarize = TRUE} only)}
 }
 \description{
-Determine the best calibration method using resampling
+\code{cal_rank()} applies multiple calibration methods and results information on
+the quality of the calibration relative to no calibration using resampling.
 }

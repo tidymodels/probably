@@ -1,11 +1,28 @@
 #' Determine the best calibration method using resampling
 #'
+#' `cal_rank()` applies multiple calibration methods and results information on
+#' the quality of the calibration relative to no calibration using resampling.
+#'
 #' @inheritParams cal_validate_logistic
+#' @param truth The column identifier for the true results. This should be an
+#' unquoted column name. The nature of the column depends on the problem type.
+#'  - regression models: a single numeric column.
+#'  - classification models: a single factor column.
+#'
+#' For objects produced by [tune::fit_resamples()] this argument is ignored.
+#' @param estimate A vector of column identifiers, or one of `dplyr` selector
+#' functions to choose which variables contains the predictions.
+#'  - regression models: a single numeric column.
+#'  - classification models: multiple columns containing class probabilities. The
+#'  order of the identifiers will be considered the same as the order of the
+#'  levels of the `truth` variable.
+#'
+#' For objects produced by [tune::fit_resamples()] this argument is ignored.
 #' @param summarize Should the overall ranks be computed (the default) or should
 #' the resample-level results be returned?
 #' @param level Confidence level for two-sided intervals produced by
 #' [stats::t.test()] (`summarize = TRUE` only)
-#'
+#' @param ... Other options passed
 #' @export
 cal_rank <-
   function(.data, truth = NULL, estimate = dplyr::starts_with(".pred_"),
@@ -13,7 +30,8 @@ cal_rank <-
   UseMethod("cal_rank")
   }
 
-# TODO make a function to go between class pred (.pred_) and reg pred (.pred) in starts_wi
+# TODO make a function to go between class pred (.pred_) and reg pred (.pred) in starts_with
+# TODO how to pass args to individual functions?
 
 #' @export
 #' @rdname cal_rank
@@ -22,11 +40,13 @@ cal_rank.resample_results <-
            metrics = NULL, summarize = TRUE, level = 0.90, ...) {
     truth <- enquo(truth)
     estimate <- enquo(estimate)
-    res <- opt_binary(.data,
-                      truth = truth,
-                      estimate = estimate,
-                      metrics = metrics,
-                      ...)
+    cal_type <- cal_type_from_rs(.data)
+    cal_fn <- switch(cal_type, regression = opt_reg, opt_binary)
+    res <- cal_fn(.data,
+                  truth = truth,
+                  estimate = estimate,
+                  metrics = metrics,
+                  ...)
 
     if (summarize) {
       res <- summary_rank(res, level = level)
@@ -141,20 +161,6 @@ get_improvement <- function(object, method, truth, estimate, metrics, ...) {
   results
 }
 
-
-# print.cal_rank <- function(x, digits = 3, ...) {
-#
-#   dplyr::group_by(x, method, .metric) %>%
-#     dplyr::summarize(
-#       `mean improvement` = mean(improvement, na.rm = TRUE),
-#       .groups = "drop"
-#     ) %>%
-#     dplyr::mutate(
-#       `mean improvement` = signif(`mean improvement`, digits = digits)
-#     ) %>%
-#     print()
-# }
-
 broomish_t <- function(x, level = 0.9) {
   ttest <- t.test(x$improvement, conf.level = level)
   dplyr::tibble(
@@ -172,11 +178,15 @@ summary_rank <- function(x, level = 0.90, ...) {
       stats = purrr::map(data, ~ broomish_t(.x, level = level))
     ) %>%
     tidyr::unnest(stats) %>%
+    dplyr::group_by(.metric) %>%
+    dplyr::mutate(rank = base::rank(improvement)) %>%
+    dplyr::ungroup() %>%
     dplyr::select(-direction, -data) %>%
     dplyr::mutate(
       dplyr::across(dplyr::where(is.double), ~ ifelse(is.nan(.x), NA_real_, .x))
     ) %>%
-    dplyr::arrange(.metric, dplyr::desc(improvement))
+    dplyr::arrange(.metric, rank) %>%
+    dplyr::relocate(rank, .after = "method")
 }
 
 #' @export
@@ -217,5 +227,16 @@ autoplot.cal_rank <- function(x, level = 0.90, metrics = NULL, ...) {
   p
 }
 
-
-
+cal_type_from_rs <- function(x) {
+  y_name <- .get_tune_outcome_names(x)
+  lvls <- levels(x$splits[[1]]$data[[y_name]])
+  num_lvls <- length(lvls)
+  if (num_lvls == 0) {
+    res <- "regression"
+  } else if (num_lvls == 2) {
+    res <- "binary"
+  } else {
+    res <- "multiclass"
+  }
+  res
+}
