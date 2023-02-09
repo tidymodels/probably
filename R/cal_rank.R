@@ -1,6 +1,10 @@
 #' Determine the best calibration method using resampling
 #'
 #' @inheritParams cal_validate_logistic
+#' @param summarize Should the overall ranks be computed (the default) or should
+#' the resample-level results be returned?
+#' @param level Confidence level for two-sided intervals produced by
+#' [stats::t.test()] (`summarize = TRUE` only)
 #'
 #' @export
 cal_rank <-
@@ -15,42 +19,44 @@ cal_rank <-
 #' @rdname cal_rank
 cal_rank.resample_results <-
   function(.data, truth = NULL, estimate = dplyr::starts_with(".pred_"),
-           metrics = NULL, ...) {
+           metrics = NULL, summarize = TRUE, level = 0.90, ...) {
     truth <- enquo(truth)
     estimate <- enquo(estimate)
-    opt_binary(.data,
-               truth = truth,
-               estimate = estimate,
-               metrics = metrics,
-               ...)
+    res <- opt_binary(.data,
+                      truth = truth,
+                      estimate = estimate,
+                      metrics = metrics,
+                      ...)
+
+    if (summarize) {
+      res <- summary_rank(res, level = level)
+      class(res) <- c("cal_rank_summary", "cal_rank", class(res))
+    } else {
+      class(res) <- c("cal_rank", class(res))
+    }
+    res
   }
 
-#' @export
-#' @rdname cal_rank
-cal_rank.rset <-
-  function(.data, truth = NULL, estimate = dplyr::starts_with(".pred_"),
-           metrics = NULL, ...) {
-    truth <- enquo(truth)
-    estimate <- enquo(estimate)
-    opt_binary(.data,
-               truth = truth,
-               estimate = estimate,
-               metrics = metrics,
-               ...)
-  }
-
-# for beta example, the chain for cal_rank.rset is
-
-# cal_rank.rset
-#   opt_binary:
-#      get_improvement:
-#         cal_validate_beta
-#            cal_validate_beta.rset
-#               cal_validate
-#               truth <- enquo(truth)
-#               estimate <- enquo(estimate)
-#                  dplyr::select(data, {{truth}})
-
+# @export
+# @rdname cal_rank
+# cal_rank.rset <-
+#   function(.data, truth = NULL, estimate = dplyr::starts_with(".pred_"),
+#            metrics = NULL, summarize = TRUE, level = 0.90, ...) {
+#     truth <- enquo(truth)
+#     estimate <- enquo(estimate)
+#     res <- opt_binary(.data,
+#                       truth = truth,
+#                       estimate = estimate,
+#                       metrics = metrics,
+#                       ...)
+#     if (summarize) {
+#       res <- summary_rank(res, level = level)
+#       class(res) <- c("cal_rank_summary", "cal_rank", class(res))
+#     } else {
+#       class(res) <- c("cal_rank", class(res))
+#     }
+#     res
+#   }
 
 # ------------------------------------------------------------------------------
 
@@ -78,7 +84,6 @@ opt_binary <- function(object, truth, estimate, metrics, ...) {
       )
     ) %>%
     dplyr::relocate(method)
-  class(res) <- c("cal_rank", class(res))
   res
 }
 
@@ -93,12 +98,10 @@ opt_reg <- function(object, ...) {
       # get_improvement(object, "isotonic_boot", ...)
     ) %>%
     dplyr::relocate(method)
-  class(res) <- c("cal_rank", class(res))
   res
 }
 
 # ------------------------------------------------------------------------------
-
 
 get_improvement <- function(object, method, truth, estimate, metrics, ...) {
 
@@ -162,31 +165,37 @@ broomish_t <- function(x, level = 0.9) {
   )
 }
 
-#' @export
-summary.cal_rank <- function(x, level = 0.90, ...) {
+summary_rank <- function(x, level = 0.90, ...) {
  x %>%
     tidyr::nest(data = improvement, .by = c(.metric, direction, method)) %>%
     dplyr::mutate(
       stats = purrr::map(data, ~ broomish_t(.x, level = level))
     ) %>%
     tidyr::unnest(stats) %>%
-    dplyr::select(-direction, -data)
+    dplyr::select(-direction, -data) %>%
+    dplyr::mutate(
+      dplyr::across(dplyr::where(is.double), ~ ifelse(is.nan(.x), NA_real_, .x))
+    ) %>%
+    dplyr::arrange(.metric, dplyr::desc(improvement))
 }
 
 #' @export
 autoplot.cal_rank <- function(x, level = 0.90, metrics = NULL, ...) {
-  stats <- summary(x, level = level)
-  if (!is.null(metrics)) {
-    stats <- dplyr::filter(stats, .metric %in% metrics)
+  if (!inherits(x, "cal_rank_summary")) {
+    x <- summary_rank(x, level = level)
   }
-  n_method <- length(unique(stats$method))
-  n_metrics <- length(unique(stats$.metric))
 
-  stats <- dplyr::mutate(stats, method = stats::reorder(method, improvement))
+  if (!is.null(metrics)) {
+    x <- dplyr::filter(x, .metric %in% metrics)
+  }
+  n_method <- length(unique(x$method))
+  n_metrics <- length(unique(x$.metric))
+
+  x <- dplyr::mutate(x, method = stats::reorder(method, improvement))
 
   p <-
     ggplot2::ggplot(
-      data = stats,
+      data = x,
       ggplot2::aes(y = method)
     ) +
     ggplot2::geom_vline(xintercept = 0, col = "green", lty = 2) +

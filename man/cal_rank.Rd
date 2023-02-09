@@ -19,6 +19,7 @@ cal_rank(
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
+  summarize = TRUE,
   ...
 )
 
@@ -27,6 +28,7 @@ cal_rank(
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
+  summarize = TRUE,
   ...
 )
 }
@@ -47,6 +49,9 @@ identifiers will be considered the same as the order of the levels of the
 
 \item{...}{Options to pass to \code{\link[=cal_estimate_logistic]{cal_estimate_logistic()}}, such as the \code{smooth}
 argument.}
+
+\item{summarize}{Should the overall ranks be computed (the default) or should
+the resample-level results be returned?}
 }
 \description{
 Determine the best calibration method using resampling
