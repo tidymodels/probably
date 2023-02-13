@@ -36,6 +36,7 @@ reference:
   contents:
   - starts_with("int_")
   - control_conformal_infer
+  - starts_with("predict.int")
 
 - title: Data
   contents:
