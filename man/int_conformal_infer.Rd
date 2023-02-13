@@ -12,10 +12,8 @@ int_conformal_infer(object, ...)
 
 \method{int_conformal_infer}{workflow}(
   object,
-  new_data,
-  ...,
   train_data,
-  level = 0.95,
+  ...,
   control = control_conformal_infer()
 )
 }
@@ -24,31 +22,31 @@ int_conformal_infer(object, ...)
 
 \item{...}{Not currently used.}
 
-\item{new_data}{A data frame of predictors.}
-
 \item{train_data}{A data frame with the \emph{original predictor data} used to
 create the fitted workflow (predictors and outcomes). If the workflow does
 not contain these values, pass them here. If the workflow used a recipe, this
 should be the data that were inputs to the recipe (and not the product of a
 recipe). It should be a named argument.}
 
-\item{level}{The confidence level for the intervals.}
-
 \item{control}{A control object from \code{\link[=control_conformal_infer]{control_conformal_infer()}} with the
 numeric minutiae.}
 }
 \value{
-A tibble with columns \code{.pred_lower}, \code{.pred}, and \code{.pred_upper}. If
-the search for the prediction bound fails, a missing value is used.
+An object of class \code{"int_conformal_infer"} containing the information
+to create intervals (which includes the training set data). The \code{predict()}
+method is used to produce the intervals.
 }
 \description{
 Nonparametric prediction intervals can be computed for fitted workflow
 objects using the conformal inference method described by Lei \emph{at al} (2018).
 }
 \details{
-This function implements what is usually called "full comformal inference"
+This function implements what is usually called "full conformal inference"
 (see Algorithm 1 in Lei \emph{et al} (2018)) since it uses the entire training
 set to compute the intervals.
+
+This function prepares the objects for the computations. The \code{\link[=predict]{predict()}}
+method computes the intervals for new data.
 
 For a given prediction, different "trial" values of the outcome are evaluated
 but augmenting the training set with the sample being predicted (with the
@@ -104,6 +102,9 @@ lm_fit <-
   add_model(linear_reg()) \%>\% 
   add_formula(outcome ~ .) \%>\% 
   fit(data = train_dat)
+
+# Create the object to be used to make prediction intervals
+lm_conform <- int_conformal_infer(lm_fit, train_dat)
 }\if{html}{\out{</div>}}
 
 We’ll use a \code{"multisession"} parallel processing plan to compute the
@@ -112,17 +113,18 @@ intervals for the five new samples in parallel:
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{library(future)
 plan("multisession")
 
-int_conformal_infer(lm_fit, new_dat, train_data = train_dat)
+# This is run in parallel:
+predict(lm_conform, new_dat)
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{## # A tibble: 5 x 3
-##   .pred_lower .pred .pred_upper
-##         <dbl> <dbl>       <dbl>
-## 1       -17.9 19.9         59.6
-## 2       -33.7  8.98        51.1
-## 3       -30.6  8.30        48.2
-## 4       -17.3 21.2         59.6
-## 5       -23.3 15.3         55.2
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## # A tibble: 5 x 2
+##   .pred_lower .pred_upper
+##         <dbl>       <dbl>
+## 1       -17.9        59.6
+## 2       -33.7        51.1
+## 3       -30.6        48.2
+## 4       -17.3        59.6
+## 5       -23.3        55.2
 }\if{html}{\out{</div>}}
 
 Using simulations, there are slightly sub-linear speed-ups when using
@@ -152,4 +154,7 @@ Wasserman (2018) Distribution-Free Predictive Inference for Regression,
 Murray Aitkin, Modelling Variance Heterogeneity in Normal Regression Using
 GLIM, \emph{Journal of the Royal Statistical Society Series C: Applied Statistics},
 Volume 36, Issue 3, November 1987, Pages 332–339.
+}
+\seealso{
+\code{\link[=predict.int_conformal_infer]{predict.int_conformal_infer()}}
 }

@@ -26,6 +26,9 @@ lm_fit <-
   add_model(linear_reg()) %>% 
   add_formula(outcome ~ .) %>% 
   fit(data = train_dat)
+
+# Create the object to be used to make prediction intervals
+lm_conform <- int_conformal_infer(lm_fit, train_dat)
 ```
 
 We'll use a `"multisession"` parallel processing plan to compute the intervals for the five new samples in parallel: 
@@ -34,7 +37,8 @@ We'll use a `"multisession"` parallel processing plan to compute the intervals f
 library(future)
 plan("multisession")
 
-int_conformal_infer(lm_fit, new_dat, train_data = train_dat)
+# This is run in parallel:
+predict(lm_conform, new_dat)
 ```
 
 Using simulations, there are slightly sub-linear speed-ups when using parallel processing to compute the row-wise intervals. 

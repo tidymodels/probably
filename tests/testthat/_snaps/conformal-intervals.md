@@ -1,5 +1,15 @@
 # bad inputs to conformal intervals
 
+    Code
+      basic_obj
+    Output
+      Conformal inference
+      training set size: 500 
+      
+      Use `predict(object, new_data, level)` to compute prediction intervals
+
+---
+
     'object' should be a fitted workflow object.
 
 ---
@@ -17,8 +27,7 @@
 # conformal intervals
 
     Code
-      res_small <- int_conformal_infer(wflow_small, sim_new, train_data = sim_data,
-        control = ctrl)
+      res_small <- predict(smol_obj, sim_new)
     Condition
       Warning in `stats::uniroot()`:
       _NOT_ converged in 2 iterations

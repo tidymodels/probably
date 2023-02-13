@@ -4,8 +4,6 @@
 #' objects using the conformal inference method described by Lei _at al_ (2018).
 #'
 #' @param object A fitted [workflows::workflow()] object.
-#' @param new_data A data frame of predictors.
-#' @param level The confidence level for the intervals.
 #' @param control A control object from [control_conformal_infer()] with the
 #' numeric minutiae.
 #' @param ... Not currently used.
@@ -14,13 +12,16 @@
 #' not contain these values, pass them here. If the workflow used a recipe, this
 #' should be the data that were inputs to the recipe (and not the product of a
 #' recipe). It should be a named argument.
-#' @return A tibble with columns `.pred_lower`, `.pred`, and `.pred_upper`. If
-#' the search for the prediction bound fails, a missing value is used.
-#'
+#' @return An object of class `"int_conformal_infer"` containing the information
+#' to create intervals (which includes the training set data). The `predict()`
+#' method is used to produce the intervals.
 #' @details
-#' This function implements what is usually called "full comformal inference"
+#' This function implements what is usually called "full conformal inference"
 #' (see Algorithm 1 in Lei _et al_ (2018)) since it uses the entire training
 #' set to compute the intervals.
+#'
+#' This function prepares the objects for the computations. The [predict()]
+#' method computes the intervals for new data.
 #'
 #' For a given prediction, different "trial" values of the outcome are evaluated
 #' but augmenting the training set with the sample being predicted (with the
@@ -50,6 +51,7 @@
 #'
 #' @includeRmd man/rmd/parallel_intervals.Rmd details
 #'
+#' @seealso [predict.int_conformal_infer()]
 #' @references
 #' Jing Lei, Max G'Sell, Alessandro Rinaldo, Ryan J. Tibshirani and Larry
 #' Wasserman (2018) Distribution-Free Predictive Inference for Regression,
@@ -72,67 +74,100 @@ int_conformal_infer.default <- function(object, ...) {
 #' @export
 #' @rdname int_conformal_infer
 int_conformal_infer.workflow <-
-  function(object, new_data, ..., train_data, level = 0.95,
-           control = control_conformal_infer()) {
+  function(object, train_data, ..., control = control_conformal_infer()) {
 
+    rlang::check_dots_empty()
     check_workflow(object)
+    check_data(train_data, object)
 
     # --------------------------------------------------------------------------
     # check req packages
 
     pkgs <- required_pkgs(object)
-    pkgs <- unique(c(pkgs, "workflows", "parsnip", "probably", control$required_pkgs))
+    pkgs <- unique(c(pkgs, "workflows", "parsnip", "probably", "mgcv", control$required_pkgs))
     rlang::check_installed(pkgs)
     control$required_pkgs <- pkgs
-
-    # --------------------------------------------------------------------------
-
-    if (is.null(train_data)) {
-      train_data <- data_from_wflow(object)
-    } else {
-      new_data <- hardhat::scream(new_data, object$blueprint$ptypes$predictors)
-    }
-
-    y_name <- get_outcome_name(object)
 
     # --------------------------------------------------------------------------
     # We need to set the potential range that encompassing the _possible_ values
     # of the prediction interval. This is done on a sample-by-sample basis using
     # a variance model on the training set residuals.
 
-    new_pred <- setup_new_data(object, new_data, train_data, control$var_multiplier)
+    var_gam <- var_model(object, train_data)
 
     # ------------------------------------------------------------------------------
-    # split new_data for row-wise processing
+    # save results
 
-    new_nest <-
-      dplyr::bind_cols(new_data, new_pred) %>%
-      dplyr::mutate(.row = dplyr::row_number()) %>%
-      dplyr::group_by(.row) %>%
-      tidyr::nest()
-
-    # ------------------------------------------------------------------------------
-    # compute intervals
-
-    if (control$method == "grid") {
-      res <- grid_all(new_nest$data, object, train_data, level, control)
-    } else {
-      res <- optimize_all(new_nest$data, object, train_data, level, control)
-    }
-    if(control$progress) {
-      cat("\n")
-    }
-    res
+    new_conf_infer(object, train_data, var_gam, control)
   }
+
+#' @export
+print.int_conformal_infer <- function(x, ...) {
+  cat("Conformal inference\n")
+  # cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
+  # cat("model:",             .get_fit_type(x$wflow), "\n")
+  cat("training set size:", format(nrow(x$training), big.mark = ","), "\n\n")
+
+  cat("Use `predict(object, new_data, level)` to compute prediction intervals\n")
+  invisible(x)
+}
 
 # ------------------------------------------------------------------------------
 
-data_from_wflow <- function(x) {
-  dplyr::bind_cols(x$pre$mold$outcomes, x$pre$mold$predictors)
+#' Prediction intervals from conformal methods
+#' @param object An object produced by [predict.int_conformal_infer()].
+#' @param new_data A data frame of predictors.
+#' @param level The confidence level for the intervals.
+#' @param ... Not currently used.
+#' @return A tibble with columns `.pred_lower` and `.pred_upper`. If
+#' the computations for the prediction bound fail, a missing value is used.
+#' @seealso [int_conformal_infer()]
+#' @export
+predict.int_conformal_infer <- function(object, new_data, level = 0.95, ...) {
+  check_data(new_data, object$wflow)
+  rlang::check_dots_empty()
+
+  new_pred <- setup_new_data(object, new_data, object$control$var_multiplier)
+
+  # ------------------------------------------------------------------------------
+  # split new_data for row-wise processing
+
+  new_nest <-
+    dplyr::bind_cols(new_data, new_pred) %>%
+    dplyr::mutate(.row = dplyr::row_number()) %>%
+    dplyr::group_by(.row) %>%
+    tidyr::nest()
+
+  # ------------------------------------------------------------------------------
+  # compute intervals
+
+  if (object$control$method == "grid") {
+    res <- grid_all(new_nest$data, object$wflow, object$training, level, object$control)
+  } else {
+    res <- optimize_all(new_nest$data, object$wflow, object$training, level, object$control)
+  }
+  if(object$control$progress) {
+    cat("\n")
+  }
+  res
 }
 
-check_train_data <- function(.data, wflow) {
-  # TODO use `wflow$pre$mold$blueprint$ptypes$predictors` and outcome to check for columns
+# ------------------------------------------------------------------------------
+
+new_conf_infer <- function(wflow, .data, variance, control) {
+  res <-
+    list(
+      wflow = wflow,
+      training = .data,
+      var_model = variance,
+      control = control
+    )
+  class(res) <- "int_conformal_infer"
+  res
+}
+
+check_data <- function(.data, wflow) {
+  hardhat::scream(.data, wflow$blueprint$ptypes$predictors)
   invisible(NULL)
 }
 
@@ -165,11 +200,9 @@ check_workflow <- function(x) {
 # This most likely underestimates the local variance so use a multiplier on the
 # variance prediction to make the possible range of the bounds really wide.
 
-setup_new_data <- function(object, new_data, train_data, multiplier = 10) {
+var_model <- function(object, train_data) {
 
   y_name <- get_outcome_name(object)
-
-  new_pred <- predict(object, new_data)
 
   train_res <- predict(object, train_data)
   train_res$resid <- train_data[[y_name]] - train_res$.pred
@@ -181,22 +214,30 @@ setup_new_data <- function(object, new_data, train_data, multiplier = 10) {
   # Use squared residuals as outcome in a gamma model to predict the standard
   # deviation at a given prediction.
   var_mod <-
-    mgcv::gam(sq ~ s(.pred),
-              data = train_res,
-              family = stats::Gamma(link = "log"))
+    try(
+      mgcv::gam(sq ~ s(.pred),
+                data = train_res,
+                family = stats::Gamma(link = "log")),
+      silent = TRUE
+    )
 
-  # previously:
-  # var_mod <-
-  #   stats::glm(sq ~ splines::ns(.pred, df = 5),
-  #              data = train_res,
-  #              family = stats::Gamma(link = "log"))
-  #
-  # Get prediction on squared errors
-  var_pred <- as.vector(predict(var_mod, new_pred, type = "response"))
+  if (inherits(var_mod, "try-error")) {
+    rlang::abort("The model to estimate the possible interval length failed.")
+  }
+
+  var_mod
+}
+
+
+setup_new_data <- function(object, new_data, multiplier = 10) {
+  new_pred <- predict(object$wflow, new_data)
+
+  rlang::check_installed("mgcv")
+  var_pred <- as.vector(predict(object$var_mod, new_pred, type = "response"))
   # convert back to original units
   var_pred <- sqrt(var_pred)
   # Add a buffer
-  new_pred$.bound <- 10 * var_pred
+  new_pred$.bound <- multiplier * var_pred
   new_pred
 
 }
@@ -244,7 +285,6 @@ trial_fit <- function(trial, trial_data, wflow, level) {
 
 grid_all <- function(new_data, model, train_data, level, ctrl) {
 
-  # purrr::map_dfr(
   furrr::future_map_dfr(
     new_data,
     grid_one,
@@ -278,14 +318,6 @@ grid_one <- function(new_data, model, train_data, level, ctrl) {
                   level = level)
     )
 
-  # if (!is.null(ctrl$testing)) {
-  #   file_nm <- format(Sys.time(), "_%Y_%m_%d")
-  #   file_nm <- paste("~/tmp/conf", signif(pred_val, 4), file_nm, sample.int(100, 1), ".RData", sep = "_")
-  #   grid_res <- res
-  #   grid_res$.pred <- pred_val
-  #   save(grid_res, file = file_nm)
-  # }
-
   compute_bound(res, pred_val)
 }
 
@@ -312,7 +344,7 @@ compute_bound <- function(x, predicted) {
   } else {
     lower <- NA_real_
   }
-  dplyr::tibble(.pred_lower = lower, .pred = predicted, .pred_upper = upper)
+  dplyr::tibble(.pred_lower = lower, .pred_upper = upper)
 }
 
 # ------------------------------------------------------------------------------
@@ -333,10 +365,6 @@ optimize_all <- function(new_data, model, train_data, level, ctrl) {
 
 get_diff <- function(val, ...) {
   res <- trial_fit(val, ...)
-  # res$.when <- date()
-  # file_nm <- paste0("~/tmp/opt_", sample.int(10^5, 1), ".RData")
-  # save(res, file = file_nm)
-  # print(res)
   res$difference
 }
 
@@ -368,7 +396,6 @@ optimize_one <- function(new_data, model, train_data, level, ctrl) {
 
   dplyr::tibble(
     .pred_lower = get_root(lower, ctrl),
-    .pred = pred_val,
     .pred_upper = get_root(upper, ctrl)
   )
 }

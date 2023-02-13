@@ -34,6 +34,10 @@ test_that("bad inputs to conformal intervals", {
 
   # ----------------------------------------------------------------------------
 
+  basic_obj <- int_conformal_infer(wflow, train_data = sim_data)
+  expect_snapshot(basic_obj)
+  expect_s3_class(basic_obj, "int_conformal_infer")
+
   expect_snapshot_error(
     int_conformal_infer(workflow(), sim_new)
   )
@@ -43,11 +47,11 @@ test_that("bad inputs to conformal intervals", {
   )
 
   expect_snapshot_error(
-    int_conformal_infer(wflow, sim_new[, 3:5], train_data = sim_data)
+    predict(basic_obj, sim_new[, 3:5])
   )
 
   expect_snapshot_error(
-    int_conformal_infer(wflow, sim_new, train_data = sim_cls_data)
+    int_conformal_infer(wflow, train_data = sim_cls_data)
   )
 })
 
@@ -81,26 +85,28 @@ test_that("conformal intervals", {
   set.seed(182)
   sim_new <- sim_regression(2)
 
+  ctrl_grid <- control_conformal_infer(method = "grid", seed = 1)
+  basic_obj <- int_conformal_infer(wflow, train_data = sim_data, control = ctrl_grid)
+
+  ctrl_hard <- control_conformal_infer(progress = TRUE, seed = 1,
+                                  max_iter = 2, tolerance = 0.000001)
+  smol_obj  <- int_conformal_infer(wflow_small, train_data = sim_small, control = ctrl_hard)
+
   # ----------------------------------------------------------------------------
 
-  ctrl <- control_conformal_infer(progress = TRUE, seed = 1,
-                                  max_iter = 2, tolerance = 0.000001)
   expect_snapshot(
-    res_small <-
-      int_conformal_infer(wflow_small,
-                          sim_new,
-                          train_data = sim_data,
-                          control = ctrl)
+    res_small <- predict(smol_obj, sim_new)
+
   )
-  expect_equal(names(res_small), c(".pred_lower", ".pred", ".pred_upper"))
+  expect_equal(names(res_small), c(".pred_lower", ".pred_upper"))
   expect_equal(nrow(res_small), 2)
   expect_true(mean(complete.cases(res_small)) < 1)
 
   # ----------------------------------------------------------------------------
 
-  ctrl <- control_conformal_infer(method = "grid", seed = 1)
-  res <- int_conformal_infer(wflow, sim_new[1,], train_data = sim_data, control = ctrl)
-  expect_equal(names(res), c(".pred_lower", ".pred", ".pred_upper"))
+
+  res <- predict(basic_obj, sim_new[1,])
+  expect_equal(names(res), c(".pred_lower", ".pred_upper"))
   expect_equal(nrow(res), 1)
   expect_true(mean(complete.cases(res)) == 1)
 
