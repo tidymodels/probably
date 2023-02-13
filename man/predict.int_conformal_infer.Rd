@@ -7,7 +7,7 @@
 \usage{
 \method{predict}{int_conformal_infer}(object, new_data, level = 0.95, ...)
 
-\method{predict}{int_conformal_infer_cv}(object, new_data, level = 0.95)
+\method{predict}{int_conformal_infer_cv}(object, new_data, level = 0.95, ...)
 }
 \arguments{
 \item{object}{An object produced by \code{\link[=predict.int_conformal_infer]{predict.int_conformal_infer()}}.}
@@ -26,5 +26,5 @@ the computations for the prediction bound fail, a missing value is used.
 Prediction intervals from conformal methods
 }
 \seealso{
-\code{\link[=int_conformal_infer]{int_conformal_infer()}}
+\code{\link[=int_conformal_infer]{int_conformal_infer()}}, \code{\link[=int_conformal_infer_cv]{int_conformal_infer_cv()}}
 }

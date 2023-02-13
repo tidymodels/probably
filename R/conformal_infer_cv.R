@@ -23,12 +23,46 @@
 #' This function prepares the objects for the computations. The [predict()]
 #' method computes the intervals for new data.
 #'
-#'
 #' @seealso [predict.int_conformal_infer_cv()]
 #' @references
 #' Rina Foygel Barber, Emmanuel J. Candès, Aaditya Ramdas, Ryan J. Tibshirani
 #' "Predictive inference with the jackknife+," _The Annals of Statistics_,
 #' 49(1), 486-507, 2021
+#' @examplesIf !probably:::is_cran_check()
+#' library(workflows)
+#' library(dplyr)
+#' library(parsnip)
+#' library(rsample)
+#' library(tune)
+#' library(modeldata)
+#'
+#' set.seed(2)
+#' sim_train <- sim_regression(200)
+#' sim_new   <- sim_regression(  5) %>% select(-outcome)
+#'
+#' sim_rs <- vfold_cv(sim_train)
+#'
+#' # We'll use a neural network model
+#' mlp_spec <-
+#'   mlp(hidden_units = 5, penalty = 0.01) %>%
+#'   set_mode("regression")
+#'
+#' # Use a control function that saves the predictions as well as the models.
+#' # Consider using the butcher package in the extracts function to have smaller
+#' # object sizes
+#'
+#' ctrl <- control_resamples(save_pred = TRUE, extract = I)
+#'
+#' set.seed(3)
+#' nnet_res <-
+#'   mlp_spec %>%
+#'   fit_resamples(outcome ~ ., resamples = sim_rs, control = ctrl)
+#'
+#'
+#' nnet_int_obj <- int_conformal_infer_cv(nnet_res)
+#' nnet_int_obj
+#'
+#' predict(nnet_int_obj, sim_new)
 #' @export
 int_conformal_infer_cv <- function(object, ...) {
   UseMethod("int_conformal_infer_cv")
@@ -49,12 +83,12 @@ int_conformal_infer_cv.resample_results <- function(object, ...) {
 
   model_list <- .get_fitted_workflows(object)
 
-  y_name <- tune:::.get_tune_outcome_names(object)
+  y_name <- tune::.get_tune_outcome_names(object)
   resids <-
     tune::collect_predictions(object, summarize = TRUE) %>%
     dplyr::mutate(.abs_resid = abs(.pred - !!rlang::sym(y_name)))
 
-  new_infer_cv(model_list, resids)
+  new_infer_cv(model_list, resids$.abs_resid)
 }
 
 #' @export
@@ -65,19 +99,18 @@ int_conformal_infer_cv.tune_results <- function(object, parameters, ...) {
   check_extras(object)
 
   model_list <- .get_fitted_workflows(object, parameters)
+  y_name <- tune::.get_tune_outcome_names(object)
 
   resids <-
     tune::collect_predictions(object, parameters = parameters, summarize = TRUE) %>%
     dplyr::mutate(.abs_resid = abs(.pred - !!rlang::sym(y_name)))
 
-  new_infer_cv(model_list, resids)
+  new_infer_cv(model_list, resids$.abs_resid)
 }
 
 #' @export
 #' @rdname predict.int_conformal_infer
-predict.int_conformal_infer_cv <- function(object, new_data, level = 0.95) {
-  # checks, scream etc
-
+predict.int_conformal_infer_cv <- function(object, new_data, level = 0.95, ...) {
   mean_pred <-
     purrr::map_dfr(
       object$models,
@@ -99,10 +132,11 @@ predict.int_conformal_infer_cv <- function(object, new_data, level = 0.95) {
   dplyr::tibble(.pred_lower = lower, .pred_upper = upper)
 }
 
+#' @export
 print.int_conformal_infer_cv <- function(x, ...) {
   cat("Conformal inference via CV+\n")
-  cat("preprocessor:",      .get_pre_type(x$models), "\n")
-  cat("model:",             .get_fit_type(x$models), "\n")
+  cat("preprocessor:",      .get_pre_type(x$models[[1]]), "\n")
+  cat("model:",             .get_fit_type(x$models[[1]]), "\n")
   cat("number of models:",  format(length(x$models), big.mark = ","), "\n")
   cat("training set size:", format(length(x$abs_resid), big.mark = ","), "\n\n")
 
@@ -117,7 +151,7 @@ new_infer_cv <- function(models, resid) {
   if (!is.numeric(resid)) {
     rlang::abort("Absolute residuals should be numeric")
   }
-  na_resid <- is.na(resids$.abs_resid)
+  na_resid <- is.na(resid)
   if (all(na_resid)) {
     rlang::abort("All of the absolute residuals are missing.")
   }
@@ -135,28 +169,28 @@ new_infer_cv <- function(models, resid) {
 
   res <- list(
     models = models,
-    abs_resid = resid$.abs_resid[!na_resid]
+    abs_resid = resid[!na_resid]
   )
   class(res) <- "int_conformal_infer_cv"
   res
 }
 
 .get_lower_cv_bound <- function(pred, resid, level = 0.95) {
-  as.vector(quantile(pred - resid, probs = 1 - level))
+  as.vector(stats::quantile(pred - resid, probs = 1 - level))
 }
 
 .get_upper_cv_bound <- function(pred, resid, level = 0.95) {
-  as.vector(quantile(pred + resid, probs = level))
+  as.vector(stats::quantile(pred + resid, probs = level))
 }
 
 .get_pre_type <- function(x) {
-  cls <- x[[1]] %>% workflows::extract_preprocessor() %>% class()
+  cls <- x %>% workflows::extract_preprocessor() %>% class()
   cls <- cls[!grepl("butchered", cls)]
   cls[1]
 }
 
 .get_fit_type <- function(x) {
-  fitted <- x[[1]] %>% workflows::extract_fit_parsnip()
+  fitted <- x %>% workflows::extract_fit_parsnip()
   res <- paste0(class(fitted$spec)[1], " (engine = ", fitted$spec$engine, ")")
   res
 }
@@ -182,15 +216,19 @@ new_infer_cv <- function(models, resid) {
 check_resampling <- function(x) {
   rs <- attr(x, "rset_info")
   if (rs$att$class != "vfold_cv") {
-    msg <- glue::glue("The data were resampled using {rs$label}.
-                      This method was developed for V-fold cross-validation.
-                      Interval coverage is unknown for your resampling method.")
+    msg <- paste0(
+      "The data were resampled using ", rs$label,
+      ". This method was developed for V-fold cross-validation. Interval ",
+      "coverage is unknown for your resampling method."
+    )
     rlang::warn(msg)
   } else {
     if (rs$att$repeats > 1) {
-      msg <- glue::glue("{rs$att$repeats} repeats were used.
-                      This method was developed for basic V-fold cross-validation.
-                      Interval coverage is unknown multiple repeats.")
+      msg <- paste0(
+        rs$att$repeats, " repeats were used. This method was developed for ",
+        "basic V-fold cross-validation. Interval coverage is unknown multiple ",
+        "repeats."
+      )
       rlang::warn(msg)
     }
   }
@@ -198,12 +236,17 @@ check_resampling <- function(x) {
 }
 
 check_parameters <- function(x, param) {
-  prms <- .get_tune_parameter_names(x)
+  prms <- tune::.get_tune_parameter_names(x)
   mtr <- tune::collect_metrics(x) %>%
     dplyr::distinct(.config, !!!rlang::syms(prms))
   remain <- dplyr::inner_join(mtr, param, by = names(param))
   if (nrow(remain) > 1) {
-    rlang::abort(glue::glue("The `parameters` argument selected {nrow(remain)} submodels. Only 1 should be selected."))
+    msg <-
+      paste0(
+        "The `parameters` argument selected ", nrow(remain), " submodels. Only ",
+        "1 should be selected."
+      )
+    rlang::abort(msg)
   }
   invisible(NULL)
 }

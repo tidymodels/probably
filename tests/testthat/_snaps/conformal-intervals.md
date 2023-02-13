@@ -4,6 +4,8 @@
       basic_obj
     Output
       Conformal inference
+      preprocessor: formula 
+      model: linear_reg (engine = lm) 
       training set size: 500 
       
       Use `predict(object, new_data, level)` to compute prediction intervals
@@ -23,6 +25,45 @@
 ---
 
     The following required columns are missing: 'predictor_01', 'predictor_02', 'predictor_03', 'predictor_04', 'predictor_05', 'predictor_06', 'predictor_07', 'predictor_08', 'predictor_09', 'predictor_10', 'predictor_11', 'predictor_12', 'predictor_13', 'predictor_14', 'predictor_15', 'predictor_16', 'predictor_17', 'predictor_18', 'predictor_19', 'predictor_20'.
+
+---
+
+    2 repeats were used. This method was developed for basic V-fold cross-validation. Interval coverage is unknown multiple repeats.
+
+---
+
+    The data were resampled using Bootstrap sampling. This method was developed for V-fold cross-validation. Interval coverage is unknown for your resampling method.
+
+---
+
+    Code
+      basic_cv_obj
+    Output
+      Conformal inference via CV+
+      preprocessor: formula 
+      model: linear_reg (engine = lm) 
+      number of models: 2 
+      training set size: 500 
+      
+      Use `predict(object, new_data, level)` to compute prediction intervals
+
+---
+
+    No known 'int_conformal_infer_cv' methods for this type of object.
+
+---
+
+    The output must contain a column called '.predictions' that contains the holdout predictions. See the documentation on the 'save_pred' argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
+
+---
+
+    The output must contain a column called '.extracts' that contains the fitted workflow objects. See the documentation on the 'extract' argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
+
+---
+
+    i In index: 1.
+    Caused by error in `validate_column_names()`:
+    ! The following required columns are missing: 'predictor_01', 'predictor_05', 'predictor_06', 'predictor_07', 'predictor_08', 'predictor_09', 'predictor_10', 'predictor_11', 'predictor_12', 'predictor_13', 'predictor_14', 'predictor_15', 'predictor_16', 'predictor_17', 'predictor_18', 'predictor_19', 'predictor_20'.
 
 # conformal intervals
 
@@ -47,6 +88,14 @@
       Search did not converge.
     Output
       
+
+---
+
+    argument "parameters" is missing, with no default
+
+---
+
+    The `parameters` argument selected 2 submodels. Only 1 should be selected.
 
 # conformal control
 

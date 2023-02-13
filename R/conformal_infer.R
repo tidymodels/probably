@@ -104,8 +104,8 @@ int_conformal_infer.workflow <-
 #' @export
 print.int_conformal_infer <- function(x, ...) {
   cat("Conformal inference\n")
-  # cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
-  # cat("model:",             .get_fit_type(x$wflow), "\n")
+  cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
+  cat("model:",             .get_fit_type(x$wflow), "\n")
   cat("training set size:", format(nrow(x$training), big.mark = ","), "\n\n")
 
   cat("Use `predict(object, new_data, level)` to compute prediction intervals\n")
@@ -121,7 +121,7 @@ print.int_conformal_infer <- function(x, ...) {
 #' @param ... Not currently used.
 #' @return A tibble with columns `.pred_lower` and `.pred_upper`. If
 #' the computations for the prediction bound fail, a missing value is used.
-#' @seealso [int_conformal_infer()]
+#' @seealso [int_conformal_infer()], [int_conformal_infer_cv()]
 #' @export
 predict.int_conformal_infer <- function(object, new_data, level = 0.95, ...) {
   check_data(new_data, object$wflow)

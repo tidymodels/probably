@@ -1,11 +1,15 @@
 test_that("bad inputs to conformal intervals", {
   skip_if_not_installed("modeldata")
+  skip_if_not_installed("nnet")
 
   # ----------------------------------------------------------------------------
 
   suppressPackageStartupMessages(library(workflows))
   suppressPackageStartupMessages(library(modeldata))
   suppressPackageStartupMessages(library(purrr))
+  suppressPackageStartupMessages(library(rsample))
+  suppressPackageStartupMessages(library(tune))
+  suppressPackageStartupMessages(library(dplyr))
 
   # ----------------------------------------------------------------------------
 
@@ -19,6 +23,24 @@ test_that("bad inputs to conformal intervals", {
 
   set.seed(182)
   sim_new <- sim_regression(2)
+
+
+  ctrl <- control_resamples(save_pred = TRUE, extract = I)
+
+  set.seed(382)
+  cv <- vfold_cv(sim_data, v = 2)
+  good_res <-
+    parsnip::linear_reg() %>% fit_resamples(outcome ~ ., cv, control = ctrl)
+
+  set.seed(382)
+  cv <- vfold_cv(sim_data, v = 2, repeats = 2)
+  rep_res <-
+    parsnip::linear_reg() %>% fit_resamples(outcome ~ ., cv, control = ctrl)
+
+  set.seed(382)
+  bt <- bootstraps(sim_data, times = 2)
+  bt_res <-
+    parsnip::linear_reg() %>% fit_resamples(outcome ~ ., bt, control = ctrl)
 
   # ----------------------------------------------------------------------------
 
@@ -52,6 +74,35 @@ test_that("bad inputs to conformal intervals", {
 
   expect_snapshot_error(
     int_conformal_infer(wflow, train_data = sim_cls_data)
+  )
+
+  # ----------------------------------------------------------------------------
+
+  basic_cv_obj <- int_conformal_infer_cv(good_res)
+
+  expect_snapshot_warning(
+    int_conformal_infer_cv(rep_res)
+  )
+  expect_snapshot_warning(
+    int_conformal_infer_cv(bt_res)
+  )
+
+  # training set < 500 because of 2 bootstraps
+  expect_snapshot(basic_cv_obj)
+  expect_s3_class(basic_cv_obj, "int_conformal_infer_cv")
+
+  expect_snapshot_error(
+    int_conformal_infer_cv(workflow())
+  )
+  expect_snapshot_error(
+    int_conformal_infer_cv(good_res %>% dplyr::select(-.predictions))
+  )
+  expect_snapshot_error(
+    int_conformal_infer_cv(good_res %>% dplyr::select(-.extracts))
+  )
+
+  expect_snapshot_error(
+    predict(basic_cv_obj, sim_new[, 3:5])
   )
 })
 
@@ -92,11 +143,21 @@ test_that("conformal intervals", {
                                   max_iter = 2, tolerance = 0.000001)
   smol_obj  <- int_conformal_infer(wflow_small, train_data = sim_small, control = ctrl_hard)
 
+
+  ctrl <- control_resamples(save_pred = TRUE, extract = I)
+  set.seed(382)
+  cv <- vfold_cv(sim_data, v = 2)
+  cv_res <-
+    parsnip::linear_reg() %>% fit_resamples(outcome ~ ., cv, control = ctrl)
+  grid_res <-
+    parsnip::mlp(penalty = tune()) %>%
+    set_mode("regression") %>%
+    tune_grid(outcome ~ ., cv, grid = 2, control = ctrl)
+
   # ----------------------------------------------------------------------------
 
   expect_snapshot(
     res_small <- predict(smol_obj, sim_new)
-
   )
   expect_equal(names(res_small), c(".pred_lower", ".pred_upper"))
   expect_equal(nrow(res_small), 2)
@@ -104,11 +165,38 @@ test_that("conformal intervals", {
 
   # ----------------------------------------------------------------------------
 
-
   res <- predict(basic_obj, sim_new[1,])
   expect_equal(names(res), c(".pred_lower", ".pred_upper"))
   expect_equal(nrow(res), 1)
   expect_true(mean(complete.cases(res)) == 1)
+
+  # ----------------------------------------------------------------------------
+
+  cv_int <- int_conformal_infer_cv(cv_res)
+  cv_bounds <- predict(cv_int, sim_small)
+  cv_bounds_90 <- predict(cv_int, sim_small, level = .9)
+  expect_equal(names(cv_bounds), c(".pred_lower", ".pred_upper"))
+  expect_equal(nrow(cv_bounds), nrow(sim_small))
+  expect_true(mean(complete.cases(cv_bounds)) == 1)
+  expect_true(
+    all(cv_bounds$.pred_lower < cv_bounds_90$.pred_lower)
+  )
+
+  # ----------------------------------------------------------------------------
+
+  two_models <- show_best(grid_res, metric = "rmse")[, c("penalty", ".config")]
+  expect_snapshot_error(int_conformal_infer_cv(grid_res))
+  expect_snapshot_error(int_conformal_infer_cv(grid_res, two_models))
+  grid_int <- int_conformal_infer_cv(grid_res, two_models[1,])
+  grid_bounds <- predict(grid_int, sim_small)
+  grid_bounds_90 <- predict(grid_int, sim_small, level = .9)
+  expect_equal(names(grid_bounds), c(".pred_lower", ".pred_upper"))
+  expect_equal(nrow(grid_bounds), nrow(sim_small))
+  expect_true(mean(complete.cases(grid_bounds)) == 1)
+  expect_true(
+    all(grid_bounds$.pred_lower < grid_bounds_90$.pred_lower)
+  )
+
 
 })
 

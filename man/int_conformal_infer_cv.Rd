@@ -17,13 +17,15 @@ int_conformal_infer_cv(object, ...)
 }
 \arguments{
 \item{object}{An object from a tidymodels resampling or tuning function such
-as \code{\link[tune:fit_resamples]{tune::fit_resamples()}}, \code{\link[tune:tune_grid]{tune::tune_grid()}}, or similar. .}
+as \code{\link[tune:fit_resamples]{tune::fit_resamples()}}, \code{\link[tune:tune_grid]{tune::tune_grid()}}, or similar. The object
+should have been produced in a way that the \code{.extracts} column contains the
+fitted workflow for each resample (see the Details below).}
 
 \item{...}{Not currently used.}
 
 \item{parameters}{An tibble of tuning parameter values that can be
 used to filter the predicted values before processing. This tibble should
-select a single set of hyperparameter values from the tuning results. This is
+select a single set of hyper-parameter values from the tuning results. This is
 only required when a tuning object is passed to \code{object}.}
 }
 \value{
@@ -42,6 +44,44 @@ residuals to make prediction intervals for regression models.
 
 This function prepares the objects for the computations. The \code{\link[=predict]{predict()}}
 method computes the intervals for new data.
+}
+\examples{
+\dontshow{if (!probably:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+library(workflows)
+library(dplyr)
+library(parsnip)
+library(rsample)
+library(tune)
+library(modeldata)
+
+set.seed(2)
+sim_train <- sim_regression(200)
+sim_new   <- sim_regression(  5) \%>\% select(-outcome)
+
+sim_rs <- vfold_cv(sim_train)
+
+# We'll use a neural network model
+mlp_spec <-
+  mlp(hidden_units = 5, penalty = 0.01) \%>\%
+  set_mode("regression")
+
+# Use a control function that saves the predictions as well as the models.
+# Consider using the butcher package in the extracts function to have smaller
+# object sizes
+
+ctrl <- control_resamples(save_pred = TRUE, extract = I)
+
+set.seed(3)
+nnet_res <-
+  mlp_spec \%>\%
+  fit_resamples(outcome ~ ., resamples = sim_rs, control = ctrl)
+
+
+nnet_int_obj <- int_conformal_infer_cv(nnet_res)
+nnet_int_obj
+
+predict(nnet_int_obj, sim_new)
+\dontshow{\}) # examplesIf}
 }
 \references{
 Rina Foygel Barber, Emmanuel J. Candès, Aaditya Ramdas, Ryan J. Tibshirani
