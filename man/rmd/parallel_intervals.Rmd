@@ -2,7 +2,7 @@
 
 The time it takes to compute the intervals depends on the training set size, search parameters (i.e., convergence criterion, number of iterations), the grid size, and the number of worker processes that are used. For the last item, the computations can be parallelized using the future and furrr packages.
 
-To use parallelsim, the [future::plan()] function can be invoked to create a parallel backend. For example, let's make an initial workflow: 
+To use parallelism, the [future::plan()] function can be invoked to create a parallel backend. For example, let's make an initial workflow: 
 
 ```{r, include = FALSE}
 library(tidymodels)
@@ -34,7 +34,6 @@ lm_conform <- int_conformal_infer(lm_fit, train_dat)
 We'll use a `"multisession"` parallel processing plan to compute the intervals for the five new samples in parallel: 
 
 ```{r}
-library(future)
 plan("multisession")
 
 # This is run in parallel:
