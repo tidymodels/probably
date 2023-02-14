@@ -11,7 +11,7 @@
 #' create the fitted workflow (predictors and outcomes). If the workflow does
 #' not contain these values, pass them here. If the workflow used a recipe, this
 #' should be the data that were inputs to the recipe (and not the product of a
-#' recipe). It should be a named argument.
+#' recipe).
 #' @return An object of class `"int_conformal_infer"` containing the information
 #' to create intervals (which includes the training set data). The `predict()`
 #' method is used to produce the intervals.
@@ -24,7 +24,7 @@
 #' method computes the intervals for new data.
 #'
 #' For a given prediction, different "trial" values of the outcome are evaluated
-#' but augmenting the training set with the sample being predicted (with the
+#' by augmenting the training set with the sample being predicted (with the
 #' trial value as the outcome). From this model, the residual associated with
 #' the trial value is compared to a quantile of the distribution of the other
 #' residuals. Usually the absolute values of the residuals are used. Once the
@@ -34,7 +34,7 @@
 #' The literature proposed using a grid search of trial values to find the two
 #' points that correspond to the prediction intervals. This can be done via
 #' an option in [control_conformal_infer()]. However, the default approach uses
-#' two different one dimensional searches on either side of the predicted value
+#' two different one-dimensional iterative searches on either side of the predicted value
 #' to find values that correspond to the prediction intervals.
 #'
 #' For medium to large data sets, the iterative search method is likely to
@@ -89,7 +89,7 @@ int_conformal_infer.workflow <-
     control$required_pkgs <- pkgs
 
     # --------------------------------------------------------------------------
-    # We need to set the potential range that encompassing the _possible_ values
+    # We need to set the potential range that encompasses the _possible_ values
     # of the prediction interval. This is done on a sample-by-sample basis using
     # a variance model on the training set residuals.
 
@@ -222,7 +222,11 @@ var_model <- function(object, train_data) {
     )
 
   if (inherits(var_mod, "try-error")) {
-    rlang::abort("The model to estimate the possible interval length failed.")
+    msg <- c(
+      "!" = "The model to estimate the possible interval length failed with the following message:",
+      "i" = conditionMessage(attr(var_mod, "condition"))
+    )
+    rlang::abort(msg)
   }
 
   var_mod
@@ -357,7 +361,7 @@ optimize_all <- function(new_data, model, train_data, level, ctrl) {
     model = model,
     train_data = train_data,
     level = level,
-    ctrl,
+    ctrl = ctrl,
     .progress = ctrl$progress,
     .options = furrr::furrr_options(seed = ctrl$seed, stdout = FALSE)
   )
