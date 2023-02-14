@@ -223,7 +223,7 @@ var_model <- function(object, train_data) {
 
   if (inherits(var_mod, "try-error")) {
     msg <- c(
-      "!" = "The model to estimate the possible interval length failed with the following message:",
+      "The model to estimate the possible interval length failed with the following message:",
       "i" = conditionMessage(attr(var_mod, "condition"))
     )
     rlang::abort(msg)
@@ -348,7 +348,7 @@ compute_bound <- function(x, predicted) {
   } else {
     lower <- NA_real_
   }
-  dplyr::tibble(.pred_lower = lower, .pred_upper = upper)
+  dplyr::tibble(.pred_lower = lower, .pred = predicted, .pred_upper = upper)
 }
 
 # ------------------------------------------------------------------------------
