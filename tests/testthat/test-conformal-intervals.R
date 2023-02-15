@@ -38,19 +38,19 @@ test_that("bad inputs to conformal intervals", {
   expect_snapshot(basic_obj)
   expect_s3_class(basic_obj, "int_conformal_infer")
 
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     int_conformal_infer(workflow(), sim_new)
   )
 
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     int_conformal_infer(wflow %>% extract_fit_parsnip(), sim_new)
   )
 
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     predict(basic_obj, sim_new[, 3:5])
   )
 
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     int_conformal_infer(wflow, train_data = sim_cls_data)
   )
 })
@@ -116,5 +116,5 @@ test_that("conformal control", {
   set.seed(1)
   expect_snapshot(dput(control_conformal_infer()))
   expect_snapshot(dput(control_conformal_infer(max_iter = 2)))
-  expect_snapshot_error(control_conformal_infer(method = "rock-paper-scissors"))
+  expect_snapshot(error = TRUE, control_conformal_infer(method = "rock-paper-scissors"))
 })
