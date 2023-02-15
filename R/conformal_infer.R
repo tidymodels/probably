@@ -347,7 +347,7 @@ compute_bound <- function(x, predicted) {
   } else {
     lower <- NA_real_
   }
-  dplyr::tibble(.pred_lower = lower, .pred = predicted, .pred_upper = upper)
+  dplyr::tibble(.pred_lower = lower, .pred_upper = upper)
 }
 
 # ------------------------------------------------------------------------------
