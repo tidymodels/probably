@@ -47,11 +47,31 @@ test_that("bad inputs to conformal intervals", {
   )
 
   expect_snapshot(error = TRUE,
+    int_conformal_infer(wflow_cls, sim_cls_new)
+  )
+
+  expect_snapshot(error = TRUE,
     predict(basic_obj, sim_new[, 3:5])
   )
 
   expect_snapshot(error = TRUE,
     int_conformal_infer(wflow, train_data = sim_cls_data)
+  )
+
+  expect_snapshot(error = TRUE,
+    int_conformal_infer(wflow, sim_new)
+  )
+
+  expect_snapshot(error = TRUE,
+    int_conformal_infer(
+      wflow,
+      sim_data,
+      control = control_conformal_infer(required_pkgs = "boop")
+    )
+  )
+
+  expect_snapshot(
+    get_root(try(stop("ope!"), silent = TRUE), control_conformal_infer())
   )
 })
 

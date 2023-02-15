@@ -26,7 +26,7 @@ int_conformal_infer(object, ...)
 create the fitted workflow (predictors and outcomes). If the workflow does
 not contain these values, pass them here. If the workflow used a recipe, this
 should be the data that were inputs to the recipe (and not the product of a
-recipe). It should be a named argument.}
+recipe).}
 
 \item{control}{A control object from \code{\link[=control_conformal_infer]{control_conformal_infer()}} with the
 numeric minutiae.}
@@ -48,19 +48,19 @@ set to compute the intervals.
 This function prepares the objects for the computations. The \code{\link[=predict]{predict()}}
 method computes the intervals for new data.
 
-For a given prediction, different "trial" values of the outcome are evaluated
-but augmenting the training set with the sample being predicted (with the
-trial value as the outcome). From this model, the residual associated with
-the trial value is compared to a quantile of the distribution of the other
-residuals. Usually the absolute values of the residuals are used. Once the
-residual of a trial value exceeds the distributional quantile, the value is
-one of the bounds.
+For a given new_data observation, the predictors are appended to the original
+training set. Then, different "trial" values of the outcome are substituted
+in for that observation's outcome and the model is re-fit. From each model,
+the residual associated with the trial value is compared to a quantile of the
+distribution of the other residuals. Usually the absolute values of the
+residuals are used. Once the residual of a trial value exceeds the
+distributional quantile, the value is one of the bounds.
 
 The literature proposed using a grid search of trial values to find the two
-points that correspond to the prediction intervals. This can be done via
-an option in \code{\link[=control_conformal_infer]{control_conformal_infer()}}. However, the default approach uses
-two different one dimensional searches on either side of the predicted value
-to find values that correspond to the prediction intervals.
+points that correspond to the prediction intervals. To use this apprach,
+set \code{method = "grid"} in \code{\link[=control_conformal_infer]{control_conformal_infer()}}. However, the default method
+\verb{"search} uses two different one-dimensional iterative searches on either
+side of the predicted value to find values that correspond to the prediction intervals.
 
 For medium to large data sets, the iterative search method is likely to
 generate slightly smaller intervals. For small training sets, grid search
@@ -82,7 +82,7 @@ iterations), the grid size, and the number of worker processes that are
 used. For the last item, the computations can be parallelized using the
 future and furrr packages.
 
-To use parallelsim, the \code{\link[future:plan]{future::plan()}} function can
+To use parallelism, the \code{\link[future:plan]{future::plan()}} function can
 be invoked to create a parallel backend. For example, let’s make an
 initial workflow:
 
@@ -110,8 +110,7 @@ lm_conform <- int_conformal_infer(lm_fit, train_dat)
 We’ll use a \code{"multisession"} parallel processing plan to compute the
 intervals for the five new samples in parallel:
 
-\if{html}{\out{<div class="sourceCode r">}}\preformatted{library(future)
-plan("multisession")
+\if{html}{\out{<div class="sourceCode r">}}\preformatted{plan("multisession")
 
 # This is run in parallel:
 predict(lm_conform, new_dat)

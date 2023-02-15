@@ -12,7 +12,7 @@ control_conformal_infer(
   tolerance = .Machine$double.eps^0.25,
   progress = FALSE,
   required_pkgs = character(0),
-  seed = NULL
+  seed = sample.int(10^5, 1)
 )
 }
 \arguments{
