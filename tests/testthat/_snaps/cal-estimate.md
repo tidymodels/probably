@@ -96,6 +96,21 @@
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
 
+# Isotonic linear estimates work - data.frame
+
+    Code
+      print(sl_logistic)
+    Message
+      
+      -- Probability Calibration 
+      Method: Isotonic
+      Type: Regression
+      Source class: Data Frame
+      Data points: 2,000
+      Truth variable: `outcome`
+      Estimate variables:
+      `.pred` ==> predictions
+
 # Isotonic Bootstrapped estimates work
 
     Code
