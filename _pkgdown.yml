@@ -32,6 +32,12 @@ reference:
   - locate-equivocal
   - levels.class_pred
 
+- title: Regression predictions
+  contents:
+  - starts_with("int_")
+  - control_conformal_infer
+  - starts_with("predict.int")
+
 - title: Data
   contents:
   - segment_naive_bayes

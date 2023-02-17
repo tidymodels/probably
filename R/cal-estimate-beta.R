@@ -172,7 +172,6 @@ cal_beta_impl_estimate <- function(.data,
         shape_params = shape_params,
         location_params = location_params,
         level = x,
-        sampled = sampled,
         ...
       )
     }
