@@ -1035,16 +1035,23 @@ tune_results_args <- function(.data,
   group <- enquo(group)
 
   if (quo_is_null(truth)) {
-    truth_str <- attributes(.data)$outcome
+    truth_str <- attributes(.data)$outcomes
     truth <- parse_expr(truth_str)
   }
 
+  y <- .data$splits[[1]]$data[[truth_str]]
+
   if (quo_is_null(estimate)) {
-    truth_str <- as_name(truth)
-    lev <- process_level(event_level) # TODO changes for regression?
-    fc_truth <- levels(predictions[[truth_str]])
-    estimate_str <- paste0(".pred_", fc_truth[[lev]])
-    estimate <- parse_expr(estimate_str)
+    if (is.factor(y)) {
+      truth_str <- as_name(truth)
+      lev <- process_level(event_level)
+      fc_truth <- levels(predictions[[truth_str]])
+      estimate_str <- paste0(".pred_", fc_truth[[lev]])
+      estimate <- parse_expr(estimate_str)
+    } else {
+      estimate_str <- ".pred"
+      estimate <- rlang::expr(.pred)
+    }
   }
 
   if (quo_is_null(group)) {
