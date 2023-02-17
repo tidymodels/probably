@@ -430,7 +430,7 @@ get_root <- function(x, ctrl) {
 #' evaluated?
 #' @param var_multiplier A multiplier for the variance model that determines the
 #' possible range of the bounds.
-#' @param max_iter When `method = "search"`, the maximum number of iterations.
+#' @param max_iter When `method = "iterative"`, the maximum number of iterations.
 #' @param tolerance Tolerance value passed to [all.equal()] to determine
 #' convergence during the search computations.
 #' @param progress Should a progress bar be used to track execution?
@@ -441,10 +441,10 @@ get_root <- function(x, ctrl) {
 #' @return A list object with the options given by the user.
 #' @export
 control_conformal_infer <-
-  function(method = "search", trial_points = 100, var_multiplier = 10,
+  function(method = "iterative", trial_points = 100, var_multiplier = 10,
            max_iter = 100, tolerance = .Machine$double.eps^0.25, progress = FALSE,
            required_pkgs = character(0), seed = sample.int(10^5, 1)) {
-    method <- rlang::arg_match0(method, c("search", "grid"))
+    method <- rlang::arg_match0(method, c("iterative", "grid"))
 
     list(
       method = method,
