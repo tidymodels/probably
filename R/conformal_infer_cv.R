@@ -1,8 +1,8 @@
 #' Prediction intervals via conformal inference CV+
 #'
-#' Nonparametric prediction intervals can be computed for fitted workflow
-#' objects using the CV+ conformal inference method described by Barber _at al_
-#' (2018).
+#' Nonparametric prediction intervals can be computed for fitted regression
+#' workflow objects using the CV+ conformal inference method described by
+#' Barber _at al_ (2018).
 #'
 #' @param object An object from a tidymodels resampling or tuning function such
 #' as [tune::fit_resamples()], [tune::tune_grid()], or similar. The object
@@ -22,6 +22,11 @@
 #'
 #' This function prepares the objects for the computations. The [predict()]
 #' method computes the intervals for new data.
+#'
+#' This method was developed for V-fold cross-validation (no repeats). Interval
+#' coverage is unknown for any other resampling methods. The function will not
+#' stop the computations for other types of resamples, but we have no way of
+#' knowing whether the results are appropriate.
 #'
 #' @seealso [predict.int_conformal_infer_cv()]
 #' @references
@@ -57,7 +62,6 @@
 #' nnet_res <-
 #'   mlp_spec %>%
 #'   fit_resamples(outcome ~ ., resamples = sim_rs, control = ctrl)
-#'
 #'
 #' nnet_int_obj <- int_conformal_infer_cv(nnet_res)
 #' nnet_int_obj

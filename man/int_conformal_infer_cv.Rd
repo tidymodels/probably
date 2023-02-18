@@ -33,9 +33,9 @@ An object of class \code{"int_conformal_infer_cv"} containing the information
 to create intervals. The \code{predict()} method is used to produce the intervals.
 }
 \description{
-Nonparametric prediction intervals can be computed for fitted workflow
-objects using the CV+ conformal inference method described by Barber \emph{at al}
-(2018).
+Nonparametric prediction intervals can be computed for fitted regression
+workflow objects using the CV+ conformal inference method described by
+Barber \emph{at al} (2018).
 }
 \details{
 This function implements the CV+ method found in Section 3 of Barber \emph{at al}
@@ -44,6 +44,11 @@ residuals to make prediction intervals for regression models.
 
 This function prepares the objects for the computations. The \code{\link[=predict]{predict()}}
 method computes the intervals for new data.
+
+This method was developed for V-fold cross-validation (no repeats). Interval
+coverage is unknown for any other resampling methods. The function will not
+stop the computations for other types of resamples, but we have no way of
+knowing whether the results are appropriate.
 }
 \examples{
 \dontshow{if (!probably:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
@@ -75,7 +80,6 @@ set.seed(3)
 nnet_res <-
   mlp_spec \%>\%
   fit_resamples(outcome ~ ., resamples = sim_rs, control = ctrl)
-
 
 nnet_int_obj <- int_conformal_infer_cv(nnet_res)
 nnet_int_obj

@@ -17,6 +17,11 @@
 
 * Based on the initial PR (#37) by Antonio R. Vargas, `threshold_perf()` now accepts a custom metric set (#25)
 
+* Two functions were added to compute prediction intervals for regression models via conformal inference: 
+
+  * `int_conformal_infer()`
+  * `int_conformal_infer_cv()`
+
 # probably 0.1.0
 
 * Max Kuhn is now the maintainer (#49).
