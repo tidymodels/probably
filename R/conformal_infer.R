@@ -11,7 +11,7 @@
 #' create the fitted workflow (predictors and outcomes). If the workflow does
 #' not contain these values, pass them here. If the workflow used a recipe, this
 #' should be the data that were inputs to the recipe (and not the product of a
-#' recipe). It should be a named argument.
+#' recipe).
 #' @return An object of class `"int_conformal_infer"` containing the information
 #' to create intervals (which includes the training set data). The `predict()`
 #' method is used to produce the intervals.
@@ -23,19 +23,20 @@
 #' This function prepares the objects for the computations. The [predict()]
 #' method computes the intervals for new data.
 #'
-#' For a given prediction, different "trial" values of the outcome are evaluated
-#' but augmenting the training set with the sample being predicted (with the
-#' trial value as the outcome). From this model, the residual associated with
-#' the trial value is compared to a quantile of the distribution of the other
-#' residuals. Usually the absolute values of the residuals are used. Once the
-#' residual of a trial value exceeds the distributional quantile, the value is
-#' one of the bounds.
+#' For a given new_data observation, the predictors are appended to the original
+#' training set. Then, different "trial" values of the outcome are substituted
+#' in for that observation's outcome and the model is re-fit. From each model,
+#' the residual associated with the trial value is compared to a quantile of the
+#' distribution of the other residuals. Usually the absolute values of the
+#' residuals are used. Once the residual of a trial value exceeds the
+#' distributional quantile, the value is one of the bounds.
 #'
 #' The literature proposed using a grid search of trial values to find the two
-#' points that correspond to the prediction intervals. This can be done via
-#' an option in [control_conformal_infer()]. However, the default approach uses
-#' two different one dimensional searches on either side of the predicted value
-#' to find values that correspond to the prediction intervals.
+#' points that correspond to the prediction intervals. To use this approach,
+#' set `method = "grid"` in [control_conformal_infer()]. However, the default method
+#' `"search` uses two different one-dimensional iterative searches on either
+#' side of the predicted value to find values that correspond to the prediction intervals.
+
 #'
 #' For medium to large data sets, the iterative search method is likely to
 #' generate slightly smaller intervals. For small training sets, grid search
@@ -89,7 +90,7 @@ int_conformal_infer.workflow <-
     control$required_pkgs <- pkgs
 
     # --------------------------------------------------------------------------
-    # We need to set the potential range that encompassing the _possible_ values
+    # We need to set the potential range that encompasses the _possible_ values
     # of the prediction interval. This is done on a sample-by-sample basis using
     # a variance model on the training set residuals.
 
@@ -104,6 +105,7 @@ int_conformal_infer.workflow <-
 #' @export
 print.int_conformal_infer <- function(x, ...) {
   cat("Conformal inference\n")
+
   cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
   cat("model:",             .get_fit_type(x$wflow), "\n")
   cat("training set size:", format(nrow(x$training), big.mark = ","), "\n\n")
@@ -182,12 +184,12 @@ get_mode <- function(x) {
     purrr::pluck("mode")
 }
 
-check_workflow <- function(x) {
+check_workflow <- function(x, call = rlang::caller_env()) {
   if (!workflows::is_trained_workflow(x)) {
-    rlang::abort("'object' should be a fitted workflow object.")
+    rlang::abort("'object' should be a fitted workflow object.", call = call)
   }
   if (get_mode(x) != "regression") {
-    rlang::abort("'object' should be a regression model.")
+    rlang::abort("'object' should be a regression model.", call = call)
   }
 }
 
@@ -200,7 +202,8 @@ check_workflow <- function(x) {
 # This most likely underestimates the local variance so use a multiplier on the
 # variance prediction to make the possible range of the bounds really wide.
 
-var_model <- function(object, train_data) {
+var_model <- function(object, train_data, call = caller_env()) {
+
 
   y_name <- get_outcome_name(object)
 
@@ -222,7 +225,11 @@ var_model <- function(object, train_data) {
     )
 
   if (inherits(var_mod, "try-error")) {
-    rlang::abort("The model to estimate the possible interval length failed.")
+    msg <- c(
+      "The model to estimate the possible interval length failed with the following message:",
+      "i" = conditionMessage(attr(var_mod, "condition"))
+    )
+    rlang::abort(msg, call = call)
   }
 
   var_mod
@@ -300,7 +307,7 @@ grid_all <- function(new_data, model, train_data, level, ctrl) {
 grid_one <- function(new_data, model, train_data, level, ctrl) {
   y_name <- get_outcome_name(model)
 
-  pkg_inst <- lapply(ctrl$required_pkgs, rlang::is_installed)
+  pkg_inst <- lapply(ctrl$required_pkgs, rlang::check_installed)
   pred_val <- new_data$.pred
   bound <- new_data$.bound
   new_data <- dplyr::select(new_data, -.pred, -.bound)
@@ -327,7 +334,6 @@ compute_bound <- function(x, predicted) {
     rlang::warn("Could not determine bounds.")
     res <-
       dplyr::tibble(.pred_lower = NA_real_,
-                    .pred = predicted,
                     .pred_upper = NA_real_)
     return(res)
   }
@@ -357,7 +363,7 @@ optimize_all <- function(new_data, model, train_data, level, ctrl) {
     model = model,
     train_data = train_data,
     level = level,
-    ctrl,
+    ctrl = ctrl,
     .progress = ctrl$progress,
     .options = furrr::furrr_options(seed = ctrl$seed, stdout = FALSE)
   )
@@ -371,7 +377,7 @@ get_diff <- function(val, ...) {
 optimize_one <- function(new_data, model, train_data, level, ctrl) {
   y_name <- get_outcome_name(model)
 
-  pkg_inst <- lapply(ctrl$required_pkgs, rlang::is_installed)
+  pkg_inst <- lapply(ctrl$required_pkgs, rlang::check_installed)
   pred_val <- new_data$.pred
   bound <- new_data$.bound
   new_data <- dplyr::select(new_data, -.pred, -.bound)
@@ -402,7 +408,11 @@ optimize_one <- function(new_data, model, train_data, level, ctrl) {
 
 get_root <- function(x, ctrl) {
   if (inherits(x, "try-error")) {
-    rlang::warn("Could not finish the search process due to errors.")
+    msg <- c(
+      "Could not finish the search process due to the following error:",
+      "i" = conditionMessage(attr(x, "condition"))
+    )
+    rlang::warn(msg)
     return(NA_real_)
   }
   if (x$iter == ctrl$max_iter) {
@@ -423,7 +433,7 @@ get_root <- function(x, ctrl) {
 #' evaluated?
 #' @param var_multiplier A multiplier for the variance model that determines the
 #' possible range of the bounds.
-#' @param max_iter When `method = "search"`, the maximum number of iterations.
+#' @param max_iter When `method = "iterative"`, the maximum number of iterations.
 #' @param tolerance Tolerance value passed to [all.equal()] to determine
 #' convergence during the search computations.
 #' @param progress Should a progress bar be used to track execution?
@@ -434,15 +444,11 @@ get_root <- function(x, ctrl) {
 #' @return A list object with the options given by the user.
 #' @export
 control_conformal_infer <-
-  function(method = "search", trial_points = 100, var_multiplier = 10,
+  function(method = "iterative", trial_points = 100, var_multiplier = 10,
            max_iter = 100, tolerance = .Machine$double.eps^0.25, progress = FALSE,
-           required_pkgs = character(0), seed = NULL) {
-    method <- rlang::arg_match0(method, c("search", "grid"))
-    if (is.null(seed)) {
-      seed <- sample.int(10^5, 1)
-    } else {
-      seed <- as.integer(seed)[1]
-    }
+           required_pkgs = character(0), seed = sample.int(10^5, 1)) {
+    method <- rlang::arg_match0(method, c("iterative", "grid"))
+
     list(
       method = method,
       trial_points = trial_points,
@@ -450,6 +456,7 @@ control_conformal_infer <-
       max_iter = max_iter,
       tolerance = tolerance,
       progress = progress,
-      seed = seed
+      required_pkgs = required_pkgs,
+      seed = as.integer(seed)[1]
     )
   }
