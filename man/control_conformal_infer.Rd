@@ -5,14 +5,14 @@
 \title{Controlling the numeric details for conformal inference}
 \usage{
 control_conformal_infer(
-  method = "search",
+  method = "iterative",
   trial_points = 100,
   var_multiplier = 10,
   max_iter = 100,
   tolerance = .Machine$double.eps^0.25,
   progress = FALSE,
   required_pkgs = character(0),
-  seed = NULL
+  seed = sample.int(10^5, 1)
 )
 }
 \arguments{
@@ -25,7 +25,7 @@ evaluated?}
 \item{var_multiplier}{A multiplier for the variance model that determines the
 possible range of the bounds.}
 
-\item{max_iter}{When \code{method = "search"}, the maximum number of iterations.}
+\item{max_iter}{When \code{method = "iterative"}, the maximum number of iterations.}
 
 \item{tolerance}{Tolerance value passed to \code{\link[=all.equal]{all.equal()}} to determine
 convergence during the search computations.}

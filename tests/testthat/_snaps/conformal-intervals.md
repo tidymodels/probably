@@ -102,20 +102,20 @@
     Code
       dput(control_conformal_infer())
     Output
-      list(method = "search", trial_points = 100, var_multiplier = 10, 
+      list(method = "iterative", trial_points = 100, var_multiplier = 10, 
           max_iter = 100, tolerance = 0.0001220703125, progress = FALSE, 
-          seed = 24388L)
+          required_pkgs = character(0), seed = 24388L)
 
 ---
 
     Code
       dput(control_conformal_infer(max_iter = 2))
     Output
-      list(method = "search", trial_points = 100, var_multiplier = 10, 
+      list(method = "iterative", trial_points = 100, var_multiplier = 10, 
           max_iter = 2, tolerance = 0.0001220703125, progress = FALSE, 
-          seed = 59521L)
+          required_pkgs = character(0), seed = 59521L)
 
 ---
 
-    `method` must be one of "search" or "grid", not "rock-paper-scissors".
+    `method` must be one of "iterative" or "grid", not "rock-paper-scissors".
 
