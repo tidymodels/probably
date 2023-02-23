@@ -15,7 +15,6 @@ cal_apply_regression.cal_estimate_linear_spline <-
 cal_apply_regression.cal_estimate_linear <-
   cal_apply_regression.cal_estimate_linear_spline
 
-
 #---------------------------- Adjust implementations ---------------------------
 
 apply_reg_predict <- function(object, .data) {

@@ -139,12 +139,15 @@ apply_beta_single <- function(model, df, est_name) {
 apply_adjustment <- function(new_data, object) {
   if (object$type == "binary") {
     new_data[, object$levels[[2]]] <- 1 - new_data[, object$levels[[1]]]
-  } else {
+  }
+
+  if(object$type == "one_vs_all"){
     ols <- as.character(object$levels)
     rs <- rowSums(new_data[, ols])
     for (i in seq_along(ols)) {
       new_data[, ols[i]] <- new_data[, ols[i]] / rs
     }
   }
+
   new_data
 }

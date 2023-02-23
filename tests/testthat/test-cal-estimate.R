@@ -62,6 +62,14 @@ test_that("Isotonic estimates work - tune_results", {
   )
 })
 
+test_that("Isotonic linear estimates work - data.frame", {
+  sl_logistic <- cal_estimate_isotonic(boosting_predictions_oob, outcome, estimate = .pred)
+  expect_cal_type(sl_logistic, "regression")
+  expect_cal_method(sl_logistic, "Isotonic")
+  expect_cal_rows(sl_logistic, 2000)
+  expect_snapshot(print(sl_logistic))
+})
+
 # -------------------------- Isotonic Bootstrapped -----------------------------
 test_that("Isotonic Bootstrapped estimates work", {
   sl_boot <- cal_estimate_isotonic_boot(segment_logistic, Class)
