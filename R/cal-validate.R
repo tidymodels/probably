@@ -619,9 +619,9 @@ cal_validate <- function(rset,
         )
 
         metric_df <- dplyr::as_tibble(metrics) %>% dplyr::select(.metric = metric, direction)
-        stats_after <- metrics(ap, truth = !!truth, estimate_cols) %>%
+        stats_after <- metrics(ap, truth = !!truth, dplyr::all_of(estimate_cols)) %>%
           dplyr::full_join(metric_df, by = ".metric")
-        stats_before <- metrics(data_as[[.x]], truth = !!truth, estimate_cols) %>%
+        stats_before <- metrics(data_as[[.x]], truth = !!truth, dplyr::all_of(estimate_cols)) %>%
           dplyr::full_join(metric_df, by = ".metric")
 
         stats_cols <- c(".metric", ".estimator", "direction", ".estimate")
