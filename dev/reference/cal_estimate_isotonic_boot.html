@@ -61,7 +61,7 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cal_estimate_isotonic_boot</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  times <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -71,7 +71,7 @@
 <span><span class="fu">cal_estimate_isotonic_boot</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  times <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -81,7 +81,7 @@
 <span><span class="fu">cal_estimate_isotonic_boot</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  times <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -158,7 +158,7 @@ seed. The results are saved inside the returned <code>cal_object</code>.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">`.pred_good`</span> ==&gt; <span style="color: #0000BB;">good</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">`.pred_poor`</span> ==&gt; <span style="color: #0000BB;">poor</span></span>
 <span class="r-in"><span><span class="co"># dplyr selector functions are also supported</span></span></span>
-<span class="r-in"><span><span class="fu">cal_estimate_isotonic_boot</span><span class="op">(</span><span class="va">segment_logistic</span>, <span class="va">Class</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">cal_estimate_isotonic_boot</span><span class="op">(</span><span class="va">segment_logistic</span>, <span class="va">Class</span>, <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Probability Calibration </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Method: <span style="color: #008700;">Bootstrapped Isotonic Regression</span></span>
