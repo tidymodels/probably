@@ -79,9 +79,9 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
     cli::cli_text(grps)
   }
 
-  if (upv && x$type == "binary") {
+  if (upv && x$type %in% c("binary", "regression")) {
     upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]][[1]]), ",")
-    cli::cli_text("Unique Probability Values: {.val2 {upv_no}}")
+    cli::cli_text("Unique Predicted Values: {.val2 {upv_no}}")
   }
 
   cli::cli_text("Truth variable: `{.val0 {x$truth}}`")

@@ -73,7 +73,7 @@
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
-      Unique Probability Values: 66
+      Unique Predicted Values: 66
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -90,7 +90,7 @@
       Type: Binary
       Source class:
       Data points: 4,000, split in 8 groups
-      Unique Probability Values: 86
+      Unique Predicted Values: 86
       Truth variable: `class`
       Estimate variables:
       `.pred_class_1` ==> class_1
@@ -107,6 +107,7 @@
       Type: Regression
       Source class: Data Frame
       Data points: 2,000
+      Unique Predicted Values: 44
       Truth variable: `outcome`
       Estimate variables:
       `.pred` ==> predictions
@@ -274,7 +275,7 @@
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
-      Unique Probability Values: 66
+      Unique Predicted Values: 66
       Truth variable: `Class`
       Estimate variables:
       `good` ==> good
