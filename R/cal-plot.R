@@ -918,6 +918,50 @@ binary_plot_impl <- function(tbl, x, y,
 
 #------------------------------- >> Utils --------------------------------------
 
+process_midpoint_grp <- function(.data,
+                             truth,
+                             estimate,
+                             group = NULL,
+                             .bin = NULL,
+                             level = 1,
+                             conf_level = 0.95) {
+
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+  group <- enquo(group)
+  .bin <- enquo(.bin)
+
+  levels <- truth_estimate_map(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate
+  )
+
+  if (length(levels) == 2) {
+    levels <- levels[1]
+  }
+
+  no_levels <- levels
+
+  names(no_levels) <- seq_along(no_levels)
+
+  purrr::imap(
+    no_levels,
+    ~ {
+      process_midpoint(
+        .data = .data,
+        truth = !!truth,
+        estimate = !!.x,
+        group = NULL,
+        .bin = NULL,
+        level = as.numeric(.y),
+        conf_level = 0.95
+      )
+    }
+  ) %>%
+    purrr::set_names(names(levels))
+}
+
 process_midpoint <- function(.data,
                              truth,
                              estimate,
