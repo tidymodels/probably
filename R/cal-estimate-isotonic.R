@@ -1,25 +1,35 @@
 #--------------------------------- Methods -------------------------------------
 #------------------------------- >> Isotonic  ----------------------------------
-#' Uses an Isotonic regression model to calibrate probabilities
+#' Uses an Isotonic regression model to calibrate model predictions.
 #' @inheritParams cal_estimate_logistic
 #' @details This function uses `stats::isoreg()` to create obtain the calibration
-#' values.
+#' values for binary classification or numeric regression.
 #' @references
 #' Zadrozny, Bianca and Elkan, Charles. (2002). Transforming Classifier Scores
 #' into Accurate Multiclass Probability Estimates. _Proceedings of the ACM SIGKDD
 #' International Conference on Knowledge Discovery and Data Mining._
 #' @examples
+#' # ------------------------------------------------------------------------------
+#' # Binary Classification
+#'
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
 #' cal_estimate_isotonic(segment_logistic, Class)
+#'
 #' # Specify the variable names in a vector of unquoted names
 #' cal_estimate_isotonic(segment_logistic, Class, c(.pred_poor, .pred_good))
+#'
 #' # dplyr selector functions are also supported
 #' cal_estimate_isotonic(segment_logistic, Class, dplyr::starts_with(".pred_"))
+#'
+#' # ------------------------------------------------------------------------------
+#' # Regression (numeric outcomes)
+#'
+#' cal_estimate_isotonic(boosting_predictions_oob, outcome, .pred)
 #' @export
 cal_estimate_isotonic <- function(.data,
                                   truth = NULL,
-                                  estimate = dplyr::starts_with(".pred_"),
+                                  estimate = dplyr::starts_with(".pred"),
                                   parameters = NULL,
                                   ...) {
   UseMethod("cal_estimate_isotonic")
@@ -29,7 +39,7 @@ cal_estimate_isotonic <- function(.data,
 #' @rdname cal_estimate_isotonic
 cal_estimate_isotonic.data.frame <- function(.data,
                                              truth = NULL,
-                                             estimate = dplyr::starts_with(".pred_"),
+                                             estimate = dplyr::starts_with(".pred"),
                                              parameters = NULL,
                                              ...) {
   stop_null_parameters(parameters)
@@ -46,7 +56,7 @@ cal_estimate_isotonic.data.frame <- function(.data,
 #' @rdname cal_estimate_isotonic
 cal_estimate_isotonic.tune_results <- function(.data,
                                                truth = NULL,
-                                               estimate = dplyr::starts_with(".pred_"),
+                                               estimate = dplyr::starts_with(".pred"),
                                                parameters = NULL,
                                                ...) {
   tune_args <- tune_results_args(
@@ -82,11 +92,11 @@ cal_estimate_isotonic.tune_results <- function(.data,
 #' # Specify the variable names in a vector of unquoted names
 #' cal_estimate_isotonic_boot(segment_logistic, Class, c(.pred_poor, .pred_good))
 #' # dplyr selector functions are also supported
-#' cal_estimate_isotonic_boot(segment_logistic, Class, dplyr::starts_with(".pred_"))
+#' cal_estimate_isotonic_boot(segment_logistic, Class, dplyr::starts_with(".pred"))
 #' @export
 cal_estimate_isotonic_boot <- function(.data,
                                        truth = NULL,
-                                       estimate = dplyr::starts_with(".pred_"),
+                                       estimate = dplyr::starts_with(".pred"),
                                        times = 10,
                                        parameters = NULL,
                                        ...) {
@@ -102,7 +112,7 @@ cal_estimate_isotonic_boot <- function(.data,
 #' @rdname cal_estimate_isotonic_boot
 cal_estimate_isotonic_boot.data.frame <- function(.data,
                                                   truth = NULL,
-                                                  estimate = dplyr::starts_with(".pred_"),
+                                                  estimate = dplyr::starts_with(".pred"),
                                                   times = 10,
                                                   parameters = NULL,
                                                   ...) {
@@ -121,7 +131,7 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
 #' @rdname cal_estimate_isotonic_boot
 cal_estimate_isotonic_boot.tune_results <- function(.data,
                                                     truth = NULL,
-                                                    estimate = dplyr::starts_with(".pred_"),
+                                                    estimate = dplyr::starts_with(".pred"),
                                                     times = 10,
                                                     parameters = NULL,
                                                     ...) {
