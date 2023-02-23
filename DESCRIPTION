@@ -10,8 +10,8 @@ Authors@R: c(
 Description: Models can be improved by post-processing class
     probabilities, by: recalibration, conversion to hard probabilities,
     assessment of equivocal zones, and other activities. 'probably'
-    contains tools for conducting these operations as well as calibration tools
-    for regression models.
+    contains tools for conducting these operations as well as calibration
+    tools for regression models.
 License: MIT + file LICENSE
 URL: https://github.com/tidymodels/probably/,
     https://probably.tidymodels.org
@@ -21,31 +21,35 @@ Depends:
 Imports: 
     butcher,
     cli,
-    dplyr (>= 1.0.9),
+    dplyr (>= 1.1.0),
+    furrr,
     generics (>= 0.1.3),
     ggplot2,
+    hardhat,
     pillar,
     purrr,
     rlang (>= 1.0.4),
+    tidyr (>= 1.3.0),
     tidyselect (>= 1.1.2),
     tune,
     vctrs (>= 0.4.1),
     withr,
+    workflows,
     yardstick (> 1.0.0)
 Suggests:
     betacal,
     covr,
     knitr,
+    MASS,
     mgcv,
     modeldata (>= 1.1.0),
     nnet,
     parsnip,
+    randomForest,
     recipes,
     rmarkdown,
     rsample,
-    testthat (>= 3.0.0),
-    randomForest,
-    MASS
+    testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
 Remotes: 
