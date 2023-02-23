@@ -41,7 +41,7 @@ as_regression_cal_object <- function(estimate,
     levels = levels,
     method = method,
     rows = rows,
-    additional_classes = c(additional_class, "cal_regression"),
+    additional_classes = additional_class,
     source_class = source_class,
     type = "regression"
   )
@@ -79,9 +79,9 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
     cli::cli_text(grps)
   }
 
-  if (upv && x$type == "binary") {
+  if (upv && x$type %in% c("binary", "regression")) {
     upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]][[1]]), ",")
-    cli::cli_text("Unique Probability Values: {.val2 {upv_no}}")
+    cli::cli_text("Unique Predicted Values: {.val2 {upv_no}}")
   }
 
   cli::cli_text("Truth variable: `{.val0 {x$truth}}`")
@@ -134,7 +134,7 @@ as_cal_object <- function(estimate,
                           type = NULL) {
   if (length(levels) == 1) {
     type <- "regression"
-    obj_class <- character(0)
+    obj_class <- "cal_regression"
   } else if (length(levels) == 2) {
     if (is.null(type)) {
       type <- "binary"
@@ -145,7 +145,6 @@ as_cal_object <- function(estimate,
       type <- "one_vs_all"
     }
     obj_class <- "cal_multi"
-    additional_classes <- paste0(additional_classes, "_multi")
   } else {
     rlang::abort("Can't translate 'levels' to a class.")
   }
