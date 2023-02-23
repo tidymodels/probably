@@ -1037,6 +1037,8 @@ tune_results_args <- function(.data,
   if (quo_is_null(truth)) {
     truth_str <- attributes(.data)$outcomes
     truth <- parse_expr(truth_str)
+  } else {
+    truth_str <- rlang::quo_squash(truth)
   }
 
   y <- .data$splits[[1]]$data[[truth_str]]
