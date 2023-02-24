@@ -82,7 +82,7 @@
 #' @export
 cal_plot_breaks <- function(.data,
                             truth = NULL,
-                            estimate = NULL,
+                            estimate = dplyr::starts_with(".pred"),
                             group = NULL,
                             num_breaks = 10,
                             conf_level = 0.90,
@@ -109,7 +109,7 @@ cal_plot_breaks_impl <- function(.data,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  assert_truth_two_levels(.data, !!truth)
+  #assert_truth_two_levels(.data, !!truth)
 
   prob_tbl <- .cal_binary_table_breaks(
     .data = .data,
@@ -145,7 +145,7 @@ cal_plot_breaks.data.frame <- cal_plot_breaks_impl
 #' @rdname cal_plot_breaks
 cal_plot_breaks.tune_results <- function(.data,
                                          truth = NULL,
-                                         estimate = NULL,
+                                         estimate = dplyr::starts_with(".pred"),
                                          group = NULL,
                                          num_breaks = 10,
                                          conf_level = 0.90,
@@ -465,6 +465,8 @@ binary_plot_impl <- function(tbl, x, y,
   x <- enquo(x)
   y <- enquo(y)
 
+  tbl_groups <- dplyr::group_vars(tbl)
+
   gp_vars <- dplyr::group_vars(.data)
 
   if (length(gp_vars)) {
@@ -499,7 +501,7 @@ binary_plot_impl <- function(tbl, x, y,
       )
   }
 
-  if (include_rug & !has_groups) {
+  if (include_rug & !has_groups & !length(tbl_groups)) {
     truth_values <- 1:2
     side_values <- c("t", "b")
     for (i in seq_along(truth_values)) {
@@ -526,8 +528,18 @@ binary_plot_impl <- function(tbl, x, y,
     theme_light() +
     theme(aspect.ratio = 1)
 
-  if (!quo_is_null(group)) {
-    res <- res + facet_wrap(group)
+  if(!quo_is_null(group) & length(tbl_groups)) {
+    res <- res + facet_grid(
+      cols = vars(!! group),
+      rows = vars(!! parse_expr(tbl_groups))
+      )
+  } else {
+    if (!quo_is_null(group)) {
+      res <- res + facet_wrap(group)
+    }
+    if(length(tbl_groups)) {
+      res <- res + facet_wrap(tbl_groups)
+    }
   }
 
   res
@@ -600,7 +612,13 @@ binary_plot_impl <- function(tbl, x, y,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  tbls <- .data %>%
+  levels <- truth_estimate_map(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate
+  )
+
+  res <- .data %>%
     dplyr::group_by(!!group, .add = TRUE) %>%
     dplyr::group_map(~ {
       grp <- .cal_binary_table_breaks_grp(
@@ -609,11 +627,18 @@ binary_plot_impl <- function(tbl, x, y,
         estimate = !!estimate,
         num_breaks = num_breaks,
         conf_level = conf_level,
-        event_level = event_level
+        event_level = event_level,
+        levels = levels
       )
       dplyr::bind_cols(.y, grp)
-    })
-  dplyr::bind_rows(tbls)
+    }) %>%
+    dplyr::bind_rows()
+
+  if(length(levels) > 2) {
+    res <- dplyr::group_by(res, !!truth)
+  }
+
+  res
 }
 
 .cal_binary_table_breaks_grp <- function(.data,
@@ -623,11 +648,10 @@ binary_plot_impl <- function(tbl, x, y,
                                          num_breaks = 10,
                                          conf_level = 0.90,
                                          event_level = c("first", "second"),
+                                         levels,
                                          ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
-
-  lev <- process_level(event_level)
 
   side <- seq(0, 1, by = 1 / num_breaks)
 
@@ -636,14 +660,16 @@ binary_plot_impl <- function(tbl, x, y,
     upper_cut = side[2:length(side)]
   )
 
-  .cal_level_grps(
+  res <- .cal_class_grps(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
     cuts = cuts,
-    lev = lev,
+    levels = levels,
     conf_level = conf_level
   )
+
+  res
 }
 
 #' @export
@@ -708,7 +734,7 @@ binary_plot_impl <- function(tbl, x, y,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  tbls <- .data %>%
+  .data %>%
     dplyr::group_by(!!group, .add = TRUE) %>%
     dplyr::group_map(~ {
       grp <- .cal_binary_table_logistic_grp(
@@ -720,8 +746,8 @@ binary_plot_impl <- function(tbl, x, y,
         smooth = smooth
       )
       dplyr::bind_cols(.y, grp)
-    })
-  dplyr::bind_rows(tbls)
+    }) %>%
+    dplyr::bind_rows()
 }
 
 .cal_binary_table_logistic_grp <- function(.data,
@@ -833,7 +859,7 @@ binary_plot_impl <- function(tbl, x, y,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  tbls <- .data %>%
+  .data %>%
     dplyr::group_by(!!group, .add = TRUE) %>%
     dplyr::group_map(~ {
       grp <- .cal_binary_table_windowed_grp(
@@ -846,8 +872,8 @@ binary_plot_impl <- function(tbl, x, y,
         event_level = event_level
       )
       dplyr::bind_cols(.y, grp)
-    })
-  dplyr::bind_rows(tbls)
+    }) %>%
+    dplyr::bind_rows()
 }
 
 .cal_binary_table_windowed_grp <- function(.data,
@@ -950,7 +976,7 @@ process_midpoint_grp <- function(.data, truth, estimate, group = NULL,
         group = NULL,
         .bin = NULL,
         level = as.numeric(.y),
-        conf_level = 0.95
+        conf_level = conf_level
       )
     }
   ) %>%
@@ -979,7 +1005,6 @@ process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
       events = sum(.is_val, na.rm = TRUE),
       total = dplyr::n()
     ) %>%
-    # dplyr::ungroup() %>%
     dplyr::filter(total > 0)
 
   if (!quo_is_null(.bin)) tbl <- dplyr::select(tbl, -.bin)
@@ -1093,16 +1118,10 @@ tune_results_args <- function(.data,
   )
 }
 
-.cal_level_grps <- function(.data, truth, estimate, cuts, lev, conf_level){
+.cal_class_grps <- function(.data, truth, estimate, cuts, levels, conf_level){
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
-
-  levels <- truth_estimate_map(
-    .data = .data,
-    truth = !!truth,
-    estimate = !!estimate
-  )
 
   if (length(levels) == 2) {
     levels <- levels[1]
@@ -1112,7 +1131,7 @@ tune_results_args <- function(.data,
 
   names(no_levels) <- seq_along(no_levels)
 
-  purrr::imap(
+  res <- purrr::imap(
     no_levels,
     ~ {
       .cal_groups(
@@ -1125,6 +1144,18 @@ tune_results_args <- function(.data,
       )
     }
   )
+
+  if(length(res) > 1) {
+    res <- res %>%
+      purrr::set_names(names(levels)) %>%
+      purrr::imap(~ dplyr::mutate(.x, !! truth := .y)) %>%
+      purrr::reduce(dplyr::bind_rows) %>%
+      dplyr::select(!! truth, dplyr::everything())
+  } else {
+    res <- res[[1]]
+  }
+
+  res
 }
 
 .cal_groups <- function(.data, truth, estimate, cuts, lev, conf_level) {
