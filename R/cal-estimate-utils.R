@@ -50,10 +50,8 @@ as_regression_cal_object <- function(estimate,
 # ------------------------------- Utils ----------------------------------------
 
 print_cls_cal <- function(x, upv = FALSE, ...) {
-
   print_type <-
-    switch(
-      x$type,
+    switch(x$type,
       "binary" = "Binary",
       "multiclass" = "Multiclass",
       "one_vs_all" = "Multiclass (1 v All)",
@@ -191,12 +189,21 @@ truth_estimate_map <- function(.data, truth, estimate) {
     if (all(substr(estimate_str, 1, 6) == ".pred_")) {
       est_map <- purrr::map(
         truth_levels,
-        ~ sym(estimate_str[paste0(".pred_", .x) == estimate_str])
+        ~ {
+          match <- paste0(".pred_", .x) == estimate_str
+          if (any(match)) {
+            sym(estimate_str[match])
+          }
+        }
       )
     } else {
       est_map <- purrr::map(
         seq_along(truth_levels),
-        ~ sym(estimate_str[[.x]])
+        ~ {
+          if (any(estimate_str == .x)) {
+            sym(estimate_str[[.x]])
+          }
+        }
       )
     }
 
@@ -205,7 +212,7 @@ truth_estimate_map <- function(.data, truth, estimate) {
     res <- list(sym(estimate_str))
     names(res) <- "predictions"
   }
-  res
+  purrr::discard(res, is.null)
 }
 
 # Wraps tidyselect call to avoid code duplication in the function above

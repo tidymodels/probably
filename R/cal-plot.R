@@ -636,7 +636,7 @@ binary_plot_impl <- function(tbl, x, y,
     upper_cut = side[2:length(side)]
   )
 
-  .cal_groups(
+  .cal_level_grps(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
@@ -918,13 +918,8 @@ binary_plot_impl <- function(tbl, x, y,
 
 #------------------------------- >> Utils --------------------------------------
 
-process_midpoint_grp <- function(.data,
-                             truth,
-                             estimate,
-                             group = NULL,
-                             .bin = NULL,
-                             level = 1,
-                             conf_level = 0.95) {
+process_midpoint_grp <- function(.data, truth, estimate, group = NULL,
+                                 .bin = NULL, level = 1, conf_level = 0.95){
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -962,13 +957,8 @@ process_midpoint_grp <- function(.data,
     purrr::set_names(names(levels))
 }
 
-process_midpoint <- function(.data,
-                             truth,
-                             estimate,
-                             group = NULL,
-                             .bin = NULL,
-                             level = 1,
-                             conf_level = 0.95) {
+process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
+                             level = 1, conf_level = 0.95) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -1100,6 +1090,40 @@ tune_results_args <- function(.data,
     estimate = quo(!!estimate),
     group = quo(!!group),
     predictions = predictions
+  )
+}
+
+.cal_level_grps <- function(.data, truth, estimate, cuts, lev, conf_level){
+
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  levels <- truth_estimate_map(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate
+  )
+
+  if (length(levels) == 2) {
+    levels <- levels[1]
+  }
+
+  no_levels <- levels
+
+  names(no_levels) <- seq_along(no_levels)
+
+  purrr::imap(
+    no_levels,
+    ~ {
+      .cal_groups(
+        .data = .data,
+        truth = !!truth,
+        estimate = !!.x,
+        cuts = cuts,
+        lev = as.integer(.y),
+        conf_level = conf_level
+      )
+    }
   )
 }
 
