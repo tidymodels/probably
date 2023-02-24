@@ -17,8 +17,11 @@
 #' @param .data A data.frame object containing predictions and probability columns.
 #' @param truth The column identifier for the true class results
 #' (that is a factor). This should be an unquoted column name.
-#' @param estimate The column identifier for the prediction probabilities.
-#' This should be an unquoted column name
+#' @param estimate A vector of column identifiers, or one of `dplyr` selector
+#' functions to choose which variables contains the class probabilities. It
+#' defaults to the prefix used by tidymodels (`.pred_`). The order of the
+#' identifiers will be considered the same as the order of the levels of the
+#' `truth` variable.
 #' @param group The column identifier to group the results.
 #' @param event_level  single string. Either "first" or "second" to specify which
 #' level of truth to consider as the "event".
@@ -96,7 +99,7 @@ cal_plot_breaks <- function(.data,
 
 cal_plot_breaks_impl <- function(.data,
                                  truth = NULL,
-                                 estimate = NULL,
+                                 estimate = dplyr::starts_with(".pred"),
                                  group = NULL,
                                  num_breaks = 10,
                                  conf_level = 0.90,
@@ -109,7 +112,7 @@ cal_plot_breaks_impl <- function(.data,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  #assert_truth_two_levels(.data, !!truth)
+  # assert_truth_two_levels(.data, !!truth)
 
   prob_tbl <- .cal_binary_table_breaks(
     .data = .data,
@@ -476,7 +479,7 @@ binary_plot_impl <- function(tbl, x, y,
     has_groups <- TRUE
     dplyr_group <- parse_expr(gp_vars)
     grouping_var <- tbl[, gp_vars][[1]]
-    if(is.numeric(grouping_var)) {
+    if (is.numeric(grouping_var)) {
       tbl[, gp_vars] <- as.factor(format(grouping_var))
     }
   } else {
@@ -502,6 +505,18 @@ binary_plot_impl <- function(tbl, x, y,
   }
 
   if (include_rug & !has_groups & !length(tbl_groups)) {
+    levels <- truth_estimate_map(
+      .data = .data,
+      truth = !!truth,
+      estimate = !!estimate
+    )
+
+    level1 <- levels[[1]]
+
+    if (length(levels) > 1) {
+      rlang::warn(paste0("Multiple class columns identified. Using: `", level1, "`"))
+    }
+
     truth_values <- 1:2
     side_values <- c("t", "b")
     for (i in seq_along(truth_values)) {
@@ -509,7 +524,7 @@ binary_plot_impl <- function(tbl, x, y,
       res <- res +
         geom_rug(
           data = level_tbl,
-          aes(x = !!estimate),
+          aes(x = !!level1),
           color = "#999999",
           sides = side_values[i],
           length = unit(0.015, "npc"),
@@ -528,16 +543,16 @@ binary_plot_impl <- function(tbl, x, y,
     theme_light() +
     theme(aspect.ratio = 1)
 
-  if(!quo_is_null(group) & length(tbl_groups)) {
+  if (!quo_is_null(group) & length(tbl_groups)) {
     res <- res + facet_grid(
-      cols = vars(!! group),
-      rows = vars(!! parse_expr(tbl_groups))
-      )
+      cols = vars(!!group),
+      rows = vars(!!parse_expr(tbl_groups))
+    )
   } else {
     if (!quo_is_null(group)) {
       res <- res + facet_wrap(group)
     }
-    if(length(tbl_groups)) {
+    if (length(tbl_groups)) {
       res <- res + facet_wrap(tbl_groups)
     }
   }
@@ -624,7 +639,6 @@ binary_plot_impl <- function(tbl, x, y,
       grp <- .cal_binary_table_breaks_grp(
         .data = .x,
         truth = !!truth,
-        estimate = !!estimate,
         num_breaks = num_breaks,
         conf_level = conf_level,
         event_level = event_level,
@@ -634,7 +648,7 @@ binary_plot_impl <- function(tbl, x, y,
     }) %>%
     dplyr::bind_rows()
 
-  if(length(levels) > 2) {
+  if (length(levels) > 2) {
     res <- dplyr::group_by(res, !!truth)
   }
 
@@ -643,7 +657,6 @@ binary_plot_impl <- function(tbl, x, y,
 
 .cal_binary_table_breaks_grp <- function(.data,
                                          truth,
-                                         estimate,
                                          group,
                                          num_breaks = 10,
                                          conf_level = 0.90,
@@ -651,7 +664,6 @@ binary_plot_impl <- function(tbl, x, y,
                                          levels,
                                          ...) {
   truth <- enquo(truth)
-  estimate <- enquo(estimate)
 
   side <- seq(0, 1, by = 1 / num_breaks)
 
@@ -663,7 +675,6 @@ binary_plot_impl <- function(tbl, x, y,
   res <- .cal_class_grps(
     .data = .data,
     truth = !!truth,
-    estimate = !!estimate,
     cuts = cuts,
     levels = levels,
     conf_level = conf_level
@@ -945,8 +956,7 @@ binary_plot_impl <- function(tbl, x, y,
 #------------------------------- >> Utils --------------------------------------
 
 process_midpoint_grp <- function(.data, truth, estimate, group = NULL,
-                                 .bin = NULL, level = 1, conf_level = 0.95){
-
+                                 .bin = NULL, level = 1, conf_level = 0.95) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -1072,8 +1082,7 @@ tune_results_args <- function(.data,
                               group,
                               event_level,
                               parameters = NULL,
-                              ...
-                              ) {
+                              ...) {
   if (!(".predictions" %in% colnames(.data))) {
     rlang::abort(
       paste0(
@@ -1083,11 +1092,12 @@ tune_results_args <- function(.data,
     )
   }
 
-  predictions <- tune::collect_predictions(x = .data,
-                                           summarize = TRUE,
-                                           parameters = parameters,
-                                           ...
-                                           )
+  predictions <- tune::collect_predictions(
+    x = .data,
+    summarize = TRUE,
+    parameters = parameters,
+    ...
+  )
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -1118,10 +1128,8 @@ tune_results_args <- function(.data,
   )
 }
 
-.cal_class_grps <- function(.data, truth, estimate, cuts, levels, conf_level){
-
+.cal_class_grps <- function(.data, truth, cuts, levels, conf_level) {
   truth <- enquo(truth)
-  estimate <- enquo(estimate)
 
   if (length(levels) == 2) {
     levels <- levels[1]
@@ -1145,12 +1153,12 @@ tune_results_args <- function(.data,
     }
   )
 
-  if(length(res) > 1) {
+  if (length(res) > 1) {
     res <- res %>%
       purrr::set_names(names(levels)) %>%
-      purrr::imap(~ dplyr::mutate(.x, !! truth := .y)) %>%
+      purrr::imap(~ dplyr::mutate(.x, !!truth := .y)) %>%
       purrr::reduce(dplyr::bind_rows) %>%
-      dplyr::select(!! truth, dplyr::everything())
+      dplyr::select(!!truth, dplyr::everything())
   } else {
     res <- res[[1]]
   }

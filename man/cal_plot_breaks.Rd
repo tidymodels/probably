@@ -9,7 +9,7 @@
 cal_plot_breaks(
   .data,
   truth = NULL,
-  estimate = NULL,
+  estimate = dplyr::starts_with(".pred"),
   group = NULL,
   num_breaks = 10,
   conf_level = 0.9,
@@ -23,7 +23,7 @@ cal_plot_breaks(
 \method{cal_plot_breaks}{data.frame}(
   .data,
   truth = NULL,
-  estimate = NULL,
+  estimate = dplyr::starts_with(".pred"),
   group = NULL,
   num_breaks = 10,
   conf_level = 0.9,
@@ -37,7 +37,7 @@ cal_plot_breaks(
 \method{cal_plot_breaks}{tune_results}(
   .data,
   truth = NULL,
-  estimate = NULL,
+  estimate = dplyr::starts_with(".pred"),
   group = NULL,
   num_breaks = 10,
   conf_level = 0.9,
@@ -54,8 +54,11 @@ cal_plot_breaks(
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}
 
-\item{estimate}{The column identifier for the prediction probabilities.
-This should be an unquoted column name}
+\item{estimate}{A vector of column identifiers, or one of \code{dplyr} selector
+functions to choose which variables contains the class probabilities. It
+defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
+identifiers will be considered the same as the order of the levels of the
+\code{truth} variable.}
 
 \item{group}{The column identifier to group the results.}
 
