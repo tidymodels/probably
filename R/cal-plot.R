@@ -545,8 +545,8 @@ binary_plot_impl <- function(tbl, x, y,
 
   if (!quo_is_null(group) & length(tbl_groups)) {
     res <- res + facet_grid(
-      cols = vars(!!group),
-      rows = vars(!!parse_expr(tbl_groups))
+      rows = vars(!!group),
+      cols = vars(!!parse_expr(tbl_groups))
     )
   } else {
     if (!quo_is_null(group)) {
