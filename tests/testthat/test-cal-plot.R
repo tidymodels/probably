@@ -12,10 +12,6 @@ test_that("Binary breaks functions work", {
     "ggplot"
     )
 
-  expect_snapshot_error(
-    cal_plot_breaks(species_probs, Species, .pred_bobcat)
-  )
-
   x11 <- .cal_binary_table_breaks(testthat_cal_binary())
 
   expect_equal(

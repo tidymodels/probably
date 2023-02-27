@@ -1,2 +1,5 @@
 *.html
 *.R
+calibrate.qmd
+calibrate_files
+rsconnect
