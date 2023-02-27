@@ -1,4 +1,4 @@
-#--------------------------------- Plots ---------------------------------------
+#------------------------------ Plot Methods -----------------------------------
 #------------------------------- >> Breaks -------------------------------------
 #' Probability calibration plots via binning
 #'
@@ -387,8 +387,6 @@ cal_plot_windowed_impl <- function(.data,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  assert_truth_two_levels(.data, !!truth)
-
   prob_tbl <- .cal_binary_table_windowed(
     .data = .data,
     truth = !!truth,
@@ -456,112 +454,6 @@ cal_plot_windowed.tune_results <- function(.data,
     include_points = include_points,
     event_level = event_level
   )
-}
-
-#------------------------------- >> Plot ---------------------------------------
-
-binary_plot_impl <- function(tbl, x, y,
-                             .data, truth, estimate, group,
-                             x_label, y_label,
-                             include_ribbon, include_rug, include_points,
-                             is_tune_results = FALSE) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-  group <- enquo(group)
-
-  x <- enquo(x)
-  y <- enquo(y)
-
-  tbl_groups <- dplyr::group_vars(tbl)
-
-  gp_vars <- dplyr::group_vars(.data)
-
-  if (length(gp_vars)) {
-    if (length(gp_vars) > 1) {
-      rlang::abort("Plot does not support more than one grouping variable")
-    }
-    has_groups <- TRUE
-    dplyr_group <- parse_expr(gp_vars)
-    grouping_var <- tbl[, gp_vars][[1]]
-    if (is.numeric(grouping_var)) {
-      tbl[, gp_vars] <- as.factor(format(grouping_var))
-    }
-  } else {
-    has_groups <- FALSE
-    dplyr_group <- NULL
-  }
-
-  res <- ggplot(data = tbl, aes(x = !!x, color = !!dplyr_group, fill = !!dplyr_group)) +
-    geom_abline(col = "#aaaaaa", linetype = 2) +
-    geom_line(aes(y = !!y))
-
-  if (include_points) {
-    res <- res + geom_point(aes(y = !!y))
-  }
-
-  if (include_ribbon) {
-    res <- res +
-      geom_ribbon(
-        aes(y = !!y, ymin = lower, ymax = upper),
-        color = "#ffffff00",
-        alpha = 0.08
-      )
-  }
-
-  if (include_rug & !has_groups & !length(tbl_groups) & !is_tune_results) {
-    levels <- truth_estimate_map(
-      .data = .data,
-      truth = !!truth,
-      estimate = !!estimate
-    )
-
-    level1 <- levels[[1]]
-
-    if (length(levels) > 1) {
-      rlang::warn(paste0("Multiple class columns identified. Using: `", level1, "`"))
-    }
-
-    truth_values <- 1:2
-    side_values <- c("t", "b")
-    for (i in seq_along(truth_values)) {
-      level_tbl <- dplyr::filter(.data, as.integer(!!truth) == truth_values[i])
-      res <- res +
-        geom_rug(
-          data = level_tbl,
-          aes(x = !!level1),
-          color = "#999999",
-          sides = side_values[i],
-          length = unit(0.015, "npc"),
-          alpha = 0.7,
-          show.legend = FALSE
-        )
-    }
-  }
-
-  res <- res +
-    lims(x = 0:1, y = 0:1) +
-    labs(
-      x = x_label,
-      y = y_label
-    ) +
-    theme_light() +
-    theme(aspect.ratio = 1)
-
-  if (!quo_is_null(group) & length(tbl_groups)) {
-    res <- res + facet_grid(
-      rows = vars(!!group),
-      cols = vars(!!parse_expr(tbl_groups))
-    )
-  } else {
-    if (!quo_is_null(group)) {
-      res <- res + facet_wrap(group)
-    }
-    if (length(tbl_groups)) {
-      res <- res + facet_wrap(tbl_groups)
-    }
-  }
-
-  res
 }
 
 #--------------------------------- Tables --------------------------------------
@@ -681,6 +573,7 @@ binary_plot_impl <- function(tbl, x, y,
     truth = !!truth,
     cuts = cuts,
     levels = levels,
+    event_level = event_level,
     conf_level = conf_level
   )
 
@@ -911,7 +804,7 @@ binary_plot_impl <- function(tbl, x, y,
   cuts$upper_cut <- steps + (window_size / 2)
   cuts$upper_cut[cuts$upper_cut > 1] <- 1
 
-  .cal_groups(
+  .cal_class_grps(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
@@ -957,46 +850,113 @@ binary_plot_impl <- function(tbl, x, y,
   )
 }
 
-#------------------------------- >> Utils --------------------------------------
+#------------------------------- >> Plot ---------------------------------------
 
-process_midpoint_grp <- function(.data, truth, estimate, group = NULL,
-                                 .bin = NULL, level = 1, conf_level = 0.95) {
+binary_plot_impl <- function(tbl, x, y,
+                             .data, truth, estimate, group,
+                             x_label, y_label,
+                             include_ribbon, include_rug, include_points,
+                             is_tune_results = FALSE) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
-  .bin <- enquo(.bin)
 
-  levels <- truth_estimate_map(
-    .data = .data,
-    truth = !!truth,
-    estimate = !!estimate
-  )
+  x <- enquo(x)
+  y <- enquo(y)
 
-  if (length(levels) == 2) {
-    levels <- levels[1]
+  tbl_groups <- dplyr::group_vars(tbl)
+
+  gp_vars <- dplyr::group_vars(.data)
+
+  if (length(gp_vars)) {
+    if (length(gp_vars) > 1) {
+      rlang::abort("Plot does not support more than one grouping variable")
+    }
+    has_groups <- TRUE
+    dplyr_group <- parse_expr(gp_vars)
+    grouping_var <- tbl[, gp_vars][[1]]
+    if (is.numeric(grouping_var)) {
+      tbl[, gp_vars] <- as.factor(format(grouping_var))
+    }
+  } else {
+    has_groups <- FALSE
+    dplyr_group <- NULL
   }
 
-  no_levels <- levels
+  res <- ggplot(data = tbl, aes(x = !!x, color = !!dplyr_group, fill = !!dplyr_group)) +
+    geom_abline(col = "#aaaaaa", linetype = 2) +
+    geom_line(aes(y = !!y))
 
-  names(no_levels) <- seq_along(no_levels)
+  if (include_points) {
+    res <- res + geom_point(aes(y = !!y))
+  }
 
-  purrr::imap(
-    no_levels,
-    ~ {
-      process_midpoint(
-        .data = .data,
-        truth = !!truth,
-        estimate = !!.x,
-        group = NULL,
-        .bin = NULL,
-        level = as.numeric(.y),
-        conf_level = conf_level
+  if (include_ribbon) {
+    res <- res +
+      geom_ribbon(
+        aes(y = !!y, ymin = lower, ymax = upper),
+        color = "#ffffff00",
+        alpha = 0.08
       )
+  }
+
+  if (include_rug & !has_groups & !length(tbl_groups) & !is_tune_results) {
+    levels <- truth_estimate_map(
+      .data = .data,
+      truth = !!truth,
+      estimate = !!estimate
+    )
+
+    level1 <- levels[[1]]
+
+    if (length(levels) > 1) {
+      rlang::warn(paste0("Multiple class columns identified. Using: `", level1, "`"))
     }
-  ) %>%
-    purrr::set_names(names(levels))
+
+    truth_values <- 1:2
+    side_values <- c("t", "b")
+    for (i in seq_along(truth_values)) {
+      level_tbl <- dplyr::filter(.data, as.integer(!!truth) == truth_values[i])
+      res <- res +
+        geom_rug(
+          data = level_tbl,
+          aes(x = !!level1),
+          color = "#999999",
+          sides = side_values[i],
+          length = unit(0.015, "npc"),
+          alpha = 0.7,
+          show.legend = FALSE
+        )
+    }
+  }
+
+  res <- res +
+    lims(x = 0:1, y = 0:1) +
+    labs(
+      x = x_label,
+      y = y_label
+    ) +
+    theme_light() +
+    theme(aspect.ratio = 1)
+
+  if (!quo_is_null(group) & length(tbl_groups)) {
+    res <- res + facet_grid(
+      rows = vars(!!group),
+      cols = vars(!!parse_expr(tbl_groups))
+    )
+  } else {
+    if (!quo_is_null(group)) {
+      res <- res + facet_wrap(group)
+    }
+    if (length(tbl_groups)) {
+      res <- res + facet_wrap(tbl_groups)
+    }
+  }
+
+  res
 }
 
+#------------------------------- >> Utils --------------------------------------
 process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
                              level = 1, conf_level = 0.95) {
   truth <- enquo(truth)
@@ -1132,11 +1092,16 @@ tune_results_args <- function(.data,
   )
 }
 
-.cal_class_grps <- function(.data, truth, cuts, levels, conf_level) {
+.cal_class_grps <- function(.data, truth, cuts, levels, event_level, conf_level) {
   truth <- enquo(truth)
 
   if (length(levels) == 2) {
-    levels <- levels[1]
+    if(event_level == "first") {
+      levels <- levels[1]
+    }
+    if(event_level == "second") {
+      levels <- levels[2]
+    }
   }
 
   no_levels <- levels
