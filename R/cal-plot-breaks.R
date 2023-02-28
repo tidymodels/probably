@@ -288,10 +288,6 @@ cal_plot_breaks.tune_results <- function(.data,
                                          levels,
                                          ...) {
 
-  lev <- process_level(event_level)
-
-  truth <- enquo(truth)
-
   side <- seq(0, 1, by = 1 / num_breaks)
 
   cuts <- list(
@@ -299,16 +295,14 @@ cal_plot_breaks.tune_results <- function(.data,
     upper_cut = side[2:length(side)]
   )
 
-  res <- .cal_class_grps(
+  .cal_class_grps(
     .data = .data,
-    truth = !!truth,
+    truth = {{ truth }},
     cuts = cuts,
     levels = levels,
     event_level = event_level,
     conf_level = conf_level
   )
-
-  res
 }
 
 #' @export

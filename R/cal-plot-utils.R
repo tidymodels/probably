@@ -1,3 +1,236 @@
+#--------------------------------- Table ---------------------------------------
+
+# This function iterates through each of the class levels. For binary it selects
+# the appropiate one based on the `event_level` selected
+.cal_class_grps <- function(.data, truth, cuts, levels, event_level, conf_level) {
+  truth <- enquo(truth)
+
+  lev <- process_level(event_level)
+  length_levels <- length(levels)
+
+  if (length_levels == 2) {
+    levels <- levels[[1]]
+    if(lev == 0) {
+      lev <- 1
+    }
+  }
+
+  if (length_levels > 2 & lev != 0) {
+    msg <- "Only 'event_level' of 'auto' is valid for multi-class models"
+    rlang::abort(msg)
+  }
+
+  no_levels <- levels
+
+  names(no_levels) <- seq_along(no_levels)
+
+  res <- purrr::imap(
+    no_levels,
+    ~ {
+      .cal_cut_grps(
+        .data = .data,
+        truth = !!truth,
+        estimate = !!.x,
+        cuts = cuts,
+        level = as.integer(.y),
+        lev = lev,
+        conf_level = conf_level
+      )
+    }
+  )
+
+  if (length(res) > 1) {
+    res <- res %>%
+      purrr::set_names(names(levels)) %>%
+      purrr::imap(~ dplyr::mutate(.x, !!truth := .y)) %>%
+      purrr::reduce(dplyr::bind_rows) %>%
+      dplyr::select(!!truth, dplyr::everything())
+  } else {
+    res <- res[[1]]
+  }
+
+  res
+}
+
+# This function iterates through each breaks/windows of the plot
+.cal_cut_grps <- function(.data, truth, estimate, cuts,
+                          level, lev, conf_level
+                          ) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+
+  cuts %>%
+    purrr::transpose() %>%
+    purrr::map_df(
+      ~ {
+        .data %>%
+          dplyr::filter(
+            !!estimate >= !!.x$lower_cut & !!estimate <= !!.x$upper_cut
+          ) %>%
+          process_midpoint(
+            truth = !!truth,
+            estimate = !!estimate,
+            level = level,
+            lev = lev,
+            conf_level = conf_level
+          ) %>%
+          dplyr::mutate(
+            predicted_midpoint = .x$lower_cut + ((.x$upper_cut - .x$lower_cut) / 2)
+          ) %>%
+          dplyr::select(predicted_midpoint, dplyr::everything())
+      }
+    )
+}
+
+#------------------------------- >> Utils --------------------------------------
+process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
+                             level = 1, lev = 1, conf_level = 0.95) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+  group <- enquo(group)
+  .bin <- enquo(.bin)
+
+  if(lev == 2) {
+    lev_yes <- 0
+    lev_no <- 1
+  } else {
+    lev_yes <- 1
+    lev_no <- 0
+  }
+
+  tbl <- .data %>%
+    dplyr::mutate(
+      .bin = !!.bin,
+      .is_val = ifelse(as.integer(!!truth) == level, lev_yes, lev_no)
+    )
+
+  if (!quo_is_null(group)) tbl <- dplyr::group_by(tbl, !!group, .add = TRUE)
+  if (!quo_is_null(.bin)) tbl <- dplyr::group_by(tbl, !!.bin, .add = TRUE)
+
+  tbl <- tbl %>%
+    dplyr::summarise(
+      event_rate = sum(.is_val, na.rm = TRUE) / dplyr::n(),
+      events = sum(.is_val, na.rm = TRUE),
+      total = dplyr::n()
+    ) %>%
+    dplyr::filter(total > 0)
+
+  if (!quo_is_null(.bin)) tbl <- dplyr::select(tbl, -.bin)
+
+  add_conf_intervals(
+    .data = tbl,
+    events = events,
+    total = total,
+    conf_level = conf_level
+  )
+}
+
+add_conf_intervals <- function(.data,
+                               events = events,
+                               total = total,
+                               conf_level = 0.90) {
+  events <- enquo(events)
+  total <- enquo(total)
+  .data %>%
+    purrr::transpose() %>%
+    purrr::map_df(
+      ~ {
+        events <- .x[[as_name(events)]]
+        total <- .x[[as_name(total)]]
+        suppressWarnings(
+          pt <- prop.test(events, total, conf.level = conf_level)
+        )
+        ret <- dplyr::as_tibble(.x)
+        ret$lower <- pt$conf.int[[1]]
+        ret$upper <- pt$conf.int[[2]]
+        ret
+      }
+    )
+}
+
+process_level <- function(x) {
+  x <- x[[1]]
+  ret <- NULL
+  if (x == "auto") {
+    ret <- 0
+  }
+  if (x == "first") {
+    ret <- 1
+  }
+  if (x == "second") {
+    ret <- 2
+  }
+  if (is.null(ret)) {
+    msg <- "Invalid event_level entry. Valid entries are 'first', 'second', or 'auto'"
+    rlang::abort(msg)
+  }
+  ret
+}
+
+assert_truth_two_levels <- function(.data, truth) {
+  truth <- enquo(truth)
+  if (!quo_is_null(truth)) {
+    truth_name <- as_name(truth)
+    truth_levels <- levels(.data[truth_name][[1]])
+    if (length(truth_levels) != 2) {
+      rlang::abort(paste0("'", truth_name, "' should be a factor with 2 levels"))
+    }
+  }
+}
+
+tune_results_args <- function(.data,
+                              truth,
+                              estimate,
+                              group,
+                              event_level,
+                              parameters = NULL,
+                              ...) {
+  if (!(".predictions" %in% colnames(.data))) {
+    rlang::abort(
+      paste0(
+        "The `tune_results` object does not contain columns with predictions",
+        " Refit with the control argument `save_pred = TRUE` to save these columns."
+      )
+    )
+  }
+
+  predictions <- tune::collect_predictions(
+    x = .data,
+    summarize = TRUE,
+    parameters = parameters,
+    ...
+  )
+
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+  group <- enquo(group)
+
+  if (quo_is_null(truth)) {
+    truth_str <- attributes(.data)$outcome
+    truth <- parse_expr(truth_str)
+  }
+
+  if (quo_is_null(estimate)) {
+    truth_str <- as_name(truth)
+    lev <- process_level(event_level) # TODO changes for regression?
+    fc_truth <- levels(predictions[[truth_str]])
+    estimate_str <- paste0(".pred_", fc_truth[[lev]])
+    estimate <- parse_expr(estimate_str)
+  }
+
+  if (quo_is_null(group)) {
+    group <- quo(.config)
+  }
+
+  list(
+    truth = quo(!!truth),
+    estimate = quo(!!estimate),
+    group = quo(!!group),
+    predictions = predictions
+  )
+}
+
 #------------------------------- >> Plot ---------------------------------------
 
 binary_plot_impl <- function(tbl, x, y,
@@ -102,213 +335,4 @@ binary_plot_impl <- function(tbl, x, y,
   }
 
   res
-}
-
-#--------------------------------- Table ---------------------------------------
-
-.cal_class_grps <- function(.data, truth, estimate, cuts, levels, event_level, conf_level) {
-  truth <- enquo(truth)
-
-  if (length(levels) == 2) {
-    event_level <- event_level[[1]]
-    if(event_level == "first" | event_level == "auto") {
-      levels <- levels[1]
-    }
-    if(event_level == "second") {
-      levels <- levels[2]
-    }
-  }
-
-  no_levels <- levels
-
-  names(no_levels) <- seq_along(no_levels)
-
-  res <- purrr::imap(
-    no_levels,
-    ~ {
-      .cal_groups(
-        .data = .data,
-        truth = !!truth,
-        estimate = !!.x,
-        cuts = cuts,
-        lev = as.integer(.y),
-        conf_level = conf_level
-      )
-    }
-  )
-
-  if (length(res) > 1) {
-    res <- res %>%
-      purrr::set_names(names(levels)) %>%
-      purrr::imap(~ dplyr::mutate(.x, !!truth := .y)) %>%
-      purrr::reduce(dplyr::bind_rows) %>%
-      dplyr::select(!!truth, dplyr::everything())
-  } else {
-    res <- res[[1]]
-  }
-
-  res
-}
-
-.cal_groups <- function(.data, truth, estimate, cuts, lev, conf_level) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-
-  cuts %>%
-    purrr::transpose() %>%
-    purrr::map_df(
-      ~ {
-        .data %>%
-          dplyr::filter(
-            !!estimate >= !!.x$lower_cut & !!estimate <= !!.x$upper_cut
-          ) %>%
-          process_midpoint(
-            truth = !!truth,
-            estimate = !!estimate,
-            level = lev,
-            conf_level = conf_level
-          ) %>%
-          dplyr::mutate(
-            predicted_midpoint = .x$lower_cut + ((.x$upper_cut - .x$lower_cut) / 2)
-          ) %>%
-          dplyr::select(predicted_midpoint, dplyr::everything())
-      }
-    )
-}
-
-#------------------------------- >> Utils --------------------------------------
-process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
-                             level = 1, conf_level = 0.95) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-  group <- enquo(group)
-  .bin <- enquo(.bin)
-
-  tbl <- .data %>%
-    dplyr::mutate(
-      .bin = !!.bin,
-      .is_val = ifelse(as.integer(!!truth) == level, 1, 0)
-    )
-
-  if (!quo_is_null(group)) tbl <- dplyr::group_by(tbl, !!group, .add = TRUE)
-  if (!quo_is_null(.bin)) tbl <- dplyr::group_by(tbl, !!.bin, .add = TRUE)
-
-  tbl <- tbl %>%
-    dplyr::summarise(
-      event_rate = sum(.is_val, na.rm = TRUE) / dplyr::n(),
-      events = sum(.is_val, na.rm = TRUE),
-      total = dplyr::n()
-    ) %>%
-    dplyr::filter(total > 0)
-
-  if (!quo_is_null(.bin)) tbl <- dplyr::select(tbl, -.bin)
-
-  add_conf_intervals(
-    .data = tbl,
-    events = events,
-    total = total,
-    conf_level = conf_level
-  )
-}
-
-add_conf_intervals <- function(.data,
-                               events = events,
-                               total = total,
-                               conf_level = 0.90) {
-  events <- enquo(events)
-  total <- enquo(total)
-  .data %>%
-    purrr::transpose() %>%
-    purrr::map_df(
-      ~ {
-        events <- .x[[as_name(events)]]
-        total <- .x[[as_name(total)]]
-        suppressWarnings(
-          pt <- prop.test(events, total, conf.level = conf_level)
-        )
-        ret <- dplyr::as_tibble(.x)
-        ret$lower <- pt$conf.int[[1]]
-        ret$upper <- pt$conf.int[[2]]
-        ret
-      }
-    )
-}
-
-process_level <- function(x) {
-  x <- x[[1]]
-  ret <- NULL
-  if (x == "first" | x == "auto") {
-    ret <- 1
-  }
-  if (x == "second") {
-    ret <- 2
-  }
-  if (is.null(ret)) { # TODO null for regression?
-    rlang::abort("Invalid event_level entry. Valid entries are 'first' and 'second'")
-  }
-  ret
-}
-
-assert_truth_two_levels <- function(.data, truth) {
-  truth <- enquo(truth)
-  if (!quo_is_null(truth)) {
-    truth_name <- as_name(truth)
-    truth_levels <- levels(.data[truth_name][[1]])
-    if (length(truth_levels) != 2) {
-      rlang::abort(paste0("'", truth_name, "' should be a factor with 2 levels"))
-    }
-  }
-}
-
-tune_results_args <- function(.data,
-                              truth,
-                              estimate,
-                              group,
-                              event_level,
-                              parameters = NULL,
-                              ...) {
-  if (!(".predictions" %in% colnames(.data))) {
-    rlang::abort(
-      paste0(
-        "The `tune_results` object does not contain columns with predictions",
-        " Refit with the control argument `save_pred = TRUE` to save these columns."
-      )
-    )
-  }
-
-  predictions <- tune::collect_predictions(
-    x = .data,
-    summarize = TRUE,
-    parameters = parameters,
-    ...
-  )
-
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-  group <- enquo(group)
-
-  if (quo_is_null(truth)) {
-    truth_str <- attributes(.data)$outcome
-    truth <- parse_expr(truth_str)
-  }
-
-  if (quo_is_null(estimate)) {
-    truth_str <- as_name(truth)
-    lev <- process_level(event_level) # TODO changes for regression?
-    fc_truth <- levels(predictions[[truth_str]])
-    estimate_str <- paste0(".pred_", fc_truth[[lev]])
-    estimate <- parse_expr(estimate_str)
-  }
-
-  if (quo_is_null(group)) {
-    group <- quo(.config)
-  }
-
-  list(
-    truth = quo(!!truth),
-    estimate = quo(!!estimate),
-    group = quo(!!group),
-    predictions = predictions
-  )
 }

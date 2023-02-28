@@ -176,7 +176,8 @@ stop_multiclass <- function() {
 truth_estimate_map <- function(.data, truth, estimate) {
   truth_str <- tidyselect_cols(.data, {{ truth }})
 
-  estimate_str <- tidyselect_cols(.data, {{ estimate }}) %>%
+  estimate_str <- .data %>%
+    tidyselect_cols({{ estimate }}) %>%
     names()
 
   if (length(estimate_str) == 0) {
@@ -187,7 +188,7 @@ truth_estimate_map <- function(.data, truth, estimate) {
 
   if (length(truth_levels) > 0) {
     if (all(substr(estimate_str, 1, 6) == ".pred_")) {
-      est_map <- purrr::map(
+      res <- purrr::map(
         truth_levels,
         ~ {
           match <- paste0(".pred_", .x) == estimate_str
@@ -197,17 +198,16 @@ truth_estimate_map <- function(.data, truth, estimate) {
         }
       )
     } else {
-      est_map <- purrr::map(
+      res <- purrr::map(
         seq_along(truth_levels),
         ~ {
           if (any(estimate_str == .x)) {
             sym(estimate_str[[.x]])
           }
         }
-      )
+      ) %>%
+        set_names(truth_levels)
     }
-
-    res <- set_names(est_map, truth_levels)
   } else {
     res <- list(sym(estimate_str))
     names(res) <- "predictions"
