@@ -59,6 +59,7 @@ cal_plot_logistic_impl <- function(.data,
                                    include_rug = TRUE,
                                    include_ribbon = TRUE,
                                    event_level = c("auto", "first", "second"),
+                                   is_tune_results = FALSE,
                                    ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -86,7 +87,8 @@ cal_plot_logistic_impl <- function(.data,
     y_label = "Predicted Event Rate",
     include_ribbon = include_ribbon,
     include_rug = include_rug,
-    include_points = FALSE
+    include_points = FALSE,
+    is_tune_results = is_tune_results
   )
 }
 
@@ -124,7 +126,8 @@ cal_plot_logistic.tune_results <- function(.data,
     include_ribbon = include_ribbon,
     include_rug = include_rug,
     event_level = event_level,
-    smooth = smooth
+    smooth = smooth,
+    is_tune_results = TRUE
   )
 }
 

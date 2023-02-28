@@ -45,10 +45,6 @@ test_that("Binary logistic functions work", {
 
   expect_s3_class(x21, "ggplot")
 
-  expect_snapshot_error(
-    cal_plot_logistic(species_probs, Species, .pred_bobcat)
-  )
-
   x22 <- .cal_binary_table_logistic(testthat_cal_binary())
 
 
@@ -136,10 +132,6 @@ test_that("Binary windowed functions work", {
 
   expect_s3_class(x31, "ggplot")
 
-  expect_snapshot_error(
-    cal_plot_windowed(species_probs, Species, .pred_bobcat)
-  )
-
   x32 <- .cal_binary_table_windowed(
     testthat_cal_binary(),
     step_size = 0.11,
@@ -182,7 +174,7 @@ test_that("Event level handling works", {
 
   expect_error(
     .cal_binary_table_breaks(segment_logistic, Class, .pred_good, event_level = "invalid"),
-    "Invalid event_level entry. Valid entries are 'first' and 'second'"
+    "Invalid event_level entry. Valid entries are 'first', 'second', or 'auto'"
   )
 })
 

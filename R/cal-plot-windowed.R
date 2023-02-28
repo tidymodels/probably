@@ -65,6 +65,7 @@ cal_plot_windowed_impl <- function(.data,
                                    include_rug = TRUE,
                                    include_points = TRUE,
                                    event_level = c("auto", "first", "second"),
+                                   is_tune_results = FALSE,
                                    ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -93,7 +94,8 @@ cal_plot_windowed_impl <- function(.data,
     y_label = "Event Rate",
     include_ribbon = include_ribbon,
     include_rug = include_rug,
-    include_points = include_points
+    include_points = include_points,
+    is_tune_results = is_tune_results
   )
 }
 
@@ -135,7 +137,8 @@ cal_plot_windowed.tune_results <- function(.data,
     include_ribbon = include_ribbon,
     include_rug = include_rug,
     include_points = include_points,
-    event_level = event_level
+    event_level = event_level,
+    is_tune_results = TRUE
   )
 }
 

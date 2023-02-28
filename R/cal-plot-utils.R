@@ -285,11 +285,12 @@ tune_results_args <- function(.data,
   }
 
   if (quo_is_null(estimate)) {
-    truth_str <- as_name(truth)
-    lev <- process_level(event_level) # TODO changes for regression?
-    fc_truth <- levels(predictions[[truth_str]])
-    estimate_str <- paste0(".pred_", fc_truth[[lev]])
-    estimate <- parse_expr(estimate_str)
+    estimate <- expr(dplyr::starts_with(".pred"))
+  #   truth_str <- as_name(truth)
+  #   lev <- process_level(event_level) # TODO changes for regression?
+  #   fc_truth <- levels(predictions[[truth_str]])
+  #   estimate_str <- paste0(".pred_", fc_truth[[lev]])
+  #   estimate <- parse_expr(estimate_str)
   }
 
   if (quo_is_null(group)) {
@@ -299,6 +300,7 @@ tune_results_args <- function(.data,
   list(
     truth = quo(!!truth),
     estimate = quo(!!estimate),
+    estimate = estimate,
     group = quo(!!group),
     predictions = predictions
   )
@@ -363,7 +365,7 @@ binary_plot_impl <- function(tbl, x, y,
 
     level1 <- levels[[1]]
 
-    if (length(levels) > 1) {
+    if (length(levels) > 1 & !is_tune_results) {
       rlang::warn(paste0("Multiple class columns identified. Using: `", level1, "`"))
     }
 
