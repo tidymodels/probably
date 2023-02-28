@@ -38,7 +38,7 @@
 #' @export
 cal_plot_logistic <- function(.data,
                               truth = NULL,
-                              estimate = NULL,
+                              estimate = dplyr::starts_with(".pred"),
                               group = NULL,
                               conf_level = 0.90,
                               smooth = TRUE,
@@ -52,7 +52,7 @@ cal_plot_logistic <- function(.data,
 
 cal_plot_logistic_impl <- function(.data,
                                    truth = NULL,
-                                   estimate = NULL,
+                                   estimate = dplyr::starts_with(".pred"),
                                    group = NULL,
                                    conf_level = 0.90,
                                    smooth = TRUE,
@@ -63,8 +63,6 @@ cal_plot_logistic_impl <- function(.data,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
-
-  assert_truth_two_levels(.data, !!truth)
 
   prob_tbl <- .cal_binary_table_logistic(
     .data = .data,
@@ -100,7 +98,7 @@ cal_plot_logistic.data.frame <- cal_plot_logistic_impl
 #' @rdname cal_plot_logistic
 cal_plot_logistic.tune_results <- function(.data,
                                            truth = NULL,
-                                           estimate = NULL,
+                                           estimate = dplyr::starts_with(".pred"),
                                            group = NULL,
                                            conf_level = 0.90,
                                            smooth = TRUE,
@@ -158,20 +156,33 @@ cal_plot_logistic.tune_results <- function(.data,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  .data %>%
+  levels <- truth_estimate_map(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate
+  )
+
+  res <- .data %>%
     dplyr::group_by(!!group, .add = TRUE) %>%
     dplyr::group_map(~ {
-      grp <- .cal_binary_table_logistic_grp(
+      grp <- .cal_class_grps(
         .data = .x,
         truth = !!truth,
-        estimate = !!estimate,
+        levels = levels,
         conf_level = conf_level,
         event_level = event_level,
-        smooth = smooth
+        smooth = smooth,
+        method = "model"
       )
       dplyr::bind_cols(.y, grp)
     }) %>%
     dplyr::bind_rows()
+
+  if (length(levels) > 2) {
+    res <- dplyr::group_by(res, !!truth)
+  }
+
+  res
 }
 
 .cal_binary_table_logistic_grp <- function(.data,

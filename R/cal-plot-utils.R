@@ -2,20 +2,22 @@
 
 # This function iterates through each of the class levels. For binary it selects
 # the appropiate one based on the `event_level` selected
-.cal_class_grps <- function(.data, truth, cuts, levels, event_level, conf_level) {
+.cal_class_grps <- function(.data, truth, cuts, levels, event_level, conf_level,
+                            method = "breaks", smooth = NULL) {
   truth <- enquo(truth)
 
   lev <- process_level(event_level)
   length_levels <- length(levels)
 
-  if (length_levels == 2) {
-    levels <- levels[1]
-    if(lev == 0) {
+  if (length_levels >= 2 & lev == 0) {
       lev <- 1
-    }
   }
 
-  if (length_levels > 2 & lev != 0) {
+  if (length_levels == 2) {
+    levels <- levels[1]
+  }
+
+  if (length_levels > 2 & lev == 2) {
     msg <- "Only 'event_level' of 'auto' is valid for multi-class models"
     rlang::abort(msg)
   }
@@ -24,20 +26,37 @@
 
   names(no_levels) <- seq_along(no_levels)
 
-  res <- purrr::imap(
-    no_levels,
-    ~ {
-      .cal_cut_grps(
-        .data = .data,
-        truth = !!truth,
-        estimate = !!.x,
-        cuts = cuts,
-        level = as.integer(.y),
-        lev = lev,
-        conf_level = conf_level
-      )
-    }
-  )
+  if(method == "breaks") {
+    res <- purrr::imap(
+      no_levels,
+      ~ {
+        .cal_cut_grps(
+          .data = .data,
+          truth = !!truth,
+          estimate = !!.x,
+          cuts = cuts,
+          level = as.integer(.y),
+          lev = lev,
+          conf_level = conf_level
+        )
+      }
+    )
+  } else {
+    res <- purrr::imap(
+      no_levels,
+      ~ {
+        .cal_model_grps(
+          .data = .data,
+          truth = !!truth,
+          estimate = !!.x,
+          smooth = smooth,
+          level = as.integer(.y),
+          lev = lev,
+          conf_level = conf_level
+        )
+      }
+    )
+  }
 
   if (length(res) > 1) {
     res <- res %>%
@@ -58,7 +77,6 @@
                           ) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
-
 
   cuts %>%
     purrr::transpose() %>%
@@ -81,6 +99,52 @@
           dplyr::select(predicted_midpoint, dplyr::everything())
       }
     )
+}
+
+.cal_model_grps <- function(.data,
+                            truth = NULL,
+                            estimate = NULL,
+                            conf_level = 0.90,
+                            event_level = c("auto", "first", "second"),
+                            lev,
+                            smooth = TRUE,
+                            ...) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  prep_data <- dplyr::select(.data, truth = !!truth, estimate = !!estimate)
+
+  if (smooth) {
+    model <- mgcv::gam(
+      truth ~ s(estimate, k = 10),
+      data = prep_data,
+      family = binomial()
+    )
+  } else {
+    model <- stats::glm(
+      truth ~ estimate,
+      data = prep_data,
+      family = binomial()
+    )
+  }
+
+  new_seq <- seq(0, 1, by = .01)
+  new_data <- data.frame(estimate = new_seq)
+  preds <- predict(model, new_data, se.fit = TRUE)
+
+  if (lev == 1) {
+    preds$fit <- -preds$fit
+  }
+
+  res <- dplyr::tibble(
+    prob = binomial()$linkinv(preds$fit),
+    lower = binomial()$linkinv(preds$fit - qnorm(conf_level) * preds$se.fit),
+    upper = binomial()$linkinv(preds$fit + qnorm(conf_level) * preds$se.fit)
+  )
+
+  res <- cbind(new_data, res)
+
+  dplyr::as_tibble(res)
 }
 
 #------------------------------- >> Utils --------------------------------------
