@@ -176,6 +176,10 @@ stop_multiclass <- function() {
 truth_estimate_map <- function(.data, truth, estimate) {
   truth_str <- tidyselect_cols(.data, {{ truth }})
 
+  if(class(truth_str) == "integer") {
+    truth_str <- names(truth_str)
+  }
+
   estimate_str <- .data %>%
     tidyselect_cols({{ estimate }}) %>%
     names()
@@ -188,7 +192,7 @@ truth_estimate_map <- function(.data, truth, estimate) {
 
   if (length(truth_levels) > 0) {
     if (all(substr(estimate_str, 1, 6) == ".pred_")) {
-      res <- purrr::map(
+      est_map <- purrr::map(
         truth_levels,
         ~ {
           match <- paste0(".pred_", .x) == estimate_str
@@ -196,24 +200,20 @@ truth_estimate_map <- function(.data, truth, estimate) {
             sym(estimate_str[match])
           }
         }
-      ) %>%
-        set_names(truth_levels)
+      )
     } else {
-      res <- purrr::map(
+      est_map <- purrr::map(
         seq_along(truth_levels),
-        ~ {
-          if (any(estimate_str == .x)) {
-            sym(estimate_str[[.x]])
-          }
-        }
-      ) %>%
-        set_names(truth_levels)
+        ~ sym(estimate_str[[.x]])
+      )
     }
+
+    res <- set_names(est_map, truth_levels)
   } else {
     res <- list(sym(estimate_str))
     names(res) <- "predictions"
   }
-  purrr::discard(res, is.null)
+  res
 }
 
 # Wraps tidyselect call to avoid code duplication in the function above
