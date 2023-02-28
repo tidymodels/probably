@@ -24,7 +24,9 @@
 #' `truth` variable.
 #' @param group The column identifier to group the results.
 #' @param event_level  single string. Either "first" or "second" to specify which
-#' level of truth to consider as the "event".
+#' level of truth to consider as the "event". Defaults to "auto", which allows
+#' the function decide which one to use based on the type of model (binary,
+#' multi-class or linear)
 #' @param num_breaks The number of segments to group the probabilities. It
 #' defaults to 10.
 #' @param conf_level Confidence level to use in the visualization. It defaults
@@ -92,7 +94,7 @@ cal_plot_breaks <- function(.data,
                             include_ribbon = TRUE,
                             include_rug = TRUE,
                             include_points = TRUE,
-                            event_level = c("first", "second"),
+                            event_level = c("auto", "first", "second"),
                             ...) {
   UseMethod("cal_plot_breaks")
 }
@@ -106,7 +108,7 @@ cal_plot_breaks_impl <- function(.data,
                                  include_ribbon = TRUE,
                                  include_rug = TRUE,
                                  include_points = TRUE,
-                                 event_level = c("first", "second"),
+                                 event_level = c("auto", "first", "second"),
                                  is_tune_results = FALSE,
                                  ...) {
   truth <- enquo(truth)
@@ -157,7 +159,7 @@ cal_plot_breaks.tune_results <- function(.data,
                                          include_ribbon = TRUE,
                                          include_rug = TRUE,
                                          include_points = TRUE,
-                                         event_level = c("first", "second"),
+                                         event_level = c("auto", "first", "second"),
                                          ...) {
   tune_args <- tune_results_args(
     .data = .data,
@@ -229,7 +231,7 @@ cal_plot_logistic <- function(.data,
                               smooth = TRUE,
                               include_rug = TRUE,
                               include_ribbon = TRUE,
-                              event_level = c("first", "second"),
+                              event_level = c("auto", "first", "second"),
                               ...) {
   UseMethod("cal_plot_logistic")
 }
@@ -243,7 +245,7 @@ cal_plot_logistic_impl <- function(.data,
                                    smooth = TRUE,
                                    include_rug = TRUE,
                                    include_ribbon = TRUE,
-                                   event_level = c("first", "second"),
+                                   event_level = c("auto", "first", "second"),
                                    ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -291,7 +293,7 @@ cal_plot_logistic.tune_results <- function(.data,
                                            smooth = TRUE,
                                            include_rug = TRUE,
                                            include_ribbon = TRUE,
-                                           event_level = c("first", "second"),
+                                           event_level = c("auto", "first", "second"),
                                            ...) {
   tune_args <- tune_results_args(
     .data = .data,
@@ -366,7 +368,7 @@ cal_plot_windowed <- function(.data,
                               include_ribbon = TRUE,
                               include_rug = TRUE,
                               include_points = TRUE,
-                              event_level = c("first", "second"),
+                              event_level = c("auto", "first", "second"),
                               ...) {
   UseMethod("cal_plot_windowed")
 }
@@ -381,7 +383,7 @@ cal_plot_windowed_impl <- function(.data,
                                    include_ribbon = TRUE,
                                    include_rug = TRUE,
                                    include_points = TRUE,
-                                   event_level = c("first", "second"),
+                                   event_level = c("auto", "first", "second"),
                                    ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -430,7 +432,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                            include_ribbon = TRUE,
                                            include_rug = TRUE,
                                            include_points = TRUE,
-                                           event_level = c("first", "second"),
+                                           event_level = c("auto", "first", "second"),
                                            ...) {
   tune_args <- tune_results_args(
     .data = .data,
@@ -505,7 +507,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                      group = NULL,
                                      num_breaks = 10,
                                      conf_level = 0.90,
-                                     event_level = c("first", "second"),
+                                     event_level = c("auto", "first", "second"),
                                      ...) {
   UseMethod(".cal_binary_table_breaks")
 }
@@ -517,7 +519,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                           group,
                                           num_breaks = 10,
                                           conf_level = 0.90,
-                                          event_level = c("first", "second"),
+                                          event_level = c("auto", "first", "second"),
                                           ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -556,7 +558,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                          group,
                                          num_breaks = 10,
                                          conf_level = 0.90,
-                                         event_level = c("first", "second"),
+                                         event_level = c("auto", "first", "second"),
                                          levels,
                                          ...) {
   truth <- enquo(truth)
@@ -592,7 +594,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                                   group = NULL,
                                                   num_breaks = 10,
                                                   conf_level = 0.90,
-                                                  event_level = c("first", "second"),
+                                                  event_level = c("auto", "first", "second"),
                                                   ...) {
   tune_args <- tune_results_args(
     .data = .data,
@@ -625,7 +627,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                        estimate = NULL,
                                        group = NULL,
                                        conf_level = 0.90,
-                                       event_level = c("first", "second"),
+                                       event_level = c("auto", "first", "second"),
                                        ...) {
   UseMethod(".cal_binary_table_logistic")
 }
@@ -635,7 +637,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                             estimate = NULL,
                                             group = NULL,
                                             conf_level = 0.90,
-                                            event_level = c("first", "second"),
+                                            event_level = c("auto", "first", "second"),
                                             smooth = TRUE,
                                             ...) {
   truth <- enquo(truth)
@@ -662,7 +664,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = NULL,
                                            conf_level = 0.90,
-                                           event_level = c("first", "second"),
+                                           event_level = c("auto", "first", "second"),
                                            smooth = TRUE,
                                            ...) {
   truth <- enquo(truth)
@@ -716,7 +718,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                                     estimate = NULL,
                                                     group = NULL,
                                                     conf_level = 0.90,
-                                                    event_level = c("first", "second"),
+                                                    event_level = c("auto", "first", "second"),
                                                     ...) {
   tune_args <- tune_results_args(
     .data = .data,
@@ -749,7 +751,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                        window_size = 0.1,
                                        step_size = window_size / 2,
                                        conf_level = 0.90,
-                                       event_level = c("first", "second"),
+                                       event_level = c("auto", "first", "second"),
                                        ...) {
   UseMethod(".cal_binary_table_windowed")
 }
@@ -761,7 +763,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                             window_size = 0.1,
                                             step_size = window_size / 2,
                                             conf_level = 0.90,
-                                            event_level = c("first", "second"),
+                                            event_level = c("auto", "first", "second"),
                                             ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -790,7 +792,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                            window_size = 0.1,
                                            step_size = window_size / 2,
                                            conf_level = 0.90,
-                                           event_level = c("first", "second"),
+                                           event_level = c("auto", "first", "second"),
                                            ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -827,7 +829,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                                     window_size = 0.1,
                                                     step_size = window_size / 2,
                                                     conf_level = 0.90,
-                                                    event_level = c("first", "second"),
+                                                    event_level = c("auto", "first", "second"),
                                                     ...) {
   tune_args <- tune_results_args(
     .data = .data,
@@ -1017,7 +1019,7 @@ add_conf_intervals <- function(.data,
 process_level <- function(x) {
   x <- x[[1]]
   ret <- NULL
-  if (x == "first") {
+  if (x == "first" | x == "auto") {
     ret <- 1
   }
   if (x == "second") {
@@ -1096,7 +1098,8 @@ tune_results_args <- function(.data,
   truth <- enquo(truth)
 
   if (length(levels) == 2) {
-    if(event_level == "first") {
+    event_level <- event_level[[1]]
+    if(event_level == "first" | event_level == "auto") {
       levels <- levels[1]
     }
     if(event_level == "second") {
