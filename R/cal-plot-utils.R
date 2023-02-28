@@ -71,10 +71,64 @@
   res
 }
 
+.cal_model_grps <- function(.data,
+                            truth = NULL,
+                            estimate = NULL,
+                            conf_level = 0.90,
+                            event_level = c("auto", "first", "second"),
+                            lev,
+                            level,
+                            smooth = TRUE) {
+  truth <- enquo(truth)
+  estimate <- enquo(estimate)
+
+  if(lev == 2) {
+    lev_yes <- 0
+    lev_no <- 1
+  } else {
+    lev_yes <- 1
+    lev_no <- 0
+  }
+
+  prep_data <- .data %>%
+    dplyr::select(truth = !!truth, estimate = !!estimate) %>%
+    dplyr::mutate(
+      truth = ifelse(as.integer(truth) == level, lev_yes, lev_no)
+    )
+
+  if (smooth) {
+    model <- mgcv::gam(
+      truth ~ s(estimate, k = 10),
+      data = prep_data,
+      family = binomial()
+    )
+  } else {
+    model <- stats::glm(
+      truth ~ estimate,
+      data = prep_data,
+      family = binomial()
+    )
+  }
+
+  new_seq <- seq(0, 1, by = .01)
+  new_data <- data.frame(estimate = new_seq)
+  preds <- predict(model, new_data, se.fit = TRUE)
+
+  res <- dplyr::tibble(
+    prob = binomial()$linkinv(preds$fit),
+    lower = binomial()$linkinv(preds$fit - qnorm(conf_level) * preds$se.fit),
+    upper = binomial()$linkinv(preds$fit + qnorm(conf_level) * preds$se.fit)
+  )
+
+  res <- cbind(new_data, res)
+
+  dplyr::as_tibble(res)
+}
+
 # This function iterates through each breaks/windows of the plot
 .cal_cut_grps <- function(.data, truth, estimate, cuts,
                           level, lev, conf_level
-                          ) {
+) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -101,53 +155,6 @@
     )
 }
 
-.cal_model_grps <- function(.data,
-                            truth = NULL,
-                            estimate = NULL,
-                            conf_level = 0.90,
-                            event_level = c("auto", "first", "second"),
-                            lev,
-                            smooth = TRUE,
-                            ...) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  prep_data <- dplyr::select(.data, truth = !!truth, estimate = !!estimate)
-
-  if (smooth) {
-    model <- mgcv::gam(
-      truth ~ s(estimate, k = 10),
-      data = prep_data,
-      family = binomial()
-    )
-  } else {
-    model <- stats::glm(
-      truth ~ estimate,
-      data = prep_data,
-      family = binomial()
-    )
-  }
-
-  new_seq <- seq(0, 1, by = .01)
-  new_data <- data.frame(estimate = new_seq)
-  preds <- predict(model, new_data, se.fit = TRUE)
-
-  if (lev == 1) {
-    preds$fit <- -preds$fit
-  }
-
-  res <- dplyr::tibble(
-    prob = binomial()$linkinv(preds$fit),
-    lower = binomial()$linkinv(preds$fit - qnorm(conf_level) * preds$se.fit),
-    upper = binomial()$linkinv(preds$fit + qnorm(conf_level) * preds$se.fit)
-  )
-
-  res <- cbind(new_data, res)
-
-  dplyr::as_tibble(res)
-}
-
-#------------------------------- >> Utils --------------------------------------
 process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
                              level = 1, lev = 1, conf_level = 0.95) {
   truth <- enquo(truth)
@@ -212,6 +219,8 @@ add_conf_intervals <- function(.data,
       }
     )
 }
+
+#---------------------------------- Utils --------------------------------------
 
 process_level <- function(x) {
   x <- x[[1]]
@@ -295,7 +304,7 @@ tune_results_args <- function(.data,
   )
 }
 
-#------------------------------- >> Plot ---------------------------------------
+#--------------------------------- Plot ----------------------------------------
 
 binary_plot_impl <- function(tbl, x, y,
                              .data, truth, estimate, group,
