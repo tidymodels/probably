@@ -196,7 +196,8 @@ truth_estimate_map <- function(.data, truth, estimate) {
             sym(estimate_str[match])
           }
         }
-      )
+      ) %>%
+        set_names(truth_levels)
     } else {
       res <- purrr::map(
         seq_along(truth_levels),

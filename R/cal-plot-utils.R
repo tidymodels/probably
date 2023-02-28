@@ -9,7 +9,7 @@
   length_levels <- length(levels)
 
   if (length_levels == 2) {
-    levels <- levels[[1]]
+    levels <- levels[1]
     if(lev == 0) {
       lev <- 1
     }
