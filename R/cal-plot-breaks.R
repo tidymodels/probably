@@ -114,8 +114,6 @@ cal_plot_breaks_impl <- function(.data,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  # assert_truth_two_levels(.data, !!truth)
-
   prob_tbl <- .cal_binary_table_breaks(
     .data = .data,
     truth = !!truth,

@@ -41,7 +41,7 @@
 #' @export
 cal_plot_windowed <- function(.data,
                               truth = NULL,
-                              estimate = NULL,
+                              estimate = dplyr::starts_with(".pred"),
                               group = NULL,
                               window_size = 0.1,
                               step_size = window_size / 2,
@@ -56,7 +56,7 @@ cal_plot_windowed <- function(.data,
 
 cal_plot_windowed_impl <- function(.data,
                                    truth = NULL,
-                                   estimate = NULL,
+                                   estimate = dplyr::starts_with(".pred"),
                                    group = NULL,
                                    window_size = 0.1,
                                    step_size = window_size / 2,
@@ -105,7 +105,7 @@ cal_plot_windowed.data.frame <- cal_plot_windowed_impl
 #' @rdname cal_plot_windowed
 cal_plot_windowed.tune_results <- function(.data,
                                            truth = NULL,
-                                           estimate = NULL,
+                                           estimate = dplyr::starts_with(".pred"),
                                            group = NULL,
                                            window_size = 0.1,
                                            step_size = window_size / 2,
@@ -169,35 +169,44 @@ cal_plot_windowed.tune_results <- function(.data,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  .data %>%
+  levels <- truth_estimate_map(
+    .data = .data,
+    truth = !!truth,
+    estimate = !!estimate
+  )
+
+  res <- .data %>%
     dplyr::group_by(!!group, .add = TRUE) %>%
     dplyr::group_map(~ {
       grp <- .cal_binary_table_windowed_grp(
         .data = .x,
         truth = !!truth,
-        estimate = !!estimate,
         window_size = window_size,
         step_size = step_size,
         conf_level = conf_level,
-        event_level = event_level
+        event_level = event_level,
+        levels = levels
       )
       dplyr::bind_cols(.y, grp)
     }) %>%
     dplyr::bind_rows()
+
+
+  if (length(levels) > 2) {
+    res <- dplyr::group_by(res, !!truth)
+  }
+
+  res
 }
 
 .cal_binary_table_windowed_grp <- function(.data,
                                            truth,
-                                           estimate,
                                            window_size = 0.1,
                                            step_size = window_size / 2,
                                            conf_level = 0.90,
                                            event_level = c("auto", "first", "second"),
+                                           levels = levels,
                                            ...) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
-
-  lev <- process_level(event_level)
 
   steps <- seq(0, 1, by = step_size)
   cuts <- list()
@@ -208,10 +217,10 @@ cal_plot_windowed.tune_results <- function(.data,
 
   .cal_class_grps(
     .data = .data,
-    truth = !!truth,
-    estimate = !!estimate,
+    truth = {{ truth }},
     cuts = cuts,
-    lev = lev,
+    levels = levels,
+    event_level = event_level,
     conf_level = conf_level
   )
 }
