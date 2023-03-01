@@ -57,18 +57,17 @@ cal_plot_windowed <- function(.data,
 #' @export
 #' @rdname cal_plot_windowed
 cal_plot_windowed.data.frame <- function(.data,
-                                           truth = NULL,
-                                           estimate = dplyr::starts_with(".pred"),
-                                           group = NULL,
-                                           window_size = 0.1,
-                                           step_size = window_size / 2,
-                                           conf_level = 0.90,
-                                           include_ribbon = TRUE,
-                                           include_rug = TRUE,
-                                           include_points = TRUE,
-                                           event_level = c("auto", "first", "second"),
-                                           ...) {
-
+                                         truth = NULL,
+                                         estimate = dplyr::starts_with(".pred"),
+                                         group = NULL,
+                                         window_size = 0.1,
+                                         step_size = window_size / 2,
+                                         conf_level = 0.90,
+                                         include_ribbon = TRUE,
+                                         include_rug = TRUE,
+                                         include_points = TRUE,
+                                         event_level = c("auto", "first", "second"),
+                                         ...) {
   cal_plot_windowed_impl(
     .data = .data,
     truth = {{ truth }},
@@ -99,7 +98,6 @@ cal_plot_windowed.tune_results <- function(.data,
                                            include_points = TRUE,
                                            event_level = c("auto", "first", "second"),
                                            ...) {
-
   cal_plot_windowed_impl(
     .data = .data,
     truth = {{ truth }},
@@ -182,15 +180,14 @@ cal_plot_windowed_impl <- function(.data,
 #' @export
 #' @keywords internal
 .cal_binary_table_windowed.data.frame <- function(.data,
-                                                    truth = NULL,
-                                                    estimate = NULL,
-                                                    group = NULL,
-                                                    window_size = 0.1,
-                                                    step_size = window_size / 2,
-                                                    conf_level = 0.90,
-                                                    event_level = c("auto", "first", "second"),
-                                                    ...) {
-
+                                                  truth = NULL,
+                                                  estimate = NULL,
+                                                  group = NULL,
+                                                  window_size = 0.1,
+                                                  step_size = window_size / 2,
+                                                  conf_level = 0.90,
+                                                  event_level = c("auto", "first", "second"),
+                                                  ...) {
   .cal_binary_table_windowed_impl(
     .data = .data,
     truth = {{ truth }},
@@ -291,7 +288,6 @@ cal_plot_windowed_impl <- function(.data,
                                            event_level = c("auto", "first", "second"),
                                            levels = levels,
                                            ...) {
-
   steps <- seq(0, 1, by = step_size)
   cuts <- list()
   cuts$lower_cut <- steps - (window_size / 2)

@@ -10,7 +10,7 @@
   length_levels <- length(levels)
 
   if (length_levels >= 2 & lev == 0) {
-      lev <- 1
+    lev <- 1
   }
 
   if (length_levels == 2) {
@@ -26,7 +26,7 @@
 
   names(no_levels) <- seq_along(no_levels)
 
-  if(method == "breaks") {
+  if (method == "breaks") {
     res <- purrr::imap(
       no_levels,
       ~ {
@@ -41,7 +41,9 @@
         )
       }
     )
-  } else {
+  }
+
+  if (method == "model") {
     res <- purrr::imap(
       no_levels,
       ~ {
@@ -82,7 +84,7 @@
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
-  if(lev == 2) {
+  if (lev == 2) {
     lev_yes <- 0
     lev_no <- 1
   } else {
@@ -127,8 +129,7 @@
 
 # This function iterates through each breaks/windows of the plot
 .cal_cut_grps <- function(.data, truth, estimate, cuts,
-                          level, lev, conf_level
-) {
+                          level, lev, conf_level) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -162,7 +163,7 @@ process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
   group <- enquo(group)
   .bin <- enquo(.bin)
 
-  if(lev == 2) {
+  if (lev == 2) {
     lev_yes <- 0
     lev_no <- 1
   } else {
@@ -286,11 +287,6 @@ tune_results_args <- function(.data,
 
   if (quo_is_null(estimate)) {
     estimate <- expr(dplyr::starts_with(".pred"))
-  #   truth_str <- as_name(truth)
-  #   lev <- process_level(event_level) # TODO changes for regression?
-  #   fc_truth <- levels(predictions[[truth_str]])
-  #   estimate_str <- paste0(".pred_", fc_truth[[lev]])
-  #   estimate <- parse_expr(estimate_str)
   }
 
   if (quo_is_null(group)) {
