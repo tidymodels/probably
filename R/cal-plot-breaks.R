@@ -1,4 +1,5 @@
-#---------------------------- Plot methods -------------------------------------
+#-------------------------------- Plot -----------------------------------------
+#------------------------------ >> Methods -------------------------------------
 #' Probability calibration plots via binning
 #'
 #' @description
@@ -98,6 +99,63 @@ cal_plot_breaks <- function(.data,
   UseMethod("cal_plot_breaks")
 }
 
+#' @export
+#' @rdname cal_plot_breaks
+cal_plot_breaks.data.frame <- function(.data,
+                                       truth = NULL,
+                                       estimate = dplyr::starts_with(".pred"),
+                                       group = NULL,
+                                       num_breaks = 10,
+                                       conf_level = 0.90,
+                                       include_ribbon = TRUE,
+                                       include_rug = TRUE,
+                                       include_points = TRUE,
+                                       event_level = c("auto", "first", "second"),
+                                       ...) {
+  cal_plot_breaks_impl(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = {{ group }},
+    num_breaks = num_breaks,
+    conf_level = conf_level,
+    include_ribbon = include_ribbon,
+    include_rug = include_rug,
+    include_points = include_points,
+    event_level = event_level,
+    is_tune_results = FALSE
+  )
+}
+#' @export
+#' @rdname cal_plot_breaks
+cal_plot_breaks.tune_results <- function(.data,
+                                         truth = NULL,
+                                         estimate = dplyr::starts_with(".pred"),
+                                         group = NULL,
+                                         num_breaks = 10,
+                                         conf_level = 0.90,
+                                         include_ribbon = TRUE,
+                                         include_rug = TRUE,
+                                         include_points = TRUE,
+                                         event_level = c("auto", "first", "second"),
+                                         ...) {
+  cal_plot_breaks_impl(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = {{ group }},
+    num_breaks = num_breaks,
+    conf_level = conf_level,
+    include_ribbon = include_ribbon,
+    include_rug = include_rug,
+    include_points = include_points,
+    event_level = event_level,
+    is_tune_results = TRUE
+  )
+}
+
+#--------------------------- >> Implementation ---------------------------------
+
 cal_plot_breaks_impl <- function(.data,
                                  truth = NULL,
                                  estimate = dplyr::starts_with(".pred"),
@@ -140,51 +198,8 @@ cal_plot_breaks_impl <- function(.data,
     is_tune_results = is_tune_results
   )
 }
-
-#' @export
-#' @rdname cal_plot_breaks
-cal_plot_breaks.data.frame <- cal_plot_breaks_impl
-
-#' @export
-#' @rdname cal_plot_breaks
-cal_plot_breaks.tune_results <- function(.data,
-                                         truth = NULL,
-                                         estimate = dplyr::starts_with(".pred"),
-                                         group = NULL,
-                                         num_breaks = 10,
-                                         conf_level = 0.90,
-                                         include_ribbon = TRUE,
-                                         include_rug = TRUE,
-                                         include_points = TRUE,
-                                         event_level = c("auto", "first", "second"),
-                                         ...) {
-  tune_args <- tune_results_args(
-    .data = .data,
-    truth = {{ truth }},
-    estimate = {{ estimate }},
-    group = {{ group }},
-    event_level = event_level,
-    ...
-  )
-
-  cal_plot_breaks_impl(
-    .data = tune_args$predictions,
-    truth = !!tune_args$truth,
-    estimate = !!tune_args$estimate,
-    group = !!tune_args$group,
-    num_breaks = num_breaks,
-    conf_level = conf_level,
-    include_ribbon = include_ribbon,
-    include_rug = include_rug,
-    include_points = include_points,
-    event_level = event_level,
-    is_tune_results = TRUE
-  )
-}
-
-
-#----------------------------- Table methods -----------------------------------
-
+#---------------------------------- Table --------------------------------------
+#------------------------------- >> Methods ------------------------------------
 #' Probability Calibration table
 #'
 #' @description Calibration table functions. They require a data.frame that
@@ -236,7 +251,58 @@ cal_plot_breaks.tune_results <- function(.data,
   UseMethod(".cal_binary_table_breaks")
 }
 
+#' @export
+#' @keywords internal
+.cal_binary_table_breaks.data.frame <- function(.data,
+                                                truth = NULL,
+                                                estimate = NULL,
+                                                group = NULL,
+                                                num_breaks = 10,
+                                                conf_level = 0.90,
+                                                event_level = c("auto", "first", "second"),
+                                                ...) {
+  .cal_binary_table_breaks_impl(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = {{ group }},
+    num_breaks = num_breaks,
+    conf_level = conf_level,
+    event_level = event_level
+  )
+}
 
+#' @export
+#' @keywords internal
+.cal_binary_table_breaks.tune_results <- function(.data,
+                                                  truth = NULL,
+                                                  estimate = NULL,
+                                                  group = NULL,
+                                                  num_breaks = 10,
+                                                  conf_level = 0.90,
+                                                  event_level = c("auto", "first", "second"),
+                                                  ...) {
+  tune_args <- tune_results_args(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = {{ group }},
+    event_level = event_level,
+    ...
+  )
+
+  .cal_binary_table_breaks_impl(
+    .data = tune_args$predictions,
+    truth = !!tune_args$truth,
+    estimate = !!tune_args$estimate,
+    group = !!tune_args$group,
+    num_breaks = num_breaks,
+    conf_level = conf_level,
+    event_level = event_level
+  )
+}
+
+#--------------------------- >> Implemantation ---------------------------------
 .cal_binary_table_breaks_impl <- function(.data,
                                           truth,
                                           estimate,
@@ -274,6 +340,10 @@ cal_plot_breaks.tune_results <- function(.data,
     res <- dplyr::group_by(res, !!truth)
   }
 
+  if (!quo_is_null(group)) {
+    res <- dplyr::group_by(res, !!group)
+  }
+
   res
 }
 
@@ -285,7 +355,6 @@ cal_plot_breaks.tune_results <- function(.data,
                                          event_level = c("auto", "first", "second"),
                                          levels,
                                          ...) {
-
   side <- seq(0, 1, by = 1 / num_breaks)
 
   cuts <- list(
@@ -300,39 +369,5 @@ cal_plot_breaks.tune_results <- function(.data,
     levels = levels,
     event_level = event_level,
     conf_level = conf_level
-  )
-}
-
-#' @export
-#' @keywords internal
-.cal_binary_table_breaks.data.frame <- .cal_binary_table_breaks_impl
-
-#' @export
-#' @keywords internal
-.cal_binary_table_breaks.tune_results <- function(.data,
-                                                  truth = NULL,
-                                                  estimate = NULL,
-                                                  group = NULL,
-                                                  num_breaks = 10,
-                                                  conf_level = 0.90,
-                                                  event_level = c("auto", "first", "second"),
-                                                  ...) {
-  tune_args <- tune_results_args(
-    .data = .data,
-    truth = {{ truth }},
-    estimate = {{ estimate }},
-    group = {{ group }},
-    event_level = event_level,
-    ...
-  )
-
-  .cal_binary_table_breaks_impl(
-    .data = tune_args$predictions,
-    truth = !!tune_args$truth,
-    estimate = !!tune_args$estimate,
-    group = !!tune_args$group,
-    num_breaks = num_breaks,
-    conf_level = conf_level,
-    event_level = event_level
   )
 }

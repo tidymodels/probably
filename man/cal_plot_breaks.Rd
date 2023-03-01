@@ -31,7 +31,6 @@ cal_plot_breaks(
   include_rug = TRUE,
   include_points = TRUE,
   event_level = c("auto", "first", "second"),
-  is_tune_results = FALSE,
   ...
 )
 
