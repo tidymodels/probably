@@ -98,8 +98,7 @@ cal_plot_windowed.tune_results <- function(.data,
                                            include_points = TRUE,
                                            event_level = c("auto", "first", "second"),
                                            ...) {
-
-  if(rlang::quo_is_null(enquo(group))) {
+  if (rlang::quo_is_null(enquo(group))) {
     group <- expr(.config)
   }
 
@@ -137,7 +136,7 @@ cal_plot_windowed_impl <- function(.data,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  prob_tbl <- .cal_binary_table_windowed(
+  prob_tbl <- .cal_table_windowed(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
@@ -148,7 +147,7 @@ cal_plot_windowed_impl <- function(.data,
     event_level = event_level
   )
 
-  binary_plot_impl(
+  cal_plot_impl(
     tbl = prob_tbl,
     x = predicted_midpoint,
     y = event_rate,
@@ -170,30 +169,30 @@ cal_plot_windowed_impl <- function(.data,
 #' @rdname cal_binary_tables
 #' @export
 #' @keywords internal
-.cal_binary_table_windowed <- function(.data,
-                                       truth = NULL,
-                                       estimate = NULL,
-                                       group = NULL,
-                                       window_size = 0.1,
-                                       step_size = window_size / 2,
-                                       conf_level = 0.90,
-                                       event_level = c("auto", "first", "second"),
-                                       ...) {
-  UseMethod(".cal_binary_table_windowed")
+.cal_table_windowed <- function(.data,
+                                truth = NULL,
+                                estimate = NULL,
+                                group = NULL,
+                                window_size = 0.1,
+                                step_size = window_size / 2,
+                                conf_level = 0.90,
+                                event_level = c("auto", "first", "second"),
+                                ...) {
+  UseMethod(".cal_table_windowed")
 }
 
 #' @export
 #' @keywords internal
-.cal_binary_table_windowed.data.frame <- function(.data,
-                                                  truth = NULL,
-                                                  estimate = NULL,
-                                                  group = NULL,
-                                                  window_size = 0.1,
-                                                  step_size = window_size / 2,
-                                                  conf_level = 0.90,
-                                                  event_level = c("auto", "first", "second"),
-                                                  ...) {
-  .cal_binary_table_windowed_impl(
+.cal_table_windowed.data.frame <- function(.data,
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           group = NULL,
+                                           window_size = 0.1,
+                                           step_size = window_size / 2,
+                                           conf_level = 0.90,
+                                           event_level = c("auto", "first", "second"),
+                                           ...) {
+  .cal_table_windowed_impl(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
@@ -207,15 +206,15 @@ cal_plot_windowed_impl <- function(.data,
 
 #' @export
 #' @keywords internal
-.cal_binary_table_windowed.tune_results <- function(.data,
-                                                    truth = NULL,
-                                                    estimate = NULL,
-                                                    group = NULL,
-                                                    window_size = 0.1,
-                                                    step_size = window_size / 2,
-                                                    conf_level = 0.90,
-                                                    event_level = c("auto", "first", "second"),
-                                                    ...) {
+.cal_table_windowed.tune_results <- function(.data,
+                                             truth = NULL,
+                                             estimate = NULL,
+                                             group = NULL,
+                                             window_size = 0.1,
+                                             step_size = window_size / 2,
+                                             conf_level = 0.90,
+                                             event_level = c("auto", "first", "second"),
+                                             ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -225,7 +224,7 @@ cal_plot_windowed_impl <- function(.data,
     ...
   )
 
-  .cal_binary_table_windowed_impl(
+  .cal_table_windowed_impl(
     .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
@@ -238,15 +237,15 @@ cal_plot_windowed_impl <- function(.data,
 }
 
 #--------------------------- >> Implementation ---------------------------------
-.cal_binary_table_windowed_impl <- function(.data,
-                                            truth = NULL,
-                                            estimate = NULL,
-                                            group = NULL,
-                                            window_size = 0.1,
-                                            step_size = window_size / 2,
-                                            conf_level = 0.90,
-                                            event_level = c("auto", "first", "second"),
-                                            ...) {
+.cal_table_windowed_impl <- function(.data,
+                                     truth = NULL,
+                                     estimate = NULL,
+                                     group = NULL,
+                                     window_size = 0.1,
+                                     step_size = window_size / 2,
+                                     conf_level = 0.90,
+                                     event_level = c("auto", "first", "second"),
+                                     ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -260,7 +259,7 @@ cal_plot_windowed_impl <- function(.data,
   res <- .data %>%
     dplyr::group_by(!!group, .add = TRUE) %>%
     dplyr::group_map(~ {
-      grp <- .cal_binary_table_windowed_grp(
+      grp <- .cal_table_windowed_grp(
         .data = .x,
         truth = !!truth,
         window_size = window_size,
@@ -281,14 +280,14 @@ cal_plot_windowed_impl <- function(.data,
   res
 }
 
-.cal_binary_table_windowed_grp <- function(.data,
-                                           truth,
-                                           window_size = 0.1,
-                                           step_size = window_size / 2,
-                                           conf_level = 0.90,
-                                           event_level = c("auto", "first", "second"),
-                                           levels = levels,
-                                           ...) {
+.cal_table_windowed_grp <- function(.data,
+                                    truth,
+                                    window_size = 0.1,
+                                    step_size = window_size / 2,
+                                    conf_level = 0.90,
+                                    event_level = c("auto", "first", "second"),
+                                    levels = levels,
+                                    ...) {
   steps <- seq(0, 1, by = step_size)
   cuts <- list()
   cuts$lower_cut <- steps - (window_size / 2)

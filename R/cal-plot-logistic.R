@@ -86,8 +86,7 @@ cal_plot_logistic.tune_results <- function(.data,
                                            include_ribbon = TRUE,
                                            event_level = c("auto", "first", "second"),
                                            ...) {
-
-  if(rlang::quo_is_null(enquo(group))) {
+  if (rlang::quo_is_null(enquo(group))) {
     group <- expr(.config)
   }
 
@@ -121,7 +120,7 @@ cal_plot_logistic_impl <- function(.data,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
-  prob_tbl <- .cal_binary_table_logistic(
+  prob_tbl <- .cal_table_logistic(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
@@ -131,7 +130,7 @@ cal_plot_logistic_impl <- function(.data,
     smooth = smooth
   )
 
-  binary_plot_impl(
+  cal_plot_impl(
     tbl = prob_tbl,
     x = estimate,
     y = prob,
@@ -153,28 +152,28 @@ cal_plot_logistic_impl <- function(.data,
 #' @rdname cal_binary_tables
 #' @export
 #' @keywords internal
-.cal_binary_table_logistic <- function(.data,
-                                       truth = NULL,
-                                       estimate = NULL,
-                                       group = NULL,
-                                       conf_level = 0.90,
-                                       smooth = TRUE,
-                                       event_level = c("auto", "first", "second"),
-                                       ...) {
-  UseMethod(".cal_binary_table_logistic")
+.cal_table_logistic <- function(.data,
+                                truth = NULL,
+                                estimate = NULL,
+                                group = NULL,
+                                conf_level = 0.90,
+                                smooth = TRUE,
+                                event_level = c("auto", "first", "second"),
+                                ...) {
+  UseMethod(".cal_table_logistic")
 }
 
 #' @export
 #' @keywords internal
-.cal_binary_table_logistic.data.frame <- function(.data,
-                                                  truth = NULL,
-                                                  estimate = NULL,
-                                                  group = NULL,
-                                                  conf_level = 0.90,
-                                                  smooth = TRUE,
-                                                  event_level = c("auto", "first", "second"),
-                                                  ...) {
-  .cal_binary_table_logistic_impl(
+.cal_table_logistic.data.frame <- function(.data,
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           group = NULL,
+                                           conf_level = 0.90,
+                                           smooth = TRUE,
+                                           event_level = c("auto", "first", "second"),
+                                           ...) {
+  .cal_table_logistic_impl(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
@@ -187,14 +186,14 @@ cal_plot_logistic_impl <- function(.data,
 
 #' @export
 #' @keywords internal
-.cal_binary_table_logistic.tune_results <- function(.data,
-                                                    truth = NULL,
-                                                    estimate = NULL,
-                                                    group = NULL,
-                                                    conf_level = 0.90,
-                                                    smooth = TRUE,
-                                                    event_level = c("auto", "first", "second"),
-                                                    ...) {
+.cal_table_logistic.tune_results <- function(.data,
+                                             truth = NULL,
+                                             estimate = NULL,
+                                             group = NULL,
+                                             conf_level = 0.90,
+                                             smooth = TRUE,
+                                             event_level = c("auto", "first", "second"),
+                                             ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -204,7 +203,7 @@ cal_plot_logistic_impl <- function(.data,
     ...
   )
 
-  .cal_binary_table_logistic_impl(
+  .cal_table_logistic_impl(
     .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
@@ -216,14 +215,14 @@ cal_plot_logistic_impl <- function(.data,
 }
 
 #--------------------------- >> Implementation ---------------------------------
-.cal_binary_table_logistic_impl <- function(.data,
-                                            truth = NULL,
-                                            estimate = NULL,
-                                            group = NULL,
-                                            conf_level = 0.90,
-                                            event_level = c("auto", "first", "second"),
-                                            smooth = TRUE,
-                                            ...) {
+.cal_table_logistic_impl <- function(.data,
+                                     truth = NULL,
+                                     estimate = NULL,
+                                     group = NULL,
+                                     conf_level = 0.90,
+                                     event_level = c("auto", "first", "second"),
+                                     smooth = TRUE,
+                                     ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)

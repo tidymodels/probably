@@ -293,11 +293,11 @@ tune_results_args <- function(.data,
 
 #--------------------------------- Plot ----------------------------------------
 
-binary_plot_impl <- function(tbl, x, y,
-                             .data, truth, estimate, group,
-                             x_label, y_label,
-                             include_ribbon, include_rug, include_points,
-                             is_tune_results = FALSE) {
+cal_plot_impl <- function(tbl, x, y,
+                          .data, truth, estimate, group,
+                          x_label, y_label,
+                          include_ribbon, include_rug, include_points,
+                          is_tune_results = FALSE) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)

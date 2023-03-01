@@ -29,7 +29,6 @@ cal_plot_logistic(
   include_rug = TRUE,
   include_ribbon = TRUE,
   event_level = c("auto", "first", "second"),
-  is_tune_results = FALSE,
   ...
 )
 

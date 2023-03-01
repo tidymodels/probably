@@ -1,42 +1,41 @@
 test_that("Binary breaks functions work", {
-
-  x10 <- .cal_binary_table_breaks(segment_logistic, Class, .pred_good)
+  x10 <- .cal_table_breaks(segment_logistic, Class, .pred_good)
 
   expect_equal(
     x10$predicted_midpoint,
     seq(0.05, 0.95, by = 0.10)
-    )
+  )
 
   expect_s3_class(
     cal_plot_breaks(segment_logistic, Class, .pred_good),
     "ggplot"
-    )
+  )
 
-  x11 <- .cal_binary_table_breaks(testthat_cal_binary())
+  x11 <- .cal_table_breaks(testthat_cal_binary())
 
   expect_equal(
     x11$predicted_midpoint,
     rep(seq(0.05, 0.95, by = 0.10), times = 8)
-    )
+  )
 
   expect_s3_class(
     cal_plot_breaks(testthat_cal_binary()),
     "ggplot"
-    )
+  )
 })
 
 test_that("Binary logistic functions work", {
-  x20 <- .cal_binary_table_logistic(segment_logistic, Class, .pred_good)
+  x20 <- .cal_table_logistic(segment_logistic, Class, .pred_good)
 
   model20 <- mgcv::gam(Class ~ s(.pred_good, k = 10),
-                       data = segment_logistic,
-                       family = binomial()
-                       )
+    data = segment_logistic,
+    family = binomial()
+  )
 
   preds20 <- predict(model20,
-                     data.frame(.pred_good = seq(0, 1, by = .01)),
-                     type = "response"
-                     )
+    data.frame(.pred_good = seq(0, 1, by = .01)),
+    type = "response"
+  )
 
   expect_equal(sd(x20$prob), sd(preds20), tolerance = 0.000001)
   expect_equal(mean(x20$prob), mean(1 - preds20), tolerance = 0.000001)
@@ -45,23 +44,23 @@ test_that("Binary logistic functions work", {
 
   expect_s3_class(x21, "ggplot")
 
-  x22 <- .cal_binary_table_logistic(testthat_cal_binary())
+  x22 <- .cal_table_logistic(testthat_cal_binary())
 
 
   x22_1 <- testthat_cal_binary() %>%
     tune::collect_predictions(summarize = TRUE) %>%
     dplyr::group_by(.config) %>%
-    dplyr::group_map(~{
+    dplyr::group_map(~ {
       model <- mgcv::gam(
         class ~ s(.pred_class_1, k = 10),
         data = .x,
         family = binomial()
-        )
-     preds <- predict(model,
-                      data.frame(.pred_class_1 = seq(0, 1, by = .01)),
-                      type = "response"
-                      )
-     1 - preds
+      )
+      preds <- predict(model,
+        data.frame(.pred_class_1 = seq(0, 1, by = .01)),
+        type = "response"
+      )
+      1 - preds
     }) %>%
     purrr::reduce(c)
 
@@ -72,19 +71,19 @@ test_that("Binary logistic functions work", {
 
   expect_s3_class(x23, "ggplot")
 
-  x24 <- .cal_binary_table_logistic(segment_logistic, Class, .pred_good, smooth = FALSE)
+  x24 <- .cal_table_logistic(segment_logistic, Class, .pred_good, smooth = FALSE)
 
   model24 <- stats::glm(Class ~ .pred_good, data = segment_logistic, family = binomial())
 
   preds24 <- predict(model24,
-                     data.frame(.pred_good = seq(0, 1, by = .01)),
-                     type = "response"
-                     )
+    data.frame(.pred_good = seq(0, 1, by = .01)),
+    type = "response"
+  )
 
   expect_equal(sd(x24$prob), sd(preds24), tolerance = 0.000001)
-  expect_equal(mean(x24$prob), mean(1- preds24), tolerance = 0.000001)
+  expect_equal(mean(x24$prob), mean(1 - preds24), tolerance = 0.000001)
 
-  x25 <- .cal_binary_table_logistic(
+  x25 <- .cal_table_logistic(
     segment_logistic,
     Class,
     .pred_poor,
@@ -98,14 +97,13 @@ test_that("Binary logistic functions work", {
 })
 
 test_that("Binary windowed functions work", {
-
-  x30 <- .cal_binary_table_windowed(
+  x30 <- .cal_table_windowed(
     segment_logistic,
     truth = Class,
     estimate = .pred_good,
     step_size = 0.11,
     window_size = 0.10
-    )
+  )
 
   x30_1 <- segment_logistic %>%
     dplyr::mutate(x = dplyr::case_when(
@@ -132,11 +130,11 @@ test_that("Binary windowed functions work", {
 
   expect_s3_class(x31, "ggplot")
 
-  x32 <- .cal_binary_table_windowed(
+  x32 <- .cal_table_windowed(
     testthat_cal_binary(),
     step_size = 0.11,
     window_size = 0.10
-    )
+  )
 
   x32_1 <- testthat_cal_binary() %>%
     tune::collect_predictions(summarize = TRUE) %>%
@@ -166,14 +164,14 @@ test_that("Binary windowed functions work", {
 })
 
 test_that("Event level handling works", {
-  x7 <- .cal_binary_table_breaks(segment_logistic, Class, .pred_good, event_level = "second")
+  x7 <- .cal_table_breaks(segment_logistic, Class, .pred_good, event_level = "second")
   expect_equal(
     which(x7$predicted_midpoint == min(x7$predicted_midpoint)),
     which(x7$event_rate == max(x7$event_rate))
   )
 
   expect_error(
-    .cal_binary_table_breaks(segment_logistic, Class, .pred_good, event_level = "invalid"),
+    .cal_table_breaks(segment_logistic, Class, .pred_good, event_level = "invalid"),
     "Invalid event_level entry. Valid entries are 'first', 'second', or 'auto'"
   )
 })
@@ -186,19 +184,19 @@ test_that("Groups are respected", {
     dplyr::mutate(source = ifelse(is.na(source), "nb", source)) %>%
     dplyr::group_by(source)
 
-  x40 <- .cal_binary_table_breaks(preds, Class, .pred_good)
+  x40 <- .cal_table_breaks(preds, Class, .pred_good)
 
   expect_equal(as.integer(table(x40$source)), c(10, 10))
 
   expect_equal(unique(x40$source), c("logistic", "nb"))
 
-  x41 <- .cal_binary_table_logistic(preds, Class, .pred_good)
+  x41 <- .cal_table_logistic(preds, Class, .pred_good)
 
   expect_equal(as.integer(table(x41$source)), c(101, 101))
 
   expect_equal(unique(x41$source), c("logistic", "nb"))
 
-  x42 <- .cal_binary_table_windowed(preds, Class, .pred_good)
+  x42 <- .cal_table_windowed(preds, Class, .pred_good)
 
   expect_equal(as.integer(table(x42$source)), c(21, 21))
 
@@ -208,7 +206,7 @@ test_that("Groups are respected", {
 test_that("Groupings that may not match work", {
   model <- glm(Class ~ .pred_good, segment_logistic, family = "binomial")
 
-  preds <- 1 -  predict(model, segment_logistic, type = "response")
+  preds <- 1 - predict(model, segment_logistic, type = "response")
 
   combined <- dplyr::bind_rows(
     dplyr::mutate(segment_logistic, source = "original"),
@@ -217,7 +215,7 @@ test_that("Groupings that may not match work", {
 
   x50 <- combined %>%
     dplyr::group_by(source) %>%
-    .cal_binary_table_breaks(Class, .pred_good)
+    .cal_table_breaks(Class, .pred_good)
 
   expect_equal(
     unique(x50$predicted_midpoint),
@@ -226,12 +224,12 @@ test_that("Groupings that may not match work", {
 
   x51 <- combined %>%
     dplyr::group_by(source) %>%
-    .cal_binary_table_windowed(
+    .cal_table_windowed(
       truth = Class,
       estimate = .pred_good,
       step_size = 0.11,
       window_size = 0.10
-      )
+    )
 
   x51_1 <- combined %>%
     dplyr::mutate(x = dplyr::case_when(
@@ -253,12 +251,11 @@ test_that("Groupings that may not match work", {
     x51$total,
     x51_1$n
   )
-
 })
 
 test_that("Numeric groups are supported", {
   grp_df <- segment_logistic
-  grp_df$num_group <- rep(c(1,2), times = 505)
+  grp_df$num_group <- rep(c(1, 2), times = 505)
 
   p <- grp_df %>%
     dplyr::group_by(num_group) %>%
