@@ -242,17 +242,6 @@ process_level <- function(x) {
   ret
 }
 
-assert_truth_two_levels <- function(.data, truth) {
-  truth <- enquo(truth)
-  if (!quo_is_null(truth)) {
-    truth_name <- as_name(truth)
-    truth_levels <- levels(.data[truth_name][[1]])
-    if (length(truth_levels) != 2) {
-      rlang::abort(paste0("'", truth_name, "' should be a factor with 2 levels"))
-    }
-  }
-}
-
 tune_results_args <- function(.data,
                               truth,
                               estimate,

@@ -139,6 +139,11 @@ cal_plot_breaks.tune_results <- function(.data,
                                          include_points = TRUE,
                                          event_level = c("auto", "first", "second"),
                                          ...) {
+
+  if(rlang::quo_is_null(enquo(group))) {
+    group <- expr(.config)
+  }
+
   cal_plot_breaks_impl(
     .data = .data,
     truth = {{ truth }},
@@ -337,11 +342,7 @@ cal_plot_breaks_impl <- function(.data,
     dplyr::bind_rows()
 
   if (length(levels) > 2) {
-    res <- dplyr::group_by(res, !!truth)
-  }
-
-  if (!quo_is_null(group)) {
-    res <- dplyr::group_by(res, !!group)
+    res <- dplyr::group_by(res, !!truth, .add = TRUE)
   }
 
   res
