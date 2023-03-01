@@ -1,4 +1,4 @@
-#-------------------------- Binary Objects -------------------------------------
+#-------------------------- Print methods -------------------------------------
 
 #' @export
 print.cal_binary <- function(x, ...) {
@@ -10,44 +10,15 @@ print.cal_estimate_isotonic <- function(x, ...) {
   print_cls_cal(x, upv = TRUE, ...)
 }
 
-# ------------------------------- Multi ----------------------------------------
-
 #' @export
 print.cal_multi <- function(x, ...) {
   print_cls_cal(x, ...)
 }
 
-
-# ------------------------------- Regression -----------------------------------
-
 #' @export
 print.cal_regression <- function(x, ...) {
   print_reg_cal(x, ...)
 }
-
-
-as_regression_cal_object <- function(estimate,
-                                     truth,
-                                     levels,
-                                     method,
-                                     rows,
-                                     additional_class = NULL,
-                                     source_class = NULL) {
-  truth <- enquo(truth)
-
-  as_cal_object(
-    estimate = estimate,
-    truth = !!truth,
-    levels = levels,
-    method = method,
-    rows = rows,
-    additional_classes = additional_class,
-    source_class = source_class,
-    type = "regression"
-  )
-}
-
-# ------------------------------- Utils ----------------------------------------
 
 print_cls_cal <- function(x, upv = FALSE, ...) {
   print_type <-
@@ -121,6 +92,50 @@ print_reg_cal <- function(x, upv = FALSE, ...) {
   cli::cli_end()
 }
 
+# ------------------------ Estimate name methods -------------------------------
+
+cal_class_name <- function(x) {
+  UseMethod("cal_class_name")
+}
+
+cal_class_name.data.frame <- function(x) {
+  "Data Frame"
+}
+
+cal_class_name.tune_results <- function(x) {
+  "Tune Results"
+}
+
+cal_class_name.tune_results <- function(x) {
+  "Tune Results"
+}
+
+cal_class_name.rset <- function(x) {
+  "Resampled data set"
+}
+
+# ------------------------------- Utils ----------------------------------------
+
+as_regression_cal_object <- function(estimate,
+                                     truth,
+                                     levels,
+                                     method,
+                                     rows,
+                                     additional_class = NULL,
+                                     source_class = NULL) {
+  truth <- enquo(truth)
+
+  as_cal_object(
+    estimate = estimate,
+    truth = !!truth,
+    levels = levels,
+    method = method,
+    rows = rows,
+    additional_classes = additional_class,
+    source_class = source_class,
+    type = "regression"
+  )
+}
 
 as_cal_object <- function(estimate,
                           truth,
@@ -167,55 +182,6 @@ stop_multiclass <- function() {
   cli::cli_abort("Multiclass not supported...yet")
 }
 
-# Centralizes the figuring out of which probability-variable maps to which
-# factor level of the "truth" variable. This is where the logic of finding
-# and mapping tidymodels explicit column names happen. If there are no .pred_
-# named variables, it will map the variables based on the position.
-# It returns a named list, wit the variable names as syms, and the assigned
-# levels as the name.
-truth_estimate_map <- function(.data, truth, estimate) {
-  truth_str <- tidyselect_cols(.data, {{ truth }})
-
-  if(class(truth_str) == "integer") {
-    truth_str <- names(truth_str)
-  }
-
-  estimate_str <- .data %>%
-    tidyselect_cols({{ estimate }}) %>%
-    names()
-
-  if (length(estimate_str) == 0) {
-    cli::cli_abort("{.arg estimate} must select at least one column.")
-  }
-
-  truth_levels <- levels(.data[[truth_str]])
-
-  if (length(truth_levels) > 0) {
-    if (all(substr(estimate_str, 1, 6) == ".pred_")) {
-      est_map <- purrr::map(
-        truth_levels,
-        ~ {
-          match <- paste0(".pred_", .x) == estimate_str
-          if (any(match)) {
-            sym(estimate_str[match])
-          }
-        }
-      )
-    } else {
-      est_map <- purrr::map(
-        seq_along(truth_levels),
-        ~ sym(estimate_str[[.x]])
-      )
-    }
-
-    res <- set_names(est_map, truth_levels)
-  } else {
-    res <- list(sym(estimate_str))
-    names(res) <- "predictions"
-  }
-  res
-}
-
 # Wraps tidyselect call to avoid code duplication in the function above
 tidyselect_cols <- function(.data, x) {
   tidyselect::eval_select(
@@ -224,6 +190,7 @@ tidyselect_cols <- function(.data, x) {
     allow_rename = FALSE
   )
 }
+
 
 # dplyr::group_map() does not pass the parent function's `...`, it overrides it
 # and there seems to be no way to change it. This function will split the the
@@ -258,24 +225,4 @@ stop_null_parameters <- function(x) {
   if (!is.null(x)) {
     rlang::abort("The `parameters` argument is only valid for `tune_results`.")
   }
-}
-
-cal_class_name <- function(x) {
-  UseMethod("cal_class_name")
-}
-
-cal_class_name.data.frame <- function(x) {
-  "Data Frame"
-}
-
-cal_class_name.tune_results <- function(x) {
-  "Tune Results"
-}
-
-cal_class_name.tune_results <- function(x) {
-  "Tune Results"
-}
-
-cal_class_name.rset <- function(x) {
-  "Resampled data set"
 }
