@@ -133,6 +133,19 @@
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
+  if (lev == 2) {
+    lev_yes <- 0
+    lev_no <- 1
+  } else {
+    lev_yes <- 1
+    lev_no <- 0
+  }
+
+  .data <- .data %>%
+    dplyr::mutate(
+      .is_val = ifelse(as.integer(!!truth) == level, lev_yes, lev_no)
+    )
+
   cuts %>%
     purrr::transpose() %>%
     purrr::map_df(
@@ -161,26 +174,10 @@ process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
-  .bin <- enquo(.bin)
-
-  if (lev == 2) {
-    lev_yes <- 0
-    lev_no <- 1
-  } else {
-    lev_yes <- 1
-    lev_no <- 0
-  }
-
-  tbl <- .data %>%
-    dplyr::mutate(
-      .bin = !!.bin,
-      .is_val = ifelse(as.integer(!!truth) == level, lev_yes, lev_no)
-    )
 
   if (!quo_is_null(group)) tbl <- dplyr::group_by(tbl, !!group, .add = TRUE)
-  if (!quo_is_null(.bin)) tbl <- dplyr::group_by(tbl, !!.bin, .add = TRUE)
 
-  tbl <- tbl %>%
+  tbl <- .data %>%
     dplyr::summarise(
       event_rate = sum(.is_val, na.rm = TRUE) / dplyr::n(),
       events = sum(.is_val, na.rm = TRUE),
@@ -188,14 +185,16 @@ process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
     ) %>%
     dplyr::filter(total > 0)
 
-  if (!quo_is_null(.bin)) tbl <- dplyr::select(tbl, -.bin)
-
-  add_conf_intervals(
+  res <- add_conf_intervals(
     .data = tbl,
     events = events,
     total = total,
     conf_level = conf_level
   )
+
+  print(res)
+
+  res
 }
 
 add_conf_intervals <- function(.data,
