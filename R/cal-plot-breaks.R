@@ -302,7 +302,7 @@ cal_plot_breaks_impl <- function(.data,
   )
 }
 
-#--------------------------- >> Implemantation ---------------------------------
+#--------------------------- >> Implementation ---------------------------------
 .cal_binary_table_breaks_impl <- function(.data,
                                           truth,
                                           estimate,

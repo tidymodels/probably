@@ -1,5 +1,5 @@
-#---------------------------- Plot methods -------------------------------------
-
+#-------------------------------- Plot -----------------------------------------
+#------------------------------ >> Methods -------------------------------------
 #' Probability calibration plots via moving windows
 #'
 #' @description
@@ -54,6 +54,69 @@ cal_plot_windowed <- function(.data,
   UseMethod("cal_plot_windowed")
 }
 
+#' @export
+#' @rdname cal_plot_windowed
+cal_plot_windowed.data.frame <- function(.data,
+                                           truth = NULL,
+                                           estimate = dplyr::starts_with(".pred"),
+                                           group = NULL,
+                                           window_size = 0.1,
+                                           step_size = window_size / 2,
+                                           conf_level = 0.90,
+                                           include_ribbon = TRUE,
+                                           include_rug = TRUE,
+                                           include_points = TRUE,
+                                           event_level = c("auto", "first", "second"),
+                                           ...) {
+
+  cal_plot_windowed_impl(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = {{ group }},
+    window_size = window_size,
+    step_size = step_size,
+    conf_level = conf_level,
+    include_ribbon = include_ribbon,
+    include_rug = include_rug,
+    include_points = include_points,
+    event_level = event_level,
+    is_tune_results = FALSE
+  )
+}
+
+#' @export
+#' @rdname cal_plot_windowed
+cal_plot_windowed.tune_results <- function(.data,
+                                           truth = NULL,
+                                           estimate = dplyr::starts_with(".pred"),
+                                           group = NULL,
+                                           window_size = 0.1,
+                                           step_size = window_size / 2,
+                                           conf_level = 0.90,
+                                           include_ribbon = TRUE,
+                                           include_rug = TRUE,
+                                           include_points = TRUE,
+                                           event_level = c("auto", "first", "second"),
+                                           ...) {
+
+  cal_plot_windowed_impl(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = {{ group }},
+    window_size = window_size,
+    step_size = step_size,
+    conf_level = conf_level,
+    include_ribbon = include_ribbon,
+    include_rug = include_rug,
+    include_points = include_points,
+    event_level = event_level,
+    is_tune_results = TRUE
+  )
+}
+
+#--------------------------- >> Implementation ---------------------------------
 cal_plot_windowed_impl <- function(.data,
                                    truth = NULL,
                                    estimate = dplyr::starts_with(".pred"),
@@ -99,51 +162,8 @@ cal_plot_windowed_impl <- function(.data,
   )
 }
 
-#' @export
-#' @rdname cal_plot_windowed
-cal_plot_windowed.data.frame <- cal_plot_windowed_impl
-
-#' @export
-#' @rdname cal_plot_windowed
-cal_plot_windowed.tune_results <- function(.data,
-                                           truth = NULL,
-                                           estimate = dplyr::starts_with(".pred"),
-                                           group = NULL,
-                                           window_size = 0.1,
-                                           step_size = window_size / 2,
-                                           conf_level = 0.90,
-                                           include_ribbon = TRUE,
-                                           include_rug = TRUE,
-                                           include_points = TRUE,
-                                           event_level = c("auto", "first", "second"),
-                                           ...) {
-  tune_args <- tune_results_args(
-    .data = .data,
-    truth = {{ truth }},
-    estimate = {{ estimate }},
-    group = {{ group }},
-    event_level = event_level,
-    ...
-  )
-
-  cal_plot_windowed_impl(
-    .data = tune_args$predictions,
-    truth = !!tune_args$truth,
-    estimate = !!tune_args$estimate,
-    group = !!tune_args$group,
-    window_size = window_size,
-    step_size = step_size,
-    conf_level = conf_level,
-    include_ribbon = include_ribbon,
-    include_rug = include_rug,
-    include_points = include_points,
-    event_level = event_level,
-    is_tune_results = TRUE
-  )
-}
-
-#--------------------------- Table methods -------------------------------------
-
+#---------------------------------- Table --------------------------------------
+#------------------------------- >> Methods ------------------------------------
 #' @rdname cal_binary_tables
 #' @export
 #' @keywords internal
@@ -159,6 +179,63 @@ cal_plot_windowed.tune_results <- function(.data,
   UseMethod(".cal_binary_table_windowed")
 }
 
+#' @export
+#' @keywords internal
+.cal_binary_table_windowed.data.frame <- function(.data,
+                                                    truth = NULL,
+                                                    estimate = NULL,
+                                                    group = NULL,
+                                                    window_size = 0.1,
+                                                    step_size = window_size / 2,
+                                                    conf_level = 0.90,
+                                                    event_level = c("auto", "first", "second"),
+                                                    ...) {
+
+  .cal_binary_table_windowed_impl(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = {{ group }},
+    window_size = window_size,
+    step_size = step_size,
+    conf_level = conf_level,
+    event_level = event_level
+  )
+}
+
+#' @export
+#' @keywords internal
+.cal_binary_table_windowed.tune_results <- function(.data,
+                                                    truth = NULL,
+                                                    estimate = NULL,
+                                                    group = NULL,
+                                                    window_size = 0.1,
+                                                    step_size = window_size / 2,
+                                                    conf_level = 0.90,
+                                                    event_level = c("auto", "first", "second"),
+                                                    ...) {
+  tune_args <- tune_results_args(
+    .data = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    group = {{ group }},
+    event_level = event_level,
+    ...
+  )
+
+  .cal_binary_table_windowed_impl(
+    .data = tune_args$predictions,
+    truth = !!tune_args$truth,
+    estimate = !!tune_args$estimate,
+    group = !!tune_args$group,
+    window_size = window_size,
+    step_size = step_size,
+    conf_level = conf_level,
+    event_level = event_level
+  )
+}
+
+#--------------------------- >> Implementation ---------------------------------
 .cal_binary_table_windowed_impl <- function(.data,
                                             truth = NULL,
                                             estimate = NULL,
@@ -199,6 +276,10 @@ cal_plot_windowed.tune_results <- function(.data,
     res <- dplyr::group_by(res, !!truth)
   }
 
+  if (!quo_is_null(group)) {
+    res <- dplyr::group_by(res, !!group)
+  }
+
   res
 }
 
@@ -225,41 +306,5 @@ cal_plot_windowed.tune_results <- function(.data,
     levels = levels,
     event_level = event_level,
     conf_level = conf_level
-  )
-}
-
-#' @export
-#' @keywords internal
-.cal_binary_table_windowed.data.frame <- .cal_binary_table_windowed_impl
-
-#' @export
-#' @keywords internal
-.cal_binary_table_windowed.tune_results <- function(.data,
-                                                    truth = NULL,
-                                                    estimate = NULL,
-                                                    group = NULL,
-                                                    window_size = 0.1,
-                                                    step_size = window_size / 2,
-                                                    conf_level = 0.90,
-                                                    event_level = c("auto", "first", "second"),
-                                                    ...) {
-  tune_args <- tune_results_args(
-    .data = .data,
-    truth = {{ truth }},
-    estimate = {{ estimate }},
-    group = {{ group }},
-    event_level = event_level,
-    ...
-  )
-
-  .cal_binary_table_windowed_impl(
-    .data = tune_args$predictions,
-    truth = !!tune_args$truth,
-    estimate = !!tune_args$estimate,
-    group = !!tune_args$group,
-    window_size = window_size,
-    step_size = step_size,
-    conf_level = conf_level,
-    event_level = event_level
   )
 }
