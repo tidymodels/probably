@@ -150,21 +150,24 @@
     purrr::transpose() %>%
     purrr::map_df(
       ~ {
-        .data %>%
+        ret <- .data %>%
           dplyr::filter(
             !!estimate >= !!.x$lower_cut & !!estimate <= !!.x$upper_cut
           ) %>%
           process_midpoint(
             truth = !!truth,
             estimate = !!estimate,
-            level = level,
-            lev = lev,
+            level = lev,
             conf_level = conf_level
-          ) %>%
-          dplyr::mutate(
-            predicted_midpoint = .x$lower_cut + ((.x$upper_cut - .x$lower_cut) / 2)
-          ) %>%
-          dplyr::select(predicted_midpoint, dplyr::everything())
+          )
+        if(!is.null(ret)) {
+          ret <- ret %>%
+            dplyr::mutate(
+              predicted_midpoint = .x$lower_cut + ((.x$upper_cut - .x$lower_cut) / 2)
+            ) %>%
+            dplyr::select(predicted_midpoint, dplyr::everything())
+        }
+        ret
       }
     )
 }
@@ -173,51 +176,27 @@ process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
                              level = 1, lev = 1, conf_level = 0.95) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
-  group <- enquo(group)
 
-  if (!quo_is_null(group)) tbl <- dplyr::group_by(tbl, !!group, .add = TRUE)
+  events <- sum(.data$.is_val, na.rm = TRUE)
+  total <- nrow(.data)
 
-  tbl <- .data %>%
-    dplyr::summarise(
-      event_rate = sum(.is_val, na.rm = TRUE) / dplyr::n(),
-      events = sum(.is_val, na.rm = TRUE),
-      total = dplyr::n()
-    ) %>%
-    dplyr::filter(total > 0)
+  tbl <- NULL
 
-  res <- add_conf_intervals(
-    .data = tbl,
-    events = events,
-    total = total,
-    conf_level = conf_level
-  )
-
-  print(res)
-
-  res
-}
-
-add_conf_intervals <- function(.data,
-                               events = events,
-                               total = total,
-                               conf_level = 0.90) {
-  events <- enquo(events)
-  total <- enquo(total)
-  .data %>%
-    purrr::transpose() %>%
-    purrr::map_df(
-      ~ {
-        events <- .x[[as_name(events)]]
-        total <- .x[[as_name(total)]]
-        suppressWarnings(
-          pt <- prop.test(events, total, conf.level = conf_level)
-        )
-        ret <- dplyr::as_tibble(.x)
-        ret$lower <- pt$conf.int[[1]]
-        ret$upper <- pt$conf.int[[2]]
-        ret
-      }
+  if(total > 0) {
+    suppressWarnings(
+      pt <- prop.test(events, total, conf.level = conf_level)
     )
+
+    tbl <- tibble::tibble(
+      event_rate = events / total,
+      events = events,
+      total = total,
+      lower = pt$conf.int[[1]],
+      upper = pt$conf.int[[2]]
+    )
+  }
+
+  tbl
 }
 
 #---------------------------------- Utils --------------------------------------
