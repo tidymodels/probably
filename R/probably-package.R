@@ -9,7 +9,7 @@
 #' @importFrom purrr map
 #' @importFrom utils head
 #' @importFrom yardstick sens spec j_index
-#' @importFrom stats binomial median predict qnorm as.stepfun glm isoreg
+#' @importFrom stats binomial median predict qnorm as.stepfun glm isoreg prop.test
 ## usethis namespace: end
 NULL
 

@@ -70,6 +70,11 @@
     res <- res[[1]]
   }
 
+  if(method == "breaks") {
+   res <- res %>%
+      dplyr::select(predicted_midpoint, dplyr::everything())
+  }
+
   res
 }
 
@@ -116,7 +121,7 @@
   new_data <- data.frame(estimate = new_seq)
   preds <- predict(model, new_data, se.fit = TRUE)
 
-  res <- dplyr::tibble(
+  res <- data.frame(
     prob = binomial()$linkinv(preds$fit),
     lower = binomial()$linkinv(preds$fit - qnorm(conf_level) * preds$se.fit),
     upper = binomial()$linkinv(preds$fit + qnorm(conf_level) * preds$se.fit)
@@ -143,39 +148,27 @@
 
   .data <- .data %>%
     dplyr::mutate(
-      .is_val = ifelse(as.integer(!!truth) == level, lev_yes, lev_no)
+      .is_val = ifelse(as.integer(!!truth) == level, lev_yes, lev_no),
+      .estimate = !! estimate
     )
 
   cuts %>%
     purrr::transpose() %>%
     purrr::map_df(
       ~ {
-        ret <- .data %>%
-          dplyr::filter(
-            !!estimate >= !!.x$lower_cut & !!estimate <= !!.x$upper_cut
-          ) %>%
-          process_midpoint(
-            truth = !!truth,
-            estimate = !!estimate,
-            level = lev,
-            conf_level = conf_level
-          )
+        rf <- .data$.estimate >= .x$lower_cut & .data$.estimate <= .x$upper_cut
+        ret <- .data[rf, ]
+        ret <- process_midpoint(ret, conf_level = conf_level)
         if(!is.null(ret)) {
-          ret <- ret %>%
-            dplyr::mutate(
-              predicted_midpoint = .x$lower_cut + ((.x$upper_cut - .x$lower_cut) / 2)
-            ) %>%
-            dplyr::select(predicted_midpoint, dplyr::everything())
+          pm <- .x$lower_cut + ((.x$upper_cut - .x$lower_cut) / 2)
+          ret$predicted_midpoint <- pm
         }
         ret
       }
     )
 }
 
-process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
-                             level = 1, lev = 1, conf_level = 0.95) {
-  truth <- enquo(truth)
-  estimate <- enquo(estimate)
+process_midpoint <- function(.data, conf_level = 0.95) {
 
   events <- sum(.data$.is_val, na.rm = TRUE)
   total <- nrow(.data)
@@ -187,7 +180,7 @@ process_midpoint <- function(.data, truth, estimate, group = NULL, .bin = NULL,
       pt <- prop.test(events, total, conf.level = conf_level)
     )
 
-    tbl <- tibble::tibble(
+    tbl <- data.frame(
       event_rate = events / total,
       events = events,
       total = total,

@@ -7,7 +7,7 @@
 truth_estimate_map <- function(.data, truth, estimate) {
   truth_str <- tidyselect_cols(.data, {{ truth }})
 
-  if(class(truth_str) == "integer") {
+  if(is.integer(truth_str)) {
     truth_str <- names(truth_str)
   }
 

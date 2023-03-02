@@ -1,5 +1,5 @@
 test_that("Binary breaks functions work", {
-  x10 <- .cal_table_breaks(segment_logistic, Class, .pred_good)
+  x10 <- .cal_table_breaks(segment_logistic, Class, .pred_good, event_level = "first")
 
   expect_equal(
     x10$predicted_midpoint,
@@ -21,6 +21,37 @@ test_that("Binary breaks functions work", {
   expect_s3_class(
     cal_plot_breaks(testthat_cal_binary()),
     "ggplot"
+  )
+})
+
+test_that("Multi-class breaks functions work", {
+
+  x10 <- .cal_table_breaks(species_probs, Species, dplyr::starts_with(".pred"))
+
+  expect_equal(
+    x10$predicted_midpoint,
+    rep(seq(0.05, 0.95, by = 0.10), times = 3)
+  )
+
+  expect_s3_class(
+    cal_plot_breaks(species_probs, Species),
+    "ggplot"
+  )
+
+  x11 <- .cal_table_breaks(testthat_cal_multiclass())
+
+  expect_equal(
+    sort(unique(x11$predicted_midpoint)),
+    seq(0.05, 0.95, by = 0.10)
+  )
+
+  expect_s3_class(
+    cal_plot_breaks(testthat_cal_multiclass()),
+    "ggplot"
+  )
+
+  expect_error(
+    cal_plot_breaks(species_probs, Species, event_level = "second")
   )
 })
 
@@ -262,4 +293,14 @@ test_that("Numeric groups are supported", {
     cal_plot_breaks(Class, .pred_good)
 
   expect_s3_class(p, "ggplot")
+})
+
+test_that("Some general exceptions", {
+  expect_error(
+    .cal_table_breaks(tune::ames_grid_search),
+    "The `tune_results` object does not contain columns with predictions"
+  )
+  expect_warning(
+    cal_plot_breaks(segment_logistic, Class),
+  )
 })
