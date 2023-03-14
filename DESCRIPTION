@@ -1,6 +1,6 @@
 Package: probably
 Title: Tools for Post-Processing Class Probability Estimates
-Version: 0.1.0.9007
+Version: 0.1.0.9008
 Authors@R: c(
     person("Max", "Kuhn", , "max@posit.co", role = c("aut", "cre")),
     person("Davis", "Vaughan", , "davis@posit.co", role = "aut"),
@@ -53,7 +53,8 @@ Suggests:
 VignetteBuilder: 
     knitr
 Remotes: 
-    tidymodels/yardstick@5f1b9ce
+    tidymodels/yardstick@5f1b9ce,
+    tidymodels/tune#624
 ByteCompile: true
 Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
