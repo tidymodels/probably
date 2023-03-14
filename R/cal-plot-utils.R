@@ -207,7 +207,8 @@ process_level <- function(x) {
     ret <- 2
   }
   if (is.null(ret)) {
-    msg <- "Invalid event_level entry. Valid entries are 'first', 'second', or 'auto'"
+    msg <- paste0("Invalid event_level entry: ", x,
+                  ". Valid entries are 'first', 'second', or 'auto'")
     rlang::abort(msg)
   }
   ret
@@ -367,3 +368,13 @@ cal_plot_impl <- function(tbl, x, y,
 
   res
 }
+
+quo_to_sym <- function(x, .data) {
+  res <- tidyselect::eval_select(x, .data)
+  if (length(res) == 0) {
+    return(NULL)
+  }
+  res <- names(res)
+  rlang::sym(res)
+}
+
