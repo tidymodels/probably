@@ -528,7 +528,7 @@ cal_validate <- function(rset,
 
   direction <- metrics %>%
     dplyr::as_tibble() %>%
-    dplyr::select("direction") %>%
+    dplyr::select(direction) %>%
     head(1) %>%
     dplyr::pull()
 
