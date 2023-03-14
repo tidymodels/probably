@@ -304,3 +304,31 @@ test_that("Some general exceptions", {
     cal_plot_breaks(segment_logistic, Class),
   )
 })
+
+# ------------------------------------------------------------------------------
+
+test_that("regression functions work", {
+  obj <- testthat_cal_reg()
+
+  expect_s3_class(
+    cal_plot_regression(boosting_predictions_oob, outcome, .pred),
+    "ggplot"
+  )
+
+  expect_snapshot_plot(
+    "df-scat",
+    print(cal_plot_regression(boosting_predictions_oob, outcome, .pred))
+  )
+  expect_snapshot_plot(
+    "df-scat-group",
+    print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, group = id))
+  )
+  expect_snapshot_plot(
+    "rs-scat-group",
+    print(cal_plot_regression(obj))
+  )
+  expect_snapshot_plot(
+    "rs-scat-group-opts",
+    print(cal_plot_regression(obj), alpha = 1/5, smooth = FALSE)
+  )
+})
