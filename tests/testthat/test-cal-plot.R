@@ -201,9 +201,8 @@ test_that("Event level handling works", {
     which(x7$event_rate == max(x7$event_rate))
   )
 
-  expect_error(
-    .cal_table_breaks(segment_logistic, Class, .pred_good, event_level = "invalid"),
-    "Invalid event_level entry. Valid entries are 'first', 'second', or 'auto'"
+  expect_snapshot_error(
+    .cal_table_breaks(segment_logistic, Class, .pred_good, event_level = "invalid")
   )
 })
 
