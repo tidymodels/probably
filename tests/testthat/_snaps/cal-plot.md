@@ -1,12 +1,4 @@
-# Binary breaks functions work
+# Event level handling works
 
-    'Species' should be a factor with 2 levels
-
-# Binary logistic functions work
-
-    'Species' should be a factor with 2 levels
-
-# Binary windowed functions work
-
-    'Species' should be a factor with 2 levels
+    Invalid event_level entry: invalid. Valid entries are 'first', 'second', or 'auto'
 

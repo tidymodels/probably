@@ -4,12 +4,12 @@
 \alias{cal_estimate_isotonic}
 \alias{cal_estimate_isotonic.data.frame}
 \alias{cal_estimate_isotonic.tune_results}
-\title{Uses an Isotonic regression model to calibrate probabilities}
+\title{Uses an Isotonic regression model to calibrate model predictions.}
 \usage{
 cal_estimate_isotonic(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   parameters = NULL,
   ...
 )
@@ -17,7 +17,7 @@ cal_estimate_isotonic(
 \method{cal_estimate_isotonic}{data.frame}(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   parameters = NULL,
   ...
 )
@@ -25,7 +25,7 @@ cal_estimate_isotonic(
 \method{cal_estimate_isotonic}{tune_results}(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   parameters = NULL,
   ...
 )
@@ -51,20 +51,30 @@ only to \code{tune_results} objects.}
 calculate the new probabilities.}
 }
 \description{
-Uses an Isotonic regression model to calibrate probabilities
+Uses an Isotonic regression model to calibrate model predictions.
 }
 \details{
 This function uses \code{stats::isoreg()} to create obtain the calibration
-values.
+values for binary classification or numeric regression.
 }
 \examples{
+# ------------------------------------------------------------------------------
+# Binary Classification
+
 # It will automatically identify the probability columns
 # if passed a model fitted with tidymodels
 cal_estimate_isotonic(segment_logistic, Class)
+
 # Specify the variable names in a vector of unquoted names
 cal_estimate_isotonic(segment_logistic, Class, c(.pred_poor, .pred_good))
+
 # dplyr selector functions are also supported
 cal_estimate_isotonic(segment_logistic, Class, dplyr::starts_with(".pred_"))
+
+# ------------------------------------------------------------------------------
+# Regression (numeric outcomes)
+
+cal_estimate_isotonic(boosting_predictions_oob, outcome, .pred)
 }
 \references{
 Zadrozny, Bianca and Elkan, Charles. (2002). Transforming Classifier Scores

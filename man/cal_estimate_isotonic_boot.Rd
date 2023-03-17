@@ -9,7 +9,7 @@
 cal_estimate_isotonic_boot(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   times = 10,
   parameters = NULL,
   ...
@@ -18,7 +18,7 @@ cal_estimate_isotonic_boot(
 \method{cal_estimate_isotonic_boot}{data.frame}(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   times = 10,
   parameters = NULL,
   ...
@@ -27,7 +27,7 @@ cal_estimate_isotonic_boot(
 \method{cal_estimate_isotonic_boot}{tune_results}(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   times = 10,
   parameters = NULL,
   ...
@@ -70,5 +70,5 @@ cal_estimate_isotonic_boot(segment_logistic, Class)
 # Specify the variable names in a vector of unquoted names
 cal_estimate_isotonic_boot(segment_logistic, Class, c(.pred_poor, .pred_good))
 # dplyr selector functions are also supported
-cal_estimate_isotonic_boot(segment_logistic, Class, dplyr::starts_with(".pred_"))
+cal_estimate_isotonic_boot(segment_logistic, Class, dplyr::starts_with(".pred"))
 }

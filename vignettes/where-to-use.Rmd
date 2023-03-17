@@ -185,6 +185,7 @@ threshold_data %>%
 With `ggplot2`, we can easily visualize this varying performance to find our optimal threshold for maximizing `j_index`.
 
 ```{r}
+#| fig-alt: "Line chart. `good` threshold along the x-axis, metric estimate along the y-axis. 3 lines are shown for the following three metrics; j_index, sens, and spec. A vertical line is spaced at x = 0.945. The range on the x-axis is 0.5 to 1, and 0 to 1 on the y-axis. Reading from the left, sens starts at y = 1, starts decreasing around x = 0.8, ending at 0 for x = 1. spec follows the same path but starting at 0 and ending at 1. j_index starts at 0, increases at around 0.8, to a high around 0.945. Sens and spec cross each other at x = 0.945."
 library(ggplot2)
 
 threshold_data <- threshold_data %>%

@@ -37,7 +37,8 @@ install.packages("probably")
 You can install the development version of probably from GitHub with:
 
 ``` r
-devtools::install_github("topepo/probably")
+# install.packages("pak")
+pak::pak("tidymodels/probably")
 ```
 
 ## Examples

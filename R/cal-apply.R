@@ -109,6 +109,60 @@ cal_apply.cal_object <- function(.data,
 
 #---------------------------------- Adjust -------------------------------------
 
+cal_adjust <- function(object, .data, pred_class) {
+  UseMethod("cal_adjust")
+}
+
+cal_adjust.cal_estimate_isotonic <- function(object, .data, pred_class) {
+  apply_interval_impl(
+    object = object,
+    .data = .data,
+    multi = FALSE
+  )
+}
+
+cal_adjust.cal_estimate_isotonic_boot <- function(object, .data, pred_class) {
+  apply_interval_impl(
+    object = object,
+    .data = .data,
+    multi = TRUE
+  )
+}
+
+cal_adjust.cal_estimate_beta <- function(object,
+                                         .data,
+                                         pred_class = NULL,
+                                         ...) {
+  apply_beta_impl(
+    object = object,
+    .data = .data
+  )
+}
+
+cal_adjust.cal_multi <- function(object, .data, pred_class) {
+  cal_apply_multi(
+    object = object,
+    .data = .data,
+    pred_class = {{ pred_class }}
+  )
+}
+
+cal_adjust.cal_binary <- function(object, .data, pred_class) {
+  cal_apply_binary(
+    object = object,
+    .data = .data,
+    pred_class = {{ pred_class }}
+  )
+}
+
+cal_adjust.cal_regression <- function(object, .data, pred_class) {
+  cal_apply_regression(
+    object = object,
+    .data = .data,
+    pred_class = NULL
+  )
+}
+
 cal_adjust_update <- function(.data,
                               object,
                               pred_class = NULL,
@@ -141,33 +195,3 @@ cal_adjust_update <- function(.data,
   }
   res
 }
-
-cal_adjust <- function(object, .data, pred_class) {
-  UseMethod("cal_adjust")
-}
-
-cal_adjust.cal_multi <- function(object, .data, pred_class) {
-  cal_apply_multi(
-    object = object,
-    .data = .data,
-    pred_class = {{ pred_class }}
-  )
-}
-
-cal_adjust.cal_binary <- function(object, .data, pred_class) {
-  cal_apply_binary(
-    object = object,
-    .data = .data,
-    pred_class = {{ pred_class }}
-  )
-}
-
-
-cal_adjust.cal_regression <- function(object, .data, pred_class) {
-  cal_apply_regression(
-    object = object,
-    .data = .data,
-    pred_class = NULL
-  )
-}
-
