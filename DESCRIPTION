@@ -54,7 +54,7 @@ VignetteBuilder:
     knitr
 Remotes: 
     tidymodels/yardstick@5f1b9ce,
-    tidymodels/tune#624
+    tidymodels/tune
 ByteCompile: true
 Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3

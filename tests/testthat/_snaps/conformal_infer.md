@@ -64,7 +64,7 @@
         required_pkgs = "boop"))
     Condition
       Error in `int_conformal_infer()`:
-      ! The package `boop` is required.
+      ! The package "boop" is required.
 
 ---
 

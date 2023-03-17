@@ -528,7 +528,7 @@ cal_validate <- function(rset,
 
   direction <- metrics %>%
     dplyr::as_tibble() %>%
-    dplyr::select("direction") %>%
+    dplyr::select(direction) %>%
     head(1) %>%
     dplyr::pull()
 
@@ -727,7 +727,7 @@ cal_validate_linear.resample_results <-
     cal_validate(
       rset = .data,
       truth = !!truth,
-      estimate = estimate,
+      estimate = {{ estimate }},
       cal_function = "linear",
       metrics = metrics,
       summarize = summarize,

@@ -113,10 +113,10 @@ regression_plot_impl <- function(.data, truth, estimate, group,
     ggplot(
       data = .data,
       aes(
-        x = !!truth,
-        y = !!estimate,
-        color = !!dplyr_group,
-        fill = !!dplyr_group
+        x = !!quo_to_sym(truth, .data),
+        y = !!quo_to_sym(estimate, .data),
+        color = !!quo_to_sym(dplyr_group, .data),
+        fill = !!quo_to_sym(dplyr_group, .data)
       )
     ) +
     geom_abline(col = "green", linetype = 2) +
