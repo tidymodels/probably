@@ -4,6 +4,8 @@
       basic_obj
     Output
       Conformal inference
+      preprocessor: formula 
+      model: linear_reg (engine = lm) 
       training set size: 500 
       
       Use `predict(object, new_data, level)` to compute prediction intervals
