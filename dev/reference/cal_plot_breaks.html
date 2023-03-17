@@ -62,7 +62,7 @@ the diagonal line."><meta name="robots" content="noindex"><!-- mathjax --><scrip
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Probability calibration plots via binning</h1>
-      <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/R/cal-plot.R" class="external-link"><code>R/cal-plot.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/R/cal-plot-breaks.R" class="external-link"><code>R/cal-plot-breaks.R</code></a></small>
       <div class="d-none name"><code>cal_plot_breaks.Rd</code></div>
     </div>
 
@@ -82,14 +82,14 @@ the diagonal line.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">cal_plot_breaks</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  num_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -97,14 +97,14 @@ the diagonal line.</p>
 <span><span class="fu">cal_plot_breaks</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  num_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -112,14 +112,14 @@ the diagonal line.</p>
 <span><span class="fu">cal_plot_breaks</span><span class="op">(</span></span>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  num_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -136,8 +136,11 @@ the diagonal line.</p>
 
 
 <dt>estimate</dt>
-<dd><p>The column identifier for the prediction probabilities.
-This should be an unquoted column name</p></dd>
+<dd><p>A vector of column identifiers, or one of <code>dplyr</code> selector
+functions to choose which variables contains the class probabilities. It
+defaults to the prefix used by tidymodels (<code>.pred_</code>). The order of the
+identifiers will be considered the same as the order of the levels of the
+<code>truth</code> variable.</p></dd>
 
 
 <dt>group</dt>
@@ -171,7 +174,9 @@ event occurring, and the bottom the frequency of the event not occurring.</p></d
 
 <dt>event_level</dt>
 <dd><p>single string. Either "first" or "second" to specify which
-level of truth to consider as the "event".</p></dd>
+level of truth to consider as the "event". Defaults to "auto", which allows
+the function decide which one to use based on the type of model (binary,
+multi-class or linear)</p></dd>
 
 
 <dt>...</dt>
