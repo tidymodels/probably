@@ -164,7 +164,7 @@
     Code
       int_conformal_infer_cv(grid_res)
     Condition
-      Error in `is.data.frame()`:
+      Error in `check_parameters()`::
       ! argument "parameters" is missing, with no default
 
 ---
