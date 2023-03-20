@@ -28,7 +28,7 @@
 
 ---
 
-    2 repeats were used. This method was developed for basic V-fold cross-validation. Interval coverage is unknown multiple repeats.
+    2 repeats were used. This method was developed for basic V-fold cross-validation. Interval coverage is unknown for multiple repeats.
 
 ---
 
