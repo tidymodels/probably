@@ -56,23 +56,42 @@ test_that("bad inputs to conformal intervals", {
 
   # ----------------------------------------------------------------------------
 
+  # When the gam for variance fails:
+  expect_snapshot(
+    error = TRUE,
+    int_conformal_infer(wflow, sim_new)
+  )
+
+  expect_snapshot(
+    error = TRUE,
+    int_conformal_infer(
+      wflow,
+      sim_data,
+      control = control_conformal_infer(required_pkgs = "boop")
+    )
+  )
+
   basic_obj <- int_conformal_infer(wflow, train_data = sim_data)
   expect_snapshot(basic_obj)
   expect_s3_class(basic_obj, "int_conformal_infer")
 
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     int_conformal_infer(workflow(), sim_new)
   )
 
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     int_conformal_infer(wflow %>% extract_fit_parsnip(), sim_new)
   )
 
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
+    int_conformal_infer(wflow_cls, sim_cls_new)
+  )
+
+  expect_snapshot(error = TRUE,
     predict(basic_obj, sim_new[, 3:5])
   )
 
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     int_conformal_infer(wflow, train_data = sim_cls_data)
   )
 
@@ -91,18 +110,22 @@ test_that("bad inputs to conformal intervals", {
   expect_snapshot(basic_cv_obj)
   expect_s3_class(basic_cv_obj, "int_conformal_infer_cv")
 
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     int_conformal_infer_cv(workflow())
   )
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     int_conformal_infer_cv(good_res %>% dplyr::select(-.predictions))
   )
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     int_conformal_infer_cv(good_res %>% dplyr::select(-.extracts))
   )
 
-  expect_snapshot_error(
+  expect_snapshot(error = TRUE,
     predict(basic_cv_obj, sim_new[, 3:5])
+  )
+
+  expect_snapshot(
+    probably:::get_root(try(stop("I made you stop"), silent = TRUE), control_conformal_infer())
   )
 })
 
@@ -185,8 +208,8 @@ test_that("conformal intervals", {
   # ----------------------------------------------------------------------------
 
   two_models <- show_best(grid_res, metric = "rmse")[, c("penalty", ".config")]
-  expect_snapshot_error(int_conformal_infer_cv(grid_res))
-  expect_snapshot_error(int_conformal_infer_cv(grid_res, two_models))
+  expect_snapshot(error = TRUE, int_conformal_infer_cv(grid_res))
+  expect_snapshot(error = TRUE, int_conformal_infer_cv(grid_res, two_models))
   grid_int <- int_conformal_infer_cv(grid_res, two_models[1,])
   grid_bounds <- predict(grid_int, sim_small)
   grid_bounds_90 <- predict(grid_int, sim_small, level = .9)
@@ -204,5 +227,5 @@ test_that("conformal control", {
   set.seed(1)
   expect_snapshot(dput(control_conformal_infer()))
   expect_snapshot(dput(control_conformal_infer(max_iter = 2)))
-  expect_snapshot_error(control_conformal_infer(method = "rock-paper-scissors"))
+  expect_snapshot(error = TRUE, control_conformal_infer(method = "rock-paper-scissors"))
 })
