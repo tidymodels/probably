@@ -82,7 +82,7 @@ iterations), the grid size, and the number of worker processes that are
 used. For the last item, the computations can be parallelized using the
 future and furrr packages.
 
-To use parallelsim, the \code{\link[future:plan]{future::plan()}} function can
+To use parallelism, the \code{\link[future:plan]{future::plan()}} function can
 be invoked to create a parallel backend. For example, let’s make an
 initial workflow:
 
