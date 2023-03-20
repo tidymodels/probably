@@ -239,7 +239,7 @@ check_resampling <- function(x) {
   invisible(NULL)
 }
 
-check_parameters <- function(x, param) {
+check_parameters <- function(x, param, call = rlang::caller_env()) {
   prms <- tune::.get_tune_parameter_names(x)
   mtr <- tune::collect_metrics(x) %>%
     dplyr::distinct(.config, !!!rlang::syms(prms))
@@ -250,12 +250,12 @@ check_parameters <- function(x, param) {
         "The `parameters` argument selected ", nrow(remain), " submodels. Only ",
         "1 should be selected."
       )
-    rlang::abort(msg)
+    rlang::abort(msg, call = call)
   }
   invisible(NULL)
 }
 
-check_extras <- function(x) {
+check_extras <- function(x, call = rlang::caller_env()) {
   if (!any(names(x) == ".extracts")) {
     msg <-
       paste0(
@@ -274,7 +274,7 @@ check_extras <- function(x) {
         "argument of the control function (e.g., `control_grid()` or ",
         "`control_resamples()`, etc.)."
       )
-    rlang::abort(msg)
+    rlang::abort(msg, cal = call)
   }
   invisible(NULL)
 }
