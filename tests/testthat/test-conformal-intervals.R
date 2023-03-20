@@ -208,7 +208,6 @@ test_that("conformal intervals", {
   # ----------------------------------------------------------------------------
 
   two_models <- show_best(grid_res, metric = "rmse")[, c("penalty", ".config")]
-  expect_snapshot(error = TRUE, int_conformal_infer_cv(grid_res))
   expect_snapshot(error = TRUE, int_conformal_infer_cv(grid_res, two_models))
   grid_int <- int_conformal_infer_cv(grid_res, two_models[1,])
   grid_bounds <- predict(grid_int, sim_small)

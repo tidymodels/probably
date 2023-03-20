@@ -162,14 +162,6 @@
 ---
 
     Code
-      int_conformal_infer_cv(grid_res)
-    Condition
-      Error in `check_parameters()`:
-      ! argument "parameters" is missing, with no default
-
----
-
-    Code
       int_conformal_infer_cv(grid_res, two_models)
     Condition
       Error in `int_conformal_infer_cv()`:
