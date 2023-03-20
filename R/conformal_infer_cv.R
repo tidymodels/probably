@@ -230,7 +230,7 @@ check_resampling <- function(x) {
     if (rs$att$repeats > 1) {
       msg <- paste0(
         rs$att$repeats, " repeats were used. This method was developed for ",
-        "basic V-fold cross-validation. Interval coverage is unknown multiple ",
+        "basic V-fold cross-validation. Interval coverage is unknown for multiple ",
         "repeats."
       )
       rlang::warn(msg)
