@@ -11,7 +11,7 @@ Description: Models can be improved by post-processing class
     probabilities, by: recalibration, conversion to hard probabilities,
     assessment of equivocal zones, and other activities. 'probably'
     contains tools for conducting these operations as well as calibration
-    tools for regression models.
+    tools and conformal inference techniques for regression models.
 License: MIT + file LICENSE
 URL: https://github.com/tidymodels/probably/,
     https://probably.tidymodels.org
