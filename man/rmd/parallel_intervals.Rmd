@@ -4,6 +4,7 @@ The time it takes to compute the intervals depends on the training set size, sea
 
 To use parallelism, the [future::plan()] function can be invoked to create a parallel backend. For example, let's make an initial workflow: 
 
+
 ```{r, include = FALSE}
 library(tidymodels)
 library(probably)

@@ -57,7 +57,7 @@ residuals are used. Once the residual of a trial value exceeds the
 distributional quantile, the value is one of the bounds.
 
 The literature proposed using a grid search of trial values to find the two
-points that correspond to the prediction intervals. To use this apprach,
+points that correspond to the prediction intervals. To use this approach,
 set \code{method = "grid"} in \code{\link[=control_conformal_infer]{control_conformal_infer()}}. However, the default method
 \verb{"search} uses two different one-dimensional iterative searches on either
 side of the predicted value to find values that correspond to the prediction intervals.

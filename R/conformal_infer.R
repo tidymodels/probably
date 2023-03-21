@@ -32,10 +32,11 @@
 #' distributional quantile, the value is one of the bounds.
 #'
 #' The literature proposed using a grid search of trial values to find the two
-#' points that correspond to the prediction intervals. To use this apprach,
+#' points that correspond to the prediction intervals. To use this approach,
 #' set `method = "grid"` in [control_conformal_infer()]. However, the default method
 #' `"search` uses two different one-dimensional iterative searches on either
 #' side of the predicted value to find values that correspond to the prediction intervals.
+
 #'
 #' For medium to large data sets, the iterative search method is likely to
 #' generate slightly smaller intervals. For small training sets, grid search
@@ -104,8 +105,9 @@ int_conformal_infer.workflow <-
 #' @export
 print.int_conformal_infer <- function(x, ...) {
   cat("Conformal inference\n")
-  # cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
-  # cat("model:",             .get_fit_type(x$wflow), "\n")
+
+  cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
+  cat("model:",             .get_fit_type(x$wflow), "\n")
   cat("training set size:", format(nrow(x$training), big.mark = ","), "\n\n")
 
   cat("Use `predict(object, new_data, level)` to compute prediction intervals\n")
@@ -121,7 +123,7 @@ print.int_conformal_infer <- function(x, ...) {
 #' @param ... Not currently used.
 #' @return A tibble with columns `.pred_lower` and `.pred_upper`. If
 #' the computations for the prediction bound fail, a missing value is used.
-#' @seealso [int_conformal_infer()]
+#' @seealso [int_conformal_infer()], [int_conformal_infer_cv()]
 #' @export
 predict.int_conformal_infer <- function(object, new_data, level = 0.95, ...) {
   check_data(new_data, object$wflow)
@@ -201,6 +203,7 @@ check_workflow <- function(x, call = rlang::caller_env()) {
 # variance prediction to make the possible range of the bounds really wide.
 
 var_model <- function(object, train_data, call = caller_env()) {
+
 
   y_name <- get_outcome_name(object)
 
