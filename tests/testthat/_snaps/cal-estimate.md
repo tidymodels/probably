@@ -193,6 +193,23 @@
       `.pred_coyote` ==> coyote
       `.pred_gray_fox` ==> gray_fox
 
+---
+
+    Code
+      print(sp_smth_multi)
+    Message
+      
+      -- Probability Calibration 
+      Method: Multinomial
+      Type: Multiclass
+      Source class: Data Frame
+      Data points: 110
+      Truth variable: `Species`
+      Estimate variables:
+      `.pred_bobcat` ==> bobcat
+      `.pred_coyote` ==> coyote
+      `.pred_gray_fox` ==> gray_fox
+
 # Multinomial estimates work - tune_results
 
     Code
@@ -203,14 +220,29 @@
       Method: Multinomial
       Type: Multiclass
       Source class: Tune Results
-      Data points: 2,930, split in 10 groups
-      Truth variable: `Bldg_Type`
+      Data points: 5,000, split in 10 groups
+      Truth variable: `class`
       Estimate variables:
-      `.pred_OneFam` ==> OneFam
-      `.pred_TwoFmCon` ==> TwoFmCon
-      `.pred_Duplex` ==> Duplex
-      `.pred_Twnhs` ==> Twnhs
-      `.pred_TwnhsE` ==> TwnhsE
+      `.pred_one` ==> one
+      `.pred_two` ==> two
+      `.pred_three` ==> three
+
+---
+
+    Code
+      print(tl_smth_multi)
+    Message
+      
+      -- Probability Calibration 
+      Method: Multinomial
+      Type: Multiclass
+      Source class: Tune Results
+      Data points: 5,000, split in 10 groups
+      Truth variable: `class`
+      Estimate variables:
+      `.pred_one` ==> one
+      `.pred_two` ==> two
+      `.pred_three` ==> three
 
 # Linear estimates work - data.frame
 
@@ -228,7 +260,7 @@
 # Linear estimates work - tune_results
 
     Code
-      print(tl_logistic)
+      print(tl_linear)
     Message
       
       -- Regression Calibration 

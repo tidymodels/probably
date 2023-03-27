@@ -114,15 +114,21 @@ test_that("Beta estimates work - tune_results", {
 
 # ------------------------------ Multinomial -----------------------------------
 test_that("Multinomial estimates work - data.frame", {
-  sp_multi <- cal_estimate_multinomial(species_probs, Species)
+  sp_multi <- cal_estimate_multinomial(species_probs, Species, smooth = FALSE)
   expect_cal_type(sp_multi, "multiclass")
   expect_cal_method(sp_multi, "Multinomial")
   expect_cal_rows(sp_multi, n = 110)
   expect_snapshot(print(sp_multi))
+
+  sp_smth_multi <- cal_estimate_multinomial(species_probs, Species, smooth = TRUE)
+  expect_cal_type(sp_smth_multi, "multiclass")
+  expect_cal_method(sp_smth_multi, "Multinomial")
+  expect_cal_rows(sp_smth_multi, n = 110)
+  expect_snapshot(print(sp_smth_multi))
 })
 
 test_that("Multinomial estimates work - tune_results", {
-  tl_multi <- cal_estimate_multinomial(testthat_cal_multiclass())
+  tl_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = FALSE)
   expect_cal_type(tl_multi, "multiclass")
   expect_cal_method(tl_multi, "Multinomial")
   expect_snapshot(print(tl_multi))
@@ -133,6 +139,20 @@ test_that("Multinomial estimates work - tune_results", {
       nrow(),
     testthat_cal_multiclass() %>%
       cal_apply(tl_multi) %>%
+      nrow()
+  )
+
+  tl_smth_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = TRUE)
+  expect_cal_type(tl_smth_multi, "multiclass")
+  expect_cal_method(tl_smth_multi, "Multinomial")
+  expect_snapshot(print(tl_smth_multi))
+
+  expect_equal(
+    testthat_cal_multiclass() %>%
+      tune::collect_predictions(summarize = TRUE) %>%
+      nrow(),
+    testthat_cal_multiclass() %>%
+      cal_apply(tl_smth_multi) %>%
       nrow()
   )
 })
