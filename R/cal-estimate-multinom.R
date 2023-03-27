@@ -1,7 +1,47 @@
 #' Uses a Multinomial calibration model to calculate new probabilities
-#' @details It uses the `multinom` function, from the `nnet` package, to
-#' create the calibration.
+#' @details
+#' When `smooth = FALSE`, [nnet::multinom()] function is used to estimate the
+#' model, otherwise [mgcv::gam()] is used.
 #' @inheritParams cal_estimate_logistic
+#' @examplesIf rlang::is_installed("modeldata", version = "1.1.0") & rlang::is_installed("parsnip") & !is_cran_check()
+#' library(modeldata)
+#' library(parsnip)
+#' library(dplyr)
+#'
+#' f <-
+#'   list(
+#'     ~ -0.5 + 0.6 * abs(A),
+#'     ~ ifelse(A > 0 & B > 0, 1.0 + 0.2 * A / B, -2),
+#'     ~ -0.6 * A + 0.50 * B - A * B
+#'   )
+#'
+#' set.seed(1)
+#' tr_dat  <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
+#' cal_dat <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
+#' te_dat  <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
+#'
+#' set.seed(2)
+#' rf_fit <-
+#'   rand_forest() %>%
+#'   set_mode("classification") %>%
+#'   set_engine("randomForest") %>%
+#'   fit(class ~ ., data = tr_dat)
+#'
+#' cal_pred <-
+#'   predict(rf_fit, cal_dat, type = "prob") %>%
+#'   bind_cols(cal_dat)
+#' te_pred <-
+#'   predict(rf_fit, te_dat, type = "prob") %>%
+#'   bind_cols(te_dat)
+#'
+#' cal_plot_windowed(cal_pred, truth = class, window_size = 0.1, step_size = 0.03)
+#'
+#' smoothed_mn <- cal_estimate_multinomial(cal_pred, truth = class)
+#'
+#' new_test_pred <- cal_apply(te_pred, smoothed_mn)
+#'
+#' cal_plot_windowed(new_test_pred, truth = class, window_size = 0.1, step_size = 0.03)
+#'
 #' @export
 cal_estimate_multinomial <- function(.data,
                                      truth = NULL,
