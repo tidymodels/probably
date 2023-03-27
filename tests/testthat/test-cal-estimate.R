@@ -154,11 +154,11 @@ test_that("Linear estimates work - data.frame", {
 })
 
 test_that("Linear estimates work - tune_results", {
-  tl_logistic <- cal_estimate_linear(testthat_cal_reg(), outcome, smooth = FALSE)
-  expect_cal_type(tl_logistic, "regression")
-  expect_cal_method(tl_logistic, "Linear")
-  expect_cal_estimate(tl_logistic, "butchered_glm")
-  expect_snapshot(print(tl_logistic))
+  tl_linear <- cal_estimate_linear(testthat_cal_reg(), outcome, smooth = FALSE)
+  expect_cal_type(tl_linear, "regression")
+  expect_cal_method(tl_linear, "Linear")
+  expect_cal_estimate(tl_linear, "butchered_glm")
+  expect_snapshot(print(tl_linear))
 })
 
 # ----------------------------- Linear Spline --------------------------------

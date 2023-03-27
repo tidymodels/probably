@@ -6,6 +6,7 @@
 cal_estimate_multinomial <- function(.data,
                                      truth = NULL,
                                      estimate = dplyr::starts_with(".pred_"),
+                                     smooth = TRUE,
                                      parameters = NULL,
                                      ...) {
   UseMethod("cal_estimate_multinomial")
@@ -13,11 +14,13 @@ cal_estimate_multinomial <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_multinomial
-cal_estimate_multinomial.data.frame <- function(.data,
-                                                truth = NULL,
-                                                estimate = dplyr::starts_with(".pred_"),
-                                                parameters = NULL,
-                                                ...) {
+cal_estimate_multinomial.data.frame <-
+  function(.data,
+           truth = NULL,
+           estimate = dplyr::starts_with(".pred_"),
+           smooth = TRUE,
+           parameters = NULL,
+           ...) {
   stop_null_parameters(parameters)
 
   truth <- enquo(truth)
@@ -26,18 +29,21 @@ cal_estimate_multinomial.data.frame <- function(.data,
     truth = !!truth,
     estimate = {{ estimate }},
     source_class = cal_class_name(.data),
+    smooth = smooth,
     ...
   )
 }
 
 #' @export
 #' @rdname cal_estimate_multinomial
-cal_estimate_multinomial.tune_results <- function(.data,
-                                                  truth = NULL,
-                                                  estimate = dplyr::starts_with(".pred_"),
-                                                  parameters = NULL,
-                                                  ...) {
-  tune_args <- tune_results_args(
+cal_estimate_multinomial.tune_results <-
+  function(.data,
+           truth = NULL,
+           estimate = dplyr::starts_with(".pred_"),
+           smooth = TRUE,
+           parameters = NULL,
+           ...) {
+    tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
@@ -53,6 +59,7 @@ cal_estimate_multinomial.tune_results <- function(.data,
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
       source_class = cal_class_name(.data),
+      smooth = smooth,
       ...
     )
 }
@@ -64,7 +71,7 @@ required_pkgs.cal_estimate_multinomial <- function(x, ...) {
   c("nnet", "probably")
 }
 
-cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
+cal_multinom_impl <- function(.data, truth, estimate, source_class, smooth, ...) {
   truth <- enquo(truth)
 
   levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
@@ -79,6 +86,7 @@ cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
     .data = .data,
     truth = !!truth,
     levels = levels,
+    smooth = smooth,
     ...
   )
 
@@ -95,7 +103,7 @@ cal_multinom_impl <- function(.data, truth, estimate, source_class, ...) {
 }
 
 
-cal_multinom_impl_grp <- function(.data, truth, levels, ...) {
+cal_multinom_impl_grp <- function(.data, truth, levels, smooth, ...) {
   truth <- enquo(truth)
   .data %>%
     split_dplyr_groups() %>%
@@ -105,6 +113,7 @@ cal_multinom_impl_grp <- function(.data, truth, levels, ...) {
           .data = x$data,
           truth = !!truth,
           levels = levels,
+          smooth = smooth,
           ... = ...
         )
         list(
@@ -118,21 +127,55 @@ cal_multinom_impl_grp <- function(.data, truth, levels, ...) {
 cal_multinom_impl_single <- function(.data,
                                      truth = NULL,
                                      levels = NULL,
+                                     smooth = TRUE,
                                      ...) {
   truth <- enquo(truth)
+  num_lvls <- length(levels)
+  levels <- levels[1:(length(levels) - 1)]
 
-  levels <- levels[1:length(levels) - 1]
+  if (smooth) {
+    # multinomial gams in mgcv needs zero-based integers as the outcome
 
-  levels_formula <- purrr::reduce(
-    levels,
-    function(x, y) expr(!!x + !!y)
-  )
+    class_col <- deparse(ensym(truth))
+    .data[[class_col]] <- as.numeric(.data[[class_col]]) - 1
+    max_int <- max(.data[[class_col]], na.rm = TRUE)
 
-  f_model <- expr(!!ensym(truth) ~ !!levels_formula)
+    # It also needs a list of formulas, one for each level, and the first one
+    # requires a LHS
 
-  prevent_output <- utils::capture.output(
-    model <- nnet::multinom(formula = f_model, data = .data, ...)
-  )
+    smooths <- purrr::map(levels, ~ call2(.fn = "s", expr(!!.x)))
+    rhs_f <- purrr::reduce(smooths, function(x, y) expr(!!x + !!y))
+    rhs_only <- new_formula(lhs = NULL, rhs = rhs_f)
+    both_sides <- new_formula(lhs = ensym(truth), rhs = rhs_f)
+    all_f <- purrr::map(seq_along(levels), ~ rhs_only)
+    all_f[[1]] <- both_sides
+
+    model <- mgcv::gam(all_f, data = .data, family = mgcv::multinom(max_int))
+
+    # Nuke environments saved in formulas
+    # # TODO This next line causes a failure for unknown reasons. Look into it more
+    # model$formula <- purrr::map(model$formula, clean_env)
+    model$terms <- clean_env(model$terms)
+
+  } else {
+    levels_formula <- purrr::reduce(
+      levels,
+      function(x, y) expr(!!x + !!y)
+    )
+
+    f_model <- expr(!!ensym(truth) ~ !!levels_formula)
+
+    prevent_output <- utils::capture.output(
+      model <- nnet::multinom(formula = f_model, data = .data, ...)
+    )
+    model$terms <- clean_env(model$terms)
+  }
+
 
   model
+}
+
+clean_env <- function(x) {
+  attr(x, ".Environment") <- rlang::base_env()
+  x
 }

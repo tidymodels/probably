@@ -18,13 +18,20 @@ cal_apply_multi.cal_estimate_multinomial <-
 #---------------------------- >> Single Predict --------------------------------
 
 apply_multi_predict <- function(object, .data) {
+  if (inherits(object$estimates[[1]]$estimate, "gam")) {
+    prob_type <- "response"
+  } else {
+    prob_type <- "probs"
+  }
   preds <- object$estimates[[1]]$estimate %>%
-    predict(newdata = .data, type = "probs") %>%
-    dplyr::as_tibble()
+    predict(newdata = .data, type = prob_type)
+
+  colnames(preds) <- as.character(object$levels)
+  preds <- dplyr::as_tibble(preds)
 
   for (i in seq_along(object$levels)) {
     lev <- object$levels[i]
-    .data[, as.character(lev)] <- preds[, names(lev)]
+    .data[, as.character(lev)] <- preds[, as.character(lev)]
   }
   .data
 }

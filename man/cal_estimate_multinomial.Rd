@@ -10,6 +10,7 @@ cal_estimate_multinomial(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
   parameters = NULL,
   ...
 )
@@ -18,6 +19,7 @@ cal_estimate_multinomial(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
   parameters = NULL,
   ...
 )
@@ -26,6 +28,7 @@ cal_estimate_multinomial(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
   parameters = NULL,
   ...
 )
@@ -42,6 +45,9 @@ functions to choose which variables contains the class probabilities. It
 defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
+
+\item{smooth}{Applies to the logistic models. It switches between logistic
+spline when \code{TRUE}, and simple logistic regression when \code{FALSE}.}
 
 \item{parameters}{(Optional)  An optional tibble of tuning parameter values
 that can be used to filter the predicted values before processing. Applies
