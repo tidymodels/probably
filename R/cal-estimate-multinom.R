@@ -3,7 +3,7 @@
 #' When `smooth = FALSE`, [nnet::multinom()] function is used to estimate the
 #' model, otherwise [mgcv::gam()] is used.
 #' @inheritParams cal_estimate_logistic
-#' @examplesIf rlang::is_installed("modeldata", version = "1.1.0") & rlang::is_installed("parsnip") & !probably:::is_cran_check()
+#' @examplesIf !probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip", "randomForest"))
 #' library(modeldata)
 #' library(parsnip)
 #' library(dplyr)
