@@ -64,7 +64,7 @@ When \code{smooth = FALSE}, \code{\link[nnet:multinom]{nnet::multinom()}} functi
 model, otherwise \code{\link[mgcv:gam]{mgcv::gam()}} is used.
 }
 \examples{
-\dontshow{if (rlang::is_installed("modeldata", version = "1.1.0") & rlang::is_installed("parsnip") & !is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (!probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip", "randomForest"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(modeldata)
 library(parsnip)
 library(dplyr)
