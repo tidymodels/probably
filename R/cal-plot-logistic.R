@@ -61,6 +61,9 @@ cal_plot_logistic.data.frame <- function(.data,
                                          include_ribbon = TRUE,
                                          event_level = c("auto", "first", "second"),
                                          ...) {
+
+  check_cal_groups(group, .data)
+
   cal_plot_logistic_impl(
     .data = .data,
     truth = {{ truth }},
