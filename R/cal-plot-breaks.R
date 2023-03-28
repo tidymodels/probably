@@ -113,7 +113,7 @@ cal_plot_breaks.data.frame <- function(.data,
                                        event_level = c("auto", "first", "second"),
                                        ...) {
 
-  check_cal_groups(group, .data)
+  check_cal_groups({{ group }}, .data)
 
   cal_plot_breaks_impl(
     .data = .data,

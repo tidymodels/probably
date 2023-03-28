@@ -41,7 +41,7 @@ cal_plot_regression_impl <- function(.data,
                                      smooth = TRUE,
                                      ...) {
 
-  check_cal_groups(group, .data)
+  check_cal_groups({{ group }}, .data)
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)

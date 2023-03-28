@@ -38,3 +38,11 @@
 
     Invalid event_level entry: invalid. Valid entries are 'first', 'second', or 'auto'
 
+# regression functions work
+
+    Code
+      obj %>% tune::collect_predictions() %>% cal_plot_windowed(outcome, estimate = .pred)
+    Condition
+      Error:
+      ! The data have several values of '.config' but no 'groups' argument was passed. This will inappropriately pool the data.
+

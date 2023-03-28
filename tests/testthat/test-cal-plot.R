@@ -364,6 +364,6 @@ test_that("regression functions work", {
     error = TRUE,
     obj %>%
       tune::collect_predictions() %>%
-      cal_plot_windowed(class, estimate = .pred_class_1)
+      cal_plot_windowed(outcome, estimate = .pred)
   )
 })

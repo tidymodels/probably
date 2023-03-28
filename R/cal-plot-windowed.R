@@ -68,7 +68,7 @@ cal_plot_windowed.data.frame <- function(.data,
                                          include_points = TRUE,
                                          event_level = c("auto", "first", "second"),
                                          ...) {
-  check_cal_groups(group, .data)
+  check_cal_groups({{ group }}, .data)
 
   cal_plot_windowed_impl(
     .data = .data,

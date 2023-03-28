@@ -228,6 +228,7 @@ cal_beta_impl_single <- function(.data,
 
 
 check_cal_groups <- function(group, .data, call = rlang::env_parent()) {
+  group <- enquo(group)
   if (!any(names(.data) == ".config")) {
     return(invisible(NULL))
   }
@@ -235,7 +236,7 @@ check_cal_groups <- function(group, .data, call = rlang::env_parent()) {
   if (num_configs == 1) {
     return(invisible(NULL))
   }
-  has_no_groups <- isTRUE(is.null(group))
+  has_no_groups <- rlang::quo_is_null(group)
   if (has_no_groups) {
     msg <- paste("The data have several values of '.config' but no 'groups'",
                  "argument was passed. This will inappropriately pool the",
