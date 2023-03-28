@@ -221,6 +221,7 @@ tune_results_args <- function(.data,
                               event_level,
                               parameters = NULL,
                               ...) {
+
   if (!(".predictions" %in% colnames(.data))) {
     rlang::abort(
       paste0(

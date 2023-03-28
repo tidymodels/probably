@@ -5,7 +5,7 @@
 #' @param location_params Number of location parameters to use. Accepted values
 #' 1 and 0. Defaults to 1.
 #' @inheritParams cal_estimate_logistic
-#' @details  This function uses the `betcal::beta_calibration()` function, and
+#' @details  This function uses the [betcal::beta_calibration()] function, and
 #' retains the resulting model.
 #' @references Meelis Kull, Telmo M. Silva Filho, Peter Flach "Beyond sigmoids:
 #' How to obtain well-calibrated probabilities from binary classifiers with beta
@@ -20,6 +20,7 @@ cal_estimate_beta <- function(.data,
                               shape_params = 2,
                               location_params = 1,
                               estimate = dplyr::starts_with(".pred_"),
+                              group = NULL,
                               parameters = NULL,
                               ...) {
   UseMethod("cal_estimate_beta")
@@ -32,15 +33,20 @@ cal_estimate_beta.data.frame <- function(.data,
                                          shape_params = 2,
                                          location_params = 1,
                                          estimate = dplyr::starts_with(".pred_"),
+                                         group = NULL,
                                          parameters = NULL,
                                          ...) {
   stop_null_parameters(parameters)
+  check_cal_groups(group, .data)
+
+
   cal_beta_impl(
     .data = .data,
     truth = {{ truth }},
     shape_params = shape_params,
     location_params = location_params,
     estimate = {{ estimate }},
+    group = {{ group }},
     source_class = cal_class_name(.data),
     ...
   )
@@ -53,13 +59,14 @@ cal_estimate_beta.tune_results <- function(.data,
                                            shape_params = 2,
                                            location_params = 1,
                                            estimate = dplyr::starts_with(".pred_"),
+                                           group = NULL,
                                            parameters = NULL,
                                            ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = NULL,
+    group = {{ group }},
     event_level = "first",
     parameters = parameters,
     ...
@@ -70,6 +77,7 @@ cal_estimate_beta.tune_results <- function(.data,
     cal_beta_impl(
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
+      group = !!tune_args$group,
       shape_params = shape_params,
       location_params = location_params,
       source_class = cal_class_name(.data),
@@ -132,6 +140,7 @@ cal_beta_impl_grp <- function(.data,
                               shape_params = 2,
                               location_params = 1,
                               estimate = NULL,
+                              group = NULL,
                               levels = NULL,
                               ...) {
   .data %>%

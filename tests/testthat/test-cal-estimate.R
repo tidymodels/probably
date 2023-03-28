@@ -98,6 +98,13 @@ test_that("Beta estimates work - data.frame", {
   expect_cal_method(sl_beta, "Beta")
   expect_cal_rows(sl_beta)
   expect_snapshot(print(sl_beta))
+
+  tune_res <- testthat_cal_binary()
+  tune_pred <- tune_res %>% tune::collect_predictions()
+  tune_cal <- cal_estimate_beta(tune_pred, class)
+
+
+
 })
 
 test_that("Beta estimates work - tune_results", {
