@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Davis
 Vaughan</h4>
             
-            <h4 data-toc-skip class="date">2023-03-21</h4>
+            <h4 data-toc-skip class="date">2023-04-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/vignettes/where-to-use.Rmd" class="external-link"><code>vignettes/where-to-use.Rmd</code></a></small>
       <div class="d-none name"><code>where-to-use.Rmd</code></div>
@@ -136,7 +136,7 @@ performance when you vary the threshold of what a “good” loan is.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> good      <span style="text-decoration: underline;">188</span>000 Not_Verified        B2       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> good       <span style="text-decoration: underline;">89</span>000 Source_Verified     B3       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> good       <span style="text-decoration: underline;">48</span>000 Not_Verified        C2       </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 9,847 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 9,847 more rows</span></span></span></code></pre></div>
 <p>Let’s split this into 75% training and 25% testing for something to
 predict on.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -271,7 +271,7 @@ investigate performance.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>      0.951   0.048<span style="text-decoration: underline;">6</span>  good       <span style="text-decoration: underline;">65</span>000 Verified            C1       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>      0.963   0.037<span style="text-decoration: underline;">0</span>  good       <span style="text-decoration: underline;">52</span>000 Verified            B4       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>      0.983   0.017<span style="text-decoration: underline;">3</span>  good       <span style="text-decoration: underline;">61</span>000 Verified            B2       </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 2,455 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2,455 more rows</span></span></span></code></pre></div>
 <p>With our class probabilities in hand, we can use
 <code><a href="../reference/make_class_pred.html">make_two_class_pred()</a></code> to convert these probabilities into
 hard predictions using a threshold. A threshold of <code>0.5</code> just
@@ -333,8 +333,6 @@ value of <code>1</code>.</p>
 </ul>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/yardstick" class="external-link">yardstick</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; For binary classification, the first factor level is assumed to be the event.</span></span>
-<span><span class="co">#&gt; Use the argument `event_level = "second"` to alter this as needed.</span></span>
 <span></span>
 <span><span class="fu"><a href="https://yardstick.tidymodels.org/reference/sens.html" class="external-link">sens</a></span><span class="op">(</span><span class="va">hard_pred_0.5</span>, <span class="va">Class</span>, <span class="va">.pred</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 × 3</span></span></span>

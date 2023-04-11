@@ -79,7 +79,7 @@
                         <h4 data-toc-skip class="author">Davis
 Vaughan</h4>
             
-            <h4 data-toc-skip class="date">2023-03-21</h4>
+            <h4 data-toc-skip class="date">2023-04-11</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/HEAD/vignettes/equivocal-zones.Rmd" class="external-link"><code>vignettes/equivocal-zones.Rmd</code></a></small>
       <div class="d-none name"><code>equivocal-zones.Rmd</code></div>
@@ -155,7 +155,7 @@ class probabilities into class predictions with
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    0.008<span style="text-decoration: underline;">42</span>    0.992   good </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    0.995      0.004<span style="text-decoration: underline;">58</span> poor </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    0.765      0.235   poor </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 1,000 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,000 more rows</span></span></span>
 <span></span>
 <span><span class="co"># Convert probabilities into predictions</span></span>
 <span><span class="co"># &gt; 0.5 = good</span></span>
@@ -183,7 +183,7 @@ class probabilities into class predictions with
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    0.008<span style="text-decoration: underline;">42</span>    0.992   good        good</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    0.995      0.004<span style="text-decoration: underline;">58</span> poor        poor</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    0.765      0.235   poor        poor</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 1,000 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,000 more rows</span></span></span></code></pre></div>
 <p>If a <code>buffer</code> is used, an equivocal zone is created around
 the threshold of <code>threshold +/- buffer</code> and any values inside
 the zone are automatically marked as equivocal.</p>
@@ -241,8 +241,6 @@ leaving the default <code>na_rm = TRUE</code> in any yardstick metric
 removes them from consideration.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/yardstick" class="external-link">yardstick</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; For binary classification, the first factor level is assumed to be the event.</span></span>
-<span><span class="co">#&gt; Use the argument `event_level = "second"` to alter this as needed.</span></span>
 <span></span>
 <span><span class="co"># No equivocal zone</span></span>
 <span><span class="va">segment_logistic_thresh</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
