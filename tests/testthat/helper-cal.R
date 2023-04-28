@@ -72,18 +72,17 @@ testthat_cal_multiclass <- function() {
 
       set.seed(111)
 
-      df <- modeldata::ames %>%
-        dplyr::sample_frac(0.1)
+      df <- sim_multinom_df(500)
 
       ranger_recipe <- recipes::recipe(
-        formula = Bldg_Type ~ .,
+        formula = class ~ .,
         data = df
       )
 
       ranger_spec <- parsnip::rand_forest(
         mtry = tune(),
         min_n = tune(),
-        trees = 1000
+        trees = 200
       ) %>%
         parsnip::set_mode("classification") %>%
         parsnip::set_engine("ranger")
@@ -122,7 +121,7 @@ testthat_cal_sim_multi <- function() {
       }
 
       set.seed(1)
-      train <- sim_multinom_df()
+      train <- sim_multinom_df(200)
       test <- sim_multinom_df()
 
       model <- randomForest::randomForest(class ~ ., train)

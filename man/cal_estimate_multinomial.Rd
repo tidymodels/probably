@@ -10,6 +10,7 @@ cal_estimate_multinomial(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
   parameters = NULL,
   ...
 )
@@ -18,6 +19,7 @@ cal_estimate_multinomial(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
   parameters = NULL,
   ...
 )
@@ -26,6 +28,7 @@ cal_estimate_multinomial(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
   parameters = NULL,
   ...
 )
@@ -43,6 +46,9 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
+\item{smooth}{Applies to the logistic models. It switches between logistic
+spline when \code{TRUE}, and simple logistic regression when \code{FALSE}.}
+
 \item{parameters}{(Optional)  An optional tibble of tuning parameter values
 that can be used to filter the predicted values before processing. Applies
 only to \code{tune_results} objects.}
@@ -54,6 +60,47 @@ calculate the new probabilities.}
 Uses a Multinomial calibration model to calculate new probabilities
 }
 \details{
-It uses the \code{multinom} function, from the \code{nnet} package, to
-create the calibration.
+When \code{smooth = FALSE}, \code{\link[nnet:multinom]{nnet::multinom()}} function is used to estimate the
+model, otherwise \code{\link[mgcv:gam]{mgcv::gam()}} is used.
+}
+\examples{
+\dontshow{if (!probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip", "randomForest"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+library(modeldata)
+library(parsnip)
+library(dplyr)
+
+f <-
+  list(
+    ~ -0.5 + 0.6 * abs(A),
+    ~ ifelse(A > 0 & B > 0, 1.0 + 0.2 * A / B, -2),
+    ~ -0.6 * A + 0.50 * B - A * B
+  )
+
+set.seed(1)
+tr_dat  <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
+cal_dat <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
+te_dat  <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
+
+set.seed(2)
+rf_fit <-
+  rand_forest() \%>\%
+  set_mode("classification") \%>\%
+  set_engine("randomForest") \%>\%
+  fit(class ~ ., data = tr_dat)
+
+cal_pred <-
+  predict(rf_fit, cal_dat, type = "prob") \%>\%
+  bind_cols(cal_dat)
+te_pred <-
+  predict(rf_fit, te_dat, type = "prob") \%>\%
+  bind_cols(te_dat)
+
+cal_plot_windowed(cal_pred, truth = class, window_size = 0.1, step_size = 0.03)
+
+smoothed_mn <- cal_estimate_multinomial(cal_pred, truth = class)
+
+new_test_pred <- cal_apply(te_pred, smoothed_mn)
+
+cal_plot_windowed(new_test_pred, truth = class, window_size = 0.1, step_size = 0.03)
+\dontshow{\}) # examplesIf}
 }
