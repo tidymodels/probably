@@ -62,6 +62,7 @@
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
+<span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -71,6 +72,7 @@
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
+<span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -80,6 +82,7 @@
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
+<span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -105,6 +108,11 @@ identifiers will be considered the same as the order of the levels of the
 <code>truth</code> variable.</p></dd>
 
 
+<dt>smooth</dt>
+<dd><p>Applies to the logistic models. It switches between logistic
+spline when <code>TRUE</code>, and simple logistic regression when <code>FALSE</code>.</p></dd>
+
+
 <dt>parameters</dt>
 <dd><p>(Optional)  An optional tibble of tuning parameter values
 that can be used to filter the predicted values before processing. Applies
@@ -118,10 +126,53 @@ calculate the new probabilities.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>It uses the <code>multinom</code> function, from the <code>nnet</code> package, to
-create the calibration.</p>
+    <p>When <code>smooth = FALSE</code>, <code><a href="https://rdrr.io/pkg/nnet/man/multinom.html" class="external-link">nnet::multinom()</a></code> function is used to estimate the
+model, otherwise <code><a href="https://rdrr.io/pkg/mgcv/man/gam.html" class="external-link">mgcv::gam()</a></code> is used.</p>
     </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://modeldata.tidymodels.org" class="external-link">modeldata</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/tidymodels/parsnip" class="external-link">parsnip</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="op">~</span> <span class="op">-</span><span class="fl">0.5</span> <span class="op">+</span> <span class="fl">0.6</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">A</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">A</span> <span class="op">&gt;</span> <span class="fl">0</span> <span class="op">&amp;</span> <span class="va">B</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="fl">1.0</span> <span class="op">+</span> <span class="fl">0.2</span> <span class="op">*</span> <span class="va">A</span> <span class="op">/</span> <span class="va">B</span>, <span class="op">-</span><span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="op">~</span> <span class="op">-</span><span class="fl">0.6</span> <span class="op">*</span> <span class="va">A</span> <span class="op">+</span> <span class="fl">0.50</span> <span class="op">*</span> <span class="va">B</span> <span class="op">-</span> <span class="va">A</span> <span class="op">*</span> <span class="va">B</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tr_dat</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://modeldata.tidymodels.org/reference/sim_classification.html" class="external-link">sim_multinomial</a></span><span class="op">(</span><span class="fl">500</span>, eqn_1 <span class="op">=</span> <span class="va">f</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, eqn_2 <span class="op">=</span> <span class="va">f</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, eqn_3 <span class="op">=</span> <span class="va">f</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cal_dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://modeldata.tidymodels.org/reference/sim_classification.html" class="external-link">sim_multinomial</a></span><span class="op">(</span><span class="fl">500</span>, eqn_1 <span class="op">=</span> <span class="va">f</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, eqn_2 <span class="op">=</span> <span class="va">f</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, eqn_3 <span class="op">=</span> <span class="va">f</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">te_dat</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://modeldata.tidymodels.org/reference/sim_classification.html" class="external-link">sim_multinomial</a></span><span class="op">(</span><span class="fl">500</span>, eqn_1 <span class="op">=</span> <span class="va">f</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, eqn_2 <span class="op">=</span> <span class="va">f</span><span class="op">[[</span><span class="fl">2</span><span class="op">]</span><span class="op">]</span>, eqn_3 <span class="op">=</span> <span class="va">f</span><span class="op">[[</span><span class="fl">3</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rf_fit</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/rand_forest.html" class="external-link">rand_forest</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_args.html" class="external-link">set_mode</a></span><span class="op">(</span><span class="st">"classification"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://parsnip.tidymodels.org/reference/set_engine.html" class="external-link">set_engine</a></span><span class="op">(</span><span class="st">"randomForest"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://generics.r-lib.org/reference/fit.html" class="external-link">fit</a></span><span class="op">(</span><span class="va">class</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">tr_dat</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">cal_pred</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">rf_fit</span>, <span class="va">cal_dat</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_cols.html" class="external-link">bind_cols</a></span><span class="op">(</span><span class="va">cal_dat</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">te_pred</span> <span class="op">&lt;-</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">rf_fit</span>, <span class="va">te_dat</span>, type <span class="op">=</span> <span class="st">"prob"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_cols.html" class="external-link">bind_cols</a></span><span class="op">(</span><span class="va">te_dat</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="cal_plot_windowed.html">cal_plot_windowed</a></span><span class="op">(</span><span class="va">cal_pred</span>, truth <span class="op">=</span> <span class="va">class</span>, window_size <span class="op">=</span> <span class="fl">0.1</span>, step_size <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="cal_estimate_multinomial-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">smoothed_mn</span> <span class="op">&lt;-</span> <span class="fu">cal_estimate_multinomial</span><span class="op">(</span><span class="va">cal_pred</span>, truth <span class="op">=</span> <span class="va">class</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">new_test_pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="cal_apply.html">cal_apply</a></span><span class="op">(</span><span class="va">te_pred</span>, <span class="va">smoothed_mn</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="cal_plot_windowed.html">cal_plot_windowed</a></span><span class="op">(</span><span class="va">new_test_pred</span>, truth <span class="op">=</span> <span class="va">class</span>, window_size <span class="op">=</span> <span class="fl">0.1</span>, step_size <span class="op">=</span> <span class="fl">0.03</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="cal_estimate_multinomial-2.png" alt="" width="700" height="433"></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside></div>
 
