@@ -22,6 +22,14 @@ test_that("Binary breaks functions work", {
     cal_plot_breaks(testthat_cal_binary()),
     "ggplot"
   )
+
+  expect_snapshot(
+    error = TRUE,
+    testthat_cal_binary() %>%
+      tune::collect_predictions() %>%
+      cal_plot_breaks(class, estimate = .pred_class_1)
+  )
+
 })
 
 test_that("Multi-class breaks functions work", {
@@ -52,6 +60,13 @@ test_that("Multi-class breaks functions work", {
 
   expect_error(
     cal_plot_breaks(species_probs, Species, event_level = "second")
+  )
+
+  expect_snapshot(
+    error = TRUE,
+    testthat_cal_multiclass() %>%
+      tune::collect_predictions() %>%
+      cal_plot_breaks(class, estimate = .pred_class_1)
   )
 })
 
@@ -125,6 +140,13 @@ test_that("Binary logistic functions work", {
     which(x25$prob == max(x25$prob)),
     nrow(x25)
   )
+
+  expect_snapshot(
+    error = TRUE,
+    testthat_cal_binary() %>%
+      tune::collect_predictions() %>%
+      cal_plot_logistic(class, estimate = .pred_class_1)
+  )
 })
 
 test_that("Binary windowed functions work", {
@@ -192,6 +214,13 @@ test_that("Binary windowed functions work", {
   x33 <- cal_plot_windowed(testthat_cal_binary())
 
   expect_s3_class(x33, "ggplot")
+
+  expect_snapshot(
+    error = TRUE,
+    testthat_cal_binary() %>%
+      tune::collect_predictions() %>%
+      cal_plot_windowed(class, estimate = .pred_class_1)
+  )
 })
 
 test_that("Event level handling works", {
@@ -329,5 +358,12 @@ test_that("regression functions work", {
   expect_snapshot_plot(
     "rs-scat-group-opts",
     print(cal_plot_regression(obj), alpha = 1/5, smooth = FALSE)
+  )
+
+  expect_snapshot(
+    error = TRUE,
+    obj %>%
+      tune::collect_predictions() %>%
+      cal_plot_windowed(outcome, estimate = .pred)
   )
 })
