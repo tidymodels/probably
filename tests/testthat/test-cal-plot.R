@@ -348,10 +348,6 @@ test_that("regression functions work", {
     print(cal_plot_regression(boosting_predictions_oob, outcome, .pred))
   )
   expect_snapshot_plot(
-    "df-scat-lin",
-    print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE))
-  )
-  expect_snapshot_plot(
     "df-scat-group",
     print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, group = id))
   )
@@ -369,5 +365,9 @@ test_that("regression functions work", {
     obj %>%
       tune::collect_predictions() %>%
       cal_plot_windowed(outcome, estimate = .pred)
+  )
+  expect_snapshot_plot(
+    "df-scat-lin",
+    print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE))
   )
 })
