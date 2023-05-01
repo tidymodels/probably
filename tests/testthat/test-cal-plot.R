@@ -366,4 +366,8 @@ test_that("regression functions work", {
       tune::collect_predictions() %>%
       cal_plot_windowed(outcome, estimate = .pred)
   )
+  expect_snapshot_plot(
+    "df-scat-lin",
+    print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE))
+  )
 })

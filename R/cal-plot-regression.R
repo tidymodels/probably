@@ -135,6 +135,14 @@ regression_plot_impl <- function(.data, truth, estimate, group,
         method = "gam",
         formula = y ~ s(x, bs = "cs")
       )
+  } else {
+    res <-
+      res + geom_smooth(
+        se = FALSE,
+        col = "blue",
+        method = "lm",
+        formula = y ~ x
+      )
   }
 
   if (!quo_is_null(group)) {
