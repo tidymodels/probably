@@ -278,9 +278,9 @@ expect_cal_rows <- function(x, n = 1010) {
 
 # ------------------------------------------------------------------------------
 
-save_svg <- function(code, width = 400, height = 400) {
+save_svg <- function(code) {
   path <- tempfile(fileext = ".svg")
-  svg(path, width = width, height = height)
+  svg(path)
   on.exit(dev.off())
   code
 
