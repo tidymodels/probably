@@ -278,9 +278,9 @@ expect_cal_rows <- function(x, n = 1010) {
 
 # ------------------------------------------------------------------------------
 
-save_png <- function(code, width = 400, height = 400) {
-  path <- tempfile(fileext = ".png")
-  png(path, width = width, height = height)
+save_svg <- function(code, width = 400, height = 400) {
+  path <- tempfile(fileext = ".svg")
+  svg(path, width = width, height = height)
   on.exit(dev.off())
   code
 
@@ -292,14 +292,14 @@ expect_snapshot_plot <- function(name, code) {
   skip_on_os("linux")
   skip_on_os("solaris")
 
-  name <- paste0(name, ".png")
+  name <- paste0(name, ".svg")
 
   # Announce the file before touching `code`. This way, if `code`
   # unexpectedly fails or skips, testthat will not auto-delete the
   # corresponding snapshot file.
   announce_snapshot_file(name = name)
 
-  path <- save_png(code)
+  path <- save_svg(code)
   expect_snapshot_file(path, name)
 }
 
