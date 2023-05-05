@@ -59,10 +59,19 @@ calculate the new probabilities.}
 Uses a bootstrapped Isotonic regression model to calibrate probabilities
 }
 \details{
-This function uses \code{stats::isoreg()} to create obtain the calibration
-values. It runs \code{isoreg()} multiple times, and each time with a different
+This function uses \code{\link[stats:isoreg]{stats::isoreg()}} to create obtain the calibration
+values. It runs \code{\link[stats:isoreg]{stats::isoreg()}} multiple times, and each time with a different
 seed. The results are saved inside the returned \code{cal_object}.
 }
+\section{Multiclass Extension}{
+
+
+This method is designed to work with two classes. For multiclass, it creates
+a set of "one versus all" calibrations for each class. After they are
+applied to the data, the probability estimates are re-normalized to add to
+one. This final step might compromise the calibration.
+}
+
 \examples{
 # It will automatically identify the probability columns
 # if passed a model fitted with tidymodels

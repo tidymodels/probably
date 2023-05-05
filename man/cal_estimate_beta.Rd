@@ -66,9 +66,18 @@ calculate the new probabilities.}
 Uses a Beta calibration model to calculate new probabilities
 }
 \details{
-This function uses the \code{betcal::beta_calibration()} function, and
+This function uses the \code{\link[betacal:beta_calibration]{betacal::beta_calibration()}} function, and
 retains the resulting model.
 }
+\section{Multiclass Extension}{
+
+
+This method is designed to work with two classes. For multiclass, it creates
+a set of "one versus all" calibrations for each class. After they are
+applied to the data, the probability estimates are re-normalized to add to
+one. This final step might compromise the calibration.
+}
+
 \examples{
 # It will automatically identify the probability columns
 # if passed a model fitted with tidymodels

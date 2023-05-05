@@ -60,8 +60,8 @@ Uses a linear regression model to calibrate numeric predictions
 This function uses existing modeling functions from other packages to create
 the calibration:
 \itemize{
-\item \code{stats::glm()} is used when \code{smooth} is set to \code{FALSE}
-\item \code{mgcv::gam()} is used when \code{smooth} is set to \code{TRUE}
+\item \code{\link[stats:glm]{stats::glm()}} is used when \code{smooth} is set to \code{FALSE}
+\item \code{\link[mgcv:gam]{mgcv::gam()}} is used when \code{smooth} is set to \code{TRUE}
 }
 
 These methods estimate the relationship in the unmodified predicted values

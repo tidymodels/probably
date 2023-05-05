@@ -23,7 +23,7 @@
 #'
 #' @template metrics_cls
 #'
-#' @param metrics A set of metrics passed created via `yardstick::metric_set()`
+#' @param metrics A set of metrics passed created via [yardstick::metric_set()]
 #' @param summarize Indicates to pass tibble with the metrics averaged, or
 #' if to return the same sampled object but with new columns containing the
 #' calibration y validation list columns.
@@ -672,7 +672,7 @@ type_sum.cal_binary <- function(x, ...) {
 #'
 #' @template metrics_reg
 #'
-#' @param metrics A set of metrics passed created via `yardstick::metric_set()`
+#' @param metrics A set of metrics passed created via [yardstick::metric_set()]
 #' @param summarize Indicates to pass tibble with the metrics averaged, or
 #' if to return the same sampled object but with new columns containing the
 #' calibration y validation list columns.

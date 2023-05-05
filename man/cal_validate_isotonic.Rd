@@ -49,7 +49,7 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
-\item{metrics}{A set of metrics passed created via \code{yardstick::metric_set()}}
+\item{metrics}{A set of metrics passed created via \code{\link[yardstick:metric_set]{yardstick::metric_set()}}}
 
 \item{save_details}{Indicates whether to include the \code{calibration} and
 \code{validation} columns when the \code{summarize} argument is set to FALSE.}

@@ -2,8 +2,9 @@
 #------------------------------- >> Isotonic  ----------------------------------
 #' Uses an Isotonic regression model to calibrate model predictions.
 #' @inheritParams cal_estimate_logistic
-#' @details This function uses `stats::isoreg()` to create obtain the calibration
+#' @details This function uses [stats::isoreg()] to create obtain the calibration
 #' values for binary classification or numeric regression.
+#' @template multiclass
 #' @references
 #' Zadrozny, Bianca and Elkan, Charles. (2002). Transforming Classifier Scores
 #' into Accurate Multiclass Probability Estimates. _Proceedings of the ACM SIGKDD
@@ -82,9 +83,10 @@ cal_estimate_isotonic.tune_results <- function(.data,
 #' Uses a bootstrapped Isotonic regression model to calibrate probabilities
 #' @param times Number of bootstraps.
 #' @inheritParams cal_estimate_logistic
-#' @details This function uses `stats::isoreg()` to create obtain the calibration
-#' values. It runs `isoreg()` multiple times, and each time with a different
+#' @details This function uses [stats::isoreg()] to create obtain the calibration
+#' values. It runs [stats::isoreg()] multiple times, and each time with a different
 #' seed. The results are saved inside the returned `cal_object`.
+#' @template multiclass
 #' @examples
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels

@@ -20,15 +20,23 @@
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
 #' cal_estimate_logistic(segment_logistic, Class)
+#'
 #' # Specify the variable names in a vector of unquoted names
 #' cal_estimate_logistic(segment_logistic, Class, c(.pred_poor, .pred_good))
+#'
 #' # dplyr selector functions are also supported
 #' cal_estimate_logistic(segment_logistic, Class, dplyr::starts_with(".pred_"))
 #' @details
 #' This function uses existing modeling functions from other packages to create
 #' the calibration:
-#' - `stats::glm()` is used when `smooth` is set to `FALSE`
-#' - `mgcv::gam()` is used when `smooth` is set to `TRUE`
+#' - [stats::glm()] is used when `smooth` is set to `FALSE`
+#' - [mgcv::gam()] is used when `smooth` is set to `TRUE`
+#'
+#' ## Multiclass Extension
+#'
+#' This method has _not_ been extended to multiclass outcomes. However, the
+#' natural multiclass extension is [cal_estimate_multinomial()].
+#'
 #' @export
 cal_estimate_logistic <- function(.data,
                                   truth = NULL,

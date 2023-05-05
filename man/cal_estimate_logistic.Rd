@@ -63,16 +63,23 @@ Uses a logistic regression model to calibrate probabilities
 This function uses existing modeling functions from other packages to create
 the calibration:
 \itemize{
-\item \code{stats::glm()} is used when \code{smooth} is set to \code{FALSE}
-\item \code{mgcv::gam()} is used when \code{smooth} is set to \code{TRUE}
+\item \code{\link[stats:glm]{stats::glm()}} is used when \code{smooth} is set to \code{FALSE}
+\item \code{\link[mgcv:gam]{mgcv::gam()}} is used when \code{smooth} is set to \code{TRUE}
+}
+\subsection{Multiclass Extension}{
+
+This method has \emph{not} been extended to multiclass outcomes. However, the
+natural multiclass extension is \code{\link[=cal_estimate_multinomial]{cal_estimate_multinomial()}}.
 }
 }
 \examples{
 # It will automatically identify the probability columns
 # if passed a model fitted with tidymodels
 cal_estimate_logistic(segment_logistic, Class)
+
 # Specify the variable names in a vector of unquoted names
 cal_estimate_logistic(segment_logistic, Class, c(.pred_poor, .pred_good))
+
 # dplyr selector functions are also supported
 cal_estimate_logistic(segment_logistic, Class, dplyr::starts_with(".pred_"))
 }
