@@ -14,6 +14,14 @@
       `.pred_good` ==> good
       `.pred_poor` ==> poor
 
+---
+
+    We can't connect the specified prediction columns to some factor levels (good). The selected columns were .pred_poor. Are there more columns to add in the funciton call?
+
+---
+
+    The number of outcome factor levels isn't consistent with the calibration method. The levels were: 'VF', 'F', 'M', 'L'
+
 # Logistic estimates work - tune_results
 
     Code
