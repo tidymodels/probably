@@ -115,7 +115,7 @@ cal_logistic_impl <- function(.data,
 
   truth <- enquo(truth)
 
-  levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
+  levels <- truth_estimate_map(.data, !!truth, {{ estimate }}, validate = TRUE)
 
   if (length(levels) == 2) {
     log_model <- cal_logistic_impl_grp(
@@ -136,7 +136,10 @@ cal_logistic_impl <- function(.data,
       source_class = source_class
     )
   } else {
-    stop_multiclass()
+    msg <- paste("The number of outcome factor levels isn't consistent with",
+                 "the calibration method. The levels were:",
+                 paste0("'", levels, "'", collapse = ", "))
+    rlang::abort(msg)
   }
 
   res
