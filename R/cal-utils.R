@@ -62,7 +62,7 @@ check_level_consistency <- function(lvls, mapping) {
     msg <- paste0(
       "We can't connect the specified prediction columns to some factor levels (",
       missings, "). The selected columns were ", cols, ". Are there more ",
-      "columns to add in the funciton call?"
+      "columns to add in the function call?"
     )
     rlang::abort(msg)
   }
