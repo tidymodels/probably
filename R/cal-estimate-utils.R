@@ -178,10 +178,6 @@ as_cal_object <- function(estimate,
   )
 }
 
-stop_multiclass <- function() {
-  cli::cli_abort("Multiclass not supported...yet")
-}
-
 # Wraps tidyselect call to avoid code duplication in the function above
 tidyselect_cols <- function(.data, x) {
   tidyselect::eval_select(

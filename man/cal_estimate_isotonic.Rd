@@ -54,9 +54,18 @@ calculate the new probabilities.}
 Uses an Isotonic regression model to calibrate model predictions.
 }
 \details{
-This function uses \code{stats::isoreg()} to create obtain the calibration
+This function uses \code{\link[stats:isoreg]{stats::isoreg()}} to create obtain the calibration
 values for binary classification or numeric regression.
 }
+\section{Multiclass Extension}{
+
+
+This method is designed to work with two classes. For multiclass, it creates
+a set of "one versus all" calibrations for each class. After they are
+applied to the data, the probability estimates are re-normalized to add to
+one. This final step might compromise the calibration.
+}
+
 \examples{
 # ------------------------------------------------------------------------------
 # Binary Classification

@@ -56,8 +56,8 @@
 #' This function uses existing modeling functions from other packages to create
 #' the calibration:
 #'
-#' - `stats::glm()` is used when `smooth` is set to `FALSE`
-#' - `mgcv::gam()` is used when `smooth` is set to `TRUE`
+#' - [stats::glm()] is used when `smooth` is set to `FALSE`
+#' - [mgcv::gam()] is used when `smooth` is set to `TRUE`
 #'
 #' These methods estimate the relationship in the unmodified predicted values
 #' and then remove that trend when [cal_apply()] is invoked.

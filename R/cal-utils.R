@@ -4,7 +4,7 @@
 # named variables, it will map the variables based on the position.
 # It returns a named list, wit the variable names as syms, and the assigned
 # levels as the name.
-truth_estimate_map <- function(.data, truth, estimate) {
+truth_estimate_map <- function(.data, truth, estimate, validate = FALSE) {
   truth_str <- tidyselect_cols(.data, {{ truth }})
 
   if(is.integer(truth_str)) {
@@ -38,11 +38,34 @@ truth_estimate_map <- function(.data, truth, estimate) {
         ~ sym(estimate_str[[.x]])
       )
     }
-
+    if (validate) {
+      check_level_consistency(truth_levels, est_map)
+    }
     res <- set_names(est_map, truth_levels)
   } else {
+    # regression case
     res <- list(sym(estimate_str))
     names(res) <- "predictions"
   }
   purrr::discard(res, is.null)
+}
+
+
+check_level_consistency <- function(lvls, mapping) {
+  null_map <- purrr::map_lgl(mapping, is_null)
+  if (any(null_map) | length(lvls) != length(mapping)) {
+    missings <- lvls[null_map]
+    missings <- paste0(missings, collapse = ", ")
+    cols <- mapping[!null_map]
+    cols < purrr::map_chr(cols, as.character)
+    cols <- paste0(cols, collapse = ", ")
+    msg <- paste0(
+      "We can't connect the specified prediction columns to some factor levels (",
+      missings, "). The selected columns were ", cols, ". Are there more ",
+      "columns to add in the function call?"
+    )
+    rlang::abort(msg)
+  }
+  invisible(NULL)
+
 }

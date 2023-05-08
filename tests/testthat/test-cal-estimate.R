@@ -6,6 +6,16 @@ test_that("Logistic estimates work - data.frame", {
   expect_cal_estimate(sl_logistic, "butchered_glm")
   expect_cal_rows(sl_logistic)
   expect_snapshot(print(sl_logistic))
+
+  expect_snapshot_error(
+    segment_logistic %>% cal_estimate_logistic(truth = Class, estimate = .pred_poor)
+  )
+
+  data(hpc_cv, package = "yardstick")
+  expect_snapshot_error(
+    hpc_cv %>% cal_estimate_logistic(truth = obs, estimate = c(VF:L))
+  )
+
 })
 
 test_that("Logistic estimates work - tune_results", {

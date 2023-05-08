@@ -5,11 +5,12 @@
 #' @param location_params Number of location parameters to use. Accepted values
 #' 1 and 0. Defaults to 1.
 #' @inheritParams cal_estimate_logistic
-#' @details  This function uses the `betcal::beta_calibration()` function, and
+#' @details  This function uses the [betacal::beta_calibration()] function, and
 #' retains the resulting model.
 #' @references Meelis Kull, Telmo M. Silva Filho, Peter Flach "Beyond sigmoids:
 #' How to obtain well-calibrated probabilities from binary classifiers with beta
 #' calibration," _Electronic Journal of Statistics_ 11(2), 5052-5080, (2017)
+#' @template multiclass
 #' @examples
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels

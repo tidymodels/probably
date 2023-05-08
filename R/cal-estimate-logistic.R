@@ -20,15 +20,23 @@
 #' # It will automatically identify the probability columns
 #' # if passed a model fitted with tidymodels
 #' cal_estimate_logistic(segment_logistic, Class)
+#'
 #' # Specify the variable names in a vector of unquoted names
 #' cal_estimate_logistic(segment_logistic, Class, c(.pred_poor, .pred_good))
+#'
 #' # dplyr selector functions are also supported
 #' cal_estimate_logistic(segment_logistic, Class, dplyr::starts_with(".pred_"))
 #' @details
 #' This function uses existing modeling functions from other packages to create
 #' the calibration:
-#' - `stats::glm()` is used when `smooth` is set to `FALSE`
-#' - `mgcv::gam()` is used when `smooth` is set to `TRUE`
+#' - [stats::glm()] is used when `smooth` is set to `FALSE`
+#' - [mgcv::gam()] is used when `smooth` is set to `TRUE`
+#'
+#' ## Multiclass Extension
+#'
+#' This method has _not_ been extended to multiclass outcomes. However, the
+#' natural multiclass extension is [cal_estimate_multinomial()].
+#'
 #' @export
 cal_estimate_logistic <- function(.data,
                                   truth = NULL,
@@ -115,7 +123,7 @@ cal_logistic_impl <- function(.data,
 
   truth <- enquo(truth)
 
-  levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
+  levels <- truth_estimate_map(.data, !!truth, {{ estimate }}, validate = TRUE)
 
   if (length(levels) == 2) {
     log_model <- cal_logistic_impl_grp(
@@ -136,7 +144,11 @@ cal_logistic_impl <- function(.data,
       source_class = source_class
     )
   } else {
-    stop_multiclass()
+    msg <- paste("The number of outcome factor levels isn't consistent with",
+                 "the calibration method. Only two class `truth` factors are",
+                 "allowed. The given levels were:",
+                 paste0("'", levels, "'", collapse = ", "))
+    rlang::abort(msg)
   }
 
   res
