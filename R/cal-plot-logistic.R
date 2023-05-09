@@ -61,8 +61,8 @@ cal_plot_logistic.data.frame <- function(.data,
                                          include_ribbon = TRUE,
                                          event_level = c("auto", "first", "second"),
                                          ...) {
-
-  check_cal_groups({{ group }}, .data)
+  check_group_argument({{ group }}, .data)
+  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_plot_logistic_impl(
     .data = .data,
