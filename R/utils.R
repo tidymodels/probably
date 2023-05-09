@@ -57,5 +57,17 @@ check_group_argument <- function(group, .data, call = rlang::env_parent()) {
     error_call = call
   )
 
+  n_group_names <- length(group_names)
+
+  if (n_group_names > 1) {
+    cli::cli_abort(
+      c(
+        x = "{.arg group} cannot select more than one column.",
+        i = "The following {n_group_names} columns were selected:",
+        i = "{names(group_names)}"
+      )
+    )
+  }
+
   invisible(NULL)
 }
