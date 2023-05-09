@@ -16,6 +16,21 @@ test_that("Logistic estimates work - data.frame", {
     hpc_cv %>% cal_estimate_logistic(truth = obs, estimate = c(VF:L))
   )
 
+  sl_logistic_group <- segment_logistic %>%
+    dplyr::mutate(group = .pred_poor > 0.5) %>%
+    cal_estimate_logistic(Class, group = group, smooth = FALSE)
+
+  expect_cal_type(sl_logistic_group, "binary")
+  expect_cal_method(sl_logistic_group, "Logistic")
+  expect_cal_estimate(sl_logistic_group, "butchered_glm")
+  expect_cal_rows(sl_logistic_group)
+  expect_snapshot(print(sl_logistic_group))
+
+  expect_snapshot_error(
+    segment_logistic %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_estimate_logistic(Class, group = c(group1, group2), smooth = FALSE)
+  )
 })
 
 test_that("Logistic estimates work - tune_results", {
@@ -34,6 +49,22 @@ test_that("Logistic spline estimates work - data.frame", {
   expect_cal_estimate(sl_gam, "butchered_gam")
   expect_cal_rows(sl_gam)
   expect_snapshot(print(sl_gam))
+
+  sl_gam_group <- segment_logistic %>%
+    dplyr::mutate(group = .pred_poor > 0.5) %>%
+    cal_estimate_logistic(Class, group = group)
+
+  expect_cal_type(sl_gam_group, "binary")
+  expect_cal_method(sl_gam_group, "Logistic Spline")
+  expect_cal_estimate(sl_gam_group, "butchered_gam")
+  expect_cal_rows(sl_gam_group)
+  expect_snapshot(print(sl_gam_group))
+
+  expect_snapshot_error(
+    segment_logistic %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_estimate_logistic(Class, group = c(group1, group2))
+  )
 })
 
 test_that("Logistic spline estimates work - tune_results", {
@@ -57,6 +88,21 @@ test_that("Isotonic estimates work - data.frame", {
   expect_cal_method(sl_isotonic, "Isotonic")
   expect_cal_rows(sl_isotonic)
   expect_snapshot(print(sl_isotonic))
+
+  sl_isotonic_group <- segment_logistic %>%
+    dplyr::mutate(group = .pred_poor > 0.5) %>%
+    cal_estimate_isotonic(Class, group = group)
+
+  expect_cal_type(sl_isotonic_group, "binary")
+  expect_cal_method(sl_isotonic_group, "Isotonic")
+  expect_cal_rows(sl_isotonic_group)
+  expect_snapshot(print(sl_isotonic_group))
+
+  expect_snapshot_error(
+    segment_logistic %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_estimate_isotonic(Class, group = c(group1, group2))
+  )
 })
 
 test_that("Isotonic estimates work - tune_results", {
@@ -78,6 +124,20 @@ test_that("Isotonic linear estimates work - data.frame", {
   expect_cal_method(sl_logistic, "Isotonic")
   expect_cal_rows(sl_logistic, 2000)
   expect_snapshot(print(sl_logistic))
+
+  sl_logistic_group <- boosting_predictions_oob %>%
+    cal_estimate_isotonic(outcome, estimate = .pred, group = id)
+
+  expect_cal_type(sl_logistic_group, "regression")
+  expect_cal_method(sl_logistic_group, "Isotonic")
+  expect_cal_rows(sl_logistic_group, 2000)
+  expect_snapshot(print(sl_logistic_group))
+
+  expect_snapshot_error(
+    boosting_predictions_oob %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_estimate_isotonic(outcome, estimate = .pred, group = c(group1, group2))
+  )
 })
 
 # -------------------------- Isotonic Bootstrapped -----------------------------
@@ -86,6 +146,20 @@ test_that("Isotonic Bootstrapped estimates work", {
   expect_cal_type(sl_boot, "binary")
   expect_cal_method(sl_boot, "Bootstrapped Isotonic Regression")
   expect_snapshot(print(sl_boot))
+
+  sl_boot_group <- segment_logistic %>%
+    dplyr::mutate(group = .pred_poor > 0.5) %>%
+    cal_estimate_isotonic_boot(Class, group = group)
+
+  expect_cal_type(sl_boot_group, "binary")
+  expect_cal_method(sl_boot_group, "Bootstrapped Isotonic Regression")
+  expect_snapshot(print(sl_boot_group))
+
+  expect_snapshot_error(
+    segment_logistic %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_estimate_isotonic_boot(Class, group = c(group1, group2))
+  )
 })
 
 test_that("Isotonic Bootstrapped estimates work - tune_results", {
@@ -108,6 +182,21 @@ test_that("Beta estimates work - data.frame", {
   expect_cal_method(sl_beta, "Beta")
   expect_cal_rows(sl_beta)
   expect_snapshot(print(sl_beta))
+
+  sl_beta_group <- segment_logistic %>%
+    dplyr::mutate(group = .pred_poor > 0.5) %>%
+    cal_estimate_beta(Class, smooth = FALSE, group = group)
+
+  expect_cal_type(sl_beta_group, "binary")
+  expect_cal_method(sl_beta_group, "Beta")
+  expect_cal_rows(sl_beta_group)
+  expect_snapshot(print(sl_beta_group))
+
+  expect_snapshot_error(
+    segment_logistic %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_estimate_beta(Class, smooth = FALSE, group = c(group1, group2))
+  )
 })
 
 test_that("Beta estimates work - tune_results", {
@@ -135,6 +224,21 @@ test_that("Multinomial estimates work - data.frame", {
   expect_cal_method(sp_smth_multi, "Multinomial")
   expect_cal_rows(sp_smth_multi, n = 110)
   expect_snapshot(print(sp_smth_multi))
+
+  sl_multi_group <- species_probs %>%
+    dplyr::mutate(group = .pred_bobcat > 0.5) %>%
+    cal_estimate_multinomial(Species, smooth = FALSE, group = group)
+
+  expect_cal_type(sl_multi_group, "multiclass")
+  expect_cal_method(sl_multi_group, "Multinomial")
+  expect_cal_rows(sl_multi_group, n = 110)
+  expect_snapshot(print(sl_multi_group))
+
+  expect_snapshot_error(
+    species_probs %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_estimate_multinomial(Species, smooth = FALSE, group = c(group1, group2))
+  )
 })
 
 test_that("Multinomial estimates work - tune_results", {
@@ -181,6 +285,22 @@ test_that("Linear estimates work - data.frame", {
   expect_cal_estimate(sl_logistic, "butchered_glm")
   expect_cal_rows(sl_logistic, 2000)
   expect_snapshot(print(sl_logistic))
+
+  sl_logistic_group <- boosting_predictions_oob %>%
+    dplyr::mutate(group = .pred > 0.5) %>%
+    cal_estimate_linear(outcome, smooth = FALSE, group = group)
+
+  expect_cal_type(sl_logistic_group, "regression")
+  expect_cal_method(sl_logistic_group, "Linear")
+  expect_cal_estimate(sl_logistic_group, "butchered_glm")
+  expect_cal_rows(sl_logistic_group, 2000)
+  expect_snapshot(print(sl_logistic_group))
+
+  expect_snapshot_error(
+    boosting_predictions_oob %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_estimate_linear(outcome, smooth = FALSE, group = c(group1, group2))
+  )
 })
 
 test_that("Linear estimates work - tune_results", {
@@ -199,6 +319,22 @@ test_that("Linear spline estimates work - data.frame", {
   expect_cal_estimate(sl_gam, "butchered_gam")
   expect_cal_rows(sl_gam, 2000)
   expect_snapshot(print(sl_gam))
+
+  sl_gam_group <- boosting_predictions_oob %>%
+    dplyr::mutate(group = .pred > 0.5) %>%
+    cal_estimate_linear(outcome, group = group)
+
+  expect_cal_type(sl_gam_group, "regression")
+  expect_cal_method(sl_gam_group, "Linear Spline")
+  expect_cal_estimate(sl_gam_group, "butchered_gam")
+  expect_cal_rows(sl_gam_group, 2000)
+  expect_snapshot(print(sl_gam_group))
+
+  expect_snapshot_error(
+    boosting_predictions_oob %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_estimate_linear(outcome, group = c(group1, group2))
+  )
 })
 
 test_that("Linear spline estimates work - tune_results", {
