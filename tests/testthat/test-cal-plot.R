@@ -24,6 +24,28 @@ test_that("Binary breaks functions work", {
   )
 })
 
+test_that("Binary breaks functions work with group argument", {
+  res <- segment_logistic %>%
+    dplyr::mutate(id = dplyr::row_number() %% 2) %>%
+    cal_plot_breaks(Class, .pred_good, group = id)
+
+  expect_s3_class(
+    res,
+    "ggplot"
+  )
+
+  expect_snapshot_plot(
+    "cal_plot_breaks-df-group",
+    print(res)
+  )
+
+  expect_snapshot_error(
+    segment_logistic %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_plot_breaks(Class, .pred_good, group = c(group1, group2))
+  )
+})
+
 test_that("Multi-class breaks functions work", {
 
   x10 <- .cal_table_breaks(species_probs, Species, dplyr::starts_with(".pred"))
@@ -124,6 +146,28 @@ test_that("Binary logistic functions work", {
   expect_equal(
     which(x25$prob == max(x25$prob)),
     nrow(x25)
+  )
+})
+
+test_that("Binary logistic functions work with group argument", {
+  res <- segment_logistic %>%
+    dplyr::mutate(id = dplyr::row_number() %% 2) %>%
+    cal_plot_logistic(Class, .pred_good, group = id)
+
+  expect_s3_class(
+    res,
+    "ggplot"
+  )
+
+  expect_snapshot_plot(
+    "cal_plot_logistic-df-group",
+    print(res)
+  )
+
+  expect_snapshot_error(
+    segment_logistic %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_plot_logistic(Class, .pred_good, group = c(group1, group2))
   )
 })
 
