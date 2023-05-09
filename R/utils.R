@@ -44,3 +44,18 @@ is_ordered.class_pred <- function(x) {
 is_ordered.default <- function(x) {
   is.ordered(x)
 }
+
+check_group_argument <- function(group, .data, call = rlang::env_parent()) {
+  group <- rlang::enquo(group)
+
+  group_names <- tidyselect::eval_select(
+    expr = group,
+    data = .data,
+    allow_rename = FALSE,
+    allow_empty = TRUE,
+    allow_predicates = TRUE,
+    error_call = call
+  )
+
+  invisible(NULL)
+}
