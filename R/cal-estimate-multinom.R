@@ -60,8 +60,12 @@ cal_estimate_multinomial.data.frame <-
            estimate = dplyr::starts_with(".pred_"),
            smooth = TRUE,
            parameters = NULL,
-           ...) {
+           ...,
+           group = NULL) {
   stop_null_parameters(parameters)
+
+  check_group_argument({{ group }}, .data)
+  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   truth <- enquo(truth)
   cal_multinom_impl(
