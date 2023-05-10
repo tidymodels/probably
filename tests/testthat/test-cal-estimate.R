@@ -34,7 +34,7 @@ test_that("Logistic estimates work - data.frame", {
   )
 
   lgst_configs <-
-    bin_with_configs %>%
+    bin_with_configs() %>%
     cal_estimate_logistic(truth = Class, smooth = FALSE)
   expect_true(are_groups_configs(lgst_configs))
 
@@ -79,7 +79,7 @@ test_that("Logistic spline estimates work - data.frame", {
   )
 
   lgst_configs <-
-    bin_with_configs %>%
+    bin_with_configs() %>%
     cal_estimate_logistic(truth = Class, smooth = TRUE)
   expect_true(are_groups_configs(lgst_configs))
 })
@@ -123,12 +123,12 @@ test_that("Isotonic estimates work - data.frame", {
   )
 
   iso_configs <-
-    bin_with_configs %>%
+    bin_with_configs() %>%
     cal_estimate_isotonic(truth = Class)
   expect_true(are_groups_configs(iso_configs))
 
   mltm_configs <-
-    mnl_with_configs %>%
+    mnl_with_configs() %>%
     cal_estimate_isotonic(truth = obs, estimate = c(VF:L))
   expect_true(are_groups_configs(mltm_configs))
 })
@@ -186,7 +186,7 @@ test_that("Isotonic linear estimates work - data.frame", {
   )
 
   iso_configs <-
-    reg_with_configs %>%
+    reg_with_configs() %>%
     cal_estimate_isotonic(truth = solubility, estimate = prediction)
   expect_true(are_groups_configs(iso_configs))
 })
@@ -215,12 +215,12 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
   )
 
   isobt_configs <-
-    bin_with_configs %>%
+    bin_with_configs() %>%
     cal_estimate_isotonic_boot(truth = Class)
   expect_true(are_groups_configs(isobt_configs))
 
   mltm_configs <-
-    mnl_with_configs %>%
+    mnl_with_configs() %>%
     cal_estimate_isotonic_boot(truth = obs, estimate = c(VF:L))
   expect_true(are_groups_configs(mltm_configs))
 
@@ -280,12 +280,12 @@ test_that("Beta estimates work - data.frame", {
   )
 
   beta_configs <-
-    bin_with_configs %>%
+    bin_with_configs() %>%
     cal_estimate_beta(truth = Class)
   expect_true(are_groups_configs(beta_configs))
 
   mltm_configs <-
-    mnl_with_configs %>%
+    mnl_with_configs() %>%
     cal_estimate_beta(truth = obs, estimate = c(VF:L))
   expect_true(are_groups_configs(mltm_configs))
 })
@@ -349,7 +349,7 @@ test_that("Multinomial estimates work - data.frame", {
   )
 
   mltm_configs <-
-    mnl_with_configs %>%
+    mnl_with_configs() %>%
     cal_estimate_multinomial(truth = obs, estimate = c(VF:L), smooth = FALSE)
   expect_true(are_groups_configs(mltm_configs))
 })
@@ -418,7 +418,7 @@ test_that("Linear estimates work - data.frame", {
   )
 
   lin_configs <-
-    reg_with_configs %>%
+    reg_with_configs() %>%
     cal_estimate_linear(truth = solubility, estimate = prediction, smooth = FALSE)
   expect_true(are_groups_configs(lin_configs))
 })
@@ -458,7 +458,7 @@ test_that("Linear spline estimates work - data.frame", {
   )
 
   lin_configs <-
-    reg_with_configs %>%
+    reg_with_configs() %>%
     cal_estimate_linear(truth = solubility, estimate = prediction, smooth = TRUE)
   expect_true(are_groups_configs(lin_configs))
 })

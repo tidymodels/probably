@@ -321,19 +321,26 @@ are_groups_configs <- function(x) {
   all(are_config)
 }
 
-
-set.seed(1)
-bin_with_configs <-
+bin_with_configs <- function() {
+  set.seed(1)
   segment_logistic %>%
-  mutate(.config = sample(letters[1:2], nrow(segment_logistic), replace = TRUE))
+    dplyr::mutate(.config = sample(letters[1:2], nrow(segment_logistic), replace = TRUE))
+}
 
-set.seed(1)
-mnl_with_configs <-
+mnl_with_configs <- function() {
+  data("hpc_cv", package = "modeldata")
+
+  set.seed(1)
   hpc_cv %>%
-  mutate(.config = sample(letters[1:2], nrow(hpc_cv), replace = TRUE))
+    dplyr::mutate(.config = sample(letters[1:2], nrow(hpc_cv), replace = TRUE))
+}
 
-set.seed(1)
-reg_with_configs <-
+reg_with_configs <- function() {
+  data("solubility_test", package = "modeldata")
+
+  set.seed(1)
+
   solubility_test %>%
-  mutate(.config = sample(letters[1:2], nrow(solubility_test), replace = TRUE))
+    dplyr::mutate(.config = sample(letters[1:2], nrow(solubility_test), replace = TRUE))
 
+}

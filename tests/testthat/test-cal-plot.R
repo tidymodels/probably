@@ -24,7 +24,7 @@ test_that("Binary breaks functions work", {
   )
 
   brks_configs <-
-    bin_with_configs %>% cal_plot_breaks(truth = Class, estimate = .pred_good)
+    bin_with_configs() %>% cal_plot_breaks(truth = Class, estimate = .pred_good)
   expect_true(has_facet(brks_configs))
 })
 
@@ -90,7 +90,7 @@ test_that("Multi-class breaks functions work", {
   expect_true(inherits(multi_configs_from_tune$facet, "FacetGrid"))
 
   multi_configs_from_df <-
-    mnl_with_configs %>% cal_plot_breaks(truth = obs, estimate = c(VF:L))
+    mnl_with_configs() %>% cal_plot_breaks(truth = obs, estimate = c(VF:L))
   expect_s3_class(multi_configs_from_df, "ggplot")
   # should be faceted by .config and class
   expect_true(inherits(multi_configs_from_df$facet, "FacetGrid"))
@@ -170,7 +170,7 @@ test_that("Binary logistic functions work", {
   )
 
   lgst_configs <-
-    bin_with_configs %>% cal_plot_logistic(truth = Class, estimate = .pred_good)
+    bin_with_configs() %>% cal_plot_logistic(truth = Class, estimate = .pred_good)
   expect_true(has_facet(lgst_configs))
 
   # ------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ test_that("Binary logistic functions work", {
 
 
   multi_configs_from_df <-
-    mnl_with_configs %>% cal_plot_logistic(truth = obs, estimate = c(VF:L))
+    mnl_with_configs() %>% cal_plot_logistic(truth = obs, estimate = c(VF:L))
   expect_s3_class(multi_configs_from_df, "ggplot")
   # should be faceted by .config and class
   expect_true(inherits(multi_configs_from_df$facet, "FacetGrid"))
@@ -214,7 +214,7 @@ test_that("Binary logistic functions work with group argument", {
   )
 
   lgst_configs <-
-    bin_with_configs %>% cal_plot_logistic(truth = Class, estimate = .pred_good)
+    bin_with_configs() %>% cal_plot_logistic(truth = Class, estimate = .pred_good)
   expect_true(has_facet(lgst_configs))
 })
 
@@ -287,7 +287,7 @@ test_that("Binary windowed functions work", {
   expect_true(has_facet(x33))
 
   win_configs <-
-    bin_with_configs %>% cal_plot_windowed(truth = Class, estimate = .pred_good)
+    bin_with_configs() %>% cal_plot_windowed(truth = Class, estimate = .pred_good)
   expect_true(has_facet(win_configs))
 
 
@@ -302,7 +302,7 @@ test_that("Binary windowed functions work", {
 
 
   multi_configs_from_df <-
-    mnl_with_configs %>% cal_plot_windowed(truth = obs, estimate = c(VF:L))
+    mnl_with_configs() %>% cal_plot_windowed(truth = obs, estimate = c(VF:L))
   expect_s3_class(multi_configs_from_df, "ggplot")
   # should be faceted by .config and class
   expect_true(inherits(multi_configs_from_df$facet, "FacetGrid"))
