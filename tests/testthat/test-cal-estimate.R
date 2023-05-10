@@ -206,7 +206,7 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
   expect_cal_type(sl_boot_group, "binary")
   expect_cal_method(sl_boot_group, "Bootstrapped Isotonic Regression")
   expect_snapshot(print(sl_boot_group))
-  expect_false(are_groups_configs(tl_isotonic))
+  expect_false(are_groups_configs(sl_boot_group))
 
   expect_snapshot_error(
     segment_logistic %>%
@@ -306,7 +306,9 @@ test_that("Beta estimates work - tune_results", {
   # multinomial outcomes
 
   set.seed(100)
-  mtnl_isotonic <- cal_estimate_beta(testthat_cal_multiclass())
+  suppressWarnings(
+    mtnl_isotonic <- cal_estimate_beta(testthat_cal_multiclass())
+  )
   expect_cal_type(mtnl_isotonic, "one_vs_all")
   expect_cal_method(mtnl_isotonic, "Beta")
   expect_snapshot(print(mtnl_isotonic))

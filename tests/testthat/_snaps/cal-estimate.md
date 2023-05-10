@@ -60,6 +60,10 @@
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
 
+---
+
+    The number of outcome factor levels isn't consistent with the calibration method. Only two class `truth` factors are allowed. The given levels were: '.pred_one', '.pred_two', '.pred_three'
+
 # Logistic spline estimates work - data.frame
 
     Code
@@ -171,6 +175,23 @@
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
 
+---
+
+    Code
+      print(mtnl_isotonic)
+    Message
+      
+      -- Probability Calibration 
+      Method: Isotonic
+      Type: Multiclass (1 v All)
+      Source class:
+      Data points: 5,000, split in 10 groups
+      Truth variable: `class`
+      Estimate variables:
+      `.pred_one` ==> one
+      `.pred_two` ==> two
+      `.pred_three` ==> three
+
 # Isotonic linear estimates work - data.frame
 
     Code
@@ -182,7 +203,7 @@
       Type: Regression
       Source class: Data Frame
       Data points: 2,000
-      Unique Predicted Values: 44
+      Unique Predicted Values: 43
       Truth variable: `outcome`
       Estimate variables:
       `.pred` ==> predictions
@@ -198,7 +219,7 @@
       Type: Regression
       Source class: Data Frame
       Data points: 2,000, split in 10 groups
-      Unique Predicted Values: 20
+      Unique Predicted Values: 11
       Truth variable: `outcome`
       Estimate variables:
       `.pred` ==> predictions
@@ -209,7 +230,7 @@
     i The following 2 columns were selected:
     i group1 and group2
 
-# Isotonic Bootstrapped estimates work
+# Isotonic Bootstrapped estimates work - data.frame
 
     Code
       print(sl_boot)
@@ -262,6 +283,23 @@
       Estimate variables:
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
+
+---
+
+    Code
+      print(mtnl_isotonic)
+    Message
+      
+      -- Probability Calibration 
+      Method: Bootstrapped Isotonic Regression
+      Type: Multiclass (1 v All)
+      Source class: Tune Results
+      Data points: 5,000, split in 10 groups
+      Truth variable: `class`
+      Estimate variables:
+      `.pred_one` ==> one
+      `.pred_two` ==> two
+      `.pred_three` ==> three
 
 # Beta estimates work - data.frame
 
@@ -316,6 +354,23 @@
       Estimate variables:
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
+
+---
+
+    Code
+      print(mtnl_isotonic)
+    Message
+      
+      -- Probability Calibration 
+      Method: Beta
+      Type: Multiclass (1 v All)
+      Source class: Tune Results
+      Data points: 5,000, split in 10 groups
+      Truth variable: `class`
+      Estimate variables:
+      `.pred_one` ==> one
+      `.pred_two` ==> two
+      `.pred_three` ==> three
 
 # Multinomial estimates work - data.frame
 
