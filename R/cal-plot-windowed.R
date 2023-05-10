@@ -105,7 +105,6 @@ cal_plot_windowed.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     event_level = event_level,
     ...
   )
@@ -227,7 +226,6 @@ cal_plot_windowed_impl <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     event_level = event_level,
     ...
   )

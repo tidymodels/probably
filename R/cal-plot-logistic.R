@@ -93,7 +93,6 @@ cal_plot_logistic.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     event_level = event_level,
     ...
   )
@@ -206,7 +205,6 @@ cal_plot_logistic_impl <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     event_level = event_level,
     ...
   )

@@ -109,7 +109,6 @@ cal_estimate_linear.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = NULL,
     event_level = NA_character_,
     parameters = parameters,
     ...

@@ -146,7 +146,6 @@ cal_plot_breaks.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     event_level = event_level,
     ...
   )
@@ -298,7 +297,6 @@ cal_plot_breaks_impl <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     event_level = event_level,
     ...
   )

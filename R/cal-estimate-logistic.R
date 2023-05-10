@@ -86,7 +86,6 @@ cal_estimate_logistic.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = NULL,
     event_level = "first",
     parameters = parameters,
     ...

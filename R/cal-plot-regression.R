@@ -74,7 +74,6 @@ cal_plot_regression.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     ...
   )
 

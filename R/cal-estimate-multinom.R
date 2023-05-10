@@ -91,7 +91,6 @@ cal_estimate_multinomial.tune_results <-
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = NULL,
     event_level = "first",
     parameters = parameters,
     ...

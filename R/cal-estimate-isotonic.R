@@ -69,7 +69,6 @@ cal_estimate_isotonic.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = NULL,
     event_level = "first",
     parameters = parameters,
     ...
@@ -151,7 +150,6 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = NULL,
     event_level = "first", # or null for regression
     parameters = parameters,
     ...

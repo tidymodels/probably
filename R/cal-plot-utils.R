@@ -217,7 +217,6 @@ process_level <- function(x) {
 tune_results_args <- function(.data,
                               truth,
                               estimate,
-                              group,
                               event_level,
                               parameters = NULL,
                               ...) {
@@ -239,7 +238,6 @@ tune_results_args <- function(.data,
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
-  group <- enquo(group)
 
   if (quo_is_null(truth)) {
     truth_str <- attributes(.data)$outcome
