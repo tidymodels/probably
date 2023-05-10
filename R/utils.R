@@ -45,7 +45,7 @@ is_ordered.default <- function(x) {
   is.ordered(x)
 }
 
-check_group_argument <- function(group, .data, call = rlang::env_parent()) {
+get_group_argument <- function(group, .data, call = rlang::env_parent()) {
   group <- rlang::enquo(group)
 
   group_names <- tidyselect::eval_select(
@@ -59,6 +59,14 @@ check_group_argument <- function(group, .data, call = rlang::env_parent()) {
 
   n_group_names <- length(group_names)
 
+  useable_config <- n_group_names == 0 &&
+    ".config" %in% names(.data) &&
+    dplyr::n_distinct(.data[[".config"]]) > 1
+
+  if (useable_config) {
+    return(quo(.config))
+  }
+
   if (n_group_names > 1) {
     cli::cli_abort(
       c(
@@ -69,5 +77,5 @@ check_group_argument <- function(group, .data, call = rlang::env_parent()) {
     )
   }
 
-  invisible(NULL)
+  return(group)
 }

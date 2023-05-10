@@ -111,7 +111,7 @@ cal_plot_breaks.data.frame <- function(.data,
                                        event_level = c("auto", "first", "second"),
                                        ...,
                                        group = NULL) {
-  check_group_argument({{ group }}, .data)
+  group <- get_group_argument({{ group }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_plot_breaks_impl(

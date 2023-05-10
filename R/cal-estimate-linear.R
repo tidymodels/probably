@@ -84,7 +84,7 @@ cal_estimate_linear.data.frame <- function(.data,
                                            group = NULL) {
   stop_null_parameters(parameters)
 
-  check_group_argument({{ group }}, .data)
+  group <- get_group_argument({{ group }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_linear_impl(
