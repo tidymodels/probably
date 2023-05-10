@@ -307,6 +307,21 @@ has_facet <- function(x) {
   inherits(x$facet, c("FacetWrap", "FacetGrid"))
 }
 
+are_groups_configs <- function(x) {
+  fltrs <- purrr::map(x$estimates, ~ .x$filter)
+
+  # Check if anything is in the filter slot
+  are_null <- purrr::map_lgl(fltrs, ~ all(is.null(.x)))
+  if (all(are_null)) {
+    return(FALSE)
+  }
+
+  fltr_vars <- purrr::map(fltrs, all.vars)
+  are_config <- purrr::map_lgl(fltr_vars, ~ identical(.x, ".config"))
+  all(are_config)
+}
+
+
 set.seed(1)
 bin_with_configs <-
   segment_logistic %>%
