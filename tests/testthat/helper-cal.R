@@ -303,3 +303,22 @@ expect_snapshot_plot <- function(name, code) {
   expect_snapshot_file(path, name)
 }
 
+has_facet <- function(x) {
+  inherits(x$facet, c("FacetWrap", "FacetGrid"))
+}
+
+set.seed(1)
+bin_with_configs <-
+  segment_logistic %>%
+  mutate(.config = sample(letters[1:2], nrow(segment_logistic), replace = TRUE))
+
+set.seed(1)
+mnl_with_configs <-
+  hpc_cv %>%
+  mutate(.config = sample(letters[1:2], nrow(hpc_cv), replace = TRUE))
+
+set.seed(1)
+reg_with_configs <-
+  solubility_test %>%
+  mutate(.config = sample(letters[1:2], nrow(solubility_test), replace = TRUE))
+
