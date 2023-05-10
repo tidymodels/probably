@@ -101,15 +101,20 @@ cal_plot_windowed.tune_results <- function(.data,
                                            include_points = TRUE,
                                            event_level = c("auto", "first", "second"),
                                            ...) {
-  if (rlang::quo_is_null(enquo(group))) {
-    group <- expr(.config)
-  }
-
-  cal_plot_windowed_impl(
+  tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     group = {{ group }},
+    event_level = event_level,
+    ...
+  )
+
+  cal_plot_windowed_impl(
+    .data = tune_args$predictions,
+    truth = !!tune_args$truth,
+    estimate = !!tune_args$estimate,
+    group = !!tune_args$group,
     window_size = window_size,
     step_size = step_size,
     conf_level = conf_level,

@@ -94,6 +94,10 @@ regression_plot_impl <- function(.data, truth, estimate, group,
   estimate <- enquo(estimate)
   group <- enquo(group)
 
+  if (quo_is_null(group)) {
+    .data[[".config"]] <- NULL
+  }
+
   gp_vars <- dplyr::group_vars(.data)
 
   if (length(gp_vars)) {
