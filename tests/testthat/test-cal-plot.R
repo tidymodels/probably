@@ -379,3 +379,42 @@ test_that("regression functions work", {
     print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE))
   )
 })
+
+# ------------------------------------------------------------------------------
+
+test_that("don't facet if there is only one .config", {
+  class_data <- testthat_cal_binary()
+
+  class_data$.predictions <- lapply(
+    class_data$.predictions,
+    function(x) dplyr::filter(x, .config == "Preprocessor1_Model1")
+  )
+
+  res_breaks <- cal_plot_breaks(class_data)
+
+  expect_null(res_breaks$data[[".config"]])
+  expect_s3_class(res_breaks, "ggplot")
+
+  res_logistic <- cal_plot_logistic(class_data)
+
+  expect_null(res_logistic$data[[".config"]])
+  expect_s3_class(res_logistic, "ggplot")
+
+  res_windowed <- cal_plot_windowed(class_data)
+
+  expect_null(res_windowed$data[[".config"]])
+  expect_s3_class(res_windowed, "ggplot")
+
+  reg_data <- testthat_cal_reg()
+
+  reg_data$.predictions <- lapply(
+    reg_data$.predictions,
+    function(x) dplyr::filter(x, .config == "Preprocessor01_Model1")
+  )
+
+  res_regression <- cal_plot_regression(reg_data)
+
+  expect_null(res_regression$data[[".config"]])
+  expect_s3_class(res_regression, "ggplot")
+})
+
