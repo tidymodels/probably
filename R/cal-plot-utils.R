@@ -250,7 +250,7 @@ tune_results_args <- function(.data,
     estimate <- expr(dplyr::starts_with(".pred"))
   }
 
-  if (dplyr::n_distinct(.data[[".config"]]) > 1) {
+  if (dplyr::n_distinct(.data[[".predictions"]][[1]][[".config"]]) > 1) {
     group <- quo(.config)
   } else {
     group <- quo(NULL)
