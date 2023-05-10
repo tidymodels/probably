@@ -88,7 +88,6 @@
 cal_plot_breaks <- function(.data,
                             truth = NULL,
                             estimate = dplyr::starts_with(".pred"),
-                            group = NULL,
                             num_breaks = 10,
                             conf_level = 0.90,
                             include_ribbon = TRUE,
@@ -104,14 +103,14 @@ cal_plot_breaks <- function(.data,
 cal_plot_breaks.data.frame <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred"),
-                                       group = NULL,
                                        num_breaks = 10,
                                        conf_level = 0.90,
                                        include_ribbon = TRUE,
                                        include_rug = TRUE,
                                        include_points = TRUE,
                                        event_level = c("auto", "first", "second"),
-                                       ...) {
+                                       ...,
+                                       group = NULL) {
   check_group_argument({{ group }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
@@ -134,7 +133,6 @@ cal_plot_breaks.data.frame <- function(.data,
 cal_plot_breaks.tune_results <- function(.data,
                                          truth = NULL,
                                          estimate = dplyr::starts_with(".pred"),
-                                         group = NULL,
                                          num_breaks = 10,
                                          conf_level = 0.90,
                                          include_ribbon = TRUE,

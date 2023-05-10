@@ -28,7 +28,6 @@
 cal_plot_regression <- function(.data,
                                 truth = NULL,
                                 estimate = NULL,
-                                group = NULL,
                                 smooth = TRUE,
                                 ...) {
   UseMethod("cal_plot_regression")
@@ -37,9 +36,9 @@ cal_plot_regression <- function(.data,
 cal_plot_regression_impl <- function(.data,
                                      truth = NULL,
                                      estimate = NULL,
-                                     group = NULL,
                                      smooth = TRUE,
-                                     ...) {
+                                     ...,
+                                     group = NULL) {
   check_group_argument({{ group }}, .data)
 
   truth <- enquo(truth)
@@ -67,7 +66,6 @@ cal_plot_regression.data.frame <- cal_plot_regression_impl
 cal_plot_regression.tune_results <- function(.data,
                                              truth = NULL,
                                              estimate = NULL,
-                                             group = NULL,
                                              smooth = TRUE,
                                              ...) {
   tune_args <- tune_results_args(

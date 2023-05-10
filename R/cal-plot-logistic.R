@@ -39,7 +39,6 @@
 cal_plot_logistic <- function(.data,
                               truth = NULL,
                               estimate = dplyr::starts_with(".pred"),
-                              group = NULL,
                               conf_level = 0.90,
                               smooth = TRUE,
                               include_rug = TRUE,
@@ -54,13 +53,13 @@ cal_plot_logistic <- function(.data,
 cal_plot_logistic.data.frame <- function(.data,
                                          truth = NULL,
                                          estimate = dplyr::starts_with(".pred"),
-                                         group = NULL,
                                          conf_level = 0.90,
                                          smooth = TRUE,
                                          include_rug = TRUE,
                                          include_ribbon = TRUE,
                                          event_level = c("auto", "first", "second"),
-                                         ...) {
+                                         ...,
+                                         group = NULL) {
   check_group_argument({{ group }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
@@ -82,7 +81,6 @@ cal_plot_logistic.data.frame <- function(.data,
 cal_plot_logistic.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = dplyr::starts_with(".pred"),
-                                           group = NULL,
                                            conf_level = 0.90,
                                            smooth = TRUE,
                                            include_rug = TRUE,

@@ -42,7 +42,6 @@
 cal_plot_windowed <- function(.data,
                               truth = NULL,
                               estimate = dplyr::starts_with(".pred"),
-                              group = NULL,
                               window_size = 0.1,
                               step_size = window_size / 2,
                               conf_level = 0.90,
@@ -59,7 +58,6 @@ cal_plot_windowed <- function(.data,
 cal_plot_windowed.data.frame <- function(.data,
                                          truth = NULL,
                                          estimate = dplyr::starts_with(".pred"),
-                                         group = NULL,
                                          window_size = 0.1,
                                          step_size = window_size / 2,
                                          conf_level = 0.90,
@@ -67,7 +65,8 @@ cal_plot_windowed.data.frame <- function(.data,
                                          include_rug = TRUE,
                                          include_points = TRUE,
                                          event_level = c("auto", "first", "second"),
-                                         ...) {
+                                         ...,
+                                         group = NULL) {
   check_group_argument({{ group }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
@@ -92,7 +91,6 @@ cal_plot_windowed.data.frame <- function(.data,
 cal_plot_windowed.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = dplyr::starts_with(".pred"),
-                                           group = NULL,
                                            window_size = 0.1,
                                            step_size = window_size / 2,
                                            conf_level = 0.90,
