@@ -120,6 +120,23 @@ cal_plot_windowed.tune_results <- function(.data,
   )
 }
 
+#' @export
+#' @rdname cal_plot_windowed
+cal_plot_windowed.grouped_df <- function(.data,
+                                         truth = NULL,
+                                         estimate = NULL,
+                                         group = NULL,
+                                         window_size = 0.1,
+                                         step_size = window_size / 2,
+                                         conf_level = 0.90,
+                                         include_ribbon = TRUE,
+                                         include_rug = TRUE,
+                                         include_points = TRUE,
+                                         event_level = c("auto", "first", "second"),
+                                         ...) {
+  abort_if_grouped_df()
+}
+
 #--------------------------- >> Implementation ---------------------------------
 cal_plot_windowed_impl <- function(.data,
                                    truth = NULL,

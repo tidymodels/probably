@@ -4,6 +4,7 @@
 \alias{cal_plot_windowed}
 \alias{cal_plot_windowed.data.frame}
 \alias{cal_plot_windowed.tune_results}
+\alias{cal_plot_windowed.grouped_df}
 \title{Probability calibration plots via moving windows}
 \usage{
 cal_plot_windowed(
@@ -40,6 +41,21 @@ cal_plot_windowed(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
+  group = NULL,
+  window_size = 0.1,
+  step_size = window_size/2,
+  conf_level = 0.9,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+)
+
+\method{cal_plot_windowed}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   group = NULL,
   window_size = 0.1,
   step_size = window_size/2,

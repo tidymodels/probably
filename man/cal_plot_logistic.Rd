@@ -4,6 +4,7 @@
 \alias{cal_plot_logistic}
 \alias{cal_plot_logistic.data.frame}
 \alias{cal_plot_logistic.tune_results}
+\alias{cal_plot_logistic.grouped_df}
 \title{Probability calibration plots via logistic regression}
 \usage{
 cal_plot_logistic(
@@ -36,6 +37,19 @@ cal_plot_logistic(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
+  group = NULL,
+  conf_level = 0.9,
+  smooth = TRUE,
+  include_rug = TRUE,
+  include_ribbon = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+)
+
+\method{cal_plot_logistic}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   group = NULL,
   conf_level = 0.9,
   smooth = TRUE,

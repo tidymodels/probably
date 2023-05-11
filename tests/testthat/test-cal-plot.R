@@ -317,8 +317,7 @@ test_that("Numeric groups are supported", {
   grp_df$num_group <- rep(c(1, 2), times = 505)
 
   p <- grp_df %>%
-    dplyr::group_by(num_group) %>%
-    cal_plot_breaks(Class, .pred_good)
+    cal_plot_breaks(Class, .pred_good, group = num_group)
 
   expect_s3_class(p, "ggplot")
 })

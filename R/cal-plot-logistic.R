@@ -107,6 +107,21 @@ cal_plot_logistic.tune_results <- function(.data,
   )
 }
 
+#' @export
+#' @rdname cal_plot_logistic
+cal_plot_logistic.grouped_df <- function(.data,
+                                         truth = NULL,
+                                         estimate = NULL,
+                                         group = NULL,
+                                         conf_level = 0.90,
+                                         smooth = TRUE,
+                                         include_rug = TRUE,
+                                         include_ribbon = TRUE,
+                                         event_level = c("auto", "first", "second"),
+                                         ...) {
+  abort_if_grouped_df()
+}
+
 #--------------------------- >> Implementation ---------------------------------
 cal_plot_logistic_impl <- function(.data,
                                    truth = NULL,

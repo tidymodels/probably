@@ -4,6 +4,7 @@
 \alias{cal_plot_breaks}
 \alias{cal_plot_breaks.data.frame}
 \alias{cal_plot_breaks.tune_results}
+\alias{cal_plot_breaks.grouped_df}
 \title{Probability calibration plots via binning}
 \usage{
 cal_plot_breaks(
@@ -38,6 +39,20 @@ cal_plot_breaks(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
+  group = NULL,
+  num_breaks = 10,
+  conf_level = 0.9,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+)
+
+\method{cal_plot_breaks}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   group = NULL,
   num_breaks = 10,
   conf_level = 0.9,
@@ -133,13 +148,11 @@ gl <- segment_logistic \%>\%
 combined <- bind_rows(mutate(segment_logistic, source = "original"), gl)
 
 combined \%>\%
-  group_by(source) \%>\%
-  cal_plot_logistic(Class, .pred_good)
+  cal_plot_logistic(Class, .pred_good, group = source)
 
 # The grouping can be faceted in ggplot2
 combined \%>\%
-  group_by(source) \%>\%
-  cal_plot_logistic(Class, .pred_good) +
+  cal_plot_logistic(Class, .pred_good, group = source) +
   facet_wrap(~source) +
   theme(legend.position = "")
 }

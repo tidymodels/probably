@@ -74,13 +74,11 @@
 #' combined <- bind_rows(mutate(segment_logistic, source = "original"), gl)
 #'
 #' combined %>%
-#'   group_by(source) %>%
-#'   cal_plot_logistic(Class, .pred_good)
+#'   cal_plot_logistic(Class, .pred_good, group = source)
 #'
 #' # The grouping can be faceted in ggplot2
 #' combined %>%
-#'   group_by(source) %>%
-#'   cal_plot_logistic(Class, .pred_good) +
+#'   cal_plot_logistic(Class, .pred_good, group = source) +
 #'   facet_wrap(~source) +
 #'   theme(legend.position = "")
 #' @seealso [cal_plot_logistic()], [cal_plot_windowed()]
@@ -159,6 +157,22 @@ cal_plot_breaks.tune_results <- function(.data,
     event_level = event_level,
     is_tune_results = TRUE
   )
+}
+
+#' @export
+#' @rdname cal_plot_breaks
+cal_plot_breaks.grouped_df <- function(.data,
+                                       truth = NULL,
+                                       estimate = NULL,
+                                       group = NULL,
+                                       num_breaks = 10,
+                                       conf_level = 0.90,
+                                       include_ribbon = TRUE,
+                                       include_rug = TRUE,
+                                       include_points = TRUE,
+                                       event_level = c("auto", "first", "second"),
+                                       ...) {
+  abort_if_grouped_df()
 }
 
 #--------------------------- >> Implementation ---------------------------------
