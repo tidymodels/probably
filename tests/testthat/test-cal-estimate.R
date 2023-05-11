@@ -156,12 +156,10 @@ test_that("Isotonic estimates work - tune_results", {
   expect_snapshot(print(mtnl_isotonic))
   expect_true(are_groups_configs(mtnl_isotonic))
 
-  # TODO
-  # expect_equal(
-  #   testthat_cal_binary_count(), # <- adapt for multiclass
-  #   nrow(cal_apply(testthat_cal_binary(), mtnl_isotonic))
-  # )
-
+  expect_equal(
+    testthat_cal_multiclass_count(),
+    nrow(cal_apply(testthat_cal_multiclass(), mtnl_isotonic))
+  )
 })
 
 test_that("Isotonic linear estimates work - data.frame", {
@@ -249,11 +247,10 @@ test_that("Isotonic Bootstrapped estimates work - tune_results", {
   expect_snapshot(print(mtnl_isotonic))
   expect_true(are_groups_configs(mtnl_isotonic))
 
-  # TODO
-  # expect_equal(
-  #   testthat_cal_binary_count(), # <- adapt for multiclass
-  #   nrow(cal_apply(testthat_cal_binary(), mtnl_isotonic))
-  # )
+  expect_equal(
+    testthat_cal_multiclass_count(),
+    nrow(cal_apply(testthat_cal_multiclass(), mtnl_isotonic))
+  )
 })
 
 # ----------------------------------- Beta -------------------------------------
@@ -314,11 +311,10 @@ test_that("Beta estimates work - tune_results", {
   expect_snapshot(print(mtnl_isotonic))
   expect_true(are_groups_configs(mtnl_isotonic))
 
-  # TODO
-  # expect_equal(
-  #   testthat_cal_binary_count(), # <- adapt for multiclass
-  #   nrow(cal_apply(testthat_cal_binary(), mtnl_isotonic))
-  # )
+  expect_equal(
+    testthat_cal_multiclass_count(),
+    nrow(cal_apply(testthat_cal_multiclass(), mtnl_isotonic))
+  )
 })
 
 # ------------------------------ Multinomial -----------------------------------
