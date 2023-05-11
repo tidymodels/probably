@@ -80,9 +80,8 @@ make_class_pred <- function(...,
   # Length check
   lens <- vapply(probs, length, numeric(1))
   if (any(lens != lens[1])) {
-    stop(
-      "All vectors passed to `...` must be of the same length.",
-      call. = FALSE
+    cli::cli_abort(
+      "All vectors passed to {.arg ...} must be of the same length."
     )
   }
 
@@ -90,28 +89,25 @@ make_class_pred <- function(...,
   num_cols <- vapply(probs, is.numeric, logical(1))
   if (any(!num_cols)) {
     not_numeric <- which(!num_cols)
-    stop (
-      "At least one vector supplied to `...` is not numeric: ",
-      paste(not_numeric, collapse = ", "),
-      call. = FALSE
+    cli::cli_abort(
+      c(
+        "x" = "The index supplied to `...` are not numeric:",
+        "i" = "{not_numeric}"
+      )
     )
   }
 
   # Levels check (length and type)
   if (length(levels) != length(probs) || !is.character(levels)) {
-    stop (
-      "`levels` must be a character vector with the ",
-      "same length as the number of vectors passed to `...`.",
-      call. = FALSE
+    cli::cli_abort(
+      "{.arg levels} must be a character vector with the \\
+      same length as the number of vectors passed to {.arg ...}."
     )
   }
 
   # min_prob checks
   if (length(min_prob) != 1 && is.numeric(min_prob)) {
-    stop(
-      "`min_prob` must be a single numeric value.",
-      call. = FALSE
-    )
+    cli::cli_abort("{.arg min_prob} must be a single numeric value.")
   }
 
   probs <- list2mat(probs)
@@ -142,13 +138,13 @@ make_two_class_pred <- function(estimate,
                                 buffer = NULL) {
 
   if (length(levels) != 2 || !is.character(levels))
-    stop ("`levels` must be a character vector of length 2.", call. = FALSE)
+    cli::cli_abort("{.arg levels} must be a character vector of length 2.")
 
   if (!is.numeric(estimate))
-    stop ("The selected probability vector should be numeric.", call. = FALSE)
+    cli::cli_abort("The selected probability vector should be numeric.")
 
   if (length(buffer) > 2 && is.numeric(buffer))
-    stop ("`buffer` must be a numeric vector of length 1 or 2.", call. = FALSE)
+    cli::cli_abort("{.arg buffer} must be a numeric vector of length 1 or 2.")
 
   if (length(buffer) == 1) {
     buffer <- c(buffer, buffer)
@@ -235,14 +231,13 @@ append_class_pred <- function(.data,
                               name = ".class_pred") {
 
   if (!is.data.frame(.data) && ncol(.data) < 2) {
-    stop (
-      "`.data` should be a data frame or tibble with at least 2 columns.",
-      call. = FALSE
+    cli::cli_abort(
+      "{.arg .data} should be a data frame or tibble with at least 2 columns."
     )
   }
 
   if (!rlang::is_scalar_character(name)) {
-    stop("`name` must be a single character value.", call. = FALSE)
+    cli::cli_abort("{.arg name} must be a single character value.")
   }
 
   sel <- tidyselect::eval_select(
@@ -253,7 +248,7 @@ append_class_pred <- function(.data,
   prob_names <- names(sel)
 
   if (length(prob_names) < 2) {
-    stop ("`...` should select at least 2 columns.", call. = FALSE)
+    cli::cli_abort("{.arg ...} should select at least 2 columns.")
   }
 
   prob_syms <- rlang::syms(prob_names)
