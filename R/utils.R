@@ -44,3 +44,13 @@ is_ordered.class_pred <- function(x) {
 is_ordered.default <- function(x) {
   is.ordered(x)
 }
+
+abort_if_grouped_df <- function(call = rlang::caller_env()) {
+  cli::cli_abort(
+    c(
+      "x" = "This function does not work with grouped data frames.",
+      "i" = "Apply `dplyr::ungroup()` and use the `.by` argument."
+    ),
+    call = call
+  )
+}
