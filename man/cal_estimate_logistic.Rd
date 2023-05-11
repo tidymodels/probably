@@ -4,6 +4,7 @@
 \alias{cal_estimate_logistic}
 \alias{cal_estimate_logistic.data.frame}
 \alias{cal_estimate_logistic.tune_results}
+\alias{cal_estimate_logistic.grouped_df}
 \title{Uses a logistic regression model to calibrate probabilities}
 \usage{
 cal_estimate_logistic(
@@ -28,6 +29,15 @@ cal_estimate_logistic(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_logistic}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   smooth = TRUE,
   parameters = NULL,
   ...

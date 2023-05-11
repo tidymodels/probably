@@ -4,6 +4,7 @@
 \alias{cal_estimate_isotonic_boot}
 \alias{cal_estimate_isotonic_boot.data.frame}
 \alias{cal_estimate_isotonic_boot.tune_results}
+\alias{cal_estimate_isotonic_boot.grouped_df}
 \title{Uses a bootstrapped Isotonic regression model to calibrate probabilities}
 \usage{
 cal_estimate_isotonic_boot(
@@ -28,6 +29,15 @@ cal_estimate_isotonic_boot(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
+  times = 10,
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_isotonic_boot}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   times = 10,
   parameters = NULL,
   ...

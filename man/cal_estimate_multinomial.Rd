@@ -4,6 +4,7 @@
 \alias{cal_estimate_multinomial}
 \alias{cal_estimate_multinomial.data.frame}
 \alias{cal_estimate_multinomial.tune_results}
+\alias{cal_estimate_multinomial.grouped_df}
 \title{Uses a Multinomial calibration model to calculate new probabilities}
 \usage{
 cal_estimate_multinomial(
@@ -28,6 +29,15 @@ cal_estimate_multinomial(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_multinomial}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   smooth = TRUE,
   parameters = NULL,
   ...

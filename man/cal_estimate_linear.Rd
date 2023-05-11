@@ -4,6 +4,7 @@
 \alias{cal_estimate_linear}
 \alias{cal_estimate_linear.data.frame}
 \alias{cal_estimate_linear.tune_results}
+\alias{cal_estimate_linear.grouped_df}
 \title{Uses a linear regression model to calibrate numeric predictions}
 \usage{
 cal_estimate_linear(
@@ -28,6 +29,15 @@ cal_estimate_linear(
   .data,
   truth = NULL,
   estimate = dplyr::matches("^.pred$"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_linear}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   smooth = TRUE,
   parameters = NULL,
   ...

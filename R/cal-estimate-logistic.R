@@ -95,6 +95,18 @@ cal_estimate_logistic.tune_results <- function(.data,
     )
 }
 
+#' @export
+#' @rdname cal_estimate_logistic
+cal_estimate_logistic.grouped_df <- function(.data,
+                                             truth = NULL,
+                                             estimate = NULL,
+                                             smooth = TRUE,
+                                             parameters = NULL,
+                                             ...) {
+  abort_if_grouped_df()
+}
+
+
 #' @rdname required_pkgs.cal_object
 #' @keywords internal
 #' @export

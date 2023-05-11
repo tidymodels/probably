@@ -4,6 +4,7 @@
 \alias{cal_estimate_isotonic}
 \alias{cal_estimate_isotonic.data.frame}
 \alias{cal_estimate_isotonic.tune_results}
+\alias{cal_estimate_isotonic.grouped_df}
 \title{Uses an Isotonic regression model to calibrate model predictions.}
 \usage{
 cal_estimate_isotonic(
@@ -26,6 +27,14 @@ cal_estimate_isotonic(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_isotonic}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   parameters = NULL,
   ...
 )

@@ -4,6 +4,7 @@
 \alias{cal_estimate_beta}
 \alias{cal_estimate_beta.data.frame}
 \alias{cal_estimate_beta.tune_results}
+\alias{cal_estimate_beta.grouped_df}
 \title{Uses a Beta calibration model to calculate new probabilities}
 \usage{
 cal_estimate_beta(
@@ -32,6 +33,16 @@ cal_estimate_beta(
   shape_params = 2,
   location_params = 1,
   estimate = dplyr::starts_with(".pred_"),
+  parameters = NULL,
+  ...
+)
+
+\method{cal_estimate_beta}{grouped_df}(
+  .data,
+  truth = NULL,
+  shape_params = 2,
+  location_params = 1,
+  estimate = NULL,
   parameters = NULL,
   ...
 )

@@ -119,6 +119,17 @@ cal_estimate_linear.tune_results <- function(.data,
     )
 }
 
+#' @export
+#' @rdname cal_estimate_linear
+cal_estimate_linear.grouped_df <- function(.data,
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           smooth = TRUE,
+                                           parameters = NULL,
+                                           ...) {
+  abort_if_grouped_df()
+}
+
 #' @rdname required_pkgs.cal_object
 #' @keywords internal
 #' @export
