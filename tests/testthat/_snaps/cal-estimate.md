@@ -38,6 +38,11 @@
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
 
+# Logistic estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
+
 # Logistic spline estimates work - data.frame
 
     Code
@@ -104,6 +109,11 @@
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
 
+# Isotonic estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
+
 # Isotonic linear estimates work - data.frame
 
     Code
@@ -152,6 +162,11 @@
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
 
+# Isotonic Bootstrapped estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
+
 # Beta estimates work - data.frame
 
     Code
@@ -183,6 +198,11 @@
       Estimate variables:
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
+
+# Beta estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
 
 # Multinomial estimates work - data.frame
 
@@ -252,6 +272,11 @@
       `.pred_two` ==> two
       `.pred_three` ==> three
 
+# Multinomial estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
+
 # Linear estimates work - data.frame
 
     Code
@@ -277,6 +302,11 @@
       Data points: 750, split in 10 groups
       Truth variable: `outcome`
       Estimate variable: `.pred`
+
+# Linear estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
 
 # Linear spline estimates work - data.frame
 
