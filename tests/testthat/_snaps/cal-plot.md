@@ -16,6 +16,11 @@
       Error:
       ! The data have several values of '.config' but no 'groups' argument was passed. This will inappropriately pool the data.
 
+# breaks plot function errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
+
 # Binary logistic functions work
 
     Code
@@ -25,6 +30,11 @@
       Error:
       ! The data have several values of '.config' but no 'groups' argument was passed. This will inappropriately pool the data.
 
+# logistic plot function errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
+
 # Binary windowed functions work
 
     Code
@@ -33,6 +43,11 @@
     Condition
       Error:
       ! The data have several values of '.config' but no 'groups' argument was passed. This will inappropriately pool the data.
+
+# windowed plot function errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
 
 # Event level handling works
 
@@ -45,4 +60,9 @@
     Condition
       Error:
       ! The data have several values of '.config' but no 'groups' argument was passed. This will inappropriately pool the data.
+
+# regression plot function errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
 

@@ -70,6 +70,12 @@ test_that("Multi-class breaks functions work", {
   )
 })
 
+test_that("breaks plot function errors - grouped_df", {
+  expect_snapshot_error(
+    cal_plot_breaks(dplyr::group_by(mtcars, vs))
+  )
+})
+
 test_that("Binary logistic functions work", {
   x20 <- .cal_table_logistic(segment_logistic, Class, .pred_good)
 
@@ -149,6 +155,12 @@ test_that("Binary logistic functions work", {
   )
 })
 
+test_that("logistic plot function errors - grouped_df", {
+  expect_snapshot_error(
+    cal_plot_logistic(dplyr::group_by(mtcars, vs))
+  )
+})
+
 test_that("Binary windowed functions work", {
   x30 <- .cal_table_windowed(
     segment_logistic,
@@ -220,6 +232,12 @@ test_that("Binary windowed functions work", {
     testthat_cal_binary() %>%
       tune::collect_predictions() %>%
       cal_plot_windowed(class, estimate = .pred_class_1)
+  )
+})
+
+test_that("windowed plot function errors - grouped_df", {
+  expect_snapshot_error(
+    cal_plot_windowed(dplyr::group_by(mtcars, vs))
   )
 })
 
@@ -368,5 +386,11 @@ test_that("regression functions work", {
   expect_snapshot_plot(
     "df-scat-lin",
     print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE))
+  )
+})
+
+test_that("regression plot function errors - grouped_df", {
+  expect_snapshot_error(
+    cal_plot_regression(dplyr::group_by(mtcars, vs))
   )
 })
