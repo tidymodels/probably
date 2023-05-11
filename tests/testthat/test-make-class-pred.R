@@ -67,9 +67,8 @@ test_that("fails with different length `...`", {
   v1 <- c(1, 2, 3)
   v2 <- c(1, 2)
 
-  expect_error(
-    make_class_pred(v1, v2),
-    "All vectors passed to `...` must be of the same length."
+  expect_snapshot_error(
+    make_class_pred(v1, v2)
   )
 
 })
@@ -79,11 +78,9 @@ test_that("fails with different type `...`", {
   v1 <- c(1)
   v2 <- c("a")
 
-  expect_error(
-    make_class_pred(v1, v2),
-    "At least one vector supplied to `...` is not numeric: 2"
+  expect_snapshot_error(
+    make_class_pred(v1, v2)
   )
-
 })
 
 test_that("fails with different length `...` VS levels", {
@@ -91,20 +88,17 @@ test_that("fails with different length `...` VS levels", {
   v1 <- c(1, 2, 3)
   v2 <- c(1, 2, 3)
 
-  expect_error(
-    make_class_pred(v1, v2, levels = c("one", "two", "three")),
-    "`levels` must be a character vector with the same length as the number of vectors passed to `...`."
+  expect_snapshot_error(
+    make_class_pred(v1, v2, levels = c("one", "two", "three"))
   )
-
 })
 
 test_that("validates type of `levels` (#42)", {
-  expect_error(
-    make_two_class_pred(1, levels = NULL),
-    "`levels` must be a character vector of length 2."
+  expect_snapshot_error(
+    make_two_class_pred(1, levels = NULL)
   )
-  expect_error(
-    make_class_pred(1, 2, levels = c(0L, 4L)),
-    "`levels` must be a character vector"
+
+  expect_snapshot_error(
+    make_class_pred(1, 2, levels = c(0L, 4L))
   )
 })
