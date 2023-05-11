@@ -99,8 +99,19 @@ testthat_cal_multiclass <- function() {
       ret <- readRDS(ret_file)
     }
     .cal_env$tune_results_multi <- ret
+    cp <- tune::collect_predictions(ret, summarize = TRUE)
+    .cal_env$tune_results_multi_count <- nrow(cp)
   }
 
+  ret
+}
+
+testthat_cal_multiclass_count <- function() {
+  ret <- .cal_env$tune_results_multi_count
+  if (is.null(ret)) {
+    invisible(testthat_cal_multiclass())
+    ret <- .cal_env$tune_results_multi_count
+  }
   ret
 }
 
