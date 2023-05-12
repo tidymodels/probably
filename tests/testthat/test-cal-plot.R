@@ -23,13 +23,31 @@ test_that("Binary breaks functions work", {
     "ggplot"
   )
 
-  expect_snapshot(
-    error = TRUE,
-    testthat_cal_binary() %>%
-      tune::collect_predictions() %>%
-      cal_plot_breaks(class, estimate = .pred_class_1)
+  brks_configs <-
+    bin_with_configs() %>% cal_plot_breaks(truth = Class, estimate = .pred_good)
+  expect_true(has_facet(brks_configs))
+})
+
+test_that("Binary breaks functions work with group argument", {
+  res <- segment_logistic %>%
+    dplyr::mutate(id = dplyr::row_number() %% 2) %>%
+    cal_plot_breaks(Class, .pred_good, group = id)
+
+  expect_s3_class(
+    res,
+    "ggplot"
   )
 
+  expect_snapshot_plot(
+    "cal_plot_breaks-df-group",
+    print(res)
+  )
+
+  expect_snapshot_error(
+    segment_logistic %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_plot_breaks(Class, .pred_good, group = c(group1, group2))
+  )
 })
 
 test_that("Multi-class breaks functions work", {
@@ -53,21 +71,29 @@ test_that("Multi-class breaks functions work", {
     seq(0.05, 0.95, by = 0.10)
   )
 
-  expect_s3_class(
-    cal_plot_breaks(testthat_cal_multiclass()),
-    "ggplot"
-  )
+  multi_configs <- cal_plot_breaks(testthat_cal_multiclass())
+  # should be faceted by .config and class
+  expect_s3_class(multi_configs, "ggplot")
+  expect_true(inherits(multi_configs$facet, "FacetGrid"))
 
   expect_error(
     cal_plot_breaks(species_probs, Species, event_level = "second")
   )
 
-  expect_snapshot(
-    error = TRUE,
-    testthat_cal_multiclass() %>%
-      tune::collect_predictions() %>%
-      cal_plot_breaks(class, estimate = .pred_class_1)
-  )
+  # ------------------------------------------------------------------------------
+  # multinomial outcome, binary logistic plots
+
+  multi_configs_from_tune <-
+    testthat_cal_multiclass() %>% cal_plot_breaks()
+  expect_s3_class(multi_configs_from_tune, "ggplot")
+  # should be faceted by .config and class
+  expect_true(inherits(multi_configs_from_tune$facet, "FacetGrid"))
+
+  multi_configs_from_df <-
+    mnl_with_configs() %>% cal_plot_breaks(truth = obs, estimate = c(VF:L))
+  expect_s3_class(multi_configs_from_df, "ggplot")
+  # should be faceted by .config and class
+  expect_true(inherits(multi_configs_from_df$facet, "FacetGrid"))
 })
 
 test_that("breaks plot function errors - grouped_df", {
@@ -95,6 +121,7 @@ test_that("Binary logistic functions work", {
   x21 <- cal_plot_logistic(segment_logistic, Class, .pred_good)
 
   expect_s3_class(x21, "ggplot")
+  expect_false(has_facet(x21))
 
   x22 <- .cal_table_logistic(testthat_cal_binary())
 
@@ -122,6 +149,7 @@ test_that("Binary logistic functions work", {
   x23 <- cal_plot_logistic(testthat_cal_binary())
 
   expect_s3_class(x23, "ggplot")
+  expect_true(has_facet(x23))
 
   x24 <- .cal_table_logistic(segment_logistic, Class, .pred_good, smooth = FALSE)
 
@@ -147,12 +175,53 @@ test_that("Binary logistic functions work", {
     nrow(x25)
   )
 
-  expect_snapshot(
-    error = TRUE,
-    testthat_cal_binary() %>%
-      tune::collect_predictions() %>%
-      cal_plot_logistic(class, estimate = .pred_class_1)
+  lgst_configs <-
+    bin_with_configs() %>% cal_plot_logistic(truth = Class, estimate = .pred_good)
+  expect_true(has_facet(lgst_configs))
+
+  # ------------------------------------------------------------------------------
+  # multinomial outcome, binary logistic plots
+
+  multi_configs_from_tune <-
+    testthat_cal_multiclass() %>% cal_plot_logistic(smooth = FALSE)
+  expect_s3_class(multi_configs_from_tune, "ggplot")
+  # should be faceted by .config and class
+  expect_true(inherits(multi_configs_from_tune$facet, "FacetGrid"))
+
+
+  multi_configs_from_df <-
+    mnl_with_configs() %>% cal_plot_logistic(truth = obs, estimate = c(VF:L))
+  expect_s3_class(multi_configs_from_df, "ggplot")
+  # should be faceted by .config and class
+  expect_true(inherits(multi_configs_from_df$facet, "FacetGrid"))
+
+})
+
+test_that("Binary logistic functions work with group argument", {
+  res <- segment_logistic %>%
+    dplyr::mutate(id = dplyr::row_number() %% 2) %>%
+    cal_plot_logistic(Class, .pred_good, group = id)
+
+  expect_s3_class(
+    res,
+    "ggplot"
   )
+  expect_true(has_facet(res))
+
+  expect_snapshot_plot(
+    "cal_plot_logistic-df-group",
+    print(res)
+  )
+
+  expect_snapshot_error(
+    segment_logistic %>%
+      dplyr::mutate(group1 = 1, group2 = 2) %>%
+      cal_plot_logistic(Class, .pred_good, group = c(group1, group2))
+  )
+
+  lgst_configs <-
+    bin_with_configs() %>% cal_plot_logistic(truth = Class, estimate = .pred_good)
+  expect_true(has_facet(lgst_configs))
 })
 
 test_that("logistic plot function errors - grouped_df", {
@@ -194,6 +263,7 @@ test_that("Binary windowed functions work", {
   x31 <- cal_plot_windowed(segment_logistic, Class, .pred_good)
 
   expect_s3_class(x31, "ggplot")
+  expect_false(has_facet(x31))
 
   x32 <- .cal_table_windowed(
     testthat_cal_binary(),
@@ -226,13 +296,28 @@ test_that("Binary windowed functions work", {
   x33 <- cal_plot_windowed(testthat_cal_binary())
 
   expect_s3_class(x33, "ggplot")
+  expect_true(has_facet(x33))
 
-  expect_snapshot(
-    error = TRUE,
-    testthat_cal_binary() %>%
-      tune::collect_predictions() %>%
-      cal_plot_windowed(class, estimate = .pred_class_1)
-  )
+  win_configs <-
+    bin_with_configs() %>% cal_plot_windowed(truth = Class, estimate = .pred_good)
+  expect_true(has_facet(win_configs))
+
+
+  # ------------------------------------------------------------------------------
+  # multinomial outcome, binary windowed plots
+
+  multi_configs_from_tune <-
+    testthat_cal_multiclass() %>% cal_plot_windowed()
+  expect_s3_class(multi_configs_from_tune, "ggplot")
+  # should be faceted by .config and class
+  expect_true(inherits(multi_configs_from_tune$facet, "FacetGrid"))
+
+
+  multi_configs_from_df <-
+    mnl_with_configs() %>% cal_plot_windowed(truth = obs, estimate = c(VF:L))
+  expect_s3_class(multi_configs_from_df, "ggplot")
+  # should be faceted by .config and class
+  expect_true(inherits(multi_configs_from_df$facet, "FacetGrid"))
 })
 
 test_that("windowed plot function errors - grouped_df", {
@@ -376,13 +461,6 @@ test_that("regression functions work", {
     "rs-scat-group-opts",
     print(cal_plot_regression(obj), alpha = 1/5, smooth = FALSE)
   )
-
-  expect_snapshot(
-    error = TRUE,
-    obj %>%
-      tune::collect_predictions() %>%
-      cal_plot_windowed(outcome, estimate = .pred)
-  )
   expect_snapshot_plot(
     "df-scat-lin",
     print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE))
@@ -393,4 +471,42 @@ test_that("regression plot function errors - grouped_df", {
   expect_snapshot_error(
     cal_plot_regression(dplyr::group_by(mtcars, vs))
   )
+})
+
+# ------------------------------------------------------------------------------
+
+test_that("don't facet if there is only one .config", {
+  class_data <- testthat_cal_binary()
+
+  class_data$.predictions <- lapply(
+    class_data$.predictions,
+    function(x) dplyr::filter(x, .config == "Preprocessor1_Model1")
+  )
+
+  res_breaks <- cal_plot_breaks(class_data)
+
+  expect_null(res_breaks$data[[".config"]])
+  expect_s3_class(res_breaks, "ggplot")
+
+  res_logistic <- cal_plot_logistic(class_data)
+
+  expect_null(res_logistic$data[[".config"]])
+  expect_s3_class(res_logistic, "ggplot")
+
+  res_windowed <- cal_plot_windowed(class_data)
+
+  expect_null(res_windowed$data[[".config"]])
+  expect_s3_class(res_windowed, "ggplot")
+
+  reg_data <- testthat_cal_reg()
+
+  reg_data$.predictions <- lapply(
+    reg_data$.predictions,
+    function(x) dplyr::filter(x, .config == "Preprocessor01_Model1")
+  )
+
+  res_regression <- cal_plot_regression(reg_data)
+
+  expect_null(res_regression$data[[".config"]])
+  expect_s3_class(res_regression, "ggplot")
 })

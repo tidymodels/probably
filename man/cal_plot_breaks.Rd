@@ -11,7 +11,6 @@ cal_plot_breaks(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  group = NULL,
   num_breaks = 10,
   conf_level = 0.9,
   include_ribbon = TRUE,
@@ -25,21 +24,20 @@ cal_plot_breaks(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  group = NULL,
   num_breaks = 10,
   conf_level = 0.9,
   include_ribbon = TRUE,
   include_rug = TRUE,
   include_points = TRUE,
   event_level = c("auto", "first", "second"),
-  ...
+  ...,
+  group = NULL
 )
 
 \method{cal_plot_breaks}{tune_results}(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  group = NULL,
   num_breaks = 10,
   conf_level = 0.9,
   include_ribbon = TRUE,
@@ -76,8 +74,6 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
-\item{group}{The column identifier to group the results.}
-
 \item{num_breaks}{The number of segments to group the probabilities. It
 defaults to 10.}
 
@@ -99,6 +95,8 @@ the function decide which one to use based on the type of model (binary,
 multi-class or linear)}
 
 \item{...}{Additional arguments passed to the \code{tune_results} object.}
+
+\item{group}{The column identifier to group the results.}
 }
 \value{
 A ggplot object.

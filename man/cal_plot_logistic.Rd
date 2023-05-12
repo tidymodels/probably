@@ -11,7 +11,6 @@ cal_plot_logistic(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  group = NULL,
   conf_level = 0.9,
   smooth = TRUE,
   include_rug = TRUE,
@@ -24,20 +23,19 @@ cal_plot_logistic(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  group = NULL,
   conf_level = 0.9,
   smooth = TRUE,
   include_rug = TRUE,
   include_ribbon = TRUE,
   event_level = c("auto", "first", "second"),
-  ...
+  ...,
+  group = NULL
 )
 
 \method{cal_plot_logistic}{tune_results}(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  group = NULL,
   conf_level = 0.9,
   smooth = TRUE,
   include_rug = TRUE,
@@ -72,8 +70,6 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
-\item{group}{The column identifier to group the results.}
-
 \item{conf_level}{Confidence level to use in the visualization. It defaults
 to 0.9.}
 
@@ -93,6 +89,8 @@ the function decide which one to use based on the type of model (binary,
 multi-class or linear)}
 
 \item{...}{Additional arguments passed to the \code{tune_results} object.}
+
+\item{group}{The column identifier to group the results.}
 }
 \value{
 A ggplot object.

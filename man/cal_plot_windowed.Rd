@@ -11,7 +11,6 @@ cal_plot_windowed(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  group = NULL,
   window_size = 0.1,
   step_size = window_size/2,
   conf_level = 0.9,
@@ -26,7 +25,6 @@ cal_plot_windowed(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  group = NULL,
   window_size = 0.1,
   step_size = window_size/2,
   conf_level = 0.9,
@@ -34,14 +32,14 @@ cal_plot_windowed(
   include_rug = TRUE,
   include_points = TRUE,
   event_level = c("auto", "first", "second"),
-  ...
+  ...,
+  group = NULL
 )
 
 \method{cal_plot_windowed}{tune_results}(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
-  group = NULL,
   window_size = 0.1,
   step_size = window_size/2,
   conf_level = 0.9,
@@ -80,8 +78,6 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
-\item{group}{The column identifier to group the results.}
-
 \item{window_size}{The size of segments. Used for the windowed probability
 calculations. It defaults to 10\% of segments.}
 
@@ -106,6 +102,8 @@ the function decide which one to use based on the type of model (binary,
 multi-class or linear)}
 
 \item{...}{Additional arguments passed to the \code{tune_results} object.}
+
+\item{group}{The column identifier to group the results.}
 }
 \value{
 A ggplot object.

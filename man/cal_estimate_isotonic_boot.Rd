@@ -22,7 +22,8 @@ cal_estimate_isotonic_boot(
   estimate = dplyr::starts_with(".pred"),
   times = 10,
   parameters = NULL,
-  ...
+  ...,
+  group = NULL
 )
 
 \method{cal_estimate_isotonic_boot}{tune_results}(
@@ -64,6 +65,10 @@ only to \code{tune_results} objects.}
 
 \item{...}{Additional arguments passed to the models or routines used to
 calculate the new probabilities.}
+
+\item{group}{The column identifier for the grouping variable. This should be
+one or more unquoted column name. Default to \code{NULL}. When \code{group = NULL} no
+grouping will take place.}
 }
 \description{
 Uses a bootstrapped Isotonic regression model to calibrate probabilities

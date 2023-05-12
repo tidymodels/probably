@@ -13,7 +13,8 @@ cal_estimate_linear(
   estimate = dplyr::matches("^.pred$"),
   smooth = TRUE,
   parameters = NULL,
-  ...
+  ...,
+  group = NULL
 )
 
 \method{cal_estimate_linear}{data.frame}(
@@ -22,7 +23,8 @@ cal_estimate_linear(
   estimate = dplyr::matches("^.pred$"),
   smooth = TRUE,
   parameters = NULL,
-  ...
+  ...,
+  group = NULL
 )
 
 \method{cal_estimate_linear}{tune_results}(
@@ -62,6 +64,10 @@ only to \code{tune_results} objects.}
 
 \item{...}{Additional arguments passed to the models or routines used to
 calculate the new predictions.}
+
+\item{group}{The column identifier for the grouping variable. This should be
+one or more unquoted column name. Default to \code{NULL}. When \code{group = NULL} no
+grouping will take place.}
 }
 \description{
 Uses a linear regression model to calibrate numeric predictions

@@ -39,7 +39,6 @@
 cal_plot_logistic <- function(.data,
                               truth = NULL,
                               estimate = dplyr::starts_with(".pred"),
-                              group = NULL,
                               conf_level = 0.90,
                               smooth = TRUE,
                               include_rug = TRUE,
@@ -54,15 +53,15 @@ cal_plot_logistic <- function(.data,
 cal_plot_logistic.data.frame <- function(.data,
                                          truth = NULL,
                                          estimate = dplyr::starts_with(".pred"),
-                                         group = NULL,
                                          conf_level = 0.90,
                                          smooth = TRUE,
                                          include_rug = TRUE,
                                          include_ribbon = TRUE,
                                          event_level = c("auto", "first", "second"),
-                                         ...) {
-
-  check_cal_groups({{ group }}, .data)
+                                         ...,
+                                         group = NULL) {
+  group <- get_group_argument({{ group }}, .data)
+  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_plot_logistic_impl(
     .data = .data,
@@ -82,22 +81,25 @@ cal_plot_logistic.data.frame <- function(.data,
 cal_plot_logistic.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = dplyr::starts_with(".pred"),
-                                           group = NULL,
                                            conf_level = 0.90,
                                            smooth = TRUE,
                                            include_rug = TRUE,
                                            include_ribbon = TRUE,
                                            event_level = c("auto", "first", "second"),
                                            ...) {
-  if (rlang::quo_is_null(enquo(group))) {
-    group <- expr(.config)
-  }
-
-  cal_plot_logistic_impl(
+  tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
+    event_level = event_level,
+    ...
+  )
+
+  cal_plot_logistic_impl(
+    .data = tune_args$predictions,
+    truth = !!tune_args$truth,
+    estimate = !!tune_args$estimate,
+    group = !!tune_args$group,
     conf_level = conf_level,
     include_ribbon = include_ribbon,
     include_rug = include_rug,
@@ -216,7 +218,6 @@ cal_plot_logistic_impl <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     event_level = event_level,
     ...
   )

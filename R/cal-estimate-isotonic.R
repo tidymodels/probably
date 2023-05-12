@@ -42,8 +42,13 @@ cal_estimate_isotonic.data.frame <- function(.data,
                                              truth = NULL,
                                              estimate = dplyr::starts_with(".pred"),
                                              parameters = NULL,
-                                             ...) {
+                                             ...,
+                                             group = NULL) {
   stop_null_parameters(parameters)
+
+  group <- get_group_argument({{ group }}, .data)
+  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
+
   cal_isoreg_impl(
     .data = .data,
     truth = {{ truth }},
@@ -64,7 +69,6 @@ cal_estimate_isotonic.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = NULL,
     event_level = "first",
     parameters = parameters,
     ...
@@ -127,8 +131,13 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
                                                   estimate = dplyr::starts_with(".pred"),
                                                   times = 10,
                                                   parameters = NULL,
-                                                  ...) {
+                                                  ...,
+                                                  group = NULL) {
   stop_null_parameters(parameters)
+
+  group <- get_group_argument({{ group }}, .data)
+  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
+
   cal_isoreg_impl(
     .data = .data,
     truth = {{ truth }},
@@ -151,7 +160,6 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = NULL,
     event_level = "first", # or null for regression
     parameters = parameters,
     ...
