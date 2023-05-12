@@ -4,6 +4,7 @@
 \alias{cal_estimate_isotonic_boot}
 \alias{cal_estimate_isotonic_boot.data.frame}
 \alias{cal_estimate_isotonic_boot.tune_results}
+\alias{cal_estimate_isotonic_boot.grouped_df}
 \title{Uses a bootstrapped Isotonic regression model to calibrate probabilities}
 \usage{
 cal_estimate_isotonic_boot(
@@ -33,10 +34,19 @@ cal_estimate_isotonic_boot(
   parameters = NULL,
   ...
 )
+
+\method{cal_estimate_isotonic_boot}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  times = 10,
+  parameters = NULL,
+  ...
+)
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{tune_results} object, that contains
-predictions and probability columns.}
+\item{.data}{An ungrouped \code{data.frame} object, or \code{tune_results} object,
+that contains predictions and probability columns.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}

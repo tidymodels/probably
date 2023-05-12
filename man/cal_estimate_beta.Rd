@@ -4,6 +4,7 @@
 \alias{cal_estimate_beta}
 \alias{cal_estimate_beta.data.frame}
 \alias{cal_estimate_beta.tune_results}
+\alias{cal_estimate_beta.grouped_df}
 \title{Uses a Beta calibration model to calculate new probabilities}
 \usage{
 cal_estimate_beta(
@@ -36,10 +37,20 @@ cal_estimate_beta(
   parameters = NULL,
   ...
 )
+
+\method{cal_estimate_beta}{grouped_df}(
+  .data,
+  truth = NULL,
+  shape_params = 2,
+  location_params = 1,
+  estimate = NULL,
+  parameters = NULL,
+  ...
+)
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{tune_results} object, that contains
-predictions and probability columns.}
+\item{.data}{An ungrouped \code{data.frame} object, or \code{tune_results} object,
+that contains predictions and probability columns.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}

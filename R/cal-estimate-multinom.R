@@ -107,6 +107,17 @@ cal_estimate_multinomial.tune_results <-
     )
 }
 
+#' @export
+#' @rdname cal_estimate_multinomial
+cal_estimate_multinomial.grouped_df <- function(.data,
+                                                truth = NULL,
+                                                estimate = NULL,
+                                                smooth = TRUE,
+                                                parameters = NULL,
+                                                ...) {
+  abort_if_grouped_df()
+}
+
 #' @rdname required_pkgs.cal_object
 #' @keywords internal
 #' @export

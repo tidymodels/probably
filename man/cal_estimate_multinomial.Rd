@@ -4,6 +4,7 @@
 \alias{cal_estimate_multinomial}
 \alias{cal_estimate_multinomial.data.frame}
 \alias{cal_estimate_multinomial.tune_results}
+\alias{cal_estimate_multinomial.grouped_df}
 \title{Uses a Multinomial calibration model to calculate new probabilities}
 \usage{
 cal_estimate_multinomial(
@@ -33,10 +34,19 @@ cal_estimate_multinomial(
   parameters = NULL,
   ...
 )
+
+\method{cal_estimate_multinomial}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+)
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{tune_results} object, that contains
-predictions and probability columns.}
+\item{.data}{An ungrouped \code{data.frame} object, or \code{tune_results} object,
+that contains predictions and probability columns.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}

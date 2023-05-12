@@ -4,6 +4,7 @@
 \alias{cal_estimate_isotonic}
 \alias{cal_estimate_isotonic.data.frame}
 \alias{cal_estimate_isotonic.tune_results}
+\alias{cal_estimate_isotonic.grouped_df}
 \title{Uses an Isotonic regression model to calibrate model predictions.}
 \usage{
 cal_estimate_isotonic(
@@ -30,10 +31,18 @@ cal_estimate_isotonic(
   parameters = NULL,
   ...
 )
+
+\method{cal_estimate_isotonic}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  parameters = NULL,
+  ...
+)
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{tune_results} object, that contains
-predictions and probability columns.}
+\item{.data}{An ungrouped \code{data.frame} object, or \code{tune_results} object,
+that contains predictions and probability columns.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}
