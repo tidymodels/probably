@@ -119,13 +119,28 @@ the diagonal line.</p>
 <span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for grouped_df</span></span>
+<span><span class="fu">cal_plot_breaks</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  num_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>A data.frame object containing predictions and probability columns.</p></dd>
+<dd><p>An ungrouped data frame object containing predictions and
+probability columns.</p></dd>
 
 
 <dt>truth</dt>
@@ -231,14 +246,12 @@ multi-class or linear)</p></dd>
 <span class="r-in"><span><span class="va">combined</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="va">segment_logistic</span>, source <span class="op">=</span> <span class="st">"original"</span><span class="op">)</span>, <span class="va">gl</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">combined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">source</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="cal_plot_logistic.html">cal_plot_logistic</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_good</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="cal_plot_logistic.html">cal_plot_logistic</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_good</span>, group <span class="op">=</span> <span class="va">source</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="cal_plot_breaks-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The grouping can be faceted in ggplot2</span></span></span>
 <span class="r-in"><span><span class="va">combined</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">source</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="cal_plot_logistic.html">cal_plot_logistic</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_good</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="cal_plot_logistic.html">cal_plot_logistic</a></span><span class="op">(</span><span class="va">Class</span>, <span class="va">.pred_good</span>, group <span class="op">=</span> <span class="va">source</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">source</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="cal_plot_breaks-5.png" alt="" width="700" height="433"></span>

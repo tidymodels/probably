@@ -80,13 +80,17 @@ the diagonal line.</p>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for tune_results</span></span>
+<span><span class="fu">cal_plot_regression</span><span class="op">(</span><span class="va">.data</span>, truth <span class="op">=</span> <span class="cn">NULL</span>, estimate <span class="op">=</span> <span class="cn">NULL</span>, smooth <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for grouped_df</span></span>
 <span><span class="fu">cal_plot_regression</span><span class="op">(</span><span class="va">.data</span>, truth <span class="op">=</span> <span class="cn">NULL</span>, estimate <span class="op">=</span> <span class="cn">NULL</span>, smooth <span class="op">=</span> <span class="cn">TRUE</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>A data.frame object containing prediction and truth columns.</p></dd>
+<dd><p>An ungrouped data frame object containing a prediction
+column.</p></dd>
 
 
 <dt>truth</dt>

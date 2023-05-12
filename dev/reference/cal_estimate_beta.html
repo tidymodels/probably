@@ -89,14 +89,25 @@
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred_"</span><span class="op">)</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for grouped_df</span></span>
+<span><span class="fu">cal_estimate_beta</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shape_params <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  location_params <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>A <code>data.frame</code> object, or <code>tune_results</code> object, that contains
-predictions and probability columns.</p></dd>
+<dd><p>An ungrouped <code>data.frame</code> object, or <code>tune_results</code> object,
+that contains predictions and probability columns.</p></dd>
 
 
 <dt>truth</dt>

@@ -122,13 +122,29 @@ the diagonal line.</p>
 <span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for grouped_df</span></span>
+<span><span class="fu">cal_plot_windowed</span><span class="op">(</span></span>
+<span>  <span class="va">.data</span>,</span>
+<span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  window_size <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  step_size <span class="op">=</span> <span class="va">window_size</span><span class="op">/</span><span class="fl">2</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>  include_ribbon <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>A data.frame object containing predictions and probability columns.</p></dd>
+<dd><p>An ungrouped data frame object containing predictions and
+probability columns.</p></dd>
 
 
 <dt>truth</dt>
