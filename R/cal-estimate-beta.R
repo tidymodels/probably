@@ -34,8 +34,13 @@ cal_estimate_beta.data.frame <- function(.data,
                                          location_params = 1,
                                          estimate = dplyr::starts_with(".pred_"),
                                          parameters = NULL,
-                                         ...) {
+                                         ...,
+                                         group = NULL) {
   stop_null_parameters(parameters)
+
+  group <- get_group_argument({{ group }}, .data)
+  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
+
   cal_beta_impl(
     .data = .data,
     truth = {{ truth }},
@@ -60,7 +65,6 @@ cal_estimate_beta.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = NULL,
     event_level = "first",
     parameters = parameters,
     ...
@@ -226,7 +230,6 @@ cal_beta_impl_single <- function(.data,
 
   beta_model
 }
-
 
 check_cal_groups <- function(group, .data, call = rlang::env_parent()) {
   group <- enquo(group)

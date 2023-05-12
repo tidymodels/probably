@@ -45,6 +45,41 @@ is_ordered.default <- function(x) {
   is.ordered(x)
 }
 
+get_group_argument <- function(group, .data, call = rlang::env_parent()) {
+  group <- rlang::enquo(group)
+
+  group_names <- tidyselect::eval_select(
+    expr = group,
+    data = .data,
+    allow_rename = FALSE,
+    allow_empty = TRUE,
+    allow_predicates = TRUE,
+    error_call = call
+  )
+
+  n_group_names <- length(group_names)
+
+  useable_config <- n_group_names == 0 &&
+    ".config" %in% names(.data) &&
+    dplyr::n_distinct(.data[[".config"]]) > 1
+
+  if (useable_config) {
+    return(quo(.config))
+  }
+
+  if (n_group_names > 1) {
+    cli::cli_abort(
+      c(
+        x = "{.arg group} cannot select more than one column.",
+        i = "The following {n_group_names} columns were selected:",
+        i = "{names(group_names)}"
+      )
+    )
+  }
+
+  return(group)
+}
+
 abort_if_tune_result <- function(call = rlang::caller_env()) {
   cli::cli_abort(
     c(

@@ -1,5 +1,6 @@
 #------------------------------- Methods ---------------------------------------
 #' Uses a linear regression model to calibrate numeric predictions
+#' @inheritParams cal_estimate_logistic
 #' @param .data A `data.frame` object, or `tune_results` object, that contains
 #' predictions and probability columns.
 #' @param truth The column identifier for the observed outcome data (that is
@@ -67,7 +68,8 @@ cal_estimate_linear <- function(.data,
                                 estimate = dplyr::matches("^.pred$"),
                                 smooth = TRUE,
                                 parameters = NULL,
-                                ...) {
+                                ...,
+                                group = NULL) {
   UseMethod("cal_estimate_linear")
 }
 
@@ -78,8 +80,13 @@ cal_estimate_linear.data.frame <- function(.data,
                                            estimate = dplyr::matches("^.pred$"),
                                            smooth = TRUE,
                                            parameters = NULL,
-                                           ...) {
+                                           ...,
+                                           group = NULL) {
   stop_null_parameters(parameters)
+
+  group <- get_group_argument({{ group }}, .data)
+  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
+
   cal_linear_impl(
     .data = .data,
     truth = {{ truth }},
@@ -102,7 +109,6 @@ cal_estimate_linear.tune_results <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = NULL,
     event_level = NA_character_,
     parameters = parameters,
     ...

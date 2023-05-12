@@ -42,7 +42,6 @@
 cal_plot_windowed <- function(.data,
                               truth = NULL,
                               estimate = dplyr::starts_with(".pred"),
-                              group = NULL,
                               window_size = 0.1,
                               step_size = window_size / 2,
                               conf_level = 0.90,
@@ -59,7 +58,6 @@ cal_plot_windowed <- function(.data,
 cal_plot_windowed.data.frame <- function(.data,
                                          truth = NULL,
                                          estimate = dplyr::starts_with(".pred"),
-                                         group = NULL,
                                          window_size = 0.1,
                                          step_size = window_size / 2,
                                          conf_level = 0.90,
@@ -67,8 +65,10 @@ cal_plot_windowed.data.frame <- function(.data,
                                          include_rug = TRUE,
                                          include_points = TRUE,
                                          event_level = c("auto", "first", "second"),
-                                         ...) {
-  check_cal_groups({{ group }}, .data)
+                                         ...,
+                                         group = NULL) {
+  group <- get_group_argument({{ group }}, .data)
+  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_plot_windowed_impl(
     .data = .data,
@@ -91,7 +91,6 @@ cal_plot_windowed.data.frame <- function(.data,
 cal_plot_windowed.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = dplyr::starts_with(".pred"),
-                                           group = NULL,
                                            window_size = 0.1,
                                            step_size = window_size / 2,
                                            conf_level = 0.90,
@@ -100,15 +99,19 @@ cal_plot_windowed.tune_results <- function(.data,
                                            include_points = TRUE,
                                            event_level = c("auto", "first", "second"),
                                            ...) {
-  if (rlang::quo_is_null(enquo(group))) {
-    group <- expr(.config)
-  }
-
-  cal_plot_windowed_impl(
+  tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
+    event_level = event_level,
+    ...
+  )
+
+  cal_plot_windowed_impl(
+    .data = tune_args$predictions,
+    truth = !!tune_args$truth,
+    estimate = !!tune_args$estimate,
+    group = !!tune_args$group,
     window_size = window_size,
     step_size = step_size,
     conf_level = conf_level,
@@ -221,7 +224,6 @@ cal_plot_windowed_impl <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     event_level = event_level,
     ...
   )
