@@ -91,7 +91,6 @@ cal_plot_regression.tune_results <- function(.data,
 cal_plot_regression.grouped_df <- function(.data,
                                            truth = NULL,
                                            estimate = NULL,
-                                           group = NULL,
                                            smooth = TRUE,
                                            ...) {
   abort_if_grouped_df()

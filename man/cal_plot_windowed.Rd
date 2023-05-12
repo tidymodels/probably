@@ -54,7 +54,6 @@ cal_plot_windowed(
   .data,
   truth = NULL,
   estimate = NULL,
-  group = NULL,
   window_size = 0.1,
   step_size = window_size/2,
   conf_level = 0.9,

@@ -20,14 +20,7 @@ cal_plot_regression(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
 
 \method{cal_plot_regression}{tune_results}(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
 
-\method{cal_plot_regression}{grouped_df}(
-  .data,
-  truth = NULL,
-  estimate = NULL,
-  group = NULL,
-  smooth = TRUE,
-  ...
-)
+\method{cal_plot_regression}{grouped_df}(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
 }
 \arguments{
 \item{.data}{An ungrouped data frame object containing a prediction

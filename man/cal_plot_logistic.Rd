@@ -48,7 +48,6 @@ cal_plot_logistic(
   .data,
   truth = NULL,
   estimate = NULL,
-  group = NULL,
   conf_level = 0.9,
   smooth = TRUE,
   include_rug = TRUE,

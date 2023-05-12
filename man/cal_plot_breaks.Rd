@@ -51,7 +51,6 @@ cal_plot_breaks(
   .data,
   truth = NULL,
   estimate = NULL,
-  group = NULL,
   num_breaks = 10,
   conf_level = 0.9,
   include_ribbon = TRUE,
