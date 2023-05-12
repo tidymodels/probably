@@ -74,7 +74,8 @@
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  times <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  group <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for tune_results</span></span>
@@ -121,6 +122,12 @@ only to <code>tune_results</code> objects.</p></dd>
 <dt>...</dt>
 <dd><p>Additional arguments passed to the models or routines used to
 calculate the new probabilities.</p></dd>
+
+
+<dt>group</dt>
+<dd><p>The column identifier for the grouping variable. This should be
+one or more unquoted column name. Default to <code>NULL</code>. When <code>group = NULL</code> no
+grouping will take place.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -72,7 +72,8 @@
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  group <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for tune_results</span></span>
@@ -115,6 +116,12 @@ only to <code>tune_results</code> objects.</p></dd>
 <dd><p>Additional arguments passed to the models or routines used to
 calculate the new probabilities.</p></dd>
 
+
+<dt>group</dt>
+<dd><p>The column identifier for the grouping variable. This should be
+one or more unquoted column name. Default to <code>NULL</code>. When <code>group = NULL</code> no
+grouping will take place.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -152,7 +159,7 @@ International Conference on Knowledge Discovery and Data Mining.</em></p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Type: <span style="color: #008700;">Binary</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Source class: <span style="color: #008700;">Data Frame</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Data points: <span style="color: #008700;">1,010</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Predicted Values: <span style="color: #008700;">84</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Predicted Values: <span style="color: #008700;">88</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Truth variable: `<span style="color: #0000BB;">Class</span>`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimate variables:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">`.pred_good`</span> ==&gt; <span style="color: #0000BB;">good</span></span>
@@ -166,7 +173,7 @@ International Conference on Knowledge Discovery and Data Mining.</em></p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Type: <span style="color: #008700;">Binary</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Source class: <span style="color: #008700;">Data Frame</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Data points: <span style="color: #008700;">1,010</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Predicted Values: <span style="color: #008700;">66</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Predicted Values: <span style="color: #008700;">85</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Truth variable: `<span style="color: #0000BB;">Class</span>`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimate variables:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">`.pred_good`</span> ==&gt; <span style="color: #0000BB;">good</span></span>
@@ -180,7 +187,7 @@ International Conference on Knowledge Discovery and Data Mining.</em></p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Type: <span style="color: #008700;">Binary</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Source class: <span style="color: #008700;">Data Frame</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Data points: <span style="color: #008700;">1,010</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Predicted Values: <span style="color: #008700;">74</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Predicted Values: <span style="color: #008700;">76</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Truth variable: `<span style="color: #0000BB;">Class</span>`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimate variables:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">`.pred_good`</span> ==&gt; <span style="color: #0000BB;">good</span></span>
@@ -196,7 +203,7 @@ International Conference on Knowledge Discovery and Data Mining.</em></p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Type: <span style="color: #008700;">Regression</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Source class: <span style="color: #008700;">Data Frame</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Data points: <span style="color: #008700;">2,000</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Predicted Values: <span style="color: #008700;">50</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Unique Predicted Values: <span style="color: #008700;">34</span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Truth variable: `<span style="color: #0000BB;">outcome</span>`</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Estimate variables:</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">`.pred`</span> ==&gt; <span style="color: #0000BB;">predictions</span></span>

@@ -83,7 +83,6 @@ the diagonal line.</p>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
-<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  window_size <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  step_size <span class="op">=</span> <span class="va">window_size</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
@@ -99,7 +98,6 @@ the diagonal line.</p>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
-<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  window_size <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  step_size <span class="op">=</span> <span class="va">window_size</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
@@ -107,7 +105,8 @@ the diagonal line.</p>
 <span>  include_rug <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  <span class="va">...</span>,</span>
+<span>  group <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for tune_results</span></span>
@@ -115,7 +114,6 @@ the diagonal line.</p>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
-<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  window_size <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  step_size <span class="op">=</span> <span class="va">window_size</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
@@ -144,10 +142,6 @@ functions to choose which variables contains the class probabilities. It
 defaults to the prefix used by tidymodels (<code>.pred_</code>). The order of the
 identifiers will be considered the same as the order of the levels of the
 <code>truth</code> variable.</p></dd>
-
-
-<dt>group</dt>
-<dd><p>The column identifier to group the results.</p></dd>
 
 
 <dt>window_size</dt>
@@ -189,6 +183,10 @@ multi-class or linear)</p></dd>
 
 <dt>...</dt>
 <dd><p>Additional arguments passed to the <code>tune_results</code> object.</p></dd>
+
+
+<dt>group</dt>
+<dd><p>The column identifier to group the results.</p></dd>
 
 </dl></div>
     <div class="section level2">
