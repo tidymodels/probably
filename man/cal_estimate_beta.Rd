@@ -48,8 +48,8 @@ cal_estimate_beta(
 )
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{tune_results} object, that contains
-predictions and probability columns.}
+\item{.data}{An ungrouped \code{data.frame} object, or \code{tune_results} object,
+that contains predictions and probability columns.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}

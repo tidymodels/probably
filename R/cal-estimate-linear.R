@@ -1,7 +1,7 @@
 #------------------------------- Methods ---------------------------------------
 #' Uses a linear regression model to calibrate numeric predictions
-#' @param .data A `data.frame` object, or `tune_results` object, that contains
-#' predictions and probability columns.
+#' @param .data Am ungrouped  `data.frame` object, or `tune_results` object,
+#' that contains a prediction column.
 #' @param truth The column identifier for the observed outcome data (that is
 #' numeric). This should be an unquoted column name.
 #' @param estimate Column identifier for the predicted values

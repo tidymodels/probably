@@ -44,7 +44,8 @@ cal_plot_regression(
 )
 }
 \arguments{
-\item{.data}{A data.frame object containing prediction and truth columns.}
+\item{.data}{An ungrouped data frame object containing a prediction
+column.}
 
 \item{truth}{The column identifier for the true results
 (numeric). This should be an unquoted column name.}

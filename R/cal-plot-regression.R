@@ -6,7 +6,8 @@
 #' is shown. If the predictions are well calibrated, the fitted curve should align with
 #' the diagonal line.
 #'
-#' @param .data A data.frame object containing prediction and truth columns.
+#' @param .data An ungrouped data frame object containing a prediction
+#' column.
 #' @param truth The column identifier for the true results
 #' (numeric). This should be an unquoted column name.
 #' @param estimate The column identifier for the predictions.

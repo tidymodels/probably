@@ -14,7 +14,8 @@
 #' If the predictions are well calibrated, the fitted curve should align with
 #' the diagonal line.
 #'
-#' @param .data A data.frame object containing predictions and probability columns.
+#' @param .data An ungrouped data frame object containing predictions and
+#' probability columns.
 #' @param truth The column identifier for the true class results
 #' (that is a factor). This should be an unquoted column name.
 #' @param estimate A vector of column identifiers, or one of `dplyr` selector

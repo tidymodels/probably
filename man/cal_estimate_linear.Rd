@@ -44,8 +44,8 @@ cal_estimate_linear(
 )
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{tune_results} object, that contains
-predictions and probability columns.}
+\item{.data}{Am ungrouped  \code{data.frame} object, or \code{tune_results} object,
+that contains a prediction column.}
 
 \item{truth}{The column identifier for the observed outcome data (that is
 numeric). This should be an unquoted column name.}

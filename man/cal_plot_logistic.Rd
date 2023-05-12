@@ -60,7 +60,8 @@ cal_plot_logistic(
 )
 }
 \arguments{
-\item{.data}{A data.frame object containing predictions and probability columns.}
+\item{.data}{An ungrouped data frame object containing predictions and
+probability columns.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}
