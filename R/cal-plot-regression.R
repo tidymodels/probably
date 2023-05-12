@@ -6,7 +6,8 @@
 #' is shown. If the predictions are well calibrated, the fitted curve should align with
 #' the diagonal line.
 #'
-#' @param .data A data.frame object containing prediction and truth columns.
+#' @param .data An ungrouped data frame object containing a prediction
+#' column.
 #' @param truth The column identifier for the true results
 #' (numeric). This should be an unquoted column name.
 #' @param estimate The column identifier for the predictions.
@@ -83,6 +84,16 @@ cal_plot_regression.tune_results <- function(.data,
     smooth = smooth,
     ...
   )
+}
+
+#' @export
+#' @rdname cal_plot_regression
+cal_plot_regression.grouped_df <- function(.data,
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           smooth = TRUE,
+                                           ...) {
+  abort_if_grouped_df()
 }
 
 regression_plot_impl <- function(.data, truth, estimate, group,

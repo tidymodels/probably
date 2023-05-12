@@ -4,6 +4,7 @@
 \alias{cal_estimate_linear}
 \alias{cal_estimate_linear.data.frame}
 \alias{cal_estimate_linear.tune_results}
+\alias{cal_estimate_linear.grouped_df}
 \title{Uses a linear regression model to calibrate numeric predictions}
 \usage{
 cal_estimate_linear(
@@ -34,10 +35,19 @@ cal_estimate_linear(
   parameters = NULL,
   ...
 )
+
+\method{cal_estimate_linear}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+)
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{tune_results} object, that contains
-predictions and probability columns.}
+\item{.data}{Am ungrouped  \code{data.frame} object, or \code{tune_results} object,
+that contains a prediction column.}
 
 \item{truth}{The column identifier for the observed outcome data (that is
 numeric). This should be an unquoted column name.}

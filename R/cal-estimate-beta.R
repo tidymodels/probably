@@ -82,6 +82,18 @@ cal_estimate_beta.tune_results <- function(.data,
     )
 }
 
+#' @export
+#' @rdname cal_estimate_beta
+cal_estimate_beta.grouped_df <- function(.data,
+                                         truth = NULL,
+                                         shape_params = 2,
+                                         location_params = 1,
+                                         estimate = NULL,
+                                         parameters = NULL,
+                                         ...) {
+  abort_if_grouped_df()
+}
+
 #' @rdname required_pkgs.cal_object
 #' @keywords internal
 #' @export

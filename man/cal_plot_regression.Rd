@@ -4,6 +4,7 @@
 \alias{cal_plot_regression}
 \alias{cal_plot_regression.data.frame}
 \alias{cal_plot_regression.tune_results}
+\alias{cal_plot_regression.grouped_df}
 \title{Regression calibration plots}
 \usage{
 cal_plot_regression(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
@@ -18,9 +19,12 @@ cal_plot_regression(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
 )
 
 \method{cal_plot_regression}{tune_results}(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
+
+\method{cal_plot_regression}{grouped_df}(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
 }
 \arguments{
-\item{.data}{A data.frame object containing prediction and truth columns.}
+\item{.data}{An ungrouped data frame object containing a prediction
+column.}
 
 \item{truth}{The column identifier for the true results
 (numeric). This should be an unquoted column name.}

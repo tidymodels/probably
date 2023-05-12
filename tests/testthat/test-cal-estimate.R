@@ -53,6 +53,12 @@ test_that("Logistic estimates work - tune_results", {
   )
 })
 
+test_that("Logistic estimates errors - grouped_df", {
+  expect_snapshot_error(
+    cal_estimate_logistic(dplyr::group_by(mtcars, vs), smooth = FALSE)
+  )
+})
+
 # ----------------------------- Logistic Spline --------------------------------
 test_that("Logistic spline estimates work - data.frame", {
   sl_gam <- cal_estimate_logistic(segment_logistic, Class)
@@ -162,6 +168,12 @@ test_that("Isotonic estimates work - tune_results", {
   )
 })
 
+test_that("Isotonic estimates errors - grouped_df", {
+  expect_snapshot_error(
+    cal_estimate_isotonic(dplyr::group_by(mtcars, vs))
+  )
+})
+
 test_that("Isotonic linear estimates work - data.frame", {
   sl_logistic <- cal_estimate_isotonic(boosting_predictions_oob, outcome, estimate = .pred)
   expect_cal_type(sl_logistic, "regression")
@@ -253,6 +265,12 @@ test_that("Isotonic Bootstrapped estimates work - tune_results", {
   )
 })
 
+test_that("Isotonic Bootstrapped estimates errors - grouped_df", {
+  expect_snapshot_error(
+    cal_estimate_isotonic_boot(dplyr::group_by(mtcars, vs))
+  )
+})
+
 # ----------------------------------- Beta -------------------------------------
 test_that("Beta estimates work - data.frame", {
   sl_beta <- cal_estimate_beta(segment_logistic, Class, smooth = FALSE)
@@ -314,6 +332,12 @@ test_that("Beta estimates work - tune_results", {
   expect_equal(
     testthat_cal_multiclass_count(),
     nrow(cal_apply(testthat_cal_multiclass(), mtnl_isotonic))
+  )
+})
+
+test_that("Beta estimates errors - grouped_df", {
+  expect_snapshot_error(
+    cal_estimate_beta(dplyr::group_by(mtcars, vs))
   )
 })
 
@@ -383,6 +407,12 @@ test_that("Multinomial estimates work - tune_results", {
   )
 })
 
+test_that("Multinomial estimates errors - grouped_df", {
+  expect_snapshot_error(
+    cal_estimate_multinomial(dplyr::group_by(mtcars, vs))
+  )
+})
+
 test_that("Passing a binary outcome causes error", {
   expect_error(
     cal_estimate_multinomial(segment_logistic, Class)
@@ -428,6 +458,12 @@ test_that("Linear estimates work - tune_results", {
   expect_cal_estimate(tl_linear, "butchered_glm")
   expect_snapshot(print(tl_linear))
   expect_true(are_groups_configs(tl_linear))
+})
+
+test_that("Linear estimates errors - grouped_df", {
+  expect_snapshot_error(
+    cal_estimate_linear(dplyr::group_by(mtcars, vs))
+  )
 })
 
 # ----------------------------- Linear Spline --------------------------------

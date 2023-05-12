@@ -4,6 +4,7 @@
 \alias{cal_estimate_logistic}
 \alias{cal_estimate_logistic.data.frame}
 \alias{cal_estimate_logistic.tune_results}
+\alias{cal_estimate_logistic.grouped_df}
 \title{Uses a logistic regression model to calibrate probabilities}
 \usage{
 cal_estimate_logistic(
@@ -33,10 +34,19 @@ cal_estimate_logistic(
   parameters = NULL,
   ...
 )
+
+\method{cal_estimate_logistic}{grouped_df}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+)
 }
 \arguments{
-\item{.data}{A \code{data.frame} object, or \code{tune_results} object, that contains
-predictions and probability columns.}
+\item{.data}{An ungrouped \code{data.frame} object, or \code{tune_results} object,
+that contains predictions and probability columns.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}

@@ -83,6 +83,16 @@ cal_estimate_isotonic.tune_results <- function(.data,
     )
 }
 
+#' @export
+#' @rdname cal_estimate_isotonic
+cal_estimate_isotonic.grouped_df <- function(.data,
+                                             truth = NULL,
+                                             estimate = NULL,
+                                             parameters = NULL,
+                                             ...) {
+  abort_if_grouped_df()
+}
+
 #------------------ >>  Bootstrapped Isotonic Regression------------------------
 #' Uses a bootstrapped Isotonic regression model to calibrate probabilities
 #' @param times Number of bootstraps.
@@ -164,6 +174,17 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
       source_class = cal_class_name(.data),
       ...
     )
+}
+
+#' @export
+#' @rdname cal_estimate_isotonic_boot
+cal_estimate_isotonic_boot.grouped_df <- function(.data,
+                                                  truth = NULL,
+                                                  estimate = NULL,
+                                                  times = 10,
+                                                  parameters = NULL,
+                                                  ...) {
+  abort_if_grouped_df()
 }
 
 #------------------------------ Implementation ---------------------------------

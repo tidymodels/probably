@@ -91,3 +91,13 @@ abort_if_tune_result <- function(call = rlang::caller_env()) {
     call = call
   )
 }
+
+abort_if_grouped_df <- function(call = rlang::caller_env()) {
+  cli::cli_abort(
+    c(
+      "x" = "This function does not work with grouped data frames.",
+      "i" = "Apply {.fn dplyr::ungroup} and use the {.arg .by} argument."
+    ),
+    call = call
+  )
+}

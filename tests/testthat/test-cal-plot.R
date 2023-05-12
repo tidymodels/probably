@@ -96,6 +96,12 @@ test_that("Multi-class breaks functions work", {
   expect_true(inherits(multi_configs_from_df$facet, "FacetGrid"))
 })
 
+test_that("breaks plot function errors - grouped_df", {
+  expect_snapshot_error(
+    cal_plot_breaks(dplyr::group_by(mtcars, vs))
+  )
+})
+
 test_that("Binary logistic functions work", {
   x20 <- .cal_table_logistic(segment_logistic, Class, .pred_good)
 
@@ -218,6 +224,12 @@ test_that("Binary logistic functions work with group argument", {
   expect_true(has_facet(lgst_configs))
 })
 
+test_that("logistic plot function errors - grouped_df", {
+  expect_snapshot_error(
+    cal_plot_logistic(dplyr::group_by(mtcars, vs))
+  )
+})
+
 test_that("Binary windowed functions work", {
   x30 <- .cal_table_windowed(
     segment_logistic,
@@ -306,6 +318,12 @@ test_that("Binary windowed functions work", {
   expect_s3_class(multi_configs_from_df, "ggplot")
   # should be faceted by .config and class
   expect_true(inherits(multi_configs_from_df$facet, "FacetGrid"))
+})
+
+test_that("windowed plot function errors - grouped_df", {
+  expect_snapshot_error(
+    cal_plot_windowed(dplyr::group_by(mtcars, vs))
+  )
 })
 
 test_that("Event level handling works", {
@@ -402,8 +420,7 @@ test_that("Numeric groups are supported", {
   grp_df$num_group <- rep(c(1, 2), times = 505)
 
   p <- grp_df %>%
-    dplyr::group_by(num_group) %>%
-    cal_plot_breaks(Class, .pred_good)
+    cal_plot_breaks(Class, .pred_good, group = num_group)
 
   expect_s3_class(p, "ggplot")
 })
@@ -450,6 +467,12 @@ test_that("regression functions work", {
   )
 })
 
+test_that("regression plot function errors - grouped_df", {
+  expect_snapshot_error(
+    cal_plot_regression(dplyr::group_by(mtcars, vs))
+  )
+})
+
 # ------------------------------------------------------------------------------
 
 test_that("don't facet if there is only one .config", {
@@ -487,4 +510,3 @@ test_that("don't facet if there is only one .config", {
   expect_null(res_regression$data[[".config"]])
   expect_s3_class(res_regression, "ggplot")
 })
-

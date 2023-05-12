@@ -1,8 +1,8 @@
 #------------------------------- Methods ---------------------------------------
 #' Uses a linear regression model to calibrate numeric predictions
 #' @inheritParams cal_estimate_logistic
-#' @param .data A `data.frame` object, or `tune_results` object, that contains
-#' predictions and probability columns.
+#' @param .data Am ungrouped  `data.frame` object, or `tune_results` object,
+#' that contains a prediction column.
 #' @param truth The column identifier for the observed outcome data (that is
 #' numeric). This should be an unquoted column name.
 #' @param estimate Column identifier for the predicted values
@@ -123,6 +123,17 @@ cal_estimate_linear.tune_results <- function(.data,
       source_class = cal_class_name(.data),
       ...
     )
+}
+
+#' @export
+#' @rdname cal_estimate_linear
+cal_estimate_linear.grouped_df <- function(.data,
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           smooth = TRUE,
+                                           parameters = NULL,
+                                           ...) {
+  abort_if_grouped_df()
 }
 
 #' @rdname required_pkgs.cal_object

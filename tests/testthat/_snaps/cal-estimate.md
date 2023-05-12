@@ -64,6 +64,11 @@
 
     The number of outcome factor levels isn't consistent with the calibration method. Only two class `truth` factors are allowed. The given levels were: '.pred_one', '.pred_two', '.pred_three'
 
+# Logistic estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
+
 # Logistic spline estimates work - data.frame
 
     Code
@@ -192,6 +197,11 @@
       `.pred_two` ==> two
       `.pred_three` ==> three
 
+# Isotonic estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
+
 # Isotonic linear estimates work - data.frame
 
     Code
@@ -301,6 +311,11 @@
       `.pred_two` ==> two
       `.pred_three` ==> three
 
+# Isotonic Bootstrapped estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
+
 # Beta estimates work - data.frame
 
     Code
@@ -371,6 +386,11 @@
       `.pred_one` ==> one
       `.pred_two` ==> two
       `.pred_three` ==> three
+
+# Beta estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
 
 # Multinomial estimates work - data.frame
 
@@ -463,6 +483,11 @@
       `.pred_two` ==> two
       `.pred_three` ==> three
 
+# Multinomial estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
+
 # Linear estimates work - data.frame
 
     Code
@@ -507,6 +532,11 @@
       Data points: 750, split in 10 groups
       Truth variable: `outcome`
       Estimate variable: `.pred`
+
+# Linear estimates errors - grouped_df
+
+    x This function does not work with grouped data frames.
+    i Apply `dplyr::ungroup()` and use the `.by` argument.
 
 # Linear spline estimates work - data.frame
 
