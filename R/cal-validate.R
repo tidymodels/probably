@@ -381,8 +381,8 @@ cal_validate_beta.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = NULL,
                                            metrics = NULL,
-                                           save_details = FALSE,
                                            summarize = TRUE,
+                                           save_details = FALSE,
                                            ...) {
   abort_if_tune_result()
 }

@@ -42,8 +42,8 @@ cal_validate_beta(
   truth = NULL,
   estimate = NULL,
   metrics = NULL,
-  save_details = FALSE,
   summarize = TRUE,
+  save_details = FALSE,
   ...
 )
 }
