@@ -142,15 +142,21 @@ threshold_perf.data.frame <- function(.data,
 
   }
 
-  if (length(probs) > 1 | length(obs) > 1)
-    stop("`truth` and `estimate` should only be single columns.",
-         call. = FALSE)
-  if (!inherits(.data[[obs]], "factor"))
-    stop("`truth` should be a factor", call. = FALSE)
-  if (length(levels(.data[[obs]])) != 2)
-    stop("`truth` should be a 2 level factor", call. = FALSE)
-  if (!is.numeric(.data[[probs]]))
-    stop("`estimate` should be numericr", call. = FALSE)
+  if (length(probs) > 1 | length(obs) > 1) {
+    cli::cli_abort(
+      "{.arg truth} and {.arg estimate} should only be single columns."
+    )
+  }
+  if (!inherits(.data[[obs]], "factor")) {
+    cli::cli_abort("{.arg truth} should be a factor.")
+  }
+
+  if (length(levels(.data[[obs]])) != 2) {
+    cli::cli_abort("{.arg truth} should be a 2 level factor.")
+  }
+  if (!is.numeric(.data[[probs]])) {
+    cli::cli_abort("{.arg estimate} should be numeric.")
+  }
 
   .data <- dplyr::rename(.data, truth = !!obs_sym, prob = !!probs_sym)
 
