@@ -28,7 +28,6 @@
 cal_plot_regression <- function(.data,
                                 truth = NULL,
                                 estimate = NULL,
-                                group = NULL,
                                 smooth = TRUE,
                                 ...) {
   UseMethod("cal_plot_regression")
@@ -37,11 +36,10 @@ cal_plot_regression <- function(.data,
 cal_plot_regression_impl <- function(.data,
                                      truth = NULL,
                                      estimate = NULL,
-                                     group = NULL,
                                      smooth = TRUE,
-                                     ...) {
-
-  check_cal_groups({{ group }}, .data)
+                                     ...,
+                                     group = NULL) {
+  group <- get_group_argument({{ group }}, .data)
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -68,14 +66,12 @@ cal_plot_regression.data.frame <- cal_plot_regression_impl
 cal_plot_regression.tune_results <- function(.data,
                                              truth = NULL,
                                              estimate = NULL,
-                                             group = NULL,
                                              smooth = TRUE,
                                              ...) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     ...
   )
 
@@ -94,6 +90,10 @@ regression_plot_impl <- function(.data, truth, estimate, group,
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
+
+  if (quo_is_null(group)) {
+    .data[[".config"]] <- NULL
+  }
 
   gp_vars <- dplyr::group_vars(.data)
 

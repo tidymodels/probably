@@ -88,7 +88,6 @@
 cal_plot_breaks <- function(.data,
                             truth = NULL,
                             estimate = dplyr::starts_with(".pred"),
-                            group = NULL,
                             num_breaks = 10,
                             conf_level = 0.90,
                             include_ribbon = TRUE,
@@ -104,16 +103,16 @@ cal_plot_breaks <- function(.data,
 cal_plot_breaks.data.frame <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred"),
-                                       group = NULL,
                                        num_breaks = 10,
                                        conf_level = 0.90,
                                        include_ribbon = TRUE,
                                        include_rug = TRUE,
                                        include_points = TRUE,
                                        event_level = c("auto", "first", "second"),
-                                       ...) {
-
-  check_cal_groups({{ group }}, .data)
+                                       ...,
+                                       group = NULL) {
+  group <- get_group_argument({{ group }}, .data)
+  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_plot_breaks_impl(
     .data = .data,
@@ -134,7 +133,6 @@ cal_plot_breaks.data.frame <- function(.data,
 cal_plot_breaks.tune_results <- function(.data,
                                          truth = NULL,
                                          estimate = dplyr::starts_with(".pred"),
-                                         group = NULL,
                                          num_breaks = 10,
                                          conf_level = 0.90,
                                          include_ribbon = TRUE,
@@ -142,15 +140,19 @@ cal_plot_breaks.tune_results <- function(.data,
                                          include_points = TRUE,
                                          event_level = c("auto", "first", "second"),
                                          ...) {
-  if (rlang::quo_is_null(enquo(group))) {
-    group <- expr(.config)
-  }
-
-  cal_plot_breaks_impl(
+  tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
+    event_level = event_level,
+    ...
+  )
+
+  cal_plot_breaks_impl(
+    .data = tune_args$predictions,
+    truth = !!tune_args$truth,
+    estimate = !!tune_args$estimate,
+    group = !!tune_args$group,
     num_breaks = num_breaks,
     conf_level = conf_level,
     include_ribbon = include_ribbon,
@@ -293,7 +295,6 @@ cal_plot_breaks_impl <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
     event_level = event_level,
     ...
   )

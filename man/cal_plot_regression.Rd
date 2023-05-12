@@ -6,32 +6,18 @@
 \alias{cal_plot_regression.tune_results}
 \title{Regression calibration plots}
 \usage{
-cal_plot_regression(
-  .data,
-  truth = NULL,
-  estimate = NULL,
-  group = NULL,
-  smooth = TRUE,
-  ...
-)
+cal_plot_regression(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
 
 \method{cal_plot_regression}{data.frame}(
   .data,
   truth = NULL,
   estimate = NULL,
-  group = NULL,
   smooth = TRUE,
-  ...
+  ...,
+  group = NULL
 )
 
-\method{cal_plot_regression}{tune_results}(
-  .data,
-  truth = NULL,
-  estimate = NULL,
-  group = NULL,
-  smooth = TRUE,
-  ...
-)
+\method{cal_plot_regression}{tune_results}(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
 }
 \arguments{
 \item{.data}{A data.frame object containing prediction and truth columns.}
@@ -42,12 +28,12 @@ cal_plot_regression(
 \item{estimate}{The column identifier for the predictions.
 This should be an unquoted column name}
 
-\item{group}{The column identifier to group the results. This should not be
-a numeric variable.}
-
 \item{smooth}{A logical: should a smoother curve be added.}
 
 \item{...}{Additional arguments passed to \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}.}
+
+\item{group}{The column identifier to group the results. This should not be
+a numeric variable.}
 }
 \value{
 A ggplot object.

@@ -217,7 +217,6 @@ process_level <- function(x) {
 tune_results_args <- function(.data,
                               truth,
                               estimate,
-                              group,
                               event_level,
                               parameters = NULL,
                               ...) {
@@ -239,7 +238,6 @@ tune_results_args <- function(.data,
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
-  group <- enquo(group)
 
   if (quo_is_null(truth)) {
     truth_str <- attributes(.data)$outcome
@@ -250,15 +248,17 @@ tune_results_args <- function(.data,
     estimate <- expr(dplyr::starts_with(".pred"))
   }
 
-  if (quo_is_null(group)) {
+  if (dplyr::n_distinct(.data[[".predictions"]][[1]][[".config"]]) > 1) {
     group <- quo(.config)
+  } else {
+    group <- quo(NULL)
   }
 
   list(
     truth = quo(!!truth),
     estimate = quo(!!estimate),
     estimate = estimate,
-    group = quo(!!group),
+    group = group,
     predictions = predictions
   )
 }

@@ -1,48 +1,16 @@
-# Binary breaks functions work
+# Binary breaks functions work with group argument
 
-    Code
-      testthat_cal_binary() %>% tune::collect_predictions() %>% cal_plot_breaks(class,
-        estimate = .pred_class_1)
-    Condition
-      Error:
-      ! The data have several values of '.config' but no 'groups' argument was passed. This will inappropriately pool the data.
+    x `group` cannot select more than one column.
+    i The following 2 columns were selected:
+    i group1 and group2
 
-# Multi-class breaks functions work
+# Binary logistic functions work with group argument
 
-    Code
-      testthat_cal_multiclass() %>% tune::collect_predictions() %>% cal_plot_breaks(
-        class, estimate = .pred_class_1)
-    Condition
-      Error:
-      ! The data have several values of '.config' but no 'groups' argument was passed. This will inappropriately pool the data.
-
-# Binary logistic functions work
-
-    Code
-      testthat_cal_binary() %>% tune::collect_predictions() %>% cal_plot_logistic(
-        class, estimate = .pred_class_1)
-    Condition
-      Error:
-      ! The data have several values of '.config' but no 'groups' argument was passed. This will inappropriately pool the data.
-
-# Binary windowed functions work
-
-    Code
-      testthat_cal_binary() %>% tune::collect_predictions() %>% cal_plot_windowed(
-        class, estimate = .pred_class_1)
-    Condition
-      Error:
-      ! The data have several values of '.config' but no 'groups' argument was passed. This will inappropriately pool the data.
+    x `group` cannot select more than one column.
+    i The following 2 columns were selected:
+    i group1 and group2
 
 # Event level handling works
 
     Invalid event_level entry: invalid. Valid entries are 'first', 'second', or 'auto'
-
-# regression functions work
-
-    Code
-      obj %>% tune::collect_predictions() %>% cal_plot_windowed(outcome, estimate = .pred)
-    Condition
-      Error:
-      ! The data have several values of '.config' but no 'groups' argument was passed. This will inappropriately pool the data.
 

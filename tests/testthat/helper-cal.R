@@ -99,8 +99,19 @@ testthat_cal_multiclass <- function() {
       ret <- readRDS(ret_file)
     }
     .cal_env$tune_results_multi <- ret
+    cp <- tune::collect_predictions(ret, summarize = TRUE)
+    .cal_env$tune_results_multi_count <- nrow(cp)
   }
 
+  ret
+}
+
+testthat_cal_multiclass_count <- function() {
+  ret <- .cal_env$tune_results_multi_count
+  if (is.null(ret)) {
+    invisible(testthat_cal_multiclass())
+    ret <- .cal_env$tune_results_multi_count
+  }
   ret
 }
 
@@ -303,3 +314,44 @@ expect_snapshot_plot <- function(name, code) {
   expect_snapshot_file(path, name)
 }
 
+has_facet <- function(x) {
+  inherits(x$facet, c("FacetWrap", "FacetGrid"))
+}
+
+are_groups_configs <- function(x) {
+  fltrs <- purrr::map(x$estimates, ~ .x$filter)
+
+  # Check if anything is in the filter slot
+  are_null <- purrr::map_lgl(fltrs, ~ all(is.null(.x)))
+  if (all(are_null)) {
+    return(FALSE)
+  }
+
+  fltr_vars <- purrr::map(fltrs, all.vars)
+  are_config <- purrr::map_lgl(fltr_vars, ~ identical(.x, ".config"))
+  all(are_config)
+}
+
+bin_with_configs <- function() {
+  set.seed(1)
+  segment_logistic %>%
+    dplyr::mutate(.config = sample(letters[1:2], nrow(segment_logistic), replace = TRUE))
+}
+
+mnl_with_configs <- function() {
+  data("hpc_cv", package = "modeldata")
+
+  set.seed(1)
+  hpc_cv %>%
+    dplyr::mutate(.config = sample(letters[1:2], nrow(hpc_cv), replace = TRUE))
+}
+
+reg_with_configs <- function() {
+  data("solubility_test", package = "modeldata")
+
+  set.seed(1)
+
+  solubility_test %>%
+    dplyr::mutate(.config = sample(letters[1:2], nrow(solubility_test), replace = TRUE))
+
+}
