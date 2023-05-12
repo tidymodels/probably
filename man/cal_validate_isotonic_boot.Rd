@@ -4,6 +4,7 @@
 \alias{cal_validate_isotonic_boot}
 \alias{cal_validate_isotonic_boot.resample_results}
 \alias{cal_validate_isotonic_boot.rset}
+\alias{cal_validate_isotonic_boot.tune_results}
 \title{Measure performance with and without using bagged isotonic regression calibration}
 \usage{
 cal_validate_isotonic_boot(
@@ -30,6 +31,16 @@ cal_validate_isotonic_boot(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_details = FALSE,
+  summarize = TRUE,
+  ...
+)
+
+\method{cal_validate_isotonic_boot}{tune_results}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,

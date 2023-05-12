@@ -4,6 +4,7 @@
 \alias{cal_validate_multinomial}
 \alias{cal_validate_multinomial.resample_results}
 \alias{cal_validate_multinomial.rset}
+\alias{cal_validate_multinomial.tune_results}
 \title{Measure performance with and without using multinomial calibration}
 \usage{
 cal_validate_multinomial(
@@ -30,6 +31,16 @@ cal_validate_multinomial(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_details = FALSE,
+  summarize = TRUE,
+  ...
+)
+
+\method{cal_validate_multinomial}{tune_results}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,

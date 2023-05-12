@@ -4,6 +4,7 @@
 \alias{cal_validate_isotonic}
 \alias{cal_validate_isotonic.resample_results}
 \alias{cal_validate_isotonic.rset}
+\alias{cal_validate_isotonic.tune_results}
 \title{Measure performance with and without using isotonic regression calibration}
 \usage{
 cal_validate_isotonic(
@@ -30,6 +31,16 @@ cal_validate_isotonic(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_details = FALSE,
+  summarize = TRUE,
+  ...
+)
+
+\method{cal_validate_isotonic}{tune_results}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   metrics = NULL,
   save_details = FALSE,
   summarize = TRUE,
