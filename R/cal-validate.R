@@ -108,6 +108,18 @@ cal_validate_logistic.rset <- function(.data,
   )
 }
 
+#' @export
+#' @rdname cal_validate_logistic
+cal_validate_logistic.tune_results <- function(.data,
+                                               truth = NULL,
+                                               estimate = NULL,
+                                               metrics = NULL,
+                                               save_details = FALSE,
+                                               summarize = TRUE,
+                                               ...) {
+  abort_if_tune_result()
+}
+
 # -------------------------------- Isotonic ------------------------------------
 #' Measure performance with and without using isotonic regression calibration
 #' @inherit cal_validate_logistic
@@ -182,6 +194,18 @@ cal_validate_isotonic.rset <- function(.data,
     save_details = save_details,
     ...
   )
+}
+
+#' @export
+#' @rdname cal_validate_isotonic
+cal_validate_isotonic.tune_results <- function(.data,
+                                               truth = NULL,
+                                               estimate = NULL,
+                                               metrics = NULL,
+                                               save_details = FALSE,
+                                               summarize = TRUE,
+                                               ...) {
+  abort_if_tune_result()
 }
 
 # ----------------------------- Isotonic Boot ----------------------------------
@@ -262,6 +286,18 @@ cal_validate_isotonic_boot.rset <- function(.data,
   )
 }
 
+#' @export
+#' @rdname cal_validate_isotonic_boot
+cal_validate_isotonic_boot.tune_results <- function(.data,
+                                                    truth = NULL,
+                                                    estimate = NULL,
+                                                    metrics = NULL,
+                                                    save_details = FALSE,
+                                                    summarize = TRUE,
+                                                    ...) {
+  abort_if_tune_result()
+}
+
 # ---------------------------------- Beta --------------------------------------
 #' Measure performance with and without using Beta calibration
 #' @inherit cal_validate_logistic
@@ -339,6 +375,18 @@ cal_validate_beta.rset <- function(.data,
   )
 }
 
+#' @export
+#' @rdname cal_validate_beta
+cal_validate_beta.tune_results <- function(.data,
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           metrics = NULL,
+                                           summarize = TRUE,
+                                           save_details = FALSE,
+                                           ...) {
+  abort_if_tune_result()
+}
+
 # ------------------------------- Multinomial ----------------------------------
 #' Measure performance with and without using multinomial calibration
 #' @inherit cal_validate_logistic
@@ -412,6 +460,18 @@ cal_validate_multinomial.rset <- function(.data,
     save_details = save_details,
     ...
   )
+}
+
+#' @export
+#' @rdname cal_validate_multinomial
+cal_validate_multinomial.tune_results <- function(.data,
+                                                  truth = NULL,
+                                                  estimate = NULL,
+                                                  metrics = NULL,
+                                                  save_details = FALSE,
+                                                  summarize = TRUE,
+                                                  ...) {
+  abort_if_tune_result()
 }
 
 # --------------------------------- Summary ------------------------------------

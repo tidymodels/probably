@@ -4,6 +4,7 @@
 \alias{cal_validate_beta}
 \alias{cal_validate_beta.resample_results}
 \alias{cal_validate_beta.rset}
+\alias{cal_validate_beta.tune_results}
 \title{Measure performance with and without using Beta calibration}
 \usage{
 cal_validate_beta(
@@ -30,6 +31,16 @@ cal_validate_beta(
   .data,
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  summarize = TRUE,
+  save_details = FALSE,
+  ...
+)
+
+\method{cal_validate_beta}{tune_results}(
+  .data,
+  truth = NULL,
+  estimate = NULL,
   metrics = NULL,
   summarize = TRUE,
   save_details = FALSE,

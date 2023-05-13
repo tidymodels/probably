@@ -80,6 +80,18 @@ get_group_argument <- function(group, .data, call = rlang::env_parent()) {
   return(group)
 }
 
+abort_if_tune_result <- function(call = rlang::caller_env()) {
+  cli::cli_abort(
+    c(
+      "This function can only be used with an {.cls rset} object or the \\
+       results of {.fn tune::fit_resamples} with a {.field .predictions} \\
+       column.",
+      i = "Not an {.cls tune_results} object."
+    ),
+    call = call
+  )
+}
+
 abort_if_grouped_df <- function(call = rlang::caller_env()) {
   cli::cli_abort(
     c(

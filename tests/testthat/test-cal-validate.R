@@ -197,3 +197,25 @@ test_that("Linear validation with `fit_resamples`", {
   expect_true(inherits(mod, "lm"))
 })
 
+test_that("validation functions error with tune_results input", {
+  expect_snapshot_error(
+    cal_validate_beta(testthat_cal_binary())
+  )
+  expect_snapshot_error(
+    cal_validate_isotonic(testthat_cal_binary())
+  )
+  expect_snapshot_error(
+    cal_validate_isotonic_boot(testthat_cal_binary())
+  )
+  expect_snapshot_error(
+    cal_validate_linear(testthat_cal_binary())
+  )
+  expect_snapshot_error(
+    cal_validate_logistic(testthat_cal_binary())
+  )
+  expect_snapshot_error(
+    cal_validate_multinomial(testthat_cal_binary())
+  )
+})
+
+
