@@ -31,7 +31,7 @@ test_that("Binary breaks functions work", {
 test_that("Binary breaks functions work with group argument", {
   res <- segment_logistic %>%
     dplyr::mutate(id = dplyr::row_number() %% 2) %>%
-    cal_plot_breaks(Class, .pred_good, group = id)
+    cal_plot_breaks(Class, .pred_good, .by = id)
 
   expect_s3_class(
     res,
@@ -46,7 +46,7 @@ test_that("Binary breaks functions work with group argument", {
   expect_snapshot_error(
     segment_logistic %>%
       dplyr::mutate(group1 = 1, group2 = 2) %>%
-      cal_plot_breaks(Class, .pred_good, group = c(group1, group2))
+      cal_plot_breaks(Class, .pred_good, .by = c(group1, group2))
   )
 })
 
@@ -200,7 +200,7 @@ test_that("Binary logistic functions work", {
 test_that("Binary logistic functions work with group argument", {
   res <- segment_logistic %>%
     dplyr::mutate(id = dplyr::row_number() %% 2) %>%
-    cal_plot_logistic(Class, .pred_good, group = id)
+    cal_plot_logistic(Class, .pred_good, .by = id)
 
   expect_s3_class(
     res,
@@ -216,7 +216,7 @@ test_that("Binary logistic functions work with group argument", {
   expect_snapshot_error(
     segment_logistic %>%
       dplyr::mutate(group1 = 1, group2 = 2) %>%
-      cal_plot_logistic(Class, .pred_good, group = c(group1, group2))
+      cal_plot_logistic(Class, .pred_good, .by = c(group1, group2))
   )
 
   lgst_configs <-
@@ -420,7 +420,7 @@ test_that("Numeric groups are supported", {
   grp_df$num_group <- rep(c(1, 2), times = 505)
 
   p <- grp_df %>%
-    cal_plot_breaks(Class, .pred_good, group = num_group)
+    cal_plot_breaks(Class, .pred_good, .by = num_group)
 
   expect_s3_class(p, "ggplot")
 })
@@ -451,7 +451,7 @@ test_that("regression functions work", {
   )
   expect_snapshot_plot(
     "df-scat-group",
-    print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, group = id))
+    print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, .by = id))
   )
   expect_snapshot_plot(
     "rs-scat-group",
