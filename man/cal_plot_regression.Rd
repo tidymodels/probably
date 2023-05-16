@@ -15,7 +15,7 @@ cal_plot_regression(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
   estimate = NULL,
   smooth = TRUE,
   ...,
-  group = NULL
+  .by = NULL
 )
 
 \method{cal_plot_regression}{tune_results}(.data, truth = NULL, estimate = NULL, smooth = TRUE, ...)
@@ -36,7 +36,7 @@ This should be an unquoted column name}
 
 \item{...}{Additional arguments passed to \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}.}
 
-\item{group}{The column identifier to group the results. This should not be
+\item{.by}{The column identifier to group the results. This should not be
 a numeric variable.}
 }
 \value{
@@ -54,6 +54,6 @@ cal_plot_regression(boosting_predictions_oob, outcome, .pred)
 cal_plot_regression(boosting_predictions_oob, outcome, .pred,
                     alpha = 1 / 6, cex = 3, smooth = FALSE)
 
-cal_plot_regression(boosting_predictions_oob, outcome, .pred, group = id,
+cal_plot_regression(boosting_predictions_oob, outcome, .pred, .by = id,
                     alpha = 1 / 6, cex = 3, smooth = FALSE)
 }

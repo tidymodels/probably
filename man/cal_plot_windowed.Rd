@@ -33,7 +33,7 @@ cal_plot_windowed(
   include_points = TRUE,
   event_level = c("auto", "first", "second"),
   ...,
-  group = NULL
+  .by = NULL
 )
 
 \method{cal_plot_windowed}{tune_results}(
@@ -102,7 +102,7 @@ multi-class or linear)}
 
 \item{...}{Additional arguments passed to the \code{tune_results} object.}
 
-\item{group}{The column identifier to group the results.}
+\item{.by}{The column identifier to group the results.}
 }
 \value{
 A ggplot object.

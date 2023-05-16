@@ -11,7 +11,7 @@
   .data,
   truth = NULL,
   estimate = NULL,
-  group = NULL,
+  .by = NULL,
   num_breaks = 10,
   conf_level = 0.9,
   event_level = c("auto", "first", "second"),
@@ -22,7 +22,7 @@
   .data,
   truth = NULL,
   estimate = NULL,
-  group = NULL,
+  .by = NULL,
   conf_level = 0.9,
   smooth = TRUE,
   event_level = c("auto", "first", "second"),
@@ -33,7 +33,7 @@
   .data,
   truth = NULL,
   estimate = NULL,
-  group = NULL,
+  .by = NULL,
   window_size = 0.1,
   step_size = window_size/2,
   conf_level = 0.9,
@@ -54,7 +54,7 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
-\item{group}{The column identifier to group the results.}
+\item{.by}{The column identifier to group the results.}
 
 \item{num_breaks}{The number of segments to group the probabilities. It
 defaults to 10.}
