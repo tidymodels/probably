@@ -12,7 +12,7 @@
 #' (numeric). This should be an unquoted column name.
 #' @param estimate The column identifier for the predictions.
 #' This should be an unquoted column name
-#' @param group The column identifier to group the results. This should not be
+#' @param .by The column identifier to group the results. This should not be
 #' a numeric variable.
 #' @param smooth A logical: should a smoother curve be added.
 #' @param ... Additional arguments passed to [ggplot2::geom_point()].
@@ -23,7 +23,7 @@
 #' cal_plot_regression(boosting_predictions_oob, outcome, .pred,
 #'                     alpha = 1 / 6, cex = 3, smooth = FALSE)
 #'
-#' cal_plot_regression(boosting_predictions_oob, outcome, .pred, group = id,
+#' cal_plot_regression(boosting_predictions_oob, outcome, .pred, .by = id,
 #'                     alpha = 1 / 6, cex = 3, smooth = FALSE)
 #' @export
 cal_plot_regression <- function(.data,
@@ -39,8 +39,8 @@ cal_plot_regression_impl <- function(.data,
                                      estimate = NULL,
                                      smooth = TRUE,
                                      ...,
-                                     group = NULL) {
-  group <- get_group_argument({{ group }}, .data)
+                                     .by = NULL) {
+  group <- get_group_argument({{ .by }}, .data)
 
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -80,7 +80,7 @@ cal_plot_regression.tune_results <- function(.data,
     .data = tune_args$predictions,
     truth = !!tune_args$truth,
     estimate = !!tune_args$estimate,
-    group = !!tune_args$group,
+    .by = !!tune_args$group,
     smooth = smooth,
     ...
   )

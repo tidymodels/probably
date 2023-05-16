@@ -61,10 +61,10 @@ cal_estimate_multinomial.data.frame <-
            smooth = TRUE,
            parameters = NULL,
            ...,
-           group = NULL) {
+           .by = NULL) {
   stop_null_parameters(parameters)
 
-  group <- get_group_argument({{ group }}, .data)
+  group <- get_group_argument({{ .by }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   truth <- enquo(truth)

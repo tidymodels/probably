@@ -43,10 +43,10 @@ cal_estimate_isotonic.data.frame <- function(.data,
                                              estimate = dplyr::starts_with(".pred"),
                                              parameters = NULL,
                                              ...,
-                                             group = NULL) {
+                                             .by = NULL) {
   stop_null_parameters(parameters)
 
-  group <- get_group_argument({{ group }}, .data)
+  group <- get_group_argument({{ .by }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_isoreg_impl(
@@ -132,10 +132,10 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
                                                   times = 10,
                                                   parameters = NULL,
                                                   ...,
-                                                  group = NULL) {
+                                                  .by = NULL) {
   stop_null_parameters(parameters)
 
-  group <- get_group_argument({{ group }}, .data)
+  group <- get_group_argument({{ .by }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_isoreg_impl(
