@@ -106,7 +106,7 @@ the diagonal line.</p>
 <span>  include_points <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  group <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  .by <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for tune_results</span></span>
@@ -201,8 +201,10 @@ multi-class or linear)</p></dd>
 <dd><p>Additional arguments passed to the <code>tune_results</code> object.</p></dd>
 
 
-<dt>group</dt>
-<dd><p>The column identifier to group the results.</p></dd>
+<dt>.by</dt>
+<dd><p>The column identifier for the grouping variable. This should be
+a single unquoted column name that selects a qualitative variable for
+grouping. Default to <code>NULL</code>. When <code>.by = NULL</code> no grouping will take place.</p></dd>
 
 </dl></div>
     <div class="section level2">

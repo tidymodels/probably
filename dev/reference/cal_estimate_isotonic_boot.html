@@ -75,7 +75,7 @@
 <span>  times <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  parameters <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span>,</span>
-<span>  group <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  .by <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for tune_results</span></span>
@@ -134,10 +134,10 @@ only to <code>tune_results</code> objects.</p></dd>
 calculate the new probabilities.</p></dd>
 
 
-<dt>group</dt>
+<dt>.by</dt>
 <dd><p>The column identifier for the grouping variable. This should be
-one or more unquoted column name. Default to <code>NULL</code>. When <code>group = NULL</code> no
-grouping will take place.</p></dd>
+a single unquoted column name that selects a qualitative variable for
+grouping. Default to <code>NULL</code>. When <code>.by = NULL</code> no grouping will take place.</p></dd>
 
 </dl></div>
     <div class="section level2">

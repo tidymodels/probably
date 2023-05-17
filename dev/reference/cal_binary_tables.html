@@ -71,7 +71,7 @@ to the actual outcome.</p>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  num_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
@@ -82,7 +82,7 @@ to the actual outcome.</p>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
 <span>  smooth <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  event_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"first"</span>, <span class="st">"second"</span><span class="op">)</span>,</span>
@@ -93,7 +93,7 @@ to the actual outcome.</p>
 <span>  <span class="va">.data</span>,</span>
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  .by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  window_size <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  step_size <span class="op">=</span> <span class="va">window_size</span><span class="op">/</span><span class="fl">2</span>,</span>
 <span>  conf_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
@@ -122,8 +122,10 @@ identifiers will be considered the same as the order of the levels of the
 <code>truth</code> variable.</p></dd>
 
 
-<dt>group</dt>
-<dd><p>The column identifier to group the results.</p></dd>
+<dt>.by</dt>
+<dd><p>The column identifier for the grouping variable. This should be
+a single unquoted column name that selects a qualitative variable for
+grouping. Default to <code>NULL</code>. When <code>.by = NULL</code> no grouping will take place.</p></dd>
 
 
 <dt>num_breaks</dt>
