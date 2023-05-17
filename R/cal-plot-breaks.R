@@ -23,7 +23,9 @@
 #' defaults to the prefix used by tidymodels (`.pred_`). The order of the
 #' identifiers will be considered the same as the order of the levels of the
 #' `truth` variable.
-#' @param group The column identifier to group the results.
+#' @param .by The column identifier for the grouping variable. This should be
+#' a single unquoted column name that selects a qualitative variable for
+#' grouping. Default to `NULL`. When `.by = NULL` no grouping will take place.
 #' @param event_level  single string. Either "first" or "second" to specify which
 #' level of truth to consider as the "event". Defaults to "auto", which allows
 #' the function decide which one to use based on the type of model (binary,
@@ -75,11 +77,11 @@
 #' combined <- bind_rows(mutate(segment_logistic, source = "original"), gl)
 #'
 #' combined %>%
-#'   cal_plot_logistic(Class, .pred_good, group = source)
+#'   cal_plot_logistic(Class, .pred_good, .by = source)
 #'
 #' # The grouping can be faceted in ggplot2
 #' combined %>%
-#'   cal_plot_logistic(Class, .pred_good, group = source) +
+#'   cal_plot_logistic(Class, .pred_good, .by = source) +
 #'   facet_wrap(~source) +
 #'   theme(legend.position = "")
 #' @seealso [cal_plot_logistic()], [cal_plot_windowed()]
@@ -109,8 +111,8 @@ cal_plot_breaks.data.frame <- function(.data,
                                        include_points = TRUE,
                                        event_level = c("auto", "first", "second"),
                                        ...,
-                                       group = NULL) {
-  group <- get_group_argument({{ group }}, .data)
+                                       .by = NULL) {
+  group <- get_group_argument({{ .by }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_plot_breaks_impl(
@@ -266,7 +268,7 @@ cal_plot_breaks_impl <- function(.data,
 .cal_table_breaks <- function(.data,
                               truth = NULL,
                               estimate = NULL,
-                              group = NULL,
+                              .by = NULL,
                               num_breaks = 10,
                               conf_level = 0.90,
                               event_level = c("auto", "first", "second"),
@@ -279,7 +281,7 @@ cal_plot_breaks_impl <- function(.data,
 .cal_table_breaks.data.frame <- function(.data,
                                          truth = NULL,
                                          estimate = NULL,
-                                         group = NULL,
+                                         .by = NULL,
                                          num_breaks = 10,
                                          conf_level = 0.90,
                                          event_level = c("auto", "first", "second"),
@@ -288,7 +290,7 @@ cal_plot_breaks_impl <- function(.data,
     .data = .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    group = {{ group }},
+    group = {{ .by }},
     num_breaks = num_breaks,
     conf_level = conf_level,
     event_level = event_level
@@ -300,7 +302,7 @@ cal_plot_breaks_impl <- function(.data,
 .cal_table_breaks.tune_results <- function(.data,
                                            truth = NULL,
                                            estimate = NULL,
-                                           group = NULL,
+                                           .by = NULL,
                                            num_breaks = 10,
                                            conf_level = 0.90,
                                            event_level = c("auto", "first", "second"),

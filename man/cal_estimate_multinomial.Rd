@@ -23,7 +23,7 @@ cal_estimate_multinomial(
   smooth = TRUE,
   parameters = NULL,
   ...,
-  group = NULL
+  .by = NULL
 )
 
 \method{cal_estimate_multinomial}{tune_results}(
@@ -67,9 +67,9 @@ only to \code{tune_results} objects.}
 \item{...}{Additional arguments passed to the models or routines used to
 calculate the new probabilities.}
 
-\item{group}{The column identifier for the grouping variable. This should be
-one or more unquoted column name. Default to \code{NULL}. When \code{group = NULL} no
-grouping will take place.}
+\item{.by}{The column identifier for the grouping variable. This should be
+a single unquoted column name that selects a qualitative variable for
+grouping. Default to \code{NULL}. When \code{.by = NULL} no grouping will take place.}
 }
 \description{
 Uses a Multinomial calibration model to calculate new probabilities

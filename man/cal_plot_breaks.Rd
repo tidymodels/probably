@@ -31,7 +31,7 @@ cal_plot_breaks(
   include_points = TRUE,
   event_level = c("auto", "first", "second"),
   ...,
-  group = NULL
+  .by = NULL
 )
 
 \method{cal_plot_breaks}{tune_results}(
@@ -95,7 +95,9 @@ multi-class or linear)}
 
 \item{...}{Additional arguments passed to the \code{tune_results} object.}
 
-\item{group}{The column identifier to group the results.}
+\item{.by}{The column identifier for the grouping variable. This should be
+a single unquoted column name that selects a qualitative variable for
+grouping. Default to \code{NULL}. When \code{.by = NULL} no grouping will take place.}
 }
 \value{
 A ggplot object.
@@ -146,11 +148,11 @@ gl <- segment_logistic \%>\%
 combined <- bind_rows(mutate(segment_logistic, source = "original"), gl)
 
 combined \%>\%
-  cal_plot_logistic(Class, .pred_good, group = source)
+  cal_plot_logistic(Class, .pred_good, .by = source)
 
 # The grouping can be faceted in ggplot2
 combined \%>\%
-  cal_plot_logistic(Class, .pred_good, group = source) +
+  cal_plot_logistic(Class, .pred_good, .by = source) +
   facet_wrap(~source) +
   theme(legend.position = "")
 }

@@ -69,7 +69,7 @@ cal_estimate_linear <- function(.data,
                                 smooth = TRUE,
                                 parameters = NULL,
                                 ...,
-                                group = NULL) {
+                                .by = NULL) {
   UseMethod("cal_estimate_linear")
 }
 
@@ -81,10 +81,10 @@ cal_estimate_linear.data.frame <- function(.data,
                                            smooth = TRUE,
                                            parameters = NULL,
                                            ...,
-                                           group = NULL) {
+                                           .by = NULL) {
   stop_null_parameters(parameters)
 
-  group <- get_group_argument({{ group }}, .data)
+  group <- get_group_argument({{ .by }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_linear_impl(

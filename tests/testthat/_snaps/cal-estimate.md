@@ -40,7 +40,7 @@
 
 ---
 
-    x `group` cannot select more than one column.
+    x `.by` cannot select more than one column.
     i The following 2 columns were selected:
     i group1 and group2
 
@@ -103,7 +103,7 @@
 
 ---
 
-    x `group` cannot select more than one column.
+    x `.by` cannot select more than one column.
     i The following 2 columns were selected:
     i group1 and group2
 
@@ -159,7 +159,7 @@
 
 ---
 
-    x `group` cannot select more than one column.
+    x `.by` cannot select more than one column.
     i The following 2 columns were selected:
     i group1 and group2
 
@@ -236,7 +236,7 @@
 
 ---
 
-    x `group` cannot select more than one column.
+    x `.by` cannot select more than one column.
     i The following 2 columns were selected:
     i group1 and group2
 
@@ -274,7 +274,7 @@
 
 ---
 
-    x `group` cannot select more than one column.
+    x `.by` cannot select more than one column.
     i The following 2 columns were selected:
     i group1 and group2
 
@@ -350,7 +350,7 @@
 
 ---
 
-    x `group` cannot select more than one column.
+    x `.by` cannot select more than one column.
     i The following 2 columns were selected:
     i group1 and group2
 
@@ -445,7 +445,7 @@
 
 ---
 
-    x `group` cannot select more than one column.
+    x `.by` cannot select more than one column.
     i The following 2 columns were selected:
     i group1 and group2
 
@@ -516,7 +516,7 @@
 
 ---
 
-    x `group` cannot select more than one column.
+    x `.by` cannot select more than one column.
     i The following 2 columns were selected:
     i group1 and group2
 
@@ -566,7 +566,7 @@
 
 ---
 
-    x `group` cannot select more than one column.
+    x `.by` cannot select more than one column.
     i The following 2 columns were selected:
     i group1 and group2
 

@@ -12,9 +12,9 @@
 #' @param parameters (Optional)  An optional tibble of tuning parameter values
 #' that can be used to filter the predicted values before processing. Applies
 #' only to `tune_results` objects.
-#' @param group The column identifier for the grouping variable. This should be
-#' one or more unquoted column name. Default to `NULL`. When `group = NULL` no
-#' grouping will take place.
+#' @param .by The column identifier for the grouping variable. This should be
+#' a single unquoted column name that selects a qualitative variable for
+#' grouping. Default to `NULL`. When `.by = NULL` no grouping will take place.
 #' @param ... Additional arguments passed to the models or routines used to
 #' calculate the new probabilities.
 #' @param smooth Applies to the logistic models. It switches between logistic
@@ -58,10 +58,10 @@ cal_estimate_logistic.data.frame <- function(.data,
                                              smooth = TRUE,
                                              parameters = NULL,
                                              ...,
-                                             group = NULL) {
+                                             .by = NULL) {
   stop_null_parameters(parameters)
 
-  group <- get_group_argument({{ group }}, .data)
+  group <- get_group_argument({{ .by }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_logistic_impl(

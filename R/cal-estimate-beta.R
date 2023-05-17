@@ -35,10 +35,10 @@ cal_estimate_beta.data.frame <- function(.data,
                                          estimate = dplyr::starts_with(".pred_"),
                                          parameters = NULL,
                                          ...,
-                                         group = NULL) {
+                                         .by = NULL) {
   stop_null_parameters(parameters)
 
-  group <- get_group_argument({{ group }}, .data)
+  group <- get_group_argument({{ .by }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
   cal_beta_impl(
