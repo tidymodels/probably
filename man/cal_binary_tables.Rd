@@ -54,7 +54,9 @@ defaults to the prefix used by tidymodels (\code{.pred_}). The order of the
 identifiers will be considered the same as the order of the levels of the
 \code{truth} variable.}
 
-\item{.by}{The column identifier to group the results.}
+\item{.by}{The column identifier for the grouping variable. This should be
+a single unquoted column name that selects a qualitative variable for
+grouping. Default to \code{NULL}. When \code{.by = NULL} no grouping will take place.}
 
 \item{num_breaks}{The number of segments to group the probabilities. It
 defaults to 10.}

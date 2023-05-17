@@ -95,7 +95,9 @@ multi-class or linear)}
 
 \item{...}{Additional arguments passed to the \code{tune_results} object.}
 
-\item{.by}{The column identifier to group the results.}
+\item{.by}{The column identifier for the grouping variable. This should be
+a single unquoted column name that selects a qualitative variable for
+grouping. Default to \code{NULL}. When \code{.by = NULL} no grouping will take place.}
 }
 \value{
 A ggplot object.

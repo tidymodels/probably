@@ -23,7 +23,9 @@
 #' defaults to the prefix used by tidymodels (`.pred_`). The order of the
 #' identifiers will be considered the same as the order of the levels of the
 #' `truth` variable.
-#' @param .by The column identifier to group the results.
+#' @param .by The column identifier for the grouping variable. This should be
+#' a single unquoted column name that selects a qualitative variable for
+#' grouping. Default to `NULL`. When `.by = NULL` no grouping will take place.
 #' @param event_level  single string. Either "first" or "second" to specify which
 #' level of truth to consider as the "event". Defaults to "auto", which allows
 #' the function decide which one to use based on the type of model (binary,

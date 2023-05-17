@@ -68,8 +68,8 @@ only to \code{tune_results} objects.}
 calculate the new probabilities.}
 
 \item{.by}{The column identifier for the grouping variable. This should be
-one or more unquoted column name. Default to \code{NULL}. When \code{.by = NULL} no
-grouping will take place.}
+a single unquoted column name that selects a qualitative variable for
+grouping. Default to \code{NULL}. When \code{.by = NULL} no grouping will take place.}
 }
 \description{
 Uses a logistic regression model to calibrate probabilities

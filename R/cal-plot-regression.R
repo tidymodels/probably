@@ -12,8 +12,9 @@
 #' (numeric). This should be an unquoted column name.
 #' @param estimate The column identifier for the predictions.
 #' This should be an unquoted column name
-#' @param .by The column identifier to group the results. This should not be
-#' a numeric variable.
+#' @param .by The column identifier for the grouping variable. This should be
+#' a single unquoted column name that selects a qualitative variable for
+#' grouping. Default to `NULL`. When `.by = NULL` no grouping will take place.
 #' @param smooth A logical: should a smoother curve be added.
 #' @param ... Additional arguments passed to [ggplot2::geom_point()].
 #' @return A ggplot object.

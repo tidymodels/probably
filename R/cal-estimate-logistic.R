@@ -13,8 +13,8 @@
 #' that can be used to filter the predicted values before processing. Applies
 #' only to `tune_results` objects.
 #' @param .by The column identifier for the grouping variable. This should be
-#' one or more unquoted column name. Default to `NULL`. When `.by = NULL` no
-#' grouping will take place.
+#' a single unquoted column name that selects a qualitative variable for
+#' grouping. Default to `NULL`. When `.by = NULL` no grouping will take place.
 #' @param ... Additional arguments passed to the models or routines used to
 #' calculate the new probabilities.
 #' @param smooth Applies to the logistic models. It switches between logistic

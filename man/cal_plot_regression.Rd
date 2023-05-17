@@ -36,8 +36,9 @@ This should be an unquoted column name}
 
 \item{...}{Additional arguments passed to \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}.}
 
-\item{.by}{The column identifier to group the results. This should not be
-a numeric variable.}
+\item{.by}{The column identifier for the grouping variable. This should be
+a single unquoted column name that selects a qualitative variable for
+grouping. Default to \code{NULL}. When \code{.by = NULL} no grouping will take place.}
 }
 \value{
 A ggplot object.
