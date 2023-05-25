@@ -722,8 +722,8 @@ cal_validate <- function(rset,
 
 #' @importFrom pillar type_sum
 #' @export
-type_sum.cal_binary <- function(x, ...) {
-  paste0(x$method, " [", x$rows, "]")
+type_sum.cal_object <- function(x, ...) {
+  "cal_obj"
 }
 
 # -------------------------------- Linear --------------------------------------

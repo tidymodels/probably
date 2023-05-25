@@ -132,11 +132,11 @@ cal_logistic_impl <- function(.data,
                               ...) {
   if (smooth) {
     model <- "logistic_spline"
-    method <- "Logistic Spline"
+    method <- "Generalized additive model"
     additional_class <- "cal_estimate_logistic_spline"
   } else {
     model <- "glm"
-    method <- "Logistic"
+    method <- "Logistic regression"
     additional_class <- "cal_estimate_logistic"
   }
 

@@ -5,7 +5,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Logistic
+      Method: Logistic regression
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
@@ -29,7 +29,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Logistic
+      Method: Logistic regression
       Type: Binary
       Source class: Data Frame
       Data points: 1,010, split in 2 groups
@@ -51,7 +51,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Logistic
+      Method: Logistic regression
       Type: Binary
       Source class: Tune Results
       Data points: 4,000, split in 8 groups
@@ -76,7 +76,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Logistic Spline
+      Method: Generalized additive model
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
@@ -92,7 +92,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Logistic Spline
+      Method: Generalized additive model
       Type: Binary
       Source class: Data Frame
       Data points: 1,010, split in 2 groups
@@ -114,7 +114,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Logistic Spline
+      Method: Generalized additive model
       Type: Binary
       Source class: Tune Results
       Data points: 4,000, split in 8 groups
@@ -130,7 +130,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic
+      Method: Isotonic regression
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
@@ -147,7 +147,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic
+      Method: Isotonic regression
       Type: Binary
       Source class: Data Frame
       Data points: 1,010, split in 2 groups
@@ -170,7 +170,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic
+      Method: Isotonic regression
       Type: Binary
       Source class:
       Data points: 4,000, split in 8 groups
@@ -187,7 +187,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic
+      Method: Isotonic regression
       Type: Multiclass (1 v All)
       Source class:
       Data points: 5,000, split in 10 groups
@@ -209,7 +209,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic
+      Method: Isotonic regression
       Type: Regression
       Source class: Data Frame
       Data points: 2,000
@@ -225,7 +225,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic
+      Method: Isotonic regression
       Type: Regression
       Source class: Data Frame
       Data points: 2,000, split in 10 groups
@@ -247,7 +247,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Bootstrapped Isotonic Regression
+      Method: Bootstrapped isotonic regression
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
@@ -263,7 +263,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Bootstrapped Isotonic Regression
+      Method: Bootstrapped isotonic regression
       Type: Binary
       Source class: Data Frame
       Data points: 1,010, split in 2 groups
@@ -285,7 +285,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Bootstrapped Isotonic Regression
+      Method: Bootstrapped isotonic regression
       Type: Binary
       Source class: Tune Results
       Data points: 4,000, split in 8 groups
@@ -301,7 +301,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Bootstrapped Isotonic Regression
+      Method: Bootstrapped isotonic regression
       Type: Multiclass (1 v All)
       Source class: Tune Results
       Data points: 5,000, split in 10 groups
@@ -323,7 +323,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Beta
+      Method: Beta calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
@@ -339,7 +339,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Beta
+      Method: Beta calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010, split in 2 groups
@@ -361,7 +361,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Beta
+      Method: Beta calibration
       Type: Binary
       Source class: Tune Results
       Data points: 4,000, split in 8 groups
@@ -377,7 +377,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Beta
+      Method: Beta calibration
       Type: Multiclass (1 v All)
       Source class: Tune Results
       Data points: 5,000, split in 10 groups
@@ -399,7 +399,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Multinomial
+      Method: Multinomial regression
       Type: Multiclass
       Source class: Data Frame
       Data points: 110
@@ -416,7 +416,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Multinomial
+      Method: Generalized additive model
       Type: Multiclass
       Source class: Data Frame
       Data points: 110
@@ -433,7 +433,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Multinomial
+      Method: Multinomial regression
       Type: Multiclass
       Source class: Data Frame
       Data points: 110, split in 2 groups
@@ -456,7 +456,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Multinomial
+      Method: Multinomial regression
       Type: Multiclass
       Source class: Tune Results
       Data points: 5,000, split in 10 groups
@@ -473,7 +473,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Multinomial
+      Method: Generalized additive model
       Type: Multiclass
       Source class: Tune Results
       Data points: 5,000, split in 10 groups
@@ -545,7 +545,7 @@
     Message
       
       -- Regression Calibration 
-      Method: Linear Spline
+      Method: Generalized additive model
       Source class: Data Frame
       Data points: 2,000
       Truth variable: `outcome`
@@ -558,7 +558,7 @@
     Message
       
       -- Regression Calibration 
-      Method: Linear Spline
+      Method: Generalized additive model
       Source class: Data Frame
       Data points: 2,000, split in 2 groups
       Truth variable: `outcome`
@@ -577,7 +577,7 @@
     Message
       
       -- Regression Calibration 
-      Method: Linear Spline
+      Method: Generalized additive model
       Source class: Tune Results
       Data points: 750, split in 10 groups
       Truth variable: `outcome`
@@ -590,7 +590,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic
+      Method: Isotonic regression
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
