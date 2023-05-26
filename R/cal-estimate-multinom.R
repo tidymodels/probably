@@ -148,7 +148,7 @@ cal_multinom_impl <- function(.data, truth, estimate, source_class, smooth, ...)
     estimate = model,
     levels = levels,
     truth = !!truth,
-    method = "Multinomial",
+    method = if (!smooth) "Multinomial regression" else "Generalized additive model",
     rows = nrow(.data),
     additional_classes = "cal_estimate_multinomial",
     source_class = source_class,

@@ -137,7 +137,7 @@ cal_beta_impl <- function(.data,
     estimate = beta_model,
     levels = levels,
     truth = {{ truth }},
-    method = "Beta",
+    method = "Beta calibration",
     rows = nrow(.data),
     source_class = source_class,
     additional_classes = "cal_estimate_beta"

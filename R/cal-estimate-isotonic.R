@@ -215,7 +215,7 @@ cal_isoreg_impl <- function(.data,
     )
     iso_model <- list(iso_model)
     addl_class <- "cal_estimate_isotonic"
-    method <- "Isotonic"
+    method <- "Isotonic regression"
   } else {
     iso_model <- purrr::map(
       sample.int(10000, times),
@@ -232,7 +232,7 @@ cal_isoreg_impl <- function(.data,
       )
     )
     addl_class <- "cal_estimate_isotonic_boot"
-    method <- "Bootstrapped Isotonic Regression"
+    method <- "Bootstrapped isotonic regression"
   }
 
 

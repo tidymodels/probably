@@ -2,7 +2,7 @@
 test_that("Logistic estimates work - data.frame", {
   sl_logistic <- cal_estimate_logistic(segment_logistic, Class, smooth = FALSE)
   expect_cal_type(sl_logistic, "binary")
-  expect_cal_method(sl_logistic, "Logistic")
+  expect_cal_method(sl_logistic, "Logistic regression")
   expect_cal_estimate(sl_logistic, "butchered_glm")
   expect_cal_rows(sl_logistic)
   expect_snapshot(print(sl_logistic))
@@ -22,7 +22,7 @@ test_that("Logistic estimates work - data.frame", {
   expect_false(are_groups_configs(sl_logistic_group))
 
   expect_cal_type(sl_logistic_group, "binary")
-  expect_cal_method(sl_logistic_group, "Logistic")
+  expect_cal_method(sl_logistic_group, "Logistic regression")
   expect_cal_estimate(sl_logistic_group, "butchered_glm")
   expect_cal_rows(sl_logistic_group)
   expect_snapshot(print(sl_logistic_group))
@@ -43,7 +43,7 @@ test_that("Logistic estimates work - data.frame", {
 test_that("Logistic estimates work - tune_results", {
   tl_logistic <- cal_estimate_logistic(testthat_cal_binary(), smooth = FALSE)
   expect_cal_type(tl_logistic, "binary")
-  expect_cal_method(tl_logistic, "Logistic")
+  expect_cal_method(tl_logistic, "Logistic regression")
   expect_cal_estimate(tl_logistic, "butchered_glm")
   expect_snapshot(print(tl_logistic))
   expect_true(are_groups_configs(tl_logistic))
@@ -63,7 +63,7 @@ test_that("Logistic estimates errors - grouped_df", {
 test_that("Logistic spline estimates work - data.frame", {
   sl_gam <- cal_estimate_logistic(segment_logistic, Class)
   expect_cal_type(sl_gam, "binary")
-  expect_cal_method(sl_gam, "Logistic Spline")
+  expect_cal_method(sl_gam, "Generalized additive model")
   expect_cal_estimate(sl_gam, "butchered_gam")
   expect_cal_rows(sl_gam)
   expect_snapshot(print(sl_gam))
@@ -73,7 +73,7 @@ test_that("Logistic spline estimates work - data.frame", {
     cal_estimate_logistic(Class, .by = group)
 
   expect_cal_type(sl_gam_group, "binary")
-  expect_cal_method(sl_gam_group, "Logistic Spline")
+  expect_cal_method(sl_gam_group, "Generalized additive model")
   expect_cal_estimate(sl_gam_group, "butchered_gam")
   expect_cal_rows(sl_gam_group)
   expect_snapshot(print(sl_gam_group))
@@ -93,7 +93,7 @@ test_that("Logistic spline estimates work - data.frame", {
 test_that("Logistic spline estimates work - tune_results", {
   tl_gam <- cal_estimate_logistic(testthat_cal_binary())
   expect_cal_type(tl_gam, "binary")
-  expect_cal_method(tl_gam, "Logistic Spline")
+  expect_cal_method(tl_gam, "Generalized additive model")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
   expect_true(are_groups_configs(tl_gam))
@@ -109,7 +109,7 @@ test_that("Isotonic estimates work - data.frame", {
   set.seed(100)
   sl_isotonic <- cal_estimate_isotonic(segment_logistic, Class)
   expect_cal_type(sl_isotonic, "binary")
-  expect_cal_method(sl_isotonic, "Isotonic")
+  expect_cal_method(sl_isotonic, "Isotonic regression")
   expect_cal_rows(sl_isotonic)
   expect_snapshot(print(sl_isotonic))
 
@@ -118,7 +118,7 @@ test_that("Isotonic estimates work - data.frame", {
     cal_estimate_isotonic(Class, .by = group)
 
   expect_cal_type(sl_isotonic_group, "binary")
-  expect_cal_method(sl_isotonic_group, "Isotonic")
+  expect_cal_method(sl_isotonic_group, "Isotonic regression")
   expect_cal_rows(sl_isotonic_group)
   expect_snapshot(print(sl_isotonic_group))
 
@@ -143,7 +143,7 @@ test_that("Isotonic estimates work - tune_results", {
   set.seed(100)
   tl_isotonic <- cal_estimate_isotonic(testthat_cal_binary())
   expect_cal_type(tl_isotonic, "binary")
-  expect_cal_method(tl_isotonic, "Isotonic")
+  expect_cal_method(tl_isotonic, "Isotonic regression")
   expect_snapshot(print(tl_isotonic))
   expect_true(are_groups_configs(tl_isotonic))
 
@@ -158,7 +158,7 @@ test_that("Isotonic estimates work - tune_results", {
   set.seed(100)
   mtnl_isotonic <- cal_estimate_isotonic(testthat_cal_multiclass())
   expect_cal_type(mtnl_isotonic, "one_vs_all")
-  expect_cal_method(mtnl_isotonic, "Isotonic")
+  expect_cal_method(mtnl_isotonic, "Isotonic regression")
   expect_snapshot(print(mtnl_isotonic))
   expect_true(are_groups_configs(mtnl_isotonic))
 
@@ -177,7 +177,7 @@ test_that("Isotonic estimates errors - grouped_df", {
 test_that("Isotonic linear estimates work - data.frame", {
   sl_logistic <- cal_estimate_isotonic(boosting_predictions_oob, outcome, estimate = .pred)
   expect_cal_type(sl_logistic, "regression")
-  expect_cal_method(sl_logistic, "Isotonic")
+  expect_cal_method(sl_logistic, "Isotonic regression")
   expect_cal_rows(sl_logistic, 2000)
   expect_snapshot(print(sl_logistic))
 
@@ -185,7 +185,7 @@ test_that("Isotonic linear estimates work - data.frame", {
     cal_estimate_isotonic(outcome, estimate = .pred, .by = id)
 
   expect_cal_type(sl_logistic_group, "regression")
-  expect_cal_method(sl_logistic_group, "Isotonic")
+  expect_cal_method(sl_logistic_group, "Isotonic regression")
   expect_cal_rows(sl_logistic_group, 2000)
   expect_snapshot(print(sl_logistic_group))
 
@@ -206,7 +206,7 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
   set.seed(1)
   sl_boot <- cal_estimate_isotonic_boot(segment_logistic, Class)
   expect_cal_type(sl_boot, "binary")
-  expect_cal_method(sl_boot, "Bootstrapped Isotonic Regression")
+  expect_cal_method(sl_boot, "Bootstrapped isotonic regression")
   expect_snapshot(print(sl_boot))
 
   sl_boot_group <- segment_logistic %>%
@@ -214,7 +214,7 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
     cal_estimate_isotonic_boot(Class, .by = group)
 
   expect_cal_type(sl_boot_group, "binary")
-  expect_cal_method(sl_boot_group, "Bootstrapped Isotonic Regression")
+  expect_cal_method(sl_boot_group, "Bootstrapped isotonic regression")
   expect_snapshot(print(sl_boot_group))
   expect_false(are_groups_configs(sl_boot_group))
 
@@ -240,7 +240,7 @@ test_that("Isotonic Bootstrapped estimates work - tune_results", {
   set.seed(100)
   tl_isotonic <- cal_estimate_isotonic_boot(testthat_cal_binary())
   expect_cal_type(tl_isotonic, "binary")
-  expect_cal_method(tl_isotonic, "Bootstrapped Isotonic Regression")
+  expect_cal_method(tl_isotonic, "Bootstrapped isotonic regression")
   expect_snapshot(print(tl_isotonic))
   expect_true(are_groups_configs(tl_isotonic))
 
@@ -255,7 +255,7 @@ test_that("Isotonic Bootstrapped estimates work - tune_results", {
   set.seed(100)
   mtnl_isotonic <- cal_estimate_isotonic_boot(testthat_cal_multiclass())
   expect_cal_type(mtnl_isotonic, "one_vs_all")
-  expect_cal_method(mtnl_isotonic, "Bootstrapped Isotonic Regression")
+  expect_cal_method(mtnl_isotonic, "Bootstrapped isotonic regression")
   expect_snapshot(print(mtnl_isotonic))
   expect_true(are_groups_configs(mtnl_isotonic))
 
@@ -275,7 +275,7 @@ test_that("Isotonic Bootstrapped estimates errors - grouped_df", {
 test_that("Beta estimates work - data.frame", {
   sl_beta <- cal_estimate_beta(segment_logistic, Class, smooth = FALSE)
   expect_cal_type(sl_beta, "binary")
-  expect_cal_method(sl_beta, "Beta")
+  expect_cal_method(sl_beta, "Beta calibration")
   expect_cal_rows(sl_beta)
   expect_snapshot(print(sl_beta))
 
@@ -284,7 +284,7 @@ test_that("Beta estimates work - data.frame", {
     cal_estimate_beta(Class, smooth = FALSE, .by = group)
 
   expect_cal_type(sl_beta_group, "binary")
-  expect_cal_method(sl_beta_group, "Beta")
+  expect_cal_method(sl_beta_group, "Beta calibration")
   expect_cal_rows(sl_beta_group)
   expect_snapshot(print(sl_beta_group))
 
@@ -308,7 +308,7 @@ test_that("Beta estimates work - data.frame", {
 test_that("Beta estimates work - tune_results", {
   tl_beta <- cal_estimate_beta(testthat_cal_binary())
   expect_cal_type(tl_beta, "binary")
-  expect_cal_method(tl_beta, "Beta")
+  expect_cal_method(tl_beta, "Beta calibration")
   expect_snapshot(print(tl_beta))
   expect_true(are_groups_configs(tl_beta))
 
@@ -325,7 +325,7 @@ test_that("Beta estimates work - tune_results", {
     mtnl_isotonic <- cal_estimate_beta(testthat_cal_multiclass())
   )
   expect_cal_type(mtnl_isotonic, "one_vs_all")
-  expect_cal_method(mtnl_isotonic, "Beta")
+  expect_cal_method(mtnl_isotonic, "Beta calibration")
   expect_snapshot(print(mtnl_isotonic))
   expect_true(are_groups_configs(mtnl_isotonic))
 
@@ -345,13 +345,13 @@ test_that("Beta estimates errors - grouped_df", {
 test_that("Multinomial estimates work - data.frame", {
   sp_multi <- cal_estimate_multinomial(species_probs, Species, smooth = FALSE)
   expect_cal_type(sp_multi, "multiclass")
-  expect_cal_method(sp_multi, "Multinomial")
+  expect_cal_method(sp_multi, "Multinomial regression")
   expect_cal_rows(sp_multi, n = 110)
   expect_snapshot(print(sp_multi))
 
   sp_smth_multi <- cal_estimate_multinomial(species_probs, Species, smooth = TRUE)
   expect_cal_type(sp_smth_multi, "multiclass")
-  expect_cal_method(sp_smth_multi, "Multinomial")
+  expect_cal_method(sp_smth_multi, "Generalized additive model")
   expect_cal_rows(sp_smth_multi, n = 110)
   expect_snapshot(print(sp_smth_multi))
 
@@ -360,7 +360,7 @@ test_that("Multinomial estimates work - data.frame", {
     cal_estimate_multinomial(Species, smooth = FALSE, .by = group)
 
   expect_cal_type(sl_multi_group, "multiclass")
-  expect_cal_method(sl_multi_group, "Multinomial")
+  expect_cal_method(sl_multi_group, "Multinomial regression")
   expect_cal_rows(sl_multi_group, n = 110)
   expect_snapshot(print(sl_multi_group))
 
@@ -379,7 +379,7 @@ test_that("Multinomial estimates work - data.frame", {
 test_that("Multinomial estimates work - tune_results", {
   tl_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = FALSE)
   expect_cal_type(tl_multi, "multiclass")
-  expect_cal_method(tl_multi, "Multinomial")
+  expect_cal_method(tl_multi, "Multinomial regression")
   expect_snapshot(print(tl_multi))
   expect_true(are_groups_configs(tl_multi))
 
@@ -394,7 +394,7 @@ test_that("Multinomial estimates work - tune_results", {
 
   tl_smth_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = TRUE)
   expect_cal_type(tl_smth_multi, "multiclass")
-  expect_cal_method(tl_smth_multi, "Multinomial")
+  expect_cal_method(tl_smth_multi, "Generalized additive model")
   expect_snapshot(print(tl_smth_multi))
 
   expect_equal(
@@ -470,7 +470,7 @@ test_that("Linear estimates errors - grouped_df", {
 test_that("Linear spline estimates work - data.frame", {
   sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome)
   expect_cal_type(sl_gam, "regression")
-  expect_cal_method(sl_gam, "Linear Spline")
+  expect_cal_method(sl_gam, "Generalized additive model")
   expect_cal_estimate(sl_gam, "butchered_gam")
   expect_cal_rows(sl_gam, 2000)
   expect_snapshot(print(sl_gam))
@@ -480,7 +480,7 @@ test_that("Linear spline estimates work - data.frame", {
     cal_estimate_linear(outcome, .by = group)
 
   expect_cal_type(sl_gam_group, "regression")
-  expect_cal_method(sl_gam_group, "Linear Spline")
+  expect_cal_method(sl_gam_group, "Generalized additive model")
   expect_cal_estimate(sl_gam_group, "butchered_gam")
   expect_cal_rows(sl_gam_group, 2000)
   expect_snapshot(print(sl_gam_group))
@@ -500,7 +500,7 @@ test_that("Linear spline estimates work - data.frame", {
 test_that("Linear spline estimates work - tune_results", {
   tl_gam <- cal_estimate_linear(testthat_cal_reg(), outcome)
   expect_cal_type(tl_gam, "regression")
-  expect_cal_method(tl_gam, "Linear Spline")
+  expect_cal_method(tl_gam, "Generalized additive model")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
   expect_true(are_groups_configs(tl_gam))
