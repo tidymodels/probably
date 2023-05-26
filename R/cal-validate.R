@@ -751,8 +751,14 @@ convert_resamples <- function(x) {
 
 # ------------------------------------------------------------------------------
 
+maybe_add_configs <- function(x) {
+  if (!any(names(x$.metrics) == ".config")) {
+    x$.metrics <- purrr::map(x$.metrics, add_configs)
+  }
+  x
+}
+
 add_configs <- function(x) {
-  # TODO see if it already exists
   x$.config <- "config"
   x
 }
@@ -768,18 +774,17 @@ add_configs <- function(x) {
 #' @return A tibble
 #' @export
 collect_metrics.cal_rset <- function(x, summarize = TRUE, ...) {
-  # check for
   tmp <- x
   class(tmp) <- c("tune_results", class(x))
-  tmp$.metrics <- purrr::map(tmp$.metrics, add_configs)
+  tmp <- maybe_add_configs(tmp)
   uncal <- tune::collect_metrics(tmp, summarize = summarize)
   uncal$type <- "uncalibrated"
 
   tmp$.metrics <- tmp$.metrics_cal
-  tmp$.metrics <- purrr::map(tmp$.metrics, add_configs)
-
+  tmp <- maybe_add_configs(tmp)
   cal <- tune::collect_metrics(tmp, summarize = summarize)
   cal$type <- "calibrated"
+
   res <- dplyr::bind_rows(uncal, cal)
   res
 }
