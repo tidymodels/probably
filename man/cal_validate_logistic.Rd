@@ -12,7 +12,7 @@ cal_validate_logistic(
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
-  save_details = FALSE,
+  save_pred = FALSE,
   summarize = TRUE,
   ...
 )
@@ -22,7 +22,7 @@ cal_validate_logistic(
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
-  save_details = FALSE,
+  save_pred = FALSE,
   summarize = TRUE,
   ...
 )
@@ -32,7 +32,7 @@ cal_validate_logistic(
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
-  save_details = FALSE,
+  save_pred = FALSE,
   summarize = TRUE,
   ...
 )
@@ -42,7 +42,7 @@ cal_validate_logistic(
   truth = NULL,
   estimate = NULL,
   metrics = NULL,
-  save_details = FALSE,
+  save_pred = FALSE,
   summarize = TRUE,
   ...
 )
@@ -62,12 +62,8 @@ identifiers will be considered the same as the order of the levels of the
 
 \item{metrics}{A set of metrics passed created via \code{\link[yardstick:metric_set]{yardstick::metric_set()}}}
 
-\item{save_details}{Indicates whether to include the \code{calibration} and
+\item{save_pred}{Indicates whether to include the \code{calibration} and
 \code{validation} columns when the \code{summarize} argument is set to FALSE.}
-
-\item{summarize}{Indicates to pass tibble with the metrics averaged, or
-if to return the same sampled object but with new columns containing the
-calibration y validation list columns.}
 
 \item{...}{Options to pass to \code{\link[=cal_estimate_logistic]{cal_estimate_logistic()}}, such as the \code{smooth}
 argument.}
@@ -75,8 +71,8 @@ argument.}
 \value{
 \itemize{
 \item When \code{summarize = TRUE} a tibble with statistics before and after calibration.
-\item When \code{summarize = FALSE & save_details = TRUE}, the original object with new
-columns for calibration statisics.
+\item When \code{summarize = FALSE}, the original object with new columns for
+calibration statistics.
 }
 }
 \description{

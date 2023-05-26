@@ -13,7 +13,7 @@ cal_validate_beta(
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
   summarize = TRUE,
-  save_details = FALSE,
+  save_pred = FALSE,
   ...
 )
 
@@ -23,7 +23,7 @@ cal_validate_beta(
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
   summarize = TRUE,
-  save_details = FALSE,
+  save_pred = FALSE,
   ...
 )
 
@@ -33,7 +33,7 @@ cal_validate_beta(
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
   summarize = TRUE,
-  save_details = FALSE,
+  save_pred = FALSE,
   ...
 )
 
@@ -43,7 +43,7 @@ cal_validate_beta(
   estimate = NULL,
   metrics = NULL,
   summarize = TRUE,
-  save_details = FALSE,
+  save_pred = FALSE,
   ...
 )
 }
@@ -62,11 +62,7 @@ identifiers will be considered the same as the order of the levels of the
 
 \item{metrics}{A set of metrics passed created via \code{\link[yardstick:metric_set]{yardstick::metric_set()}}}
 
-\item{summarize}{Indicates to pass tibble with the metrics averaged, or
-if to return the same sampled object but with new columns containing the
-calibration y validation list columns.}
-
-\item{save_details}{Indicates whether to include the \code{calibration} and
+\item{save_pred}{Indicates whether to include the \code{calibration} and
 \code{validation} columns when the \code{summarize} argument is set to FALSE.}
 
 \item{...}{Options to pass to \code{\link[=cal_estimate_beta]{cal_estimate_beta()}}, such as the
@@ -75,8 +71,8 @@ calibration y validation list columns.}
 \value{
 \itemize{
 \item When \code{summarize = TRUE} a tibble with statistics before and after calibration.
-\item When \code{summarize = FALSE & save_details = TRUE}, the original object with new
-columns for calibration statisics.
+\item When \code{summarize = FALSE}, the original object with new columns for
+calibration statistics.
 }
 }
 \description{

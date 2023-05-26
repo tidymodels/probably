@@ -11,7 +11,7 @@ cal_validate_linear(
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
-  save_details = FALSE,
+  save_pred = FALSE,
   summarize = TRUE,
   ...
 )
@@ -21,7 +21,7 @@ cal_validate_linear(
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
-  save_details = FALSE,
+  save_pred = FALSE,
   summarize = TRUE,
   ...
 )
@@ -31,7 +31,7 @@ cal_validate_linear(
   truth = NULL,
   estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
-  save_details = FALSE,
+  save_pred = FALSE,
   summarize = TRUE,
   ...
 )
@@ -51,7 +51,7 @@ identifiers will be considered the same as the order of the levels of the
 
 \item{metrics}{A set of metrics passed created via \code{\link[yardstick:metric_set]{yardstick::metric_set()}}}
 
-\item{save_details}{Indicates whether to include the \code{calibration} and
+\item{save_pred}{Indicates whether to include the \code{calibration} and
 \code{validation} columns when the \code{summarize} argument is set to FALSE.}
 
 \item{summarize}{Indicates to pass tibble with the metrics averaged, or

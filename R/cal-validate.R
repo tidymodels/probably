@@ -19,18 +19,22 @@
 #'    [tune::collect_predictions()] on the object and use the process in the
 #'    previous bullet point.
 #'
-#' Please note that these functions do not apply to `tune_result` objects.
+#' Please note that these functions do not apply to `tune_result` objects. The
+#' notion of "validation" implies that the tuning parameter selection has been
+#' resolved.
 #'
 #' @template metrics_cls
 #'
 #' @param metrics A set of metrics passed created via [yardstick::metric_set()]
-#' @param summarize Indicates to pass tibble with the metrics averaged, or
-#' if to return the same sampled object but with new columns containing the
-#' calibration y validation list columns.
-#' @param save_details Indicates whether to include the `calibration` and
+#' @param save_pred Indicates whether to include the `calibration` and
 #' `validation` columns when the `summarize` argument is set to FALSE.
 #' @param ... Options to pass to [cal_estimate_logistic()], such as the `smooth`
 #' argument.
+#' @return
+#' - When `summarize = TRUE` a tibble with statistics before and after calibration.
+#' - When `summarize = FALSE`, the original object with new columns for
+#'   calibration statistics.
+#'
 #' @seealso [cal_apply()], [cal_estimate_logistic()]
 #' @examples
 #'
@@ -51,7 +55,7 @@ cal_validate_logistic <- function(.data,
                                   truth = NULL,
                                   estimate = dplyr::starts_with(".pred_"),
                                   metrics = NULL,
-                                  save_details = FALSE,
+                                  save_pred = FALSE,
                                   summarize = TRUE,
                                   ...) {
   UseMethod("cal_validate_logistic")
@@ -64,7 +68,7 @@ cal_validate_logistic.resample_results <-
            truth = NULL,
            estimate = dplyr::starts_with(".pred_"),
            metrics = NULL,
-           save_details = FALSE,
+           save_pred = FALSE,
            summarize = TRUE,
            ...) {
 
@@ -82,7 +86,7 @@ cal_validate_logistic.resample_results <-
       cal_function = "logistic",
       metrics = metrics,
       summarize = summarize,
-      save_details = save_details,
+      save_pred = save_pred,
       ...
     )
   }
@@ -93,7 +97,7 @@ cal_validate_logistic.rset <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
                                        metrics = NULL,
-                                       save_details = FALSE,
+                                       save_pred = FALSE,
                                        summarize = TRUE,
                                        ...) {
   cal_validate(
@@ -103,7 +107,7 @@ cal_validate_logistic.rset <- function(.data,
     cal_function = "logistic",
     metrics = metrics,
     summarize = summarize,
-    save_details = save_details,
+    save_pred = save_pred,
     ...
   )
 }
@@ -114,7 +118,7 @@ cal_validate_logistic.tune_results <- function(.data,
                                                truth = NULL,
                                                estimate = NULL,
                                                metrics = NULL,
-                                               save_details = FALSE,
+                                               save_pred = FALSE,
                                                summarize = TRUE,
                                                ...) {
   abort_if_tune_result()
@@ -139,7 +143,7 @@ cal_validate_isotonic <- function(.data,
                                   truth = NULL,
                                   estimate = dplyr::starts_with(".pred_"),
                                   metrics = NULL,
-                                  save_details = FALSE,
+                                  save_pred = FALSE,
                                   summarize = TRUE,
                                   ...) {
   UseMethod("cal_validate_isotonic")
@@ -152,7 +156,7 @@ cal_validate_isotonic.resample_results <-
            truth = NULL,
            estimate = dplyr::starts_with(".pred_"),
            metrics = NULL,
-           save_details = FALSE,
+           save_pred = FALSE,
            summarize = TRUE,
            ...) {
 
@@ -170,7 +174,7 @@ cal_validate_isotonic.resample_results <-
       cal_function = "isotonic",
       metrics = metrics,
       summarize = summarize,
-      save_details = save_details,
+      save_pred = save_pred,
       ...
     )
 }
@@ -181,7 +185,7 @@ cal_validate_isotonic.rset <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
                                        metrics = NULL,
-                                       save_details = FALSE,
+                                       save_pred = FALSE,
                                        summarize = TRUE,
                                        ...) {
   cal_validate(
@@ -191,7 +195,7 @@ cal_validate_isotonic.rset <- function(.data,
     cal_function = "isotonic",
     metrics = metrics,
     summarize = summarize,
-    save_details = save_details,
+    save_pred = save_pred,
     ...
   )
 }
@@ -202,7 +206,7 @@ cal_validate_isotonic.tune_results <- function(.data,
                                                truth = NULL,
                                                estimate = NULL,
                                                metrics = NULL,
-                                               save_details = FALSE,
+                                               save_pred = FALSE,
                                                summarize = TRUE,
                                                ...) {
   abort_if_tune_result()
@@ -229,7 +233,7 @@ cal_validate_isotonic_boot <- function(.data,
                                        truth = NULL,
                                        estimate = dplyr::starts_with(".pred_"),
                                        metrics = NULL,
-                                       save_details = FALSE,
+                                       save_pred = FALSE,
                                        summarize = TRUE,
                                        ...) {
   UseMethod("cal_validate_isotonic_boot")
@@ -242,7 +246,7 @@ cal_validate_isotonic_boot.resample_results <-
            truth = NULL,
            estimate = dplyr::starts_with(".pred_"),
            metrics = NULL,
-           save_details = FALSE,
+           save_pred = FALSE,
            summarize = TRUE,
            ...) {
 
@@ -260,7 +264,7 @@ cal_validate_isotonic_boot.resample_results <-
       cal_function = "isotonic_boot",
       metrics = metrics,
       summarize = summarize,
-      save_details = save_details,
+      save_pred = save_pred,
       ...
     )
   }
@@ -271,7 +275,7 @@ cal_validate_isotonic_boot.rset <- function(.data,
                                             truth = NULL,
                                             estimate = dplyr::starts_with(".pred_"),
                                             metrics = NULL,
-                                            save_details = FALSE,
+                                            save_pred = FALSE,
                                             summarize = TRUE,
                                             ...) {
   cal_validate(
@@ -281,7 +285,7 @@ cal_validate_isotonic_boot.rset <- function(.data,
     cal_function = "isotonic_boot",
     metrics = metrics,
     summarize = summarize,
-    save_details = save_details,
+    save_pred = save_pred,
     ...
   )
 }
@@ -292,7 +296,7 @@ cal_validate_isotonic_boot.tune_results <- function(.data,
                                                     truth = NULL,
                                                     estimate = NULL,
                                                     metrics = NULL,
-                                                    save_details = FALSE,
+                                                    save_pred = FALSE,
                                                     summarize = TRUE,
                                                     ...) {
   abort_if_tune_result()
@@ -319,7 +323,7 @@ cal_validate_beta <- function(.data,
                               estimate = dplyr::starts_with(".pred_"),
                               metrics = NULL,
                               summarize = TRUE,
-                              save_details = FALSE,
+                              save_pred = FALSE,
                               ...) {
   UseMethod("cal_validate_beta")
 }
@@ -332,7 +336,7 @@ cal_validate_beta.resample_results <-
            estimate = dplyr::starts_with(".pred_"),
            metrics = NULL,
            summarize = TRUE,
-           save_details = FALSE,
+           save_pred = FALSE,
            ...) {
 
     if (!is.null(truth)) {
@@ -349,7 +353,7 @@ cal_validate_beta.resample_results <-
       cal_function = "beta",
       metrics = metrics,
       summarize = summarize,
-      save_details = save_details,
+      save_pred = save_pred,
       ...
     )
   }
@@ -361,7 +365,7 @@ cal_validate_beta.rset <- function(.data,
                                    estimate = dplyr::starts_with(".pred_"),
                                    metrics = NULL,
                                    summarize = TRUE,
-                                   save_details = FALSE,
+                                   save_pred = FALSE,
                                    ...) {
   cal_validate(
     rset = .data,
@@ -370,7 +374,7 @@ cal_validate_beta.rset <- function(.data,
     cal_function = "beta",
     metrics = metrics,
     summarize = summarize,
-    save_details = save_details,
+    save_pred = save_pred,
     ...
   )
 }
@@ -382,7 +386,7 @@ cal_validate_beta.tune_results <- function(.data,
                                            estimate = NULL,
                                            metrics = NULL,
                                            summarize = TRUE,
-                                           save_details = FALSE,
+                                           save_pred = FALSE,
                                            ...) {
   abort_if_tune_result()
 }
@@ -405,7 +409,7 @@ cal_validate_multinomial <- function(.data,
                                      truth = NULL,
                                      estimate = dplyr::starts_with(".pred_"),
                                      metrics = NULL,
-                                     save_details = FALSE,
+                                     save_pred = FALSE,
                                      summarize = TRUE,
                                      ...) {
   UseMethod("cal_validate_multinomial")
@@ -418,7 +422,7 @@ cal_validate_multinomial.resample_results <-
            truth = NULL,
            estimate = dplyr::starts_with(".pred_"),
            metrics = NULL,
-           save_details = FALSE,
+           save_pred = FALSE,
            summarize = TRUE,
            ...) {
 
@@ -436,7 +440,7 @@ cal_validate_multinomial.resample_results <-
       cal_function = "multinomial",
       metrics = metrics,
       summarize = summarize,
-      save_details = save_details,
+      save_pred = save_pred,
       ...
     )
   }
@@ -447,7 +451,7 @@ cal_validate_multinomial.rset <- function(.data,
                                           truth = NULL,
                                           estimate = dplyr::starts_with(".pred_"),
                                           metrics = NULL,
-                                          save_details = FALSE,
+                                          save_pred = FALSE,
                                           summarize = TRUE,
                                           ...) {
   cal_validate(
@@ -457,7 +461,7 @@ cal_validate_multinomial.rset <- function(.data,
     cal_function = "multinomial",
     metrics = metrics,
     summarize = summarize,
-    save_details = save_details,
+    save_pred = save_pred,
     ...
   )
 }
@@ -468,59 +472,11 @@ cal_validate_multinomial.tune_results <- function(.data,
                                                   truth = NULL,
                                                   estimate = NULL,
                                                   metrics = NULL,
-                                                  save_details = FALSE,
+                                                  save_pred = FALSE,
                                                   summarize = TRUE,
                                                   ...) {
   abort_if_tune_result()
 }
-
-# --------------------------------- Summary ------------------------------------
-#' Summarizes the resampling metrics associated with calibration
-#' @examples
-#'
-#' library(dplyr)
-#'
-#' sl_val <- segment_logistic %>%
-#'   rsample::vfold_cv() %>%
-#'   cal_validate_beta(Class, summarize = FALSE, save_details = TRUE)
-#'
-#' sl_val
-#'
-#' cal_validate_summarize(sl_val)
-#'
-#' @param x The results of one of the `cal_validate_*()` functions.
-#' @export
-cal_validate_summarize <- function(x) {
-  UseMethod("cal_validate_summarize")
-}
-
-#' @rdname cal_validate_summarize
-#' @export
-cal_validate_summarize.cal_rset <- function(x) {
-  fs <- x$stats_after[[1]]
-
-  fs$.estimate <- NULL
-
-  seq_len(nrow(fs)) %>%
-    map(~ {
-      y <- .x
-      ret <- fs[y, ]
-
-      sb <- purrr::map_dbl(x$stats_before, ~ .x[y, ]$.estimate)
-      ret1 <- ret
-      ret1$stage <- "uncalibrated"
-      ret1$.estimate <- mean(sb)
-
-      sa <- purrr::map_dbl(x$stats_after, ~ .x[y, ]$.estimate)
-      ret2 <- ret
-      ret2$stage <- "calibrated"
-      ret2$.estimate <- mean(sa)
-
-      dplyr::bind_rows(ret1, ret2)
-    }) %>%
-    dplyr::bind_rows()
-}
-
 
 # ------------------------------ Implementation --------------------------------
 
@@ -572,7 +528,7 @@ cal_validate <- function(rset,
                          cal_function = NULL,
                          metrics = NULL,
                          summarize = TRUE,
-                         save_details = FALSE,
+                         save_pred = FALSE,
                          ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
@@ -583,22 +539,17 @@ cal_validate <- function(rset,
 
   outcomes <- dplyr::select(rset$splits[[1]]$data, {{ truth }}) %>% purrr::pluck(1)
   model_mode <- get_problem_type(outcomes)
+  existing_metrics <- any(names(rset) == ".metrics")
 
   metrics <- check_validation_metrics(metrics, model_mode)
 
-  direction <- metrics %>%
-    dplyr::as_tibble() %>%
-    dplyr::select(direction) %>%
-    head(1) %>%
-    dplyr::pull()
-
-  data_tr <- purrr::map(rset$splits, rsample::analysis)
-  data_as <- purrr::map(rset$splits, rsample::assessment)
+  predictions_in <- purrr::map(rset$splits, rsample::analysis)
+  predictions_out <- purrr::map(rset$splits, rsample::assessment)
 
   # TODO clean these up
   if (cal_function == "logistic") {
     cals <- purrr::map(
-      data_tr,
+      predictions_in,
       cal_estimate_logistic,
       truth = !!truth,
       estimate = !!estimate,
@@ -608,7 +559,7 @@ cal_validate <- function(rset,
 
   if (cal_function == "isotonic") {
     cals <- purrr::map(
-      data_tr,
+      predictions_in,
       cal_estimate_isotonic,
       truth = !!truth,
       estimate = !!estimate,
@@ -618,7 +569,7 @@ cal_validate <- function(rset,
 
   if (cal_function == "isotonic_boot") {
     cals <- purrr::map(
-      data_tr,
+      predictions_in,
       cal_estimate_isotonic_boot,
       truth = !!truth,
       estimate = !!estimate,
@@ -628,7 +579,7 @@ cal_validate <- function(rset,
 
   if (cal_function == "beta") {
     cals <- purrr::map(
-      data_tr,
+      predictions_in,
       cal_estimate_beta,
       truth = !!truth,
       estimate = !!estimate,
@@ -638,7 +589,7 @@ cal_validate <- function(rset,
 
   if (cal_function == "multinomial") {
     cals <- purrr::map(
-      data_tr,
+      predictions_in,
       cal_estimate_multinomial,
       truth = !!truth,
       estimate = !!estimate,
@@ -648,7 +599,7 @@ cal_validate <- function(rset,
 
   if (cal_function == "linear") {
     cals <- purrr::map(
-      data_tr,
+      predictions_in,
       cal_estimate_linear,
       truth = !!truth,
       estimate = !!estimate,
@@ -669,56 +620,54 @@ cal_validate <- function(rset,
     estimate_cols <- rlang::expr_deparse(cals[[1]]$levels$predictions)
   }
 
-  applied <- seq_along(data_as) %>%
-    purrr::map(
-      ~ {
-        ap <- cal_apply(
-          .data = data_as[[.x]],
-          object = cals[[.x]],
-          pred_class = !!rlang::parse_expr(".pred_class")
-        )
+  metric_res <-
+    purrr::map2_dfr(cals,
+                    predictions_out,
+                    compute_cal_metrics,
+                    metrics = metrics,
+                    truth_col = truth,
+                    est_cols = estimate_cols,
+                    orig = !existing_metrics,
+                    pred = save_pred)
+  rset <- dplyr::bind_cols(rset, metric_res)
 
-        metric_df <- dplyr::as_tibble(metrics) %>% dplyr::select(.metric = metric, direction)
-        stats_after <- metrics(ap, truth = !!truth, dplyr::all_of(estimate_cols)) %>%
-          dplyr::full_join(metric_df, by = ".metric")
-        stats_before <- metrics(data_as[[.x]], truth = !!truth, dplyr::all_of(estimate_cols)) %>%
-          dplyr::full_join(metric_df, by = ".metric")
-
-        stats_cols <- c(".metric", ".estimator", "direction", ".estimate")
-        stats_after <- stats_after[, stats_cols]
-        stats_before <- stats_before[, stats_cols]
-
-        list(
-          ap = ap,
-          stats_after = stats_after,
-          stats_before = stats_before
-        )
-      }
-    ) %>%
-    purrr::transpose()
-
-  if (save_details) {
-    rset <- dplyr::mutate(
-      rset,
-      calibration = cals,
-      validation = applied$ap
-    )
-  }
-
-  ret <- dplyr::mutate(
-    rset,
-    stats_after = applied$stats_after,
-    stats_before = applied$stats_before
-  )
-
-  class(ret) <- c("cal_rset", class(ret))
-
-  if (summarize) {
-    ret <- cal_validate_summarize(ret)
-  }
-
-  ret
+  # TODO add metrics as attribute?
+  class(rset) <- c("cal_rset", class(rset))
+  rset
 }
+
+compute_cal_metrics <- function(calib, preds, metrics, truth_col, est_cols,
+                                orig = TRUE, pred = FALSE) {
+  metric_info <-
+    dplyr::as_tibble(metrics) %>%
+    dplyr::select(.metric = metric, direction)
+
+  cal_pred <-
+    cal_apply(
+      .data = preds,
+      object = calib,
+      pred_class = !!rlang::parse_expr(".pred_class")
+    )
+  cal_metrics <-
+    metrics(cal_pred, truth = !!truth_col, dplyr::all_of(est_cols)) %>%
+    dplyr::full_join(metric_info, by = ".metric")
+  res <- tibble(.metrics_cal = list(cal_metrics))
+  if (pred) {
+    res$.predictions_cal <- list(cal_pred)
+  }
+
+  if (orig) {
+    uncal_metrics <-
+      metrics(preds, truth = !!truth_col, dplyr::all_of(est_cols)) %>%
+      dplyr::full_join(metric_info, by = ".metric")
+    res$.metrics <- list(uncal_metrics)
+    res <- dplyr::relocate(res, .metrics)
+  }
+
+  res
+}
+
+
 
 #' @importFrom pillar type_sum
 #' @export
@@ -736,7 +685,7 @@ type_sum.cal_object <- function(x, ...) {
 #' @param summarize Indicates to pass tibble with the metrics averaged, or
 #' if to return the same sampled object but with new columns containing the
 #' calibration y validation list columns.
-#' @param save_details Indicates whether to include the `calibration` and
+#' @param save_pred Indicates whether to include the `calibration` and
 #' `validation` columns when the `summarize` argument is set to FALSE.
 #' @param ... Options to pass to [cal_estimate_linear()], such as the `smooth`
 #' argument.
@@ -760,7 +709,7 @@ cal_validate_linear <- function(.data,
                                 truth = NULL,
                                 estimate = dplyr::starts_with(".pred"),
                                 metrics = NULL,
-                                save_details = FALSE,
+                                save_pred = FALSE,
                                 summarize = TRUE,
                                 ...) {
   UseMethod("cal_validate_linear")
@@ -773,7 +722,7 @@ cal_validate_linear.resample_results <-
            truth = NULL,
            estimate = dplyr::starts_with(".pred"),
            metrics = NULL,
-           save_details = FALSE,
+           save_pred = FALSE,
            summarize = TRUE,
            ...) {
 
@@ -791,7 +740,7 @@ cal_validate_linear.resample_results <-
       cal_function = "linear",
       metrics = metrics,
       summarize = summarize,
-      save_details = save_details,
+      save_pred = save_pred,
       ...
     )
   }
@@ -802,7 +751,7 @@ cal_validate_linear.rset <- function(.data,
                                      truth = NULL,
                                      estimate = dplyr::starts_with(".pred"),
                                      metrics = NULL,
-                                     save_details = FALSE,
+                                     save_pred = FALSE,
                                      summarize = TRUE,
                                      ...) {
   cal_validate(
@@ -812,7 +761,7 @@ cal_validate_linear.rset <- function(.data,
     cal_function = "linear",
     metrics = metrics,
     summarize = summarize,
-    save_details = save_details,
+    save_pred = save_pred,
     ...
   )
 }
