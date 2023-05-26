@@ -509,8 +509,8 @@ cal_validate <- function(rset,
 
   metrics <- check_validation_metrics(metrics, model_mode)
 
-  predictions_in <- purrr::map(rset$splits, rsample::analysis)
-  predictions_out <- purrr::map(rset$splits, rsample::assessment)
+  predictions_in  <- pull_pred(rset, analysis = TRUE)
+  predictions_out <- pull_pred(rset, analysis = FALSE)
 
   # TODO clean these up
   if (cal_function == "logistic") {
@@ -597,22 +597,34 @@ cal_validate <- function(rset,
                     pred = save_pred)
   rset <- dplyr::bind_cols(rset, metric_res)
 
-  # TODO add metrics as attribute?
+  attr(rset, "metrics") <- metrics
   class(rset) <- c("cal_rset", class(rset))
   rset
 }
 
-set_cal_class <- function(x) {
-  orig <- class(x)
+pull_pred <- function(x, analysis = TRUE) {
+  has_dot_row <- any(names(x$splits[[1]]$data) == ".row")
+  if (analysis) {
+    what <- "analysis"
+  } else {
+    what <- "assessment"
+  }
+  preds <- purrr::map(x$splits, as.data.frame, data = what)
+  if (!has_dot_row) {
+    rows <- purrr::map(x$splits, ~ tibble::tibble(.row = as.integer(.x, data = what)))
+    preds <- purrr::map2(preds, rows, ~ dplyr::bind_cols(.x, .y))
+  }
 
+  preds
 }
-
 
 compute_cal_metrics <- function(calib, preds, metrics, truth_col, est_cols,
                                 orig = TRUE, pred = FALSE) {
-  metric_info <-
-    dplyr::as_tibble(metrics) %>%
-    dplyr::select(.metric = metric, direction)
+  if (has_configs(preds)) {
+    configs <- preds$.config
+  } else {
+    configs <- NULL
+  }
 
   cal_pred <-
     cal_apply(
@@ -620,11 +632,13 @@ compute_cal_metrics <- function(calib, preds, metrics, truth_col, est_cols,
       object = calib,
       pred_class = !!rlang::parse_expr(".pred_class")
     )
-  cal_metrics <-
-    metrics(cal_pred, truth = !!truth_col, dplyr::all_of(est_cols)) %>%
-    dplyr::full_join(metric_info, by = ".metric")
+  cal_metrics <- metrics(cal_pred, truth = !!truth_col, dplyr::all_of(est_cols))
   res <- tibble(.metrics_cal = list(cal_metrics))
+
   if (pred) {
+    if (!is.null(configs)) {
+      cal_pred$.config <- configs
+    }
     res$.predictions_cal <- list(cal_pred)
   }
 
@@ -740,8 +754,7 @@ cal_validate_linear.rset <- function(.data,
 convert_resamples <- function(x) {
   predictions <-
     tune::collect_predictions(x, summarize = TRUE) %>%
-    dplyr::arrange(.row) %>%
-    dplyr::select(-dplyr::starts_with("id"), -.row, -.config)
+    dplyr::arrange(.row)
   for (i in seq_along(x$splits)) {
     x$splits[[i]]$data <- predictions
   }
@@ -751,9 +764,13 @@ convert_resamples <- function(x) {
 
 # ------------------------------------------------------------------------------
 
-maybe_add_configs <- function(x) {
-  if (!any(names(x$.metrics) == ".config")) {
-    x$.metrics <- purrr::map(x$.metrics, add_configs)
+has_configs <- function(x) {
+  any(names(x) == ".config")
+}
+
+maybe_add_configs <- function(x, what = ".metrics") {
+  if (!has_configs(x[[what]][[1]])) {
+    x[[what]] <- purrr::map(x[[what]], add_configs)
   }
   x
 }
@@ -763,7 +780,7 @@ add_configs <- function(x) {
   x
 }
 
-#' Obtain and format results produced by calibration validation
+#' Obtain and format metrics produced by calibration validation
 #'
 #' @param x An object produced by one of the validation function (or class
 #' `cal_rset`).
@@ -778,13 +795,51 @@ collect_metrics.cal_rset <- function(x, summarize = TRUE, ...) {
   class(tmp) <- c("tune_results", class(x))
   tmp <- maybe_add_configs(tmp)
   uncal <- tune::collect_metrics(tmp, summarize = summarize)
-  uncal$type <- "uncalibrated"
+  uncal$.type <- "uncalibrated"
 
   tmp$.metrics <- tmp$.metrics_cal
   tmp <- maybe_add_configs(tmp)
   cal <- tune::collect_metrics(tmp, summarize = summarize)
-  cal$type <- "calibrated"
+  cal$.type <- "calibrated"
 
   res <- dplyr::bind_rows(uncal, cal)
+  res <- dplyr::relocate(res, .type, .after = .metric)
+  res
+}
+
+#' Obtain and format predictions produced by calibration validation
+#'
+#' @param x An object produced by one of the validation function (or class
+#' `cal_rset`).
+#' @param summarize A logical; should predictions be summarized over resamples
+#' (`TRUE`) or return the values for each individual resample. See
+#' [tune::collect_predictions()] for more details.
+#' @param ... Not currently used.
+#' @return A tibble
+#' @export
+collect_predictions.cal_rset <- function(x, summarize = TRUE, ...) {
+  has_no_preds <- !any(grepl("^\\.predictions", names(x)))
+  if (has_no_preds) {
+    rlang::abort("There are no saved prediction columns to collect.", call = NULL)
+  }
+  res <- NULL
+
+  if (any(names(x) == ".predictions")) {
+    tmp <- x
+    class(tmp) <- c("tune_results", class(x))
+    tmp <- maybe_add_configs(tmp, ".predictions")
+    res <- tune::collect_predictions(tmp, summarize = summarize)
+    res$.type <- "uncalibrated"
+  }
+
+  if (any(names(x) == ".predictions_cal")) {
+    tmp <- x
+    class(tmp) <- c("tune_results", class(x))
+    tmp$.predictions <- tmp$.predictions_cal
+    tmp <- maybe_add_configs(tmp, ".predictions")
+    cal <- tune::collect_predictions(tmp, summarize = summarize)
+    cal$.type <- "calibrated"
+    res <- dplyr::bind_rows(res, cal)
+  }
   res
 }
