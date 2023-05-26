@@ -12,7 +12,6 @@ cal_validate_linear(
   estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
   save_pred = FALSE,
-  summarize = TRUE,
   ...
 )
 
@@ -22,7 +21,6 @@ cal_validate_linear(
   estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
   save_pred = FALSE,
-  summarize = TRUE,
   ...
 )
 
@@ -32,13 +30,12 @@ cal_validate_linear(
   estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
   save_pred = FALSE,
-  summarize = TRUE,
   ...
 )
 }
 \arguments{
-\item{.data}{An ungrouped \code{data.frame} object, or \code{tune_results} object,
-that contains predictions and probability columns.}
+\item{.data}{An \code{rset} object or the results of \code{\link[tune:fit_resamples]{tune::fit_resamples()}} with
+a \code{.predictions} column.}
 
 \item{truth}{The column identifier for the true class results
 (that is a factor). This should be an unquoted column name.}
@@ -51,14 +48,9 @@ identifiers will be considered the same as the order of the levels of the
 
 \item{metrics}{A set of metrics passed created via \code{\link[yardstick:metric_set]{yardstick::metric_set()}}}
 
-\item{save_pred}{Indicates whether to include the \code{calibration} and
-\code{validation} columns when the \code{summarize} argument is set to FALSE.}
+\item{save_pred}{Indicates whether to a column of post-calibration predictions.}
 
-\item{summarize}{Indicates to pass tibble with the metrics averaged, or
-if to return the same sampled object but with new columns containing the
-calibration y validation list columns.}
-
-\item{...}{Options to pass to \code{\link[=cal_estimate_linear]{cal_estimate_linear()}}, such as the \code{smooth}
+\item{...}{Options to pass to \code{\link[=cal_estimate_logistic]{cal_estimate_logistic()}}, such as the \code{smooth}
 argument.}
 }
 \description{

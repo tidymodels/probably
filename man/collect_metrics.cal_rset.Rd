@@ -2,7 +2,7 @@
 % Please edit documentation in R/cal-validate.R
 \name{collect_metrics.cal_rset}
 \alias{collect_metrics.cal_rset}
-\title{Obtain and format results produced by calibration validation}
+\title{Obtain and format metrics produced by calibration validation}
 \usage{
 collect_metrics.cal_rset(x, summarize = TRUE, ...)
 }
@@ -20,5 +20,5 @@ collect_metrics.cal_rset(x, summarize = TRUE, ...)
 A tibble
 }
 \description{
-Obtain and format results produced by calibration validation
+Obtain and format metrics produced by calibration validation
 }

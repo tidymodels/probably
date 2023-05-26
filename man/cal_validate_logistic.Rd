@@ -13,7 +13,6 @@ cal_validate_logistic(
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
   save_pred = FALSE,
-  summarize = TRUE,
   ...
 )
 
@@ -23,7 +22,6 @@ cal_validate_logistic(
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
   save_pred = FALSE,
-  summarize = TRUE,
   ...
 )
 
@@ -33,7 +31,6 @@ cal_validate_logistic(
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
   save_pred = FALSE,
-  summarize = TRUE,
   ...
 )
 
@@ -43,7 +40,6 @@ cal_validate_logistic(
   estimate = NULL,
   metrics = NULL,
   save_pred = FALSE,
-  summarize = TRUE,
   ...
 )
 }
@@ -93,6 +89,8 @@ previous bullet point.
 Please note that these functions do not apply to \code{tune_result} objects. The
 notion of "validation" implies that the tuning parameter selection has been
 resolved.
+
+\code{collect_predictions()} can be used to aggregate the metrics for analysis.
 }
 \section{Performance Metrics}{
 

@@ -12,7 +12,6 @@ cal_validate_beta(
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
-  summarize = TRUE,
   save_pred = FALSE,
   ...
 )
@@ -22,7 +21,6 @@ cal_validate_beta(
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
-  summarize = TRUE,
   save_pred = FALSE,
   ...
 )
@@ -32,7 +30,6 @@ cal_validate_beta(
   truth = NULL,
   estimate = dplyr::starts_with(".pred_"),
   metrics = NULL,
-  summarize = TRUE,
   save_pred = FALSE,
   ...
 )
@@ -42,7 +39,6 @@ cal_validate_beta(
   truth = NULL,
   estimate = NULL,
   metrics = NULL,
-  summarize = TRUE,
   save_pred = FALSE,
   ...
 )
@@ -93,6 +89,8 @@ previous bullet point.
 Please note that these functions do not apply to \code{tune_result} objects. The
 notion of "validation" implies that the tuning parameter selection has been
 resolved.
+
+\code{collect_predictions()} can be used to aggregate the metrics for analysis.
 }
 \section{Performance Metrics}{
 

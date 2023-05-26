@@ -513,6 +513,8 @@ cal_validate <- function(rset,
   predictions_in  <- pull_pred(rset, analysis = TRUE)
   predictions_out <- pull_pred(rset, analysis = FALSE)
 
+
+
   # TODO clean these up
   if (cal_function == "logistic") {
     cals <- purrr::map(
@@ -615,7 +617,7 @@ pull_pred <- function(x, analysis = TRUE) {
   }
   preds <- purrr::map(x$splits, as.data.frame, data = what)
   if (!has_dot_row) {
-    rows <- purrr::map(x$splits, ~ tibble::tibble(.row = as.integer(.x, data = what)))
+    rows <- purrr::map(x$splits, ~ dplyr::tibble(.row = as.integer(.x, data = what)))
     preds <- purrr::map2(preds, rows, ~ dplyr::bind_cols(.x, .y))
   }
 
@@ -636,7 +638,7 @@ compute_cal_metrics <- function(calib, preds, metrics, truth_col, est_cols, pred
       pred_class = !!rlang::parse_expr(".pred_class")
     )
   cal_metrics <- metrics(cal_pred, truth = !!truth_col, dplyr::all_of(est_cols))
-  res <- tibble(.metrics_cal = list(cal_metrics))
+  res <- dplyr::tibble(.metrics_cal = list(cal_metrics))
 
   if (pred) {
     if (!is.null(configs)) {
@@ -662,18 +664,10 @@ type_sum.cal_object <- function(x, ...) {
 
 # -------------------------------- Linear --------------------------------------
 #' Measure performance with and without using linear regression calibration
-#' @inheritParams cal_estimate_logistic
+#' @inheritParams cal_validate_logistic
 #'
 #' @template metrics_reg
 #'
-#' @param metrics A set of metrics passed created via [yardstick::metric_set()]
-#' @param summarize Indicates to pass tibble with the metrics averaged, or
-#' if to return the same sampled object but with new columns containing the
-#' calibration y validation list columns.
-#' @param save_pred Indicates whether to include the `calibration` and
-#' `validation` columns when the `summarize` argument is set to FALSE.
-#' @param ... Options to pass to [cal_estimate_linear()], such as the `smooth`
-#' argument.
 #' @seealso [cal_apply()], [cal_estimate_linear()]
 #' @examples
 #' library(dplyr)
