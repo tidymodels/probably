@@ -26,14 +26,11 @@
 #' @template metrics_cls
 #'
 #' @param metrics A set of metrics passed created via [yardstick::metric_set()]
-#' @param save_pred Indicates whether to include the `calibration` and
-#' `validation` columns when the `summarize` argument is set to FALSE.
+#' @param save_pred Indicates whether to a column of post-calibration predictions.
 #' @param ... Options to pass to [cal_estimate_logistic()], such as the `smooth`
 #' argument.
-#' @return
-#' - When `summarize = TRUE` a tibble with statistics before and after calibration.
-#' - When `summarize = FALSE`, the original object with new columns for
-#'   calibration statistics.
+#' @return The original object with a `.metrics_cal` column and, optionally,
+#' an additional `.predictions_cal` column. The class `cal_rset` is also added.
 #'
 #' @seealso [cal_apply()], [cal_estimate_logistic()]
 #' @examples

@@ -62,18 +62,14 @@ identifiers will be considered the same as the order of the levels of the
 
 \item{metrics}{A set of metrics passed created via \code{\link[yardstick:metric_set]{yardstick::metric_set()}}}
 
-\item{save_pred}{Indicates whether to include the \code{calibration} and
-\code{validation} columns when the \code{summarize} argument is set to FALSE.}
+\item{save_pred}{Indicates whether to a column of post-calibration predictions.}
 
 \item{...}{Options to pass to \code{\link[=cal_estimate_isotonic_boot]{cal_estimate_isotonic_boot()}}, such as the
 \code{times} argument.}
 }
 \value{
-\itemize{
-\item When \code{summarize = TRUE} a tibble with statistics before and after calibration.
-\item When \code{summarize = FALSE}, the original object with new columns for
-calibration statistics.
-}
+The original object with a \code{.metrics_cal} column and, optionally,
+an additional \code{.predictions_cal} column. The class \code{cal_rset} is also added.
 }
 \description{
 This function uses resampling to measure the effect of calibrating predicted
