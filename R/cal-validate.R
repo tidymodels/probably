@@ -23,6 +23,7 @@
 #' notion of "validation" implies that the tuning parameter selection has been
 #' resolved.
 #'
+#' `collect_predictions()` can be used to aggregate the metrics for analysis.
 #' @template metrics_cls
 #'
 #' @param metrics A set of metrics passed created via [yardstick::metric_set()]
@@ -586,6 +587,10 @@ cal_validate <- function(rset,
     estimate_cols <- rlang::expr_deparse(cals[[1]]$levels$predictions)
   }
 
+  # These are replaced because we don't know if the original metrics contained
+  # one that is sensitive to calibration.
+  rset$.metrics <- NULL
+
   metric_res <-
     purrr::map2_dfr(cals,
                     predictions_out,
@@ -593,7 +598,6 @@ cal_validate <- function(rset,
                     metrics = metrics,
                     truth_col = truth,
                     est_cols = estimate_cols,
-                    orig = !existing_metrics,
                     pred = save_pred)
   rset <- dplyr::bind_cols(rset, metric_res)
 
@@ -618,8 +622,7 @@ pull_pred <- function(x, analysis = TRUE) {
   preds
 }
 
-compute_cal_metrics <- function(calib, preds, metrics, truth_col, est_cols,
-                                orig = TRUE, pred = FALSE) {
+compute_cal_metrics <- function(calib, preds, metrics, truth_col, est_cols, pred = FALSE) {
   if (has_configs(preds)) {
     configs <- preds$.config
   } else {
@@ -642,13 +645,9 @@ compute_cal_metrics <- function(calib, preds, metrics, truth_col, est_cols,
     res$.predictions_cal <- list(cal_pred)
   }
 
-  if (orig) {
-    uncal_metrics <-
-      metrics(preds, truth = !!truth_col, dplyr::all_of(est_cols)) %>%
-      dplyr::full_join(metric_info, by = ".metric")
-    res$.metrics <- list(uncal_metrics)
-    res <- dplyr::relocate(res, .metrics)
-  }
+  uncal_metrics <- metrics(preds, truth = !!truth_col, dplyr::all_of(est_cols))
+  res$.metrics <- list(uncal_metrics)
+  res <- dplyr::relocate(res, .metrics)
 
   res
 }
