@@ -72,6 +72,13 @@ calibration y validation list columns.}
 \item{...}{Options to pass to \code{\link[=cal_estimate_isotonic_boot]{cal_estimate_isotonic_boot()}}, such as the
 \code{times} argument.}
 }
+\value{
+\itemize{
+\item When \code{summarize = TRUE} a tibble with statistics before and after calibration.
+\item When \code{summarize = FALSE & save_details = TRUE}, the original object with new
+columns for calibration statisics.
+}
+}
 \description{
 This function uses resampling to measure the effect of calibrating predicted
 values.
@@ -91,7 +98,9 @@ different resampling scheme should be used, run
 previous bullet point.
 }
 
-Please note that these functions do not apply to \code{tune_result} objects.
+Please note that these functions do not apply to \code{tune_result} objects. The
+notion of "validation" implies that the tuning parameter selection has been
+resolved.
 }
 \section{Performance Metrics}{
 
