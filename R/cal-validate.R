@@ -116,6 +116,8 @@ cal_validate_logistic.tune_results <- function(.data,
   abort_if_tune_result()
 }
 
+# TODO fix regression output creating .pred_class column
+
 # -------------------------------- Isotonic ------------------------------------
 #' Measure performance with and without using isotonic regression calibration
 #' @inherit cal_validate_logistic

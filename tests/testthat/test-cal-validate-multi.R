@@ -1,4 +1,4 @@
-test_that("Isotonic validation works - Multiclass", {
+test_that("Isotonic validation with data frame input - Multiclass", {
   df <- rsample::vfold_cv(testthat_cal_sim_multi())
 
   res_sum <- cal_validate_isotonic(df, class)
@@ -11,7 +11,7 @@ test_that("Isotonic validation works - Multiclass", {
 
 })
 
-test_that("Bootstrapped Isotonic validation works - Multiclass", {
+test_that("Bootstrapped Isotonic validation with data frame input - Multiclass", {
   df <- rsample::vfold_cv(testthat_cal_sim_multi())
 
   res_sum <- cal_validate_isotonic_boot(df, class)
@@ -24,7 +24,7 @@ test_that("Bootstrapped Isotonic validation works - Multiclass", {
 
 })
 
-test_that("Multinomial validation works", {
+test_that("Multinomial validation with data frame input", {
   df <- rsample::vfold_cv(species_probs)
 
   res_sum <- cal_validate_multinomial(df, Species)
