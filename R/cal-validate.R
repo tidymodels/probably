@@ -513,69 +513,18 @@ cal_validate <- function(rset,
   predictions_in  <- pull_pred(rset, analysis = TRUE)
   predictions_out <- pull_pred(rset, analysis = FALSE)
 
-
-
-  # TODO clean these up
-  if (cal_function == "logistic") {
-    cals <- purrr::map(
-      predictions_in,
-      cal_estimate_logistic,
-      truth = !!truth,
-      estimate = !!estimate,
+  est_fn_name <- paste0("cal_estimate_", cal_function)
+  est_cl <-
+    rlang::call2(
+      est_fn_name,
+      .ns = "probably",
+      .data = expr(.x),
+      truth = truth,
+      estimate = estimate,
       ...
     )
-  }
 
-  if (cal_function == "isotonic") {
-    cals <- purrr::map(
-      predictions_in,
-      cal_estimate_isotonic,
-      truth = !!truth,
-      estimate = !!estimate,
-      ...
-    )
-  }
-
-  if (cal_function == "isotonic_boot") {
-    cals <- purrr::map(
-      predictions_in,
-      cal_estimate_isotonic_boot,
-      truth = !!truth,
-      estimate = !!estimate,
-      ...
-    )
-  }
-
-  if (cal_function == "beta") {
-    cals <- purrr::map(
-      predictions_in,
-      cal_estimate_beta,
-      truth = !!truth,
-      estimate = !!estimate,
-      ...
-    )
-  }
-
-  if (cal_function == "multinomial") {
-    cals <- purrr::map(
-      predictions_in,
-      cal_estimate_multinomial,
-      truth = !!truth,
-      estimate = !!estimate,
-      ...
-    )
-  }
-
-  if (cal_function == "linear") {
-    cals <- purrr::map(
-      predictions_in,
-      cal_estimate_linear,
-      truth = !!truth,
-      estimate = !!estimate,
-      ...
-    )
-  }
-
+  cals <- purrr::map(predictions_in, ~ eval_tidy(est_cl))
 
   if (model_mode == "classification") {
     if(cals[[1]]$type == "binary") {
