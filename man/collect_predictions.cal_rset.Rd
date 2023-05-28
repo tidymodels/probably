@@ -4,7 +4,7 @@
 \alias{collect_predictions.cal_rset}
 \title{Obtain and format predictions produced by calibration validation}
 \usage{
-collect_predictions.cal_rset(x, summarize = TRUE, ...)
+\method{collect_predictions}{cal_rset}(x, summarize = TRUE, ...)
 }
 \arguments{
 \item{x}{An object produced by one of the validation function (or class

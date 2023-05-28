@@ -4,7 +4,7 @@
 \alias{collect_metrics.cal_rset}
 \title{Obtain and format metrics produced by calibration validation}
 \usage{
-collect_metrics.cal_rset(x, summarize = TRUE, ...)
+\method{collect_metrics}{cal_rset}(x, summarize = TRUE, ...)
 }
 \arguments{
 \item{x}{An object produced by one of the validation function (or class

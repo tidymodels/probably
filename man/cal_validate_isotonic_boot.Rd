@@ -10,7 +10,7 @@
 cal_validate_isotonic_boot(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
   save_pred = FALSE,
   ...
@@ -19,7 +19,7 @@ cal_validate_isotonic_boot(
 \method{cal_validate_isotonic_boot}{resample_results}(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
   save_pred = FALSE,
   ...
@@ -28,7 +28,7 @@ cal_validate_isotonic_boot(
 \method{cal_validate_isotonic_boot}{rset}(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
   save_pred = FALSE,
   ...

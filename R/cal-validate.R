@@ -116,8 +116,6 @@ cal_validate_logistic.tune_results <- function(.data,
   abort_if_tune_result()
 }
 
-# TODO fix regression output creating .pred_class column
-
 # -------------------------------- Isotonic ------------------------------------
 #' Measure performance with and without using isotonic regression calibration
 #' @inherit cal_validate_logistic
@@ -135,7 +133,7 @@ cal_validate_logistic.tune_results <- function(.data,
 #' @export
 cal_validate_isotonic <- function(.data,
                                   truth = NULL,
-                                  estimate = dplyr::starts_with(".pred_"),
+                                  estimate = dplyr::starts_with(".pred"),
                                   metrics = NULL,
                                   save_pred = FALSE,
                                   ...) {
@@ -147,7 +145,7 @@ cal_validate_isotonic <- function(.data,
 cal_validate_isotonic.resample_results <-
   function(.data,
            truth = NULL,
-           estimate = dplyr::starts_with(".pred_"),
+           estimate = dplyr::starts_with(".pred"),
            metrics = NULL,
            save_pred = FALSE,
            ...) {
@@ -174,7 +172,7 @@ cal_validate_isotonic.resample_results <-
 #' @rdname cal_validate_isotonic
 cal_validate_isotonic.rset <- function(.data,
                                        truth = NULL,
-                                       estimate = dplyr::starts_with(".pred_"),
+                                       estimate = dplyr::starts_with(".pred"),
                                        metrics = NULL,
                                        save_pred = FALSE,
                                        ...) {
@@ -219,7 +217,7 @@ cal_validate_isotonic.tune_results <- function(.data,
 #' @export
 cal_validate_isotonic_boot <- function(.data,
                                        truth = NULL,
-                                       estimate = dplyr::starts_with(".pred_"),
+                                       estimate = dplyr::starts_with(".pred"),
                                        metrics = NULL,
                                        save_pred = FALSE,
                                        ...) {
@@ -231,7 +229,7 @@ cal_validate_isotonic_boot <- function(.data,
 cal_validate_isotonic_boot.resample_results <-
   function(.data,
            truth = NULL,
-           estimate = dplyr::starts_with(".pred_"),
+           estimate = dplyr::starts_with(".pred"),
            metrics = NULL,
            save_pred = FALSE,
            ...) {
@@ -258,7 +256,7 @@ cal_validate_isotonic_boot.resample_results <-
 #' @rdname cal_validate_isotonic_boot
 cal_validate_isotonic_boot.rset <- function(.data,
                                             truth = NULL,
-                                            estimate = dplyr::starts_with(".pred_"),
+                                            estimate = dplyr::starts_with(".pred"),
                                             metrics = NULL,
                                             save_pred = FALSE,
                                             ...) {

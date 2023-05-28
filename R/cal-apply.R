@@ -168,7 +168,12 @@ cal_adjust_update <- function(.data,
                               pred_class = NULL,
                               parameters = NULL,
                               ...) {
-  pred_class <- enquo(pred_class)
+
+  if (object$type != "regression") {
+    pred_class <- enquo(pred_class)
+  } else {
+    pred_class <- quo(NULL)
+  }
 
   res <- cal_adjust(
     object = object,
