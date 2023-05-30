@@ -10,8 +10,6 @@ generics::augment
 #' @export
 generics::required_pkgs
 
-# TODO conditionally if tune is loaded?
-
 #' @importFrom tune collect_metrics
 #' @export
 tune::collect_metrics

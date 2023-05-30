@@ -506,7 +506,6 @@ cal_validate <- function(rset,
 
   outcomes <- dplyr::select(rset$splits[[1]]$data, {{ truth }}) %>% purrr::pluck(1)
   model_mode <- get_problem_type(outcomes)
-  existing_metrics <- any(names(rset) == ".metrics")
 
   metrics <- check_validation_metrics(metrics, model_mode)
 
