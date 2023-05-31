@@ -355,3 +355,7 @@ reg_with_configs <- function() {
     dplyr::mutate(.config = sample(letters[1:2], nrow(solubility_test), replace = TRUE))
 
 }
+
+holdout_length <- function(x) {
+  length(as.integer(x, data = "assessment"))
+}

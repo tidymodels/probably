@@ -6,6 +6,8 @@
 \alias{fit}
 \alias{augment}
 \alias{required_pkgs}
+\alias{collect_metrics}
+\alias{collect_predictions}
 \alias{as.factor}
 \alias{as.ordered}
 \title{Objects exported from other packages}
@@ -16,5 +18,7 @@ below to see their documentation.
 
 \describe{
   \item{generics}{\code{\link[generics:coercion-factor]{as.factor}}, \code{\link[generics:coercion-factor]{as.ordered}}, \code{\link[generics]{augment}}, \code{\link[generics]{fit}}, \code{\link[generics]{required_pkgs}}}
+
+  \item{tune}{\code{\link[tune:collect_predictions]{collect_metrics}}, \code{\link[tune]{collect_predictions}}}
 }}
 

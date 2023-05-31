@@ -53,6 +53,7 @@ reference:
 - title: Calibration Validation
   contents:
   - starts_with("cal_validate")
+  - starts_with("collect_")
 
 - title: Calibration Plots
   contents:

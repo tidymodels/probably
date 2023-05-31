@@ -10,6 +10,14 @@ generics::augment
 #' @export
 generics::required_pkgs
 
+#' @importFrom tune collect_metrics
+#' @export
+tune::collect_metrics
+
+#' @importFrom tune collect_predictions
+#' @export
+tune::collect_predictions
+
 # from tune
 # nocov start
 

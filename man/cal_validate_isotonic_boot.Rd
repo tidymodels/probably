@@ -10,30 +10,27 @@
 cal_validate_isotonic_boot(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
-  save_details = FALSE,
-  summarize = TRUE,
+  save_pred = FALSE,
   ...
 )
 
 \method{cal_validate_isotonic_boot}{resample_results}(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
-  save_details = FALSE,
-  summarize = TRUE,
+  save_pred = FALSE,
   ...
 )
 
 \method{cal_validate_isotonic_boot}{rset}(
   .data,
   truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
+  estimate = dplyr::starts_with(".pred"),
   metrics = NULL,
-  save_details = FALSE,
-  summarize = TRUE,
+  save_pred = FALSE,
   ...
 )
 
@@ -42,8 +39,7 @@ cal_validate_isotonic_boot(
   truth = NULL,
   estimate = NULL,
   metrics = NULL,
-  save_details = FALSE,
-  summarize = TRUE,
+  save_pred = FALSE,
   ...
 )
 }
@@ -62,15 +58,14 @@ identifiers will be considered the same as the order of the levels of the
 
 \item{metrics}{A set of metrics passed created via \code{\link[yardstick:metric_set]{yardstick::metric_set()}}}
 
-\item{save_details}{Indicates whether to include the \code{calibration} and
-\code{validation} columns when the \code{summarize} argument is set to FALSE.}
-
-\item{summarize}{Indicates to pass tibble with the metrics averaged, or
-if to return the same sampled object but with new columns containing the
-calibration y validation list columns.}
+\item{save_pred}{Indicates whether to a column of post-calibration predictions.}
 
 \item{...}{Options to pass to \code{\link[=cal_estimate_isotonic_boot]{cal_estimate_isotonic_boot()}}, such as the
 \code{times} argument.}
+}
+\value{
+The original object with a \code{.metrics_cal} column and, optionally,
+an additional \code{.predictions_cal} column. The class \code{cal_rset} is also added.
 }
 \description{
 This function uses resampling to measure the effect of calibrating predicted
@@ -91,7 +86,11 @@ different resampling scheme should be used, run
 previous bullet point.
 }
 
-Please note that these functions do not apply to \code{tune_result} objects.
+Please note that these functions do not apply to \code{tune_result} objects. The
+notion of "validation" implies that the tuning parameter selection has been
+resolved.
+
+\code{collect_predictions()} can be used to aggregate the metrics for analysis.
 }
 \section{Performance Metrics}{
 
