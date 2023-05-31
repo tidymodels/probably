@@ -63,8 +63,7 @@
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  save_details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  summarize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  save_pred <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -74,8 +73,7 @@
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  save_details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  summarize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  save_pred <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -85,8 +83,7 @@
 <span>  truth <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  estimate <span class="op">=</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">starts_with</a></span><span class="op">(</span><span class="st">".pred"</span><span class="op">)</span>,</span>
 <span>  metrics <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  save_details <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  summarize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  save_pred <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -94,8 +91,8 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>.data</dt>
-<dd><p>An ungrouped <code>data.frame</code> object, or <code>tune_results</code> object,
-that contains predictions and probability columns.</p></dd>
+<dd><p>An <code>rset</code> object or the results of <code><a href="https://tune.tidymodels.org/reference/fit_resamples.html" class="external-link">tune::fit_resamples()</a></code> with
+a <code>.predictions</code> column.</p></dd>
 
 
 <dt>truth</dt>
@@ -115,19 +112,12 @@ identifiers will be considered the same as the order of the levels of the
 <dd><p>A set of metrics passed created via <code><a href="https://yardstick.tidymodels.org/reference/metric_set.html" class="external-link">yardstick::metric_set()</a></code></p></dd>
 
 
-<dt>save_details</dt>
-<dd><p>Indicates whether to include the <code>calibration</code> and
-<code>validation</code> columns when the <code>summarize</code> argument is set to FALSE.</p></dd>
-
-
-<dt>summarize</dt>
-<dd><p>Indicates to pass tibble with the metrics averaged, or
-if to return the same sampled object but with new columns containing the
-calibration y validation list columns.</p></dd>
+<dt>save_pred</dt>
+<dd><p>Indicates whether to a column of post-calibration predictions.</p></dd>
 
 
 <dt>...</dt>
-<dd><p>Options to pass to <code><a href="cal_estimate_linear.html">cal_estimate_linear()</a></code>, such as the <code>smooth</code>
+<dd><p>Options to pass to <code><a href="cal_estimate_logistic.html">cal_estimate_logistic()</a></code>, such as the <code>smooth</code>
 argument.</p></dd>
 
 </dl></div>
@@ -169,13 +159,20 @@ function compares the average of the metrics before, and after the calibration.<
 <span class="r-in"><span>  <span class="co"># Resample with 10-fold cross-validation</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rsample.tidymodels.org/reference/vfold_cv.html" class="external-link">vfold_cv</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
 <span class="r-in"><span>  <span class="fu">cal_validate_linear</span><span class="op">(</span>truth <span class="op">=</span> <span class="va">outcome</span>, smooth <span class="op">=</span> <span class="cn">FALSE</span>, metrics <span class="op">=</span> <span class="va">reg_stats</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 5</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   .metric .estimator direction stage        .estimate</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> rmse    standard   minimize  uncalibrated    15.9  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> rmse    standard   minimize  calibrated      13.9  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> ccc     standard   maximize  uncalibrated     0.461</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> ccc     standard   maximize  calibrated       0.696</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #  10-fold cross-validation </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 10 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    splits             id     .metrics         .metrics_cal    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;list&gt;</span>          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> <span style="color: #949494;">&lt;split [1800/200]&gt;</span> Fold01 <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> <span style="color: #949494;">&lt;split [1800/200]&gt;</span> Fold02 <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> <span style="color: #949494;">&lt;split [1800/200]&gt;</span> Fold03 <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> <span style="color: #949494;">&lt;split [1800/200]&gt;</span> Fold04 <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> <span style="color: #949494;">&lt;split [1800/200]&gt;</span> Fold05 <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> <span style="color: #949494;">&lt;split [1800/200]&gt;</span> Fold06 <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> <span style="color: #949494;">&lt;split [1800/200]&gt;</span> Fold07 <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> <span style="color: #949494;">&lt;split [1800/200]&gt;</span> Fold08 <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> <span style="color: #949494;">&lt;split [1800/200]&gt;</span> Fold09 <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> <span style="color: #949494;">&lt;split [1800/200]&gt;</span> Fold10 <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span> <span style="color: #949494;">&lt;tibble [2 × 3]&gt;</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

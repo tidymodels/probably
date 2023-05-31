@@ -91,10 +91,13 @@
     <loc>https://probably.tidymodels.org/dev/reference/cal_validate_multinomial.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_summarize.html</loc>
+    <loc>https://probably.tidymodels.org/dev/reference/class_pred.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/dev/reference/class_pred.html</loc>
+    <loc>https://probably.tidymodels.org/dev/reference/collect_metrics.cal_rset.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/collect_predictions.cal_rset.html</loc>
   </url>
   <url>
     <loc>https://probably.tidymodels.org/dev/reference/control_conformal_infer.html</loc>
