@@ -52,8 +52,6 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: 
     knitr
-Remotes: 
-    tidymodels/yardstick
 ByteCompile: true
 Config/Needs/website: tidyverse/tidytemplate
 Config/testthat/edition: 3
