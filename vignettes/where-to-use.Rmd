@@ -29,7 +29,7 @@ Regarding placement in the modeling workflow, probably best fits in as a post pr
 
 ## Example
 
-As an example, we'll use parsnip to fit a logistic regression on some [Lending Club](https://www.lendingclub.com/) loan data, and then use probably to investigate what happens to performance when you vary the threshold of what a "good" loan is.
+As an example, we'll use parsnip to fit a logistic regression on some Lending Club `https://www.lendingclub.com/` loan data, and then use probably to investigate what happens to performance when you vary the threshold of what a "good" loan is.
 
 ```{r, message=FALSE, warning=FALSE}
 library(parsnip)
