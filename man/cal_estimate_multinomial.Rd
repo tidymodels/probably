@@ -119,3 +119,7 @@ new_test_pred <- cal_apply(te_pred, smoothed_mn)
 cal_plot_windowed(new_test_pred, truth = class, window_size = 0.1, step_size = 0.03)
 \dontshow{\}) # examplesIf}
 }
+\seealso{
+\url{https://www.tidymodels.org/learn/models/calibration/},
+\code{\link[=cal_validate_multinomial]{cal_validate_multinomial()}}
+}

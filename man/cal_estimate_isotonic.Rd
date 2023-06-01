@@ -104,3 +104,7 @@ Zadrozny, Bianca and Elkan, Charles. (2002). Transforming Classifier Scores
 into Accurate Multiclass Probability Estimates. \emph{Proceedings of the ACM SIGKDD
 International Conference on Knowledge Discovery and Data Mining.}
 }
+\seealso{
+\url{https://www.tidymodels.org/learn/models/calibration/},
+\code{\link[=cal_validate_isotonic]{cal_validate_isotonic()}}
+}

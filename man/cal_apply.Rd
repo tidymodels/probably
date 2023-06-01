@@ -46,3 +46,9 @@ w_calibration <- cal_estimate_logistic(segment_logistic, Class)
 
 cal_apply(segment_logistic, w_calibration)
 }
+\seealso{
+\url{https://www.tidymodels.org/learn/models/calibration/},
+\code{\link[=cal_estimate_beta]{cal_estimate_beta()}}, \code{\link[=cal_estimate_isotonic]{cal_estimate_isotonic()}},
+\code{\link[=cal_estimate_isotonic_boot]{cal_estimate_isotonic_boot()}}, \code{\link[=cal_estimate_linear]{cal_estimate_linear()}},
+\code{\link[=cal_estimate_logistic]{cal_estimate_logistic()}}, \code{\link[=cal_estimate_multinomial]{cal_estimate_multinomial()}}
+}

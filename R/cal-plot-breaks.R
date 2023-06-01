@@ -42,6 +42,9 @@
 #' @param include_points Flag that indicates if the point layer is to be included.
 #' @param ... Additional arguments passed to the `tune_results` object.
 #' @return A ggplot object.
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_plot_windowed()], [cal_plot_logistic()]
 #' @examples
 #'
 #' library(ggplot2)

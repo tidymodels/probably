@@ -111,5 +111,6 @@ segment_logistic \%>\%
 
 }
 \seealso{
-\code{\link[=cal_apply]{cal_apply()}}, \code{\link[=cal_estimate_isotonic]{cal_estimate_isotonic()}}
+\url{https://www.tidymodels.org/learn/models/calibration/},
+\code{\link[=cal_estimate_isotonic]{cal_estimate_isotonic()}}
 }

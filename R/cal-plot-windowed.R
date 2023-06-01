@@ -18,6 +18,9 @@
 #' @param step_size The gap between segments. Used for the windowed probability
 #' calculations. It defaults to half the size of `window_size`
 #' @return A ggplot object.
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_plot_logistic()], [cal_plot_breaks()]
 #' @examples
 #'
 #' library(ggplot2)

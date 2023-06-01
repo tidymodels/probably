@@ -32,8 +32,9 @@
 #' argument.
 #' @return The original object with a `.metrics_cal` column and, optionally,
 #' an additional `.predictions_cal` column. The class `cal_rset` is also added.
-#'
-#' @seealso [cal_apply()], [cal_estimate_logistic()]
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_estimate_logistic()]
 #' @examples
 #'
 #' library(dplyr)
@@ -120,7 +121,9 @@ cal_validate_logistic.tune_results <- function(.data,
 #' Measure performance with and without using isotonic regression calibration
 #' @inherit cal_validate_logistic
 #' @inheritParams cal_estimate_isotonic
-#' @seealso [cal_apply()], [cal_estimate_isotonic()]
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_estimate_isotonic()]
 #' @template metrics_both
 #' @examples
 #'
@@ -204,7 +207,9 @@ cal_validate_isotonic.tune_results <- function(.data,
 #' @inheritParams cal_estimate_isotonic_boot
 #' @param ... Options to pass to [cal_estimate_isotonic_boot()], such as the
 #' `times` argument.
-#' @seealso [cal_apply()], [cal_estimate_isotonic_boot()]
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_estimate_isotonic_boot()]
 #' @template metrics_both
 #' @examples
 #'
@@ -288,7 +293,9 @@ cal_validate_isotonic_boot.tune_results <- function(.data,
 #' @inheritParams cal_estimate_beta
 #' @param ... Options to pass to [cal_estimate_beta()], such as the
 #' `shape_params` and `location_params` arguments.
-#' @seealso [cal_apply()], [cal_estimate_beta()]
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_estimate_beta()]
 #' @examples
 #'
 #' library(dplyr)
@@ -616,7 +623,9 @@ type_sum.cal_object <- function(x, ...) {
 #'
 #' @template metrics_reg
 #'
-#' @seealso [cal_apply()], [cal_estimate_linear()]
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_estimate_linear()]
 #' @examples
 #' library(dplyr)
 #' library(yardstick)
