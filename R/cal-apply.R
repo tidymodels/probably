@@ -17,6 +17,11 @@
 #' that can be used to filter the predicted values before processing. Applies
 #' only to `tune_results` objects.
 #' @param ... Optional arguments; currently unused.
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_estimate_beta()], [cal_estimate_isotonic()],
+#' [cal_estimate_isotonic_boot()], [cal_estimate_linear()],
+#' [cal_estimate_logistic()], [cal_estimate_multinomial()]
 #' @examples
 #'
 #' # ------------------------------------------------------------------------------

@@ -80,5 +80,6 @@ boosting_predictions_oob \%>\%
   cal_validate_linear(truth = outcome, smooth = FALSE, metrics = reg_stats)
 }
 \seealso{
-\code{\link[=cal_apply]{cal_apply()}}, \code{\link[=cal_estimate_linear]{cal_estimate_linear()}}
+\url{https://www.tidymodels.org/learn/models/calibration/},
+\code{\link[=cal_estimate_linear]{cal_estimate_linear()}}
 }

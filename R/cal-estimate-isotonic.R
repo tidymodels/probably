@@ -9,6 +9,9 @@
 #' Zadrozny, Bianca and Elkan, Charles. (2002). Transforming Classifier Scores
 #' into Accurate Multiclass Probability Estimates. _Proceedings of the ACM SIGKDD
 #' International Conference on Knowledge Discovery and Data Mining._
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_validate_isotonic()]
 #' @examples
 #' # ------------------------------------------------------------------------------
 #' # Binary Classification
@@ -100,6 +103,9 @@ cal_estimate_isotonic.grouped_df <- function(.data,
 #' @details This function uses [stats::isoreg()] to create obtain the calibration
 #' values. It runs [stats::isoreg()] multiple times, and each time with a different
 #' seed. The results are saved inside the returned `cal_object`.
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_validate_isotonic_boot()]
 #' @template multiclass
 #' @examples
 #' # It will automatically identify the probability columns

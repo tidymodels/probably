@@ -17,6 +17,9 @@
 #' @param smooth A logical for using a generalized additive model with smooth
 #' terms for the predictor via [mgcv::gam()] and [mgcv::s()].
 #' @return A ggplot object.
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_plot_windowed()], [cal_plot_breaks()]
 #' @examples
 #'
 #' library(ggplot2)

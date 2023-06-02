@@ -1,4 +1,4 @@
-# probably (development version)
+# probably 1.0.0
 
 * Copyright holder changed to Posit Software PBC.
 

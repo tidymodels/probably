@@ -3,6 +3,9 @@
 #' When `smooth = FALSE`, [nnet::multinom()] function is used to estimate the
 #' model, otherwise [mgcv::gam()] is used.
 #' @inheritParams cal_estimate_logistic
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_validate_multinomial()]
 #' @examplesIf !probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip", "randomForest"))
 #' library(modeldata)
 #' library(parsnip)

@@ -126,5 +126,8 @@ cal_plot_logistic(
 )
 }
 \seealso{
+\url{https://www.tidymodels.org/learn/models/calibration/},
+\code{\link[=cal_plot_windowed]{cal_plot_windowed()}}, \code{\link[=cal_plot_breaks]{cal_plot_breaks()}}
+
 \code{\link[=cal_plot_breaks]{cal_plot_breaks()}}, \code{\link[=cal_plot_windowed]{cal_plot_windowed()}}
 }

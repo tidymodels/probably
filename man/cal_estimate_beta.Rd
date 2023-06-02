@@ -104,3 +104,7 @@ Meelis Kull, Telmo M. Silva Filho, Peter Flach "Beyond sigmoids:
 How to obtain well-calibrated probabilities from binary classifiers with beta
 calibration," \emph{Electronic Journal of Statistics} 11(2), 5052-5080, (2017)
 }
+\seealso{
+\url{https://www.tidymodels.org/learn/models/calibration/},
+\code{\link[=cal_validate_beta]{cal_validate_beta()}}
+}

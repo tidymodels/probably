@@ -98,3 +98,7 @@ cal_estimate_logistic(segment_logistic, Class, c(.pred_poor, .pred_good))
 # dplyr selector functions are also supported
 cal_estimate_logistic(segment_logistic, Class, dplyr::starts_with(".pred_"))
 }
+\seealso{
+\url{https://www.tidymodels.org/learn/models/calibration/},
+\code{\link[=cal_validate_logistic]{cal_validate_logistic()}}
+}

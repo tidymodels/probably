@@ -39,7 +39,9 @@
 #'
 #' This method has _not_ been extended to multiclass outcomes. However, the
 #' natural multiclass extension is [cal_estimate_multinomial()].
-#'
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_validate_logistic()]
 #' @export
 cal_estimate_logistic <- function(.data,
                                   truth = NULL,

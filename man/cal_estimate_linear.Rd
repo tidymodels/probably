@@ -123,5 +123,6 @@ boosting_predictions_test \%>\%
 
 }
 \seealso{
-\code{\link[=cal_apply]{cal_apply()}}, \code{\link[=cal_validate_linear]{cal_validate_linear()}}
+\url{https://www.tidymodels.org/learn/models/calibration/},
+\code{\link[=cal_validate_linear]{cal_validate_linear()}}
 }

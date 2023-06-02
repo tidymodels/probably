@@ -96,3 +96,7 @@ cal_estimate_isotonic_boot(segment_logistic, Class, c(.pred_poor, .pred_good))
 # dplyr selector functions are also supported
 cal_estimate_isotonic_boot(segment_logistic, Class, dplyr::starts_with(".pred"))
 }
+\seealso{
+\url{https://www.tidymodels.org/learn/models/calibration/},
+\code{\link[=cal_validate_isotonic_boot]{cal_validate_isotonic_boot()}}
+}

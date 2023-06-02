@@ -14,7 +14,9 @@
 #' @param smooth Applies to the linear models. It switches between a generalized
 #' additive model using spline terms when `TRUE`, and simple linear regression
 #' when `FALSE`.
-#' @seealso [cal_apply()], [cal_validate_linear()]
+#' @seealso
+#' \url{https://www.tidymodels.org/learn/models/calibration/},
+#' [cal_validate_linear()]
 #' @examples
 #' library(dplyr)
 #' library(ggplot2)
