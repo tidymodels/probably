@@ -133,7 +133,7 @@ predict.int_conformal_infer_cv <- function(object, new_data, level = 0.95, ...) 
       as.list(seq_along(mean_pred)),
       ~ .get_upper_cv_bound(mean_pred[.x], object$abs_resid, level = level)
     )
-  dplyr::tibble(.pred_lower = lower, .pred_upper = upper)
+  dplyr::tibble(.pred_lower = lower, .pred = mean_pred, .pred_upper = upper)
 }
 
 #' @export

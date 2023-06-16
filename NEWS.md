@@ -1,5 +1,7 @@
 # probably (development version)
 
+* `predict.int_conformal_infer_cv()` now returns a `.pred` column that is the average prediction from the resampled models. The prediction intervals are centered on these. 
+
 # probably 1.0.0
 
 * Copyright holder changed to Posit Software PBC.
