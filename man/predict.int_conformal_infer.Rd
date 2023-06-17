@@ -20,10 +20,21 @@
 }
 \value{
 A tibble with columns \code{.pred_lower} and \code{.pred_upper}. If
-the computations for the prediction bound fail, a missing value is used.
+the computations for the prediction bound fail, a missing value is used. For
+objects produced by \code{\link[=int_conformal_infer_cv]{int_conformal_infer_cv()}}, an additional \code{.pred} column
+is  also returned (see Details below).
 }
 \description{
 Prediction intervals from conformal methods
+}
+\details{
+For the CV+. estimator produced by \code{\link[=int_conformal_infer_cv]{int_conformal_infer_cv()}}, the intervals
+are centered around the mean of the predictions produced by the
+resample-specific model. For example, with 10-fold cross-validation, \code{.pred}
+is the average of the predictions from the 10 models produced by each fold.
+This may differ from the prediction generated from a model fit that was
+trained on the entire training set, especially if the training sets are
+small.
 }
 \seealso{
 \code{\link[=int_conformal_infer]{int_conformal_infer()}}, \code{\link[=int_conformal_infer_cv]{int_conformal_infer_cv()}}

@@ -198,7 +198,7 @@ test_that("conformal intervals", {
   cv_int <- int_conformal_infer_cv(cv_res)
   cv_bounds <- predict(cv_int, sim_small)
   cv_bounds_90 <- predict(cv_int, sim_small, level = .9)
-  expect_equal(names(cv_bounds), c(".pred_lower", ".pred_upper"))
+  expect_equal(names(cv_bounds), c(".pred_lower", ".pred", ".pred_upper"))
   expect_equal(nrow(cv_bounds), nrow(sim_small))
   expect_true(mean(complete.cases(cv_bounds)) == 1)
   expect_true(
@@ -212,7 +212,7 @@ test_that("conformal intervals", {
   grid_int <- int_conformal_infer_cv(grid_res, two_models[1,])
   grid_bounds <- predict(grid_int, sim_small)
   grid_bounds_90 <- predict(grid_int, sim_small, level = .9)
-  expect_equal(names(grid_bounds), c(".pred_lower", ".pred_upper"))
+  expect_equal(names(grid_bounds), c(".pred_lower", ".pred", ".pred_upper"))
   expect_equal(nrow(grid_bounds), nrow(sim_small))
   expect_true(mean(complete.cases(grid_bounds)) == 1)
   expect_true(

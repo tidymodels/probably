@@ -122,8 +122,18 @@ print.int_conformal_infer <- function(x, ...) {
 #' @param level The confidence level for the intervals.
 #' @param ... Not currently used.
 #' @return A tibble with columns `.pred_lower` and `.pred_upper`. If
-#' the computations for the prediction bound fail, a missing value is used.
+#' the computations for the prediction bound fail, a missing value is used. For
+#' objects produced by [int_conformal_infer_cv()], an additional `.pred` column
+#' is  also returned (see Details below).
 #' @seealso [int_conformal_infer()], [int_conformal_infer_cv()]
+#' @details
+#' For the CV+. estimator produced by [int_conformal_infer_cv()], the intervals
+#' are centered around the mean of the predictions produced by the
+#' resample-specific model. For example, with 10-fold cross-validation, `.pred`
+#' is the average of the predictions from the 10 models produced by each fold.
+#' This may differ from the prediction generated from a model fit that was
+#' trained on the entire training set, especially if the training sets are
+#' small.
 #' @export
 predict.int_conformal_infer <- function(object, new_data, level = 0.95, ...) {
   check_data(new_data, object$wflow)
