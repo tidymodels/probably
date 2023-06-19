@@ -112,7 +112,7 @@ predict.int_conformal_infer_split <- function(object, new_data, level = 0.95, ..
 }
 
 check_data_all <- function(.data, wflow) {
-  mold <- hardhat:::extract_mold(wflow)
+  mold <- hardhat::extract_mold(wflow)
   ptypes <- mold$blueprint$ptypes
   ptypes <- dplyr::bind_cols(ptypes$predictors, ptypes$outcomes)
   hardhat::scream(.data, ptypes)

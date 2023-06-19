@@ -6,9 +6,6 @@ test_that("split conformal intervals", {
 
   suppressPackageStartupMessages(library(workflows))
   suppressPackageStartupMessages(library(modeldata))
-  suppressPackageStartupMessages(library(purrr))
-  suppressPackageStartupMessages(library(rsample))
-  suppressPackageStartupMessages(library(tune))
   suppressPackageStartupMessages(library(dplyr))
 
   # ----------------------------------------------------------------------------
