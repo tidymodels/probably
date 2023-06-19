@@ -1,6 +1,8 @@
 # probably (development version)
 
-* `predict.int_conformal_infer_cv()` now returns a `.pred` column that is the average prediction from the resampled models. The prediction intervals are centered on these. 
+* `predict.int_conformal_infer_cv()` now returns a `.pred` column that is the average prediction from the resampled models. The prediction intervals are centered on these.
+
+* Split conformal inference is available using `int_conformal_infer_split()`. 
 
 # probably 1.0.0
 
