@@ -45,6 +45,7 @@ Suggests:
     modeldata (>= 1.1.0),
     nnet,
     parsnip,
+    quantregForest,
     randomForest,
     recipes,
     rmarkdown,
