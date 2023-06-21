@@ -438,6 +438,8 @@ test_that("Some general exceptions", {
 # ------------------------------------------------------------------------------
 
 test_that("regression functions work", {
+  skip_if(R.version[["arch"]] != "aarch64") # see note below
+
   obj <- testthat_cal_reg()
 
   expect_s3_class(
@@ -449,6 +451,8 @@ test_that("regression functions work", {
     "df-scat",
     print(cal_plot_regression(boosting_predictions_oob, outcome, .pred))
   )
+  # There are incredibly small differences for this particular plot between
+  # Intel Macs and those with Apple Silicon
   expect_snapshot_plot(
     "df-scat-group",
     print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, .by = id))
