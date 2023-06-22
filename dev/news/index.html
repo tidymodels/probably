@@ -53,8 +53,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="probably-development-version">probably (development version)<a class="anchor" aria-label="anchor" href="#probably-development-version"></a></h2>
-<ul><li><p><code><a href="../reference/predict.int_conformal_infer.html">predict.int_conformal_infer_cv()</a></code> now returns a <code>.pred</code> column that is the average prediction from the resampled models. The prediction intervals are centered on these.</p></li>
-<li><p>Split conformal inference is available using <code><a href="../reference/int_conformal_infer_split.html">int_conformal_infer_split()</a></code>.</p></li>
+<ul><li><p>The conformal functions <code>int_conformal_infer_*()</code> were renamed to <code>int_conformal_*()</code>.</p></li>
+<li><p><code><a href="../reference/predict.int_conformal_full.html">predict.int_conformal_cv()</a></code> now returns a <code>.pred</code> column that is the average prediction from the resampled models. The prediction intervals are centered on these.</p></li>
+<li><p>Split conformal inference is available using <code><a href="../reference/int_conformal_split.html">int_conformal_split()</a></code>.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.0" id="probably-100">probably 1.0.0<a class="anchor" aria-label="anchor" href="#probably-100"></a></h2><p class="text-muted">CRAN release: 2023-06-01</p>
@@ -76,8 +77,8 @@
 <li><p>Based on the initial PR (<a href="https://github.com/tidymodels/probably/issues/37" class="external-link">#37</a>) by Antonio R. Vargas, <code><a href="../reference/threshold_perf.html">threshold_perf()</a></code> now accepts a custom metric set (<a href="https://github.com/tidymodels/probably/issues/25" class="external-link">#25</a>)</p></li>
 <li>
 <p>Two functions were added to compute prediction intervals for regression models via conformal inference:</p>
-<ul><li><code><a href="../reference/int_conformal_infer.html">int_conformal_infer()</a></code></li>
-<li><code><a href="../reference/int_conformal_infer_cv.html">int_conformal_infer_cv()</a></code></li>
+<ul><li><code>int_conformal_infer()</code></li>
+<li><code>int_conformal_infer_cv()</code></li>
 </ul></li>
 </ul></div>
     <div class="section level2">
