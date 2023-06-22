@@ -4,6 +4,14 @@
 
 ---
 
+    The following required columns are missing: 'predictor_01'.
+
+---
+
+    The following required columns are missing: 'predictor_01'.
+
+---
+
     `...` must be empty.
     x Problematic argument:
     * level = 0.9

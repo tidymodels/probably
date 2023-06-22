@@ -27,7 +27,6 @@ test_that("split conformal intervals", {
     int_conformal_infer_split(lm(outcome ~ ., sim_data), sim_cal)
   )
 
-  # TODO make these better
   expect_snapshot_error(
     int_conformal_infer_split(wflow, sim_cal[, -1])
   )

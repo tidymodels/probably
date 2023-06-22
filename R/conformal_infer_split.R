@@ -72,7 +72,7 @@ int_conformal_infer_split.default <- function(object, ...) {
 #' @rdname int_conformal_infer_split
 int_conformal_infer_split.workflow <- function(object, cal_data, ...) {
   rlang::check_dots_empty()
-  # check_data_all(cal_data, object) # TODO fix this
+  check_data_all(cal_data, object)
 
   y_name <- names(hardhat::extract_mold(object)$outcomes)
   cal_pred <- generics::augment(object, cal_data)
@@ -115,7 +115,7 @@ check_data_all <- function(.data, wflow) {
   mold <- hardhat::extract_mold(wflow)
   ptypes <- mold$blueprint$ptypes
   ptypes <- dplyr::bind_cols(ptypes$predictors, ptypes$outcomes)
-  hardhat::scream(.data, ptypes)
+  hardhat::shrink(.data, ptypes)
   invisible(NULL)
 }
 

@@ -27,16 +27,12 @@ test_that("split conformal quantile intervals", {
     int_conformal_infer_quantile(lm(outcome ~ ., sim_data), sim_cal)
   )
 
-  # TODO make these better
-  # expect_snapshot_error(
-  #   int_conformal_infer_quantile(wflow, sim_data[, -2], sim_cal[, -1])
-  # )
-  # expect_snapshot_error(
-  #   int_conformal_infer_quantile(wflow, sim_data, sim_cal[, -2])
-  # )
-  # expect_snapshot_error(
-  #   int_conformal_infer_quantile(wflow, sim_data, sim_cal)
-  # )
+  expect_snapshot_error(
+    int_conformal_infer_quantile(wflow, sim_data[, -2], sim_cal[, -1])
+  )
+  expect_snapshot_error(
+    int_conformal_infer_quantile(wflow, sim_data, sim_cal[, -2])
+  )
 
   # ------------------------------------------------------------------------------
 

@@ -4,12 +4,7 @@
 
 ---
 
-    Assigned data `cal_pred[[y_name]] - cal_pred$.pred` must be compatible with existing data.
-    x Existing data has 100 rows.
-    x Assigned data has 0 rows.
-    i Only vectors of size 1 are recycled.
-    Caused by error in `vectbl_recycle_rhs_rows()`:
-    ! Can't recycle input of size 0 to size 100.
+    The following required columns are missing: 'outcome'.
 
 ---
 

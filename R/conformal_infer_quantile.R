@@ -72,11 +72,8 @@ int_conformal_infer_quantile <- function(object, ...) {
 int_conformal_infer_quantile.workflow <-
   function(object, train_data, cal_data, level = 0.95, ...) {
 
-    # hardhat::scream(cal_data, object$blueprint$ptypes$predictors)
-    # hardhat::scream(cal_data, object$blueprint$ptypes$outcomes)
-    #
-    # hardhat::scream(train_data, object$blueprint$ptypes$predictors)
-    # hardhat::scream(train_data, object$blueprint$ptypes$outcomes)
+    check_data_all(train_data, object)
+    check_data_all(cal_data, object)
 
     # ------------------------------------------------------------------------------
 
