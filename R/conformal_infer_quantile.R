@@ -14,7 +14,7 @@
 #' @param level The confidence level for the intervals.
 #' @param ... Options to pass to [quantregForest::quantregForest()] (such as the
 #' number of trees).
-#' @return An object of class `"int_conformal_infer_quantile"` containing the
+#' @return An object of class `"int_conformal_quantile"` containing the
 #' information to create intervals (which includes `object`).
 #' The `predict()` method is used to produce the intervals.
 #' @details
@@ -27,7 +27,7 @@
 #'
 #' Note that the because of the method used to construct the interval, it is
 #' possible that the prediction intervals will not include the predicted value.
-#' @seealso [predict.int_conformal_infer_quantile()]
+#' @seealso [predict.int_conformal_quantile()]
 #' @references
 #' Romano, Yaniv, Evan Patterson, and Emmanuel Candes. "Conformalized quantile
 #' regression." _Advances in neural information processing systems_ 32 (2019).
@@ -56,20 +56,20 @@
 #'
 #' mlp_fit <- fit(mlp_wflow, data = sim_train)
 #'
-#' mlp_int <- int_conformal_infer_quantile(mlp_fit, sim_train, sim_cal,
+#' mlp_int <- int_conformal_quantile(mlp_fit, sim_train, sim_cal,
 #'                                         level = 0.90)
 #' mlp_int
 #'
 #' predict(mlp_int, sim_new)
 #' @export
-int_conformal_infer_quantile <- function(object, ...) {
-  UseMethod("int_conformal_infer_quantile")
+int_conformal_quantile <- function(object, ...) {
+  UseMethod("int_conformal_quantile")
 }
 
 
 #' @export
-#' @rdname int_conformal_infer_quantile
-int_conformal_infer_quantile.workflow <-
+#' @rdname int_conformal_quantile
+int_conformal_quantile.workflow <-
   function(object, train_data, cal_data, level = 0.95, ...) {
 
     check_data_all(train_data, object)
@@ -98,12 +98,12 @@ int_conformal_infer_quantile.workflow <-
         quant = quant_fit,
         level = level
       )
-    class(res) <- "int_conformal_infer_quantile"
+    class(res) <- "int_conformal_quantile"
     res
   }
 
 #' @export
-print.int_conformal_infer_quantile <- function(x, ...) {
+print.int_conformal_quantile <- function(x, ...) {
   cat("Split Conformal inference via Quantile Regression\n")
 
   cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
@@ -116,8 +116,8 @@ print.int_conformal_infer_quantile <- function(x, ...) {
 }
 
 #' @export
-#' @rdname predict.int_conformal_infer
-predict.int_conformal_infer_quantile <- function(object, new_data, ...) {
+#' @rdname predict.int_conformal_full
+predict.int_conformal_quantile <- function(object, new_data, ...) {
   check_data(new_data, object$wflow)
   rlang::check_dots_empty()
 

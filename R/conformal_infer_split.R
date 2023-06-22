@@ -10,7 +10,7 @@
 #' this should be the data that were inputs to the recipe (and not the product
 #' of a recipe).
 #' @param ... Not currently used.
-#' @return An object of class `"int_conformal_infer_split"` containing the
+#' @return An object of class `"int_conformal_split"` containing the
 #' information to create intervals (which includes `object`).
 #' The `predict()` method is used to produce the intervals.
 #' @details
@@ -24,7 +24,7 @@
 #' `cal_data` should be large enough to get a good estimates of a extreme
 #' quantile (e.g., the 95th for 95% interval) and should not include rows that
 #' were in the original training set.
-#' @seealso [predict.int_conformal_infer_split()]
+#' @seealso [predict.int_conformal_split()]
 #' @references
 #' Lei, Jing, et al. "Distribution-free predictive inference for regression."
 #' _Journal of the American Statistical Association_ 113.523 (2018): 1094-1111.
@@ -53,24 +53,24 @@
 #'
 #' mlp_fit <- fit(mlp_wflow, data = sim_train)
 #'
-#' mlp_int <- int_conformal_infer_split(mlp_fit, sim_cal)
+#' mlp_int <- int_conformal_split(mlp_fit, sim_cal)
 #' mlp_int
 #'
 #' predict(mlp_int, sim_new, level = 0.90)
 #' @export
-int_conformal_infer_split <- function(object, ...) {
-  UseMethod("int_conformal_infer_split")
+int_conformal_split <- function(object, ...) {
+  UseMethod("int_conformal_split")
 }
 
 #' @export
-#' @rdname int_conformal_infer_split
-int_conformal_infer_split.default <- function(object, ...) {
-  rlang::abort("No known 'int_conformal_infer_split' methods for this type of object.")
+#' @rdname int_conformal_split
+int_conformal_split.default <- function(object, ...) {
+  rlang::abort("No known 'int_conformal_split' methods for this type of object.")
 }
 
 #' @export
-#' @rdname int_conformal_infer_split
-int_conformal_infer_split.workflow <- function(object, cal_data, ...) {
+#' @rdname int_conformal_split
+int_conformal_split.workflow <- function(object, cal_data, ...) {
   rlang::check_dots_empty()
   check_data_all(cal_data, object)
 
@@ -78,12 +78,12 @@ int_conformal_infer_split.workflow <- function(object, cal_data, ...) {
   cal_pred <- generics::augment(object, cal_data)
   cal_pred$.resid <- cal_pred[[y_name]] - cal_pred$.pred
   res <- list(resid = sort(abs(cal_pred$.resid)), wflow = object, n = nrow(cal_pred))
-  class(res) <- "int_conformal_infer_split"
+  class(res) <- "int_conformal_split"
   res
 }
 
 #' @export
-print.int_conformal_infer_split <- function(x, ...) {
+print.int_conformal_split <- function(x, ...) {
   cat("Split Conformal inference\n")
 
   cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
@@ -95,8 +95,8 @@ print.int_conformal_infer_split <- function(x, ...) {
 }
 
 #' @export
-#' @rdname predict.int_conformal_infer
-predict.int_conformal_infer_split <- function(object, new_data, level = 0.95, ...) {
+#' @rdname predict.int_conformal_full
+predict.int_conformal_split <- function(object, new_data, level = 0.95, ...) {
   check_data(new_data, object$wflow)
   rlang::check_dots_empty()
 

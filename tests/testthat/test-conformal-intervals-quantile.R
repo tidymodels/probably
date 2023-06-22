@@ -24,25 +24,25 @@ test_that("split conformal quantile intervals", {
   # ------------------------------------------------------------------------------
 
   expect_snapshot_error(
-    int_conformal_infer_quantile(lm(outcome ~ ., sim_data), sim_cal)
+    int_conformal_quantile(lm(outcome ~ ., sim_data), sim_cal)
   )
 
   expect_snapshot_error(
-    int_conformal_infer_quantile(wflow, sim_data[, -2], sim_cal[, -1])
+    int_conformal_quantile(wflow, sim_data[, -2], sim_cal[, -1])
   )
   expect_snapshot_error(
-    int_conformal_infer_quantile(wflow, sim_data, sim_cal[, -2])
+    int_conformal_quantile(wflow, sim_data, sim_cal[, -2])
   )
 
   # ------------------------------------------------------------------------------
 
   lm_int <-
-    int_conformal_infer_quantile(wflow, sim_data, sim_cal, level = 0.90, trees = 20)
+    int_conformal_quantile(wflow, sim_data, sim_cal, level = 0.90, trees = 20)
   expect_snapshot_error(
     predict(lm_int, sim_new, level = 0.90)
   )
   expect_snapshot(lm_int)
-  expect_true(inherits(lm_int, "int_conformal_infer_quantile"))
+  expect_true(inherits(lm_int, "int_conformal_quantile"))
 
   new_int <- predict(lm_int, sim_new)
   exp_ptype <-

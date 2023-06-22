@@ -24,27 +24,27 @@ test_that("split conformal intervals", {
   # ------------------------------------------------------------------------------
 
   expect_snapshot_error(
-    int_conformal_infer_split(lm(outcome ~ ., sim_data), sim_cal)
+    int_conformal_split(lm(outcome ~ ., sim_data), sim_cal)
   )
 
   expect_snapshot_error(
-    int_conformal_infer_split(wflow, sim_cal[, -1])
+    int_conformal_split(wflow, sim_cal[, -1])
   )
   expect_snapshot_error(
-    int_conformal_infer_split(wflow, sim_cal[, -2])
+    int_conformal_split(wflow, sim_cal[, -2])
   )
   expect_snapshot_error(
-    int_conformal_infer_split(wflow, sim_cal, level = .1)
+    int_conformal_split(wflow, sim_cal, level = .1)
   )
 
   # ------------------------------------------------------------------------------
 
-  lm_int <- int_conformal_infer_split(wflow, sim_cal)
+  lm_int <- int_conformal_split(wflow, sim_cal)
   expect_snapshot_error(
     predict(lm_int, sim_new, potato = 3)
   )
   expect_snapshot(lm_int)
-  expect_true(inherits(lm_int, "int_conformal_infer_split"))
+  expect_true(inherits(lm_int, "int_conformal_split"))
 
   new_int <- predict(lm_int, sim_new, level = 0.90)
   exp_ptype <-

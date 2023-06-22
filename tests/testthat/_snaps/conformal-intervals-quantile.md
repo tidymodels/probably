@@ -1,6 +1,6 @@
 # split conformal quantile intervals
 
-    no applicable method for 'int_conformal_infer_quantile' applied to an object of class "lm"
+    no applicable method for 'int_conformal_quantile' applied to an object of class "lm"
 
 ---
 
