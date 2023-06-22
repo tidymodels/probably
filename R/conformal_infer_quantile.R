@@ -98,7 +98,7 @@ int_conformal_quantile.workflow <-
         quant = quant_fit,
         level = level
       )
-    class(res) <- "int_conformal_quantile"
+    class(res) <- c("conformal_reg_quantile", "int_conformal_quantile")
     res
   }
 

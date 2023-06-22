@@ -175,7 +175,7 @@ new_infer_cv <- function(models, resid) {
     models = models,
     abs_resid = resid[!na_resid]
   )
-  class(res) <- "int_conformal_cv"
+  class(res) <- c("conformal_reg_cv", "int_conformal_cv")
   res
 }
 

@@ -174,7 +174,7 @@ new_conf_infer <- function(wflow, .data, variance, control) {
       var_model = variance,
       control = control
     )
-  class(res) <- "int_conformal_full"
+  class(res) <- c("conformal_reg_full", "int_conformal_full")
   res
 }
 

@@ -78,7 +78,7 @@ int_conformal_split.workflow <- function(object, cal_data, ...) {
   cal_pred <- generics::augment(object, cal_data)
   cal_pred$.resid <- cal_pred[[y_name]] - cal_pred$.pred
   res <- list(resid = sort(abs(cal_pred$.resid)), wflow = object, n = nrow(cal_pred))
-  class(res) <- "int_conformal_split"
+  class(res) <- c("conformal_reg_split", "int_conformal_split")
   res
 }
 
