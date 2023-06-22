@@ -4,7 +4,7 @@
 #' objects using the conformal inference method described by Lei _at al_ (2018).
 #'
 #' @param object A fitted [workflows::workflow()] object.
-#' @param control A control object from [control_conformal_infer()] with the
+#' @param control A control object from [control_conformal_full()] with the
 #' numeric minutiae.
 #' @param ... Not currently used.
 #' @param train_data A data frame with the _original predictor data_ used to
@@ -33,7 +33,7 @@
 #'
 #' The literature proposed using a grid search of trial values to find the two
 #' points that correspond to the prediction intervals. To use this approach,
-#' set `method = "grid"` in [control_conformal_infer()]. However, the default method
+#' set `method = "grid"` in [control_conformal_full()]. However, the default method
 #' `"search` uses two different one-dimensional iterative searches on either
 #' side of the predicted value to find values that correspond to the prediction intervals.
 
@@ -75,7 +75,7 @@ int_conformal_full.default <- function(object, ...) {
 #' @export
 #' @rdname int_conformal_full
 int_conformal_full.workflow <-
-  function(object, train_data, ..., control = control_conformal_infer()) {
+  function(object, train_data, ..., control = control_conformal_full()) {
 
     rlang::check_dots_empty()
     check_workflow(object)
@@ -453,7 +453,7 @@ get_root <- function(x, ctrl) {
 #' (re)fit.
 #' @return A list object with the options given by the user.
 #' @export
-control_conformal_infer <-
+control_conformal_full <-
   function(method = "iterative", trial_points = 100, var_multiplier = 10,
            max_iter = 100, tolerance = .Machine$double.eps^0.25, progress = FALSE,
            required_pkgs = character(0), seed = sample.int(10^5, 1)) {

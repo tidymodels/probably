@@ -10,12 +10,7 @@ int_conformal_full(object, ...)
 
 \method{int_conformal_full}{default}(object, ...)
 
-\method{int_conformal_full}{workflow}(
-  object,
-  train_data,
-  ...,
-  control = control_conformal_infer()
-)
+\method{int_conformal_full}{workflow}(object, train_data, ..., control = control_conformal_full())
 }
 \arguments{
 \item{object}{A fitted \code{\link[workflows:workflow]{workflows::workflow()}} object.}
@@ -28,7 +23,7 @@ not contain these values, pass them here. If the workflow used a recipe, this
 should be the data that were inputs to the recipe (and not the product of a
 recipe).}
 
-\item{control}{A control object from \code{\link[=control_conformal_infer]{control_conformal_infer()}} with the
+\item{control}{A control object from \code{\link[=control_conformal_full]{control_conformal_full()}} with the
 numeric minutiae.}
 }
 \value{
@@ -58,7 +53,7 @@ distributional quantile, the value is one of the bounds.
 
 The literature proposed using a grid search of trial values to find the two
 points that correspond to the prediction intervals. To use this approach,
-set \code{method = "grid"} in \code{\link[=control_conformal_infer]{control_conformal_infer()}}. However, the default method
+set \code{method = "grid"} in \code{\link[=control_conformal_full]{control_conformal_full()}}. However, the default method
 \verb{"search} uses two different one-dimensional iterative searches on either
 side of the predicted value to find values that correspond to the prediction intervals.
 

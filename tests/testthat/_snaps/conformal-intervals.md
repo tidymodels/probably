@@ -10,7 +10,7 @@
 ---
 
     Code
-      int_conformal_full(wflow, sim_data, control = control_conformal_infer(
+      int_conformal_full(wflow, sim_data, control = control_conformal_full(
         required_pkgs = "boop"))
     Condition
       Error in `int_conformal_full()`:
@@ -127,7 +127,7 @@
 
     Code
       probably:::get_root(try(stop("I made you stop"), silent = TRUE),
-      control_conformal_infer())
+      control_conformal_full())
     Condition
       Warning:
       Could not finish the search process due to the following error:
@@ -170,7 +170,7 @@
 # conformal control
 
     Code
-      dput(control_conformal_infer())
+      dput(control_conformal_full())
     Output
       list(method = "iterative", trial_points = 100, var_multiplier = 10, 
           max_iter = 100, tolerance = 0.0001220703125, progress = FALSE, 
@@ -179,7 +179,7 @@
 ---
 
     Code
-      dput(control_conformal_infer(max_iter = 2))
+      dput(control_conformal_full(max_iter = 2))
     Output
       list(method = "iterative", trial_points = 100, var_multiplier = 10, 
           max_iter = 2, tolerance = 0.0001220703125, progress = FALSE, 
@@ -188,8 +188,8 @@
 ---
 
     Code
-      control_conformal_infer(method = "rock-paper-scissors")
+      control_conformal_full(method = "rock-paper-scissors")
     Condition
-      Error in `control_conformal_infer()`:
+      Error in `control_conformal_full()`:
       ! `method` must be one of "iterative" or "grid", not "rock-paper-scissors".
 

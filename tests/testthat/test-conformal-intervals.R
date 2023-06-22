@@ -67,7 +67,7 @@ test_that("bad inputs to conformal intervals", {
     int_conformal_full(
       wflow,
       sim_data,
-      control = control_conformal_infer(required_pkgs = "boop")
+      control = control_conformal_full(required_pkgs = "boop")
     )
   )
 
@@ -125,7 +125,7 @@ test_that("bad inputs to conformal intervals", {
   )
 
   expect_snapshot(
-    probably:::get_root(try(stop("I made you stop"), silent = TRUE), control_conformal_infer())
+    probably:::get_root(try(stop("I made you stop"), silent = TRUE), control_conformal_full())
   )
 })
 
@@ -159,10 +159,10 @@ test_that("conformal intervals", {
   set.seed(182)
   sim_new <- sim_regression(2)
 
-  ctrl_grid <- control_conformal_infer(method = "grid", seed = 1)
+  ctrl_grid <- control_conformal_full(method = "grid", seed = 1)
   basic_obj <- int_conformal_full(wflow, train_data = sim_data, control = ctrl_grid)
 
-  ctrl_hard <- control_conformal_infer(progress = TRUE, seed = 1,
+  ctrl_hard <- control_conformal_full(progress = TRUE, seed = 1,
                                   max_iter = 2, tolerance = 0.000001)
   smol_obj  <- int_conformal_full(wflow_small, train_data = sim_small, control = ctrl_hard)
 
@@ -224,7 +224,7 @@ test_that("conformal intervals", {
 
 test_that("conformal control", {
   set.seed(1)
-  expect_snapshot(dput(control_conformal_infer()))
-  expect_snapshot(dput(control_conformal_infer(max_iter = 2)))
-  expect_snapshot(error = TRUE, control_conformal_infer(method = "rock-paper-scissors"))
+  expect_snapshot(dput(control_conformal_full()))
+  expect_snapshot(dput(control_conformal_full(max_iter = 2)))
+  expect_snapshot(error = TRUE, control_conformal_full(method = "rock-paper-scissors"))
 })
