@@ -112,6 +112,12 @@
     <loc>https://probably.tidymodels.org/dev/reference/int_conformal_infer_cv.html</loc>
   </url>
   <url>
+    <loc>https://probably.tidymodels.org/dev/reference/int_conformal_infer_quantile.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/dev/reference/int_conformal_infer_split.html</loc>
+  </url>
+  <url>
     <loc>https://probably.tidymodels.org/dev/reference/is_class_pred.html</loc>
   </url>
   <url>
