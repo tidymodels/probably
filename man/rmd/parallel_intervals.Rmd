@@ -29,7 +29,7 @@ lm_fit <-
   fit(data = train_dat)
 
 # Create the object to be used to make prediction intervals
-lm_conform <- int_conformal_infer(lm_fit, train_dat)
+lm_conform <- int_conformal_full(lm_fit, train_dat)
 ```
 
 We'll use a `"multisession"` parallel processing plan to compute the intervals for the five new samples in parallel: 

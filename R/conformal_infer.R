@@ -4,7 +4,7 @@
 #' objects using the conformal inference method described by Lei _at al_ (2018).
 #'
 #' @param object A fitted [workflows::workflow()] object.
-#' @param control A control object from [control_conformal_infer()] with the
+#' @param control A control object from [control_conformal_full()] with the
 #' numeric minutiae.
 #' @param ... Not currently used.
 #' @param train_data A data frame with the _original predictor data_ used to
@@ -12,7 +12,7 @@
 #' not contain these values, pass them here. If the workflow used a recipe, this
 #' should be the data that were inputs to the recipe (and not the product of a
 #' recipe).
-#' @return An object of class `"int_conformal_infer"` containing the information
+#' @return An object of class `"int_conformal_full"` containing the information
 #' to create intervals (which includes the training set data). The `predict()`
 #' method is used to produce the intervals.
 #' @details
@@ -33,7 +33,7 @@
 #'
 #' The literature proposed using a grid search of trial values to find the two
 #' points that correspond to the prediction intervals. To use this approach,
-#' set `method = "grid"` in [control_conformal_infer()]. However, the default method
+#' set `method = "grid"` in [control_conformal_full()]. However, the default method
 #' `"search` uses two different one-dimensional iterative searches on either
 #' side of the predicted value to find values that correspond to the prediction intervals.
 
@@ -52,7 +52,7 @@
 #'
 #' @includeRmd man/rmd/parallel_intervals.Rmd details
 #'
-#' @seealso [predict.int_conformal_infer()]
+#' @seealso [predict.int_conformal_full()]
 #' @references
 #' Jing Lei, Max G'Sell, Alessandro Rinaldo, Ryan J. Tibshirani and Larry
 #' Wasserman (2018) Distribution-Free Predictive Inference for Regression,
@@ -62,20 +62,20 @@
 #' GLIM, _Journal of the Royal Statistical Society Series C: Applied Statistics_,
 #' Volume 36, Issue 3, November 1987, Pages 332–339.
 #' @export
-int_conformal_infer <- function(object, ...) {
-  UseMethod("int_conformal_infer")
+int_conformal_full <- function(object, ...) {
+  UseMethod("int_conformal_full")
 }
 
 #' @export
-#' @rdname int_conformal_infer
-int_conformal_infer.default <- function(object, ...) {
-  rlang::abort("No known 'int_conformal_infer' methods for this type of object.")
+#' @rdname int_conformal_full
+int_conformal_full.default <- function(object, ...) {
+  rlang::abort("No known 'int_conformal_full' methods for this type of object.")
 }
 
 #' @export
-#' @rdname int_conformal_infer
-int_conformal_infer.workflow <-
-  function(object, train_data, ..., control = control_conformal_infer()) {
+#' @rdname int_conformal_full
+int_conformal_full.workflow <-
+  function(object, train_data, ..., control = control_conformal_full()) {
 
     rlang::check_dots_empty()
     check_workflow(object)
@@ -103,7 +103,7 @@ int_conformal_infer.workflow <-
   }
 
 #' @export
-print.int_conformal_infer <- function(x, ...) {
+print.int_conformal_full <- function(x, ...) {
   cat("Conformal inference\n")
 
   cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
@@ -117,17 +117,17 @@ print.int_conformal_infer <- function(x, ...) {
 # ------------------------------------------------------------------------------
 
 #' Prediction intervals from conformal methods
-#' @param object An object produced by [predict.int_conformal_infer()].
+#' @param object An object produced by [predict.int_conformal_full()].
 #' @param new_data A data frame of predictors.
 #' @param level The confidence level for the intervals.
 #' @param ... Not currently used.
 #' @return A tibble with columns `.pred_lower` and `.pred_upper`. If
 #' the computations for the prediction bound fail, a missing value is used. For
-#' objects produced by [int_conformal_infer_cv()], an additional `.pred` column
+#' objects produced by [int_conformal_cv()], an additional `.pred` column
 #' is  also returned (see Details below).
-#' @seealso [int_conformal_infer()], [int_conformal_infer_cv()]
+#' @seealso [int_conformal_full()], [int_conformal_cv()]
 #' @details
-#' For the CV+. estimator produced by [int_conformal_infer_cv()], the intervals
+#' For the CV+. estimator produced by [int_conformal_cv()], the intervals
 #' are centered around the mean of the predictions produced by the
 #' resample-specific model. For example, with 10-fold cross-validation, `.pred`
 #' is the average of the predictions from the 10 models produced by each fold.
@@ -135,7 +135,7 @@ print.int_conformal_infer <- function(x, ...) {
 #' trained on the entire training set, especially if the training sets are
 #' small.
 #' @export
-predict.int_conformal_infer <- function(object, new_data, level = 0.95, ...) {
+predict.int_conformal_full <- function(object, new_data, level = 0.95, ...) {
   check_data(new_data, object$wflow)
   rlang::check_dots_empty()
 
@@ -174,7 +174,7 @@ new_conf_infer <- function(wflow, .data, variance, control) {
       var_model = variance,
       control = control
     )
-  class(res) <- "int_conformal_infer"
+  class(res) <- c("conformal_reg_full", "int_conformal_full")
   res
 }
 
@@ -453,7 +453,7 @@ get_root <- function(x, ctrl) {
 #' (re)fit.
 #' @return A list object with the options given by the user.
 #' @export
-control_conformal_infer <-
+control_conformal_full <-
   function(method = "iterative", trial_points = 100, var_multiplier = 10,
            max_iter = 100, tolerance = .Machine$double.eps^0.25, progress = FALSE,
            required_pkgs = character(0), seed = sample.int(10^5, 1)) {

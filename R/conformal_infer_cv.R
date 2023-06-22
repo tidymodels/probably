@@ -13,7 +13,7 @@
 #' select a single set of hyper-parameter values from the tuning results. This is
 #' only required when a tuning object is passed to `object`.
 #' @param ... Not currently used.
-#' @return An object of class `"int_conformal_infer_cv"` containing the information
+#' @return An object of class `"int_conformal_cv"` containing the information
 #' to create intervals. The `predict()` method is used to produce the intervals.
 #' @details
 #' This function implements the CV+ method found in Section 3 of Barber _at al_
@@ -28,7 +28,7 @@
 #' stop the computations for other types of resamples, but we have no way of
 #' knowing whether the results are appropriate.
 #'
-#' @seealso [predict.int_conformal_infer_cv()]
+#' @seealso [predict.int_conformal_cv()]
 #' @references
 #' Rina Foygel Barber, Emmanuel J. Candès, Aaditya Ramdas, Ryan J. Tibshirani
 #' "Predictive inference with the jackknife+," _The Annals of Statistics_,
@@ -63,25 +63,25 @@
 #'   mlp_spec %>%
 #'   fit_resamples(outcome ~ ., resamples = sim_rs, control = ctrl)
 #'
-#' nnet_int_obj <- int_conformal_infer_cv(nnet_res)
+#' nnet_int_obj <- int_conformal_cv(nnet_res)
 #' nnet_int_obj
 #'
 #' predict(nnet_int_obj, sim_new)
 #' @export
-int_conformal_infer_cv <- function(object, ...) {
-  UseMethod("int_conformal_infer_cv")
+int_conformal_cv <- function(object, ...) {
+  UseMethod("int_conformal_cv")
 }
 
 
 #' @export
-#' @rdname int_conformal_infer_cv
-int_conformal_infer_cv.default <- function(object, ...) {
-  rlang::abort("No known 'int_conformal_infer_cv' methods for this type of object.")
+#' @rdname int_conformal_cv
+int_conformal_cv.default <- function(object, ...) {
+  rlang::abort("No known 'int_conformal_cv' methods for this type of object.")
 }
 
 #' @export
-#' @rdname int_conformal_infer_cv
-int_conformal_infer_cv.resample_results <- function(object, ...) {
+#' @rdname int_conformal_cv
+int_conformal_cv.resample_results <- function(object, ...) {
   check_resampling(object)
   check_extras(object)
 
@@ -96,8 +96,8 @@ int_conformal_infer_cv.resample_results <- function(object, ...) {
 }
 
 #' @export
-#' @rdname int_conformal_infer_cv
-int_conformal_infer_cv.tune_results <- function(object, parameters, ...) {
+#' @rdname int_conformal_cv
+int_conformal_cv.tune_results <- function(object, parameters, ...) {
   check_resampling(object)
   check_parameters(object, parameters)
   check_extras(object)
@@ -113,8 +113,8 @@ int_conformal_infer_cv.tune_results <- function(object, parameters, ...) {
 }
 
 #' @export
-#' @rdname predict.int_conformal_infer
-predict.int_conformal_infer_cv <- function(object, new_data, level = 0.95, ...) {
+#' @rdname predict.int_conformal_full
+predict.int_conformal_cv <- function(object, new_data, level = 0.95, ...) {
   mean_pred <-
     purrr::map_dfr(
       object$models,
@@ -137,7 +137,7 @@ predict.int_conformal_infer_cv <- function(object, new_data, level = 0.95, ...) 
 }
 
 #' @export
-print.int_conformal_infer_cv <- function(x, ...) {
+print.int_conformal_cv <- function(x, ...) {
   cat("Conformal inference via CV+\n")
   cat("preprocessor:",      .get_pre_type(x$models[[1]]), "\n")
   cat("model:",             .get_fit_type(x$models[[1]]), "\n")
@@ -175,7 +175,7 @@ new_infer_cv <- function(models, resid) {
     models = models,
     abs_resid = resid[!na_resid]
   )
-  class(res) <- "int_conformal_infer_cv"
+  class(res) <- c("conformal_reg_cv", "int_conformal_cv")
   res
 }
 
