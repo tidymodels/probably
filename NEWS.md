@@ -1,3 +1,5 @@
+# probably (development version)
+
 # probably 1.0.1
 
 * The conformal functions `int_conformal_infer_*()` were renamed to `int_conformal_*()`.
