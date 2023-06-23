@@ -1,10 +1,10 @@
-# probably (development version)
+# probably 1.0.1
 
 * The conformal functions `int_conformal_infer_*()` were renamed to `int_conformal_*()`.
 
 * `predict.int_conformal_cv()` now returns a `.pred` column that is the average prediction from the resampled models. The prediction intervals are centered on these.
 
-* Split conformal inference is available using `int_conformal_split()`. 
+* Split conformal inference is available using `int_conformal_split()` and conformal quantile regression can be used with `int_conformal_quantile()`. 
 
 # probably 1.0.0
 
