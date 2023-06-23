@@ -103,16 +103,22 @@
     <loc>https://probably.tidymodels.org/reference/collect_predictions.cal_rset.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/control_conformal_infer.html</loc>
+    <loc>https://probably.tidymodels.org/reference/control_conformal_full.html</loc>
   </url>
   <url>
     <loc>https://probably.tidymodels.org/reference/index.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/int_conformal_infer.html</loc>
+    <loc>https://probably.tidymodels.org/reference/int_conformal_cv.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/int_conformal_infer_cv.html</loc>
+    <loc>https://probably.tidymodels.org/reference/int_conformal_full.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/reference/int_conformal_quantile.html</loc>
+  </url>
+  <url>
+    <loc>https://probably.tidymodels.org/reference/int_conformal_split.html</loc>
   </url>
   <url>
     <loc>https://probably.tidymodels.org/reference/is_class_pred.html</loc>
@@ -127,7 +133,7 @@
     <loc>https://probably.tidymodels.org/reference/make_class_pred.html</loc>
   </url>
   <url>
-    <loc>https://probably.tidymodels.org/reference/predict.int_conformal_infer.html</loc>
+    <loc>https://probably.tidymodels.org/reference/predict.int_conformal_full.html</loc>
   </url>
   <url>
     <loc>https://probably.tidymodels.org/reference/probably-package.html</loc>
