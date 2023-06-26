@@ -281,7 +281,7 @@ trial_fit <- function(trial, trial_data, wflow, level) {
 
   # Compute the abs residuals then more statistics
   tmp_res <-
-    augment(tmp_fit, trial_data) |>
+    augment(tmp_fit, trial_data) %>%
     dplyr::mutate(
       .abs_resid = abs(!!rlang::sym(y_name) - .pred)
     )
