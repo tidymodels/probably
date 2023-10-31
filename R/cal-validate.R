@@ -68,7 +68,6 @@ cal_validate_logistic.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
-
     if (!is.null(truth)) {
       rlang::warn("'truth' is automaticaly set when this type of object is used.")
     }
@@ -152,7 +151,6 @@ cal_validate_isotonic.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
-
     if (!is.null(truth)) {
       rlang::warn("'truth' is automaticaly set when this type of object is used.")
     }
@@ -169,7 +167,7 @@ cal_validate_isotonic.resample_results <-
       save_pred = save_pred,
       ...
     )
-}
+  }
 
 #' @export
 #' @rdname cal_validate_isotonic
@@ -238,7 +236,6 @@ cal_validate_isotonic_boot.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
-
     if (!is.null(truth)) {
       rlang::warn("'truth' is automaticaly set when this type of object is used.")
     }
@@ -323,7 +320,6 @@ cal_validate_beta.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
-
     if (!is.null(truth)) {
       rlang::warn("'truth' is automaticaly set when this type of object is used.")
     }
@@ -404,7 +400,6 @@ cal_validate_multinomial.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
-
     if (!is.null(truth)) {
       rlang::warn("'truth' is automaticaly set when this type of object is used.")
     }
@@ -469,7 +464,6 @@ get_problem_type <- function(x) {
 }
 
 check_validation_metrics <- function(metrics, model_mode) {
-
   if (is.null(metrics)) {
     if (model_mode == "regression") {
       metrics <- yardstick::metric_set(yardstick::rmse)
@@ -516,7 +510,7 @@ cal_validate <- function(rset,
 
   metrics <- check_validation_metrics(metrics, model_mode)
 
-  predictions_in  <- pull_pred(rset, analysis = TRUE)
+  predictions_in <- pull_pred(rset, analysis = TRUE)
   predictions_out <- pull_pred(rset, analysis = FALSE)
 
   est_fn_name <- paste0("cal_estimate_", cal_function)
@@ -533,7 +527,7 @@ cal_validate <- function(rset,
   cals <- purrr::map(predictions_in, ~ eval_tidy(est_cl))
 
   if (model_mode == "classification") {
-    if(cals[[1]]$type == "binary") {
+    if (cals[[1]]$type == "binary") {
       estimate_cols <- cals[[1]]$levels[[1]]
     } else {
       estimate_cols <- cals[[1]]$levels %>%
@@ -550,12 +544,13 @@ cal_validate <- function(rset,
 
   metric_res <-
     purrr::map2_dfr(cals,
-                    predictions_out,
-                    compute_cal_metrics,
-                    metrics = metrics,
-                    truth_col = truth,
-                    est_cols = estimate_cols,
-                    pred = save_pred)
+      predictions_out,
+      compute_cal_metrics,
+      metrics = metrics,
+      truth_col = truth,
+      est_cols = estimate_cols,
+      pred = save_pred
+    )
   rset <- dplyr::bind_cols(rset, metric_res)
 
   attr(rset, "metrics") <- metrics
@@ -659,7 +654,6 @@ cal_validate_linear.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
-
     if (!is.null(truth)) {
       rlang::warn("'truth' is automaticaly set when this type of object is used.")
     }

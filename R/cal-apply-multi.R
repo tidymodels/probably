@@ -6,7 +6,6 @@ cal_apply_multi <- function(object, .data, pred_class) {
 
 cal_apply_multi.cal_estimate_multinomial <-
   function(object, .data, pred_class = NULL, ...) {
-
     apply_multi_predict(
       object = object,
       .data = .data

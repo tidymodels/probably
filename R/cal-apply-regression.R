@@ -18,7 +18,6 @@ cal_apply_regression.cal_estimate_linear <-
 #---------------------------- Adjust implementations ---------------------------
 
 apply_reg_predict <- function(object, .data) {
-
   .pred_name <- rlang::expr_deparse(object$levels$predictions)
   .data <- object$estimates %>%
     purrr::map(

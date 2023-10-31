@@ -169,7 +169,6 @@ cal_linear_impl <- function(.data,
   levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
 
   if (length(levels) == 1) {
-
     # check outcome type:
     y <- rlang::eval_tidy(levels[[1]], .data)
     if (!is.vector(y) || !is.numeric(y) || is.factor(y)) {

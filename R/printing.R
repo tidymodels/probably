@@ -1,9 +1,7 @@
 cat_class_pred <- function(x) {
-
-  if(length(x) == 0) {
+  if (length(x) == 0) {
     cat("class_pred(0)", "\n")
-  }
-  else {
+  } else {
     print(format(x), quote = FALSE)
   }
 }
@@ -11,10 +9,9 @@ cat_class_pred <- function(x) {
 # Adapted from print.factor
 # Smart enough to truncate the levels if they get too long
 cat_levels <- function(x, width = getOption("width")) {
-
   ord <- is_ordered_class_pred(x)
 
-  if(ord) {
+  if (ord) {
     colsep <- " < "
   } else {
     colsep <- " "
@@ -31,8 +28,7 @@ cat_levels <- function(x, width = getOption("width")) {
 
     if (n_lev <= 1L || lenl[n_lev] <= width) {
       n_lev
-    }
-    else {
+    } else {
       max(1L, which.max(lenl > width) - 1L)
     }
   }
@@ -49,7 +45,6 @@ cat_levels <- function(x, width = getOption("width")) {
 
     # Print `Levels: `
     header,
-
     paste(
 
       # `first levels ... last levels`
@@ -61,13 +56,11 @@ cat_levels <- function(x, width = getOption("width")) {
       else {
         lev
       },
-
       collapse = colsep
     ),
 
     # Newline
     "\n",
-
     sep = ""
   )
 }
@@ -75,12 +68,12 @@ cat_levels <- function(x, width = getOption("width")) {
 cat_reportable <- function(x) {
   reportable <- 100 * reportable_rate(x)
 
-  if(rlang::is_scalar_integerish(reportable)) {
+  if (rlang::is_scalar_integerish(reportable)) {
     reportable <- vec_cast(reportable, integer())
   }
 
   digits <- function(x) {
-    if(is.integer(x)) {
+    if (is.integer(x)) {
       0
     } else {
       1

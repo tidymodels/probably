@@ -53,7 +53,7 @@ test_that("split conformal quantile intervals", {
     )
 
   expect_true(inherits(new_int, "tbl_df"))
-  expect_equal(new_int[0,], exp_ptype)
+  expect_equal(new_int[0, ], exp_ptype)
   expect_equal(
     colnames(new_int),
     c(".pred", ".pred_lower", ".pred_upper")
@@ -62,5 +62,4 @@ test_that("split conformal quantile intervals", {
     nrow(new_int),
     nrow(sim_new)
   )
-
 })

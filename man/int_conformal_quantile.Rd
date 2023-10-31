@@ -56,8 +56,8 @@ library(modeldata)
 
 set.seed(2)
 sim_train <- sim_regression(500)
-sim_cal   <- sim_regression(200)
-sim_new   <- sim_regression(  5) \%>\% select(-outcome)
+sim_cal <- sim_regression(200)
+sim_new <- sim_regression(5) \%>\% select(-outcome)
 
 # We'll use a neural network model
 mlp_spec <-
@@ -72,7 +72,8 @@ mlp_wflow <-
 mlp_fit <- fit(mlp_wflow, data = sim_train)
 
 mlp_int <- int_conformal_quantile(mlp_fit, sim_train, sim_cal,
-                                        level = 0.90)
+  level = 0.90
+)
 mlp_int
 
 predict(mlp_int, sim_new)

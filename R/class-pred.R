@@ -1,9 +1,7 @@
-
 # ------------------------------------------------------------------------------
 # Creation
 
 new_class_pred <- function(x, labels, ordered = FALSE, equivocal = "[EQ]", ..., subclass = NULL) {
-
   stopifnot(is.integer(x))
   stopifnot(is.character(labels))
   stopifnot(is.logical(ordered) && length(ordered) == 1L)
@@ -17,7 +15,6 @@ new_class_pred <- function(x, labels, ordered = FALSE, equivocal = "[EQ]", ..., 
     ...,
     class = c(subclass, "class_pred")
   )
-
 }
 
 #' Create a class prediction object
@@ -51,17 +48,16 @@ new_class_pred <- function(x, labels, ordered = FALSE, equivocal = "[EQ]", ..., 
 #'
 #' @export
 class_pred <- function(x = factor(), which = integer(), equivocal = "[EQ]") {
-
   # Check invariants
-  if(!is.factor(x)) {
+  if (!is.factor(x)) {
     abort("`x` must be a factor.")
   }
 
-  if(!is.numeric(which)) {
+  if (!is.numeric(which)) {
     abort("`which` must be a numeric.")
   }
 
-  if(!rlang::is_scalar_character(equivocal)) {
+  if (!rlang::is_scalar_character(equivocal)) {
     abort("`equivocal` must be a length 1 character.")
   }
 
@@ -73,7 +69,7 @@ class_pred <- function(x = factor(), which = integer(), equivocal = "[EQ]") {
   which <- unique(which)
 
   # which cannot go outside the range of the number of values in x
-  if(length(which) > 0L && max(which) > length(x)) {
+  if (length(which) > 0L && max(which) > length(x)) {
     msg <- paste0("The largest value of `which` can be ", length(x), ".")
     abort(msg)
   }
@@ -81,7 +77,7 @@ class_pred <- function(x = factor(), which = integer(), equivocal = "[EQ]") {
   labs <- levels(x)
 
   # Check for `equivocal` in labels. Not allowed.
-  if(equivocal %in% labs) {
+  if (equivocal %in% labs) {
     msg <- paste0(
       "`\"", equivocal, "\"`",
       "is reserved for equivocal values",
@@ -299,7 +295,7 @@ reportable_rate.default <- function(x) {
 reportable_rate.class_pred <- function(x) {
   n <- length(x)
 
-  if(n == 0L) {
+  if (n == 0L) {
     return(0L)
   }
 

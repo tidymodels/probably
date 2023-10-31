@@ -21,7 +21,7 @@ tune::collect_predictions
 # from tune
 # nocov start
 
-is_cran_check <- function () {
+is_cran_check <- function() {
   if (identical(Sys.getenv("NOT_CRAN"), "true")) {
     FALSE
   } else {
@@ -29,4 +29,4 @@ is_cran_check <- function () {
   }
 }
 
-#nocov end
+# nocov end

@@ -13,10 +13,10 @@ editor_options:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE, 
-  comment = "#>", 
-  fig.width = 7, 
-  fig.height = 6, 
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 6,
   fig.align = "center"
 )
 ```
@@ -60,7 +60,7 @@ set.seed(123)
 split <- initial_split(lending_club, prop = 0.75)
 
 lending_train <- training(split)
-lending_test  <- testing(split)
+lending_test <- testing(split)
 ```
 
 Before we do anything, let's look at the counts of what we are going to be predicting, the `Class` of the loan.
@@ -77,14 +77,14 @@ We'll use parsnip's `logistic_reg()` to create a model specification for logisti
 logi_reg <- logistic_reg()
 logi_reg_glm <- logi_reg %>% set_engine("glm")
 
-# A small model specification that defines the type of model you are 
+# A small model specification that defines the type of model you are
 # using and the engine
 logi_reg_glm
 
 # Fit the model
 logi_reg_fit <- fit(
-  logi_reg_glm, 
-  formula = Class ~ annual_inc + verification_status + sub_grade, 
+  logi_reg_glm,
+  formula = Class ~ annual_inc + verification_status + sub_grade,
   data = lending_train
 )
 
@@ -112,14 +112,14 @@ With our class probabilities in hand, we can use `make_two_class_pred()` to conv
 hard_pred_0.5 <- lending_test_pred %>%
   mutate(
     .pred = make_two_class_pred(
-      estimate = .pred_good, 
-      levels = levels(Class), 
+      estimate = .pred_good,
+      levels = levels(Class),
       threshold = .5
     )
   ) %>%
   select(Class, contains(".pred"))
 
-hard_pred_0.5 %>% 
+hard_pred_0.5 %>%
   count(.truth = Class, .pred)
 ```
 
@@ -129,14 +129,14 @@ Hmm, with a `0.5` threshold, almost all of the loans were predicted as "good". P
 hard_pred_0.75 <- lending_test_pred %>%
   mutate(
     .pred = make_two_class_pred(
-      estimate = .pred_good, 
-      levels = levels(Class), 
+      estimate = .pred_good,
+      levels = levels(Class),
       threshold = .75
     )
   ) %>%
   select(Class, contains(".pred"))
 
-hard_pred_0.75 %>% 
+hard_pred_0.75 %>%
   count(.truth = Class, .pred)
 ```
 

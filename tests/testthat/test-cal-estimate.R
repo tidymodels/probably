@@ -37,7 +37,6 @@ test_that("Logistic estimates work - data.frame", {
     bin_with_configs() %>%
     cal_estimate_logistic(truth = Class, smooth = FALSE)
   expect_true(are_groups_configs(lgst_configs))
-
 })
 
 test_that("Logistic estimates work - tune_results", {
@@ -233,7 +232,6 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
     mnl_with_configs() %>%
     cal_estimate_isotonic_boot(truth = obs, estimate = c(VF:L))
   expect_true(are_groups_configs(mltm_configs))
-
 })
 
 test_that("Isotonic Bootstrapped estimates work - tune_results", {

@@ -47,11 +47,12 @@ test_that("Logistic validation with data frame input", {
   expect_equal(sort(unique(pred_rs$.type)), c("calibrated"))
   expect_equal(
     names(pred_rs),
-    c("Class", ".row", ".config", ".pred_poor", ".pred_good", ".pred_class",
-      ".type")
+    c(
+      "Class", ".row", ".config", ".pred_poor", ".pred_good", ".pred_class",
+      ".type"
+    )
   )
   expect_equal(nrow(pred_rs), nrow(df$splits[[1]]$data))
-
 })
 
 
@@ -80,7 +81,6 @@ test_that("Beta validation with data frame input", {
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
     purrr::map_int(val_with_pred$.predictions_cal, nrow)
   )
-
 })
 
 
@@ -109,7 +109,6 @@ test_that("Isotonic validation classification with data frame input", {
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
     purrr::map_int(val_with_pred$.predictions_cal, nrow)
   )
-
 })
 
 test_that("Bootstrapped Isotonic classification validation with data frame input", {
@@ -137,7 +136,6 @@ test_that("Bootstrapped Isotonic classification validation with data frame input
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
     purrr::map_int(val_with_pred$.predictions_cal, nrow)
   )
-
 })
 
 test_that("Multinomial classification validation with data frame input", {
@@ -165,7 +163,6 @@ test_that("Multinomial classification validation with data frame input", {
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
     purrr::map_int(val_with_pred$.predictions_cal, nrow)
   )
-
 })
 
 # ------------------------------------------------------------------------------
@@ -222,7 +219,6 @@ test_that("Isotonic validation regression with data frame input", {
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
     purrr::map_int(val_with_pred$.predictions_cal, nrow)
   )
-
 })
 
 test_that("Bootstrapped Isotonic regression validation with data frame input", {
@@ -276,13 +272,12 @@ test_that("Logistic validation with `fit_resamples`", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2",  ".pred_class")
+    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2", ".pred_class")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
     purrr::map_int(val_with_pred$.predictions_cal, nrow)
   )
-
 })
 
 test_that("Isotonic classification validation with `fit_resamples`", {
@@ -307,7 +302,7 @@ test_that("Isotonic classification validation with `fit_resamples`", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2",  ".pred_class")
+    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2", ".pred_class")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -338,7 +333,7 @@ test_that("Bootstrapped isotonic classification validation with `fit_resamples`"
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2",  ".pred_class")
+    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2", ".pred_class")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -368,7 +363,7 @@ test_that("Beta calibration validation with `fit_resamples`", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2",  ".pred_class")
+    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2", ".pred_class")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -473,7 +468,6 @@ test_that("Linear validation with `fit_resamples`", {
     c(".row", "outcome", ".config", ".pred", ".type")
   )
   expect_equal(nrow(pred_rs), nrow(val_obj$splits[[1]]$data) * 2)
-
 })
 
 
@@ -567,5 +561,3 @@ test_that("validation functions error with tune_results input", {
     cal_validate_multinomial(testthat_cal_binary())
   )
 })
-
-

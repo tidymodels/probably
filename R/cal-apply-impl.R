@@ -12,7 +12,6 @@ apply_interval_impl <- function(object, .data, multi = FALSE, method = "auto") {
     purrr::reduce(dplyr::bind_rows)
 
   apply_adjustment(new_data, object)
-
 }
 
 # Iterates through each prediction column
@@ -141,7 +140,7 @@ apply_adjustment <- function(new_data, object) {
     new_data[, object$levels[[2]]] <- 1 - new_data[, object$levels[[1]]]
   }
 
-  if(object$type == "one_vs_all"){
+  if (object$type == "one_vs_all") {
     ols <- as.character(object$levels)
     rs <- rowSums(new_data[, ols])
     for (i in seq_along(ols)) {

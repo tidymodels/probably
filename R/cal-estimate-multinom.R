@@ -19,9 +19,9 @@
 #'   )
 #'
 #' set.seed(1)
-#' tr_dat  <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
+#' tr_dat <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
 #' cal_dat <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
-#' te_dat  <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
+#' te_dat <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
 #'
 #' set.seed(2)
 #' rf_fit <-
@@ -65,21 +65,21 @@ cal_estimate_multinomial.data.frame <-
            parameters = NULL,
            ...,
            .by = NULL) {
-  stop_null_parameters(parameters)
+    stop_null_parameters(parameters)
 
-  group <- get_group_argument({{ .by }}, .data)
-  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
+    group <- get_group_argument({{ .by }}, .data)
+    .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
-  truth <- enquo(truth)
-  cal_multinom_impl(
-    .data = .data,
-    truth = !!truth,
-    estimate = {{ estimate }},
-    source_class = cal_class_name(.data),
-    smooth = smooth,
-    ...
-  )
-}
+    truth <- enquo(truth)
+    cal_multinom_impl(
+      .data = .data,
+      truth = !!truth,
+      estimate = {{ estimate }},
+      source_class = cal_class_name(.data),
+      smooth = smooth,
+      ...
+    )
+  }
 
 #' @export
 #' @rdname cal_estimate_multinomial
@@ -91,24 +91,24 @@ cal_estimate_multinomial.tune_results <-
            parameters = NULL,
            ...) {
     tune_args <- tune_results_args(
-    .data = .data,
-    truth = {{ truth }},
-    estimate = {{ estimate }},
-    event_level = "first",
-    parameters = parameters,
-    ...
-  )
-
-  tune_args$predictions %>%
-    dplyr::group_by(!!tune_args$group) %>%
-    cal_multinom_impl(
-      truth = !!tune_args$truth,
-      estimate = !!tune_args$estimate,
-      source_class = cal_class_name(.data),
-      smooth = smooth,
+      .data = .data,
+      truth = {{ truth }},
+      estimate = {{ estimate }},
+      event_level = "first",
+      parameters = parameters,
       ...
     )
-}
+
+    tune_args$predictions %>%
+      dplyr::group_by(!!tune_args$group) %>%
+      cal_multinom_impl(
+        truth = !!tune_args$truth,
+        estimate = !!tune_args$estimate,
+        source_class = cal_class_name(.data),
+        smooth = smooth,
+        ...
+      )
+  }
 
 #' @export
 #' @rdname cal_estimate_multinomial
@@ -204,7 +204,7 @@ cal_multinom_impl_single <- function(.data,
     rhs_f <- purrr::reduce(smooths, function(x, y) expr(!!x + !!y))
     rhs_only <- new_formula(lhs = NULL, rhs = rhs_f)
     both_sides <- new_formula(lhs = ensym(truth), rhs = rhs_f)
-    all_f <- purrr::map(seq_along(levels), ~ rhs_only)
+    all_f <- purrr::map(seq_along(levels), ~rhs_only)
     all_f[[1]] <- both_sides
 
     model <- mgcv::gam(all_f, data = .data, family = mgcv::multinom(max_int))
@@ -213,7 +213,6 @@ cal_multinom_impl_single <- function(.data,
     # # TODO This next line causes a failure for unknown reasons. Look into it more
     # model$formula <- purrr::map(model$formula, clean_env)
     model$terms <- clean_env(model$terms)
-
   } else {
     levels_formula <- purrr::reduce(
       levels,

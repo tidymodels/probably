@@ -101,15 +101,16 @@ threshold_perf.data.frame <- function(.data,
                                       na_rm = TRUE,
                                       event_level = "first",
                                       ...) {
-
   if (is.null(thresholds)) {
     thresholds <- seq(0.5, 1, length = 21)
   }
   if (is.null(metrics)) {
     metrics <-
-      yardstick::metric_set(yardstick::sensitivity,
-                            yardstick::specificity,
-                            yardstick::j_index)
+      yardstick::metric_set(
+        yardstick::sensitivity,
+        yardstick::specificity,
+        yardstick::j_index
+      )
   }
   measure_sens_spec <- check_thresholded_metrics(metrics)
 
@@ -122,7 +123,7 @@ threshold_perf.data.frame <- function(.data,
     data = .data
   )
 
-  obs   <- names(obs_sel)
+  obs <- names(obs_sel)
   probs <- names(probs_sel)
 
   rs_ch <- dplyr::group_vars(.data)
@@ -132,14 +133,10 @@ threshold_perf.data.frame <- function(.data,
   probs_sym <- sym(probs)
 
   if (length(rs_ch) == 0) {
-
     rs_ch <- NULL
     rs_id <- NULL
-
   } else {
-
     rs_id <- syms(rs_ch)
-
   }
 
   if (length(probs) > 1 | length(obs) > 1) {
@@ -210,7 +207,7 @@ threshold_perf.data.frame <- function(.data,
       dplyr::mutate(
         .metric = "distance",
         # .estimate is specificity currently. This recodes as distance
-        .estimate = (1 - sens_vec) ^ 2 + (1 - .estimate) ^ 2
+        .estimate = (1 - sens_vec)^2 + (1 - .estimate)^2
       )
 
     .data_metrics <- dplyr::bind_rows(.data_metrics, dist)
@@ -223,8 +220,9 @@ expand_preds <- function(.data, threshold, inc = NULL) {
   threshold <- unique(threshold)
   nth <- length(threshold)
   n_data <- nrow(.data)
-  if (!is.null(inc))
+  if (!is.null(inc)) {
     .data <- dplyr::select(.data, tidyselect::all_of(inc))
+  }
   .data <- .data[rep(1:nrow(.data), times = nth), ]
   .data$.threshold <- rep(threshold, each = n_data)
   .data
@@ -239,7 +237,7 @@ check_thresholded_metrics <- function(x) {
   # check to see if sensitivity and specificity are in the lists
   has_sens <-
     any(y$metric %in% c("sens", "sensitivity")) &
-    any(y$metric %in% c("spec", "specificity"))
+      any(y$metric %in% c("spec", "specificity"))
   has_sens
 }
 
@@ -256,4 +254,3 @@ utils::globalVariables(
     "distance"
   )
 )
-

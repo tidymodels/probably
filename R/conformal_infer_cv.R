@@ -43,7 +43,7 @@
 #'
 #' set.seed(2)
 #' sim_train <- sim_regression(200)
-#' sim_new   <- sim_regression(  5) %>% select(-outcome)
+#' sim_new <- sim_regression(5) %>% select(-outcome)
 #'
 #' sim_rs <- vfold_cv(sim_train)
 #'
@@ -139,9 +139,9 @@ predict.int_conformal_cv <- function(object, new_data, level = 0.95, ...) {
 #' @export
 print.int_conformal_cv <- function(x, ...) {
   cat("Conformal inference via CV+\n")
-  cat("preprocessor:",      .get_pre_type(x$models[[1]]), "\n")
-  cat("model:",             .get_fit_type(x$models[[1]]), "\n")
-  cat("number of models:",  format(length(x$models), big.mark = ","), "\n")
+  cat("preprocessor:", .get_pre_type(x$models[[1]]), "\n")
+  cat("model:", .get_fit_type(x$models[[1]]), "\n")
+  cat("number of models:", format(length(x$models), big.mark = ","), "\n")
   cat("training set size:", format(length(x$abs_resid), big.mark = ","), "\n\n")
 
   cat("Use `predict(object, new_data, level)` to compute prediction intervals\n")
@@ -188,7 +188,9 @@ new_infer_cv <- function(models, resid) {
 }
 
 .get_pre_type <- function(x) {
-  cls <- x %>% workflows::extract_preprocessor() %>% class()
+  cls <- x %>%
+    workflows::extract_preprocessor() %>%
+    class()
   cls <- cls[!grepl("butchered", cls)]
   cls[1]
 }

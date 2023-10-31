@@ -1,7 +1,7 @@
 # ------------------------------------------------------------------------------
 # Setup
 
-ex_eq    <- c(0L, 1L, 2L, 2L, 3L)
+ex_eq <- c(0L, 1L, 2L, 2L, 3L)
 ex_no_eq <- c(1L, 1L, 2L, 2L, 3L)
 real_labs <- c("low", "med", "high")
 
@@ -71,10 +71,10 @@ test_that("class_pred can be coerced to ordered factor", {
 })
 
 test_that("casting class_pred to class_pred", {
-  cp1  <- class_pred(factor(c("a", "b", "b", "c")), which = 2)
-  cp2  <- class_pred(factor(c("a", "b", "b", "b")), which = 3)
-  cp3  <- class_pred(factor(c("a", "b", "b", "c")), which = 2, equivocal = "eq")
-  cp4  <- class_pred(factor(c("a", "b", "b", "c"), ordered = TRUE), which = 2)
+  cp1 <- class_pred(factor(c("a", "b", "b", "c")), which = 2)
+  cp2 <- class_pred(factor(c("a", "b", "b", "b")), which = 3)
+  cp3 <- class_pred(factor(c("a", "b", "b", "c")), which = 2, equivocal = "eq")
+  cp4 <- class_pred(factor(c("a", "b", "b", "c"), ordered = TRUE), which = 2)
 
   # lossy cast, no c level in cp2
   expect_error(vec_cast(cp1, cp2), class = "vctrs_error_cast_lossy")
@@ -92,12 +92,12 @@ test_that("casting class_pred to class_pred", {
 })
 
 test_that("casting class_pred to factor", {
-  cp1  <- class_pred(factor(c("a", "b", "b", "c")))
-  cp2  <- class_pred(factor(c("a", "b", "b", "c")), which = 2)
-  cp3  <- class_pred(factor(c(NA, "a", "b", "c")), which = 3)
-  fc1  <- factor(levels = c("a", "b"))
-  fc2  <- factor(levels = c("a", "b", "c"))
-  fc3  <- factor(levels = c("a", "b", "c"), ordered = TRUE)
+  cp1 <- class_pred(factor(c("a", "b", "b", "c")))
+  cp2 <- class_pred(factor(c("a", "b", "b", "c")), which = 2)
+  cp3 <- class_pred(factor(c(NA, "a", "b", "c")), which = 3)
+  fc1 <- factor(levels = c("a", "b"))
+  fc2 <- factor(levels = c("a", "b", "c"))
+  fc3 <- factor(levels = c("a", "b", "c"), ordered = TRUE)
 
   # lossy cast, no c level in fc1
   expect_error(vec_cast(cp1, fc1), class = "vctrs_error_cast_lossy")
@@ -123,11 +123,10 @@ test_that("casting class_pred to factor", {
   # special test for when the factor you are casting to has different
   # levels and they are in an odd order compared to what the class_pred had
   # (poor is between good and great here)
-  cp_special  <- class_pred(factor(c("good", "great")))
-  fc_special  <- factor(c("good", "poor", "great"), c("good", "poor", "great"))
+  cp_special <- class_pred(factor(c("good", "great")))
+  fc_special <- factor(c("good", "poor", "great"), c("good", "poor", "great"))
   res_special <- factor(c("good", "great"), levels = c("good", "poor", "great"))
   expect_equal(vec_cast(cp_special, fc_special), res_special)
-
 })
 
 test_that("casting factor to class_pred", {
@@ -166,10 +165,10 @@ test_that("casting factor to class_pred", {
 
 test_that("casting character to class_pred", {
   chr1 <- c("a", "b", "b", "c")
-  cp1  <- class_pred(factor(c("a", "b", "b", "c")))
-  cp2  <- class_pred(factor(c("a", "b", "b", "b")))
-  cp3  <- class_pred(factor(c("a", "b", "b", "c"), ordered = TRUE))
-  cp4  <- class_pred(factor(c("a", "b", "b", "c")), equivocal = "eq")
+  cp1 <- class_pred(factor(c("a", "b", "b", "c")))
+  cp2 <- class_pred(factor(c("a", "b", "b", "b")))
+  cp3 <- class_pred(factor(c("a", "b", "b", "c"), ordered = TRUE))
+  cp4 <- class_pred(factor(c("a", "b", "b", "c")), equivocal = "eq")
 
   # lossy cast, no c level in chr1
   expect_error(vec_cast(chr1, cp2), class = "vctrs_error_cast_lossy")
@@ -188,11 +187,9 @@ test_that("casting character to class_pred", {
 
   # converting to ordered class_pred maintains orderedness
   expect_true(is_ordered_class_pred(vec_cast(chr1, cp3)))
-
 })
 
 test_that("slicing", {
-
   # levels are kept
   expect_equal(levels(manual_creation_eq[1]), real_labs)
 
@@ -207,7 +204,6 @@ test_that("slicing", {
 })
 
 test_that("unknown casts are handled correctly", {
-
   # numeric -> class_pred = error
   expect_error(vec_cast(numeric(), class_pred()))
 
@@ -218,11 +214,9 @@ test_that("unknown casts are handled correctly", {
   # NULL second = x, NULL first = NULL
   expect_equal(vec_cast(NULL, class_pred()), NULL)
   expect_equal(vec_cast(class_pred(), NULL), class_pred())
-
 })
 
 test_that("ptype2 checks are handled correctly", {
-
   expect_error(vec_ptype2(manual_creation_eq, numeric()), class = "vctrs_error_incompatible_type")
   expect_equal(vec_ptype2(manual_creation_eq, vctrs::unspecified()), vec_ptype(manual_creation_eq))
 
@@ -231,7 +225,6 @@ test_that("ptype2 checks are handled correctly", {
 })
 
 test_that("combining class preds", {
-
   cp1 <- new_class_pred(c(1L, 2L, 2L), c("low", "med"))
   cp2 <- new_class_pred(c(1L, 2L, 2L), c("low", "med"), ordered = TRUE)
   cp3 <- new_class_pred(c(1L, 2L, 2L), c("low", "med"), equivocal = "eq")
@@ -247,11 +240,9 @@ test_that("combining class preds", {
   # joining with different equivocal labels uses the LHS label
   expect_equal(get_equivocal_label(c(cp1, cp3)), "[EQ]")
   expect_equal(get_equivocal_label(c(cp3, cp1)), "eq")
-
 })
 
 test_that("combining class pred with factor", {
-
   cp1 <- class_pred(factor(c("good", "poor")), which = 2)
   chr <- c("good", "great", NA)
   fc1 <- factor(chr)
@@ -286,7 +277,6 @@ test_that("combining class pred with factor", {
 })
 
 test_that("common type: factor and class_pred", {
-
   expect_s3_class(vec_ptype2(class_pred(), factor()), "class_pred")
 
   expect_equal(
@@ -332,7 +322,6 @@ test_that("common type: factor and class_pred", {
     ),
     "eq"
   )
-
 })
 
 test_that("smaller vctrs helpers", {
@@ -340,10 +329,9 @@ test_that("smaller vctrs helpers", {
 })
 
 test_that("reportable rate", {
-
   report_100 <- class_pred(factor(1))
-  report_0   <- class_pred()
-  report_50  <- class_pred(factor(c(1, 2)), 2)
+  report_0 <- class_pred()
+  report_50 <- class_pred(factor(c(1, 2)), 2)
   report_667 <- class_pred(factor(c(1, 2, 3)), 2)
 
   expect_output(cat_reportable(report_100), "Reportable: 100%")
@@ -378,7 +366,6 @@ test_that("locate equivocal helpers", {
 })
 
 test_that("class_pred printing", {
-
   expect_output(
     cat_class_pred(manual_creation_eq),
     "\\[1\\] \\[EQ\\] low  med  med  high"
@@ -398,7 +385,7 @@ test_that("class_pred printing", {
   )
 
   # long levels
-  fctrs <- paste0("blaaaaaaaaaaaaaaaaaaaaaaaaa", c(1,2,3,4))
+  fctrs <- paste0("blaaaaaaaaaaaaaaaaaaaaaaaaa", c(1, 2, 3, 4))
   cp <- class_pred(as.factor(fctrs))
 
   expect_output(
@@ -406,4 +393,3 @@ test_that("class_pred printing", {
     "4 Levels: blaaaaaaaaaaaaaaaaaaaaaaaaa1 ... blaaaaaaaaaaaaaaaaaaaaaaaaa4"
   )
 })
-

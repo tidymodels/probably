@@ -1,4 +1,3 @@
-
 # is there a forcats for this?
 recode_data <- function(obs, prob, threshold, event_level) {
   lvl <- levels(obs)

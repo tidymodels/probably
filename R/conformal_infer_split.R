@@ -38,8 +38,8 @@
 #'
 #' set.seed(2)
 #' sim_train <- sim_regression(500)
-#' sim_cal   <- sim_regression(200)
-#' sim_new   <- sim_regression(  5) %>% select(-outcome)
+#' sim_cal <- sim_regression(200)
+#' sim_new <- sim_regression(5) %>% select(-outcome)
 #'
 #' # We'll use a neural network model
 #' mlp_spec <-
@@ -86,8 +86,8 @@ int_conformal_split.workflow <- function(object, cal_data, ...) {
 print.int_conformal_split <- function(x, ...) {
   cat("Split Conformal inference\n")
 
-  cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
-  cat("model:",             .get_fit_type(x$wflow), "\n")
+  cat("preprocessor:", .get_pre_type(x$wflow), "\n")
+  cat("model:", .get_fit_type(x$wflow), "\n")
   cat("calibration set size:", format(x$n, big.mark = ","), "\n\n")
 
   cat("Use `predict(object, new_data, level)` to compute prediction intervals\n")
@@ -118,7 +118,3 @@ check_data_all <- function(.data, wflow) {
   hardhat::shrink(.data, ptypes)
   invisible(NULL)
 }
-
-
-
-
