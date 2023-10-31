@@ -57,4 +57,3 @@ test_that("Isotonic validation with `fit_resamples` - Multiclass", {
     purrr::map_int(val_with_pred$.predictions_cal, nrow)
   )
 })
-

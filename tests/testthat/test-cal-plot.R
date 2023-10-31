@@ -51,7 +51,6 @@ test_that("Binary breaks functions work with group argument", {
 })
 
 test_that("Multi-class breaks functions work", {
-
   x10 <- .cal_table_breaks(species_probs, Species, dplyr::starts_with(".pred"))
 
   expect_equal(
@@ -194,7 +193,6 @@ test_that("Binary logistic functions work", {
   expect_s3_class(multi_configs_from_df, "ggplot")
   # should be faceted by .config and class
   expect_true(inherits(multi_configs_from_df$facet, "FacetGrid"))
-
 })
 
 test_that("Binary logistic functions work with group argument", {
@@ -463,7 +461,7 @@ test_that("regression functions work", {
   )
   expect_snapshot_plot(
     "rs-scat-group-opts",
-    print(cal_plot_regression(obj), alpha = 1/5, smooth = FALSE)
+    print(cal_plot_regression(obj), alpha = 1 / 5, smooth = FALSE)
   )
   expect_snapshot_plot(
     "df-scat-lin",

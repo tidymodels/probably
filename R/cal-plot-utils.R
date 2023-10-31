@@ -70,8 +70,8 @@
     res <- res[[1]]
   }
 
-  if(method == "breaks") {
-   res <- res %>%
+  if (method == "breaks") {
+    res <- res %>%
       dplyr::select(predicted_midpoint, dplyr::everything())
   }
 
@@ -149,7 +149,7 @@
   .data <- .data %>%
     dplyr::mutate(
       .is_val = ifelse(as.integer(!!truth) == level, lev_yes, lev_no),
-      .estimate = !! estimate
+      .estimate = !!estimate
     )
 
   cuts %>%
@@ -159,7 +159,7 @@
         rf <- .data$.estimate >= .x$lower_cut & .data$.estimate <= .x$upper_cut
         ret <- .data[rf, ]
         ret <- process_midpoint(ret, conf_level = conf_level)
-        if(!is.null(ret)) {
+        if (!is.null(ret)) {
           pm <- .x$lower_cut + ((.x$upper_cut - .x$lower_cut) / 2)
           ret$predicted_midpoint <- pm
         }
@@ -169,13 +169,12 @@
 }
 
 process_midpoint <- function(.data, conf_level = 0.95) {
-
   events <- sum(.data$.is_val, na.rm = TRUE)
   total <- nrow(.data)
 
   tbl <- NULL
 
-  if(total > 0) {
+  if (total > 0) {
     suppressWarnings(
       pt <- prop.test(events, total, conf.level = conf_level)
     )
@@ -207,8 +206,10 @@ process_level <- function(x) {
     ret <- 2
   }
   if (is.null(ret)) {
-    msg <- paste0("Invalid event_level entry: ", x,
-                  ". Valid entries are 'first', 'second', or 'auto'")
+    msg <- paste0(
+      "Invalid event_level entry: ", x,
+      ". Valid entries are 'first', 'second', or 'auto'"
+    )
     rlang::abort(msg)
   }
   ret
@@ -377,4 +378,3 @@ quo_to_sym <- function(x, .data) {
   res <- names(res)
   rlang::sym(res)
 }
-

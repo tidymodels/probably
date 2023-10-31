@@ -76,7 +76,6 @@ int_conformal_full.default <- function(object, ...) {
 #' @rdname int_conformal_full
 int_conformal_full.workflow <-
   function(object, train_data, ..., control = control_conformal_full()) {
-
     rlang::check_dots_empty()
     check_workflow(object)
     check_data(train_data, object)
@@ -106,8 +105,8 @@ int_conformal_full.workflow <-
 print.int_conformal_full <- function(x, ...) {
   cat("Conformal inference\n")
 
-  cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
-  cat("model:",             .get_fit_type(x$wflow), "\n")
+  cat("preprocessor:", .get_pre_type(x$wflow), "\n")
+  cat("model:", .get_fit_type(x$wflow), "\n")
   cat("training set size:", format(nrow(x$training), big.mark = ","), "\n\n")
 
   cat("Use `predict(object, new_data, level)` to compute prediction intervals\n")
@@ -158,7 +157,7 @@ predict.int_conformal_full <- function(object, new_data, level = 0.95, ...) {
   } else {
     res <- optimize_all(new_nest$data, object$wflow, object$training, level, object$control)
   }
-  if(object$control$progress) {
+  if (object$control$progress) {
     cat("\n")
   }
   res
@@ -213,8 +212,6 @@ check_workflow <- function(x, call = rlang::caller_env()) {
 # variance prediction to make the possible range of the bounds really wide.
 
 var_model <- function(object, train_data, call = caller_env()) {
-
-
   y_name <- get_outcome_name(object)
 
   train_res <- predict(object, train_data)
@@ -229,8 +226,9 @@ var_model <- function(object, train_data, call = caller_env()) {
   var_mod <-
     try(
       mgcv::gam(sq ~ s(.pred),
-                data = train_res,
-                family = stats::Gamma(link = "log")),
+        data = train_res,
+        family = stats::Gamma(link = "log")
+      ),
       silent = TRUE
     )
 
@@ -256,7 +254,6 @@ setup_new_data <- function(object, new_data, multiplier = 10) {
   # Add a buffer
   new_pred$.bound <- multiplier * var_pred
   new_pred
-
 }
 
 # ------------------------------------------------------------------------------
@@ -301,7 +298,6 @@ trial_fit <- function(trial, trial_data, wflow, level) {
 # ------------------------------------------------------------------------------
 
 grid_all <- function(new_data, model, train_data, level, ctrl) {
-
   furrr::future_map_dfr(
     new_data,
     grid_one,
@@ -330,31 +326,34 @@ grid_one <- function(new_data, model, train_data, level, ctrl) {
     purrr::map_dfr(
       trial_vals,
       ~ trial_fit(.x,
-                  trial_data = trial_data,
-                  wflow = model,
-                  level = level)
+        trial_data = trial_data,
+        wflow = model,
+        level = level
+      )
     )
 
   compute_bound(res, pred_val)
 }
 
 compute_bound <- function(x, predicted) {
-  x <- x[stats::complete.cases(x),]
+  x <- x[stats::complete.cases(x), ]
   if (all(x$difference < 0)) {
     rlang::warn("Could not determine bounds.")
     res <-
-      dplyr::tibble(.pred_lower = NA_real_,
-                    .pred_upper = NA_real_)
+      dplyr::tibble(
+        .pred_lower = NA_real_,
+        .pred_upper = NA_real_
+      )
     return(res)
   }
 
-  upper <- x[x$trial >= predicted & x$difference >= 0,]
+  upper <- x[x$trial >= predicted & x$difference >= 0, ]
   if (nrow(upper) > 0) {
     upper <- min(upper$trial)
   } else {
     upper <- NA_real_
   }
-  lower <- x[x$trial <= predicted & x$difference >= 0,]
+  lower <- x[x$trial <= predicted & x$difference >= 0, ]
   if (nrow(lower) > 0) {
     lower <- max(lower$trial)
   } else {
@@ -397,18 +396,22 @@ optimize_one <- function(new_data, model, train_data, level, ctrl) {
   upper <-
     try(
       stats::uniroot(get_diff, c(pred_val, pred_val + bound),
-                     maxiter = ctrl$max_iter, tol = ctrl$tolerance,
-                     extendInt = "upX",
-                     trial_data, model, level),
-      silent = TRUE)
+        maxiter = ctrl$max_iter, tol = ctrl$tolerance,
+        extendInt = "upX",
+        trial_data, model, level
+      ),
+      silent = TRUE
+    )
 
   lower <-
     try(
       stats::uniroot(get_diff, c(pred_val - bound, pred_val),
-                     maxiter = ctrl$max_iter, tol = ctrl$tolerance,
-                     extendInt = "downX",
-                     trial_data, model, level),
-      silent = TRUE)
+        maxiter = ctrl$max_iter, tol = ctrl$tolerance,
+        extendInt = "downX",
+        trial_data, model, level
+      ),
+      silent = TRUE
+    )
 
   dplyr::tibble(
     .pred_lower = get_root(lower, ctrl),

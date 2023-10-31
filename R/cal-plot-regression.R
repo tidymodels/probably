@@ -22,10 +22,13 @@
 #' cal_plot_regression(boosting_predictions_oob, outcome, .pred)
 #'
 #' cal_plot_regression(boosting_predictions_oob, outcome, .pred,
-#'                     alpha = 1 / 6, cex = 3, smooth = FALSE)
+#'   alpha = 1 / 6, cex = 3, smooth = FALSE
+#' )
 #'
-#' cal_plot_regression(boosting_predictions_oob, outcome, .pred, .by = id,
-#'                     alpha = 1 / 6, cex = 3, smooth = FALSE)
+#' cal_plot_regression(boosting_predictions_oob, outcome, .pred,
+#'   .by = id,
+#'   alpha = 1 / 6, cex = 3, smooth = FALSE
+#' )
 #' @export
 cal_plot_regression <- function(.data,
                                 truth = NULL,
@@ -116,7 +119,7 @@ regression_plot_impl <- function(.data, truth, estimate, group,
     has_groups <- TRUE
     dplyr_group <- parse_expr(gp_vars)
     grouping_var <- tbl[, gp_vars][[1]]
-    if(is.numeric(grouping_var)) {
+    if (is.numeric(grouping_var)) {
       tbl[, gp_vars] <- as.factor(format(grouping_var))
     }
   } else {

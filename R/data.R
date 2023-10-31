@@ -60,5 +60,3 @@ NULL
 #' str(boosting_predictions_oob)
 #' str(boosting_predictions_test)
 NULL
-
-

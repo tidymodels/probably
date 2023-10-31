@@ -156,13 +156,11 @@ testthat_cal_sim_multi <- function() {
 testthat_cal_reg <- function() {
   ret <- .cal_env$reg_tune_results
 
-  if(is.null(ret)) {
-
+  if (is.null(ret)) {
     ret_file <- test_path("cal_files/reg_sim.rds")
 
-    if(!file.exists(ret_file)) {
-
-      if(!dir.exists(test_path("cal_files"))) {
+    if (!file.exists(ret_file)) {
+      if (!dir.exists(test_path("cal_files"))) {
         dir.create(test_path("cal_files"))
       }
 
@@ -193,7 +191,7 @@ testthat_cal_reg <- function() {
 
 testthat_cal_reg_count <- function() {
   ret <- .cal_env$reg_tune_results_count
-  if(is.null(ret)) {
+  if (is.null(ret)) {
     invisible(testthat_cal_reg())
     ret <- .cal_env$reg_tune_results_count
   }
@@ -202,7 +200,7 @@ testthat_cal_reg_count <- function() {
 
 testthat_cal_reg_sampled <- function() {
   ret <- .cal_env$resampled_reg_data
-  if(is.null(ret)) {
+  if (is.null(ret)) {
     set.seed(100)
     ret <- rsample::vfold_cv(boosting_predictions_oob)
     .cal_env$resampled_reg_data <- ret
@@ -222,13 +220,11 @@ sim_multinom_df <- function(n = 1000) {
 testthat_cal_fit_rs <- function() {
   ret <- .cal_env$resample_results
 
-  if(is.null(ret)) {
-
+  if (is.null(ret)) {
     ret_file <- test_path("cal_files/fit_rs.rds")
 
-    if(!file.exists(ret_file)) {
-
-      if(!dir.exists(test_path("cal_files"))) {
+    if (!file.exists(ret_file)) {
+      if (!dir.exists(test_path("cal_files"))) {
         dir.create(test_path("cal_files"))
       }
       suppressPackageStartupMessages(library(tune))
@@ -249,7 +245,9 @@ testthat_cal_fit_rs <- function() {
         dplyr::rename(outcome = class) %>%
         vfold_cv() %>%
         fit_resamples(mlp() %>% set_mode("classification"),
-                      outcome ~ ., resamples = ., control = ctrl)
+          outcome ~ .,
+          resamples = ., control = ctrl
+        )
       set.seed(113)
       rs_reg <-
         modeldata::sim_regression(100)[, 1:3] %>%
@@ -353,7 +351,6 @@ reg_with_configs <- function() {
 
   solubility_test %>%
     dplyr::mutate(.config = sample(letters[1:2], nrow(solubility_test), replace = TRUE))
-
 }
 
 holdout_length <- function(x) {

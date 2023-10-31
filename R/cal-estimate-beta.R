@@ -257,11 +257,12 @@ check_cal_groups <- function(group, .data, call = rlang::env_parent()) {
   }
   has_no_groups <- rlang::quo_is_null(group)
   if (has_no_groups) {
-    msg <- paste("The data have several values of '.config' but no 'groups'",
-                 "argument was passed. This will inappropriately pool the",
-                 "data.")
+    msg <- paste(
+      "The data have several values of '.config' but no 'groups'",
+      "argument was passed. This will inappropriately pool the",
+      "data."
+    )
     rlang::abort(msg, call = call)
   }
   invisible(NULL)
 }
-

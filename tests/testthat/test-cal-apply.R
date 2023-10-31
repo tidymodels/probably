@@ -2,7 +2,7 @@ test_that("Logistic apply works - data.frame", {
   sl_logistic <- cal_estimate_logistic(segment_logistic, Class, smooth = FALSE)
   ap_logistic <- cal_apply(segment_logistic, sl_logistic)
 
-  pred_good <-  ap_logistic$.pred_good
+  pred_good <- ap_logistic$.pred_good
   expect_equal(mean(pred_good), 0.3425743, tolerance = 0.000001)
   expect_equal(sd(pred_good), 0.2993934, tolerance = 0.000001)
 })
@@ -21,7 +21,7 @@ test_that("Logistic spline apply works", {
   sl_gam <- cal_estimate_logistic(segment_logistic, Class)
   ap_gam <- cal_apply(segment_logistic, sl_gam)
 
-  pred_good <-  ap_gam$.pred_good
+  pred_good <- ap_gam$.pred_good
   expect_equal(mean(pred_good), 0.3425743, tolerance = 0.000001)
   expect_equal(sd(pred_good), 0.2987027, tolerance = 0.000001)
 })
@@ -42,9 +42,9 @@ test_that("Linear apply works - data.frame", {
   sl_linear <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
   ap_linear <- cal_apply(boosting_predictions_oob, sl_linear)
 
-  pred <-  ap_linear$.pred
+  pred <- ap_linear$.pred
   expect_equal(mean(pred), 14.87123, tolerance = 0.000001)
-  expect_equal(sd(pred),   14.94483, tolerance = 0.000001)
+  expect_equal(sd(pred), 14.94483, tolerance = 0.000001)
 })
 
 test_that("Linear apply works - tune_results", {
@@ -61,9 +61,9 @@ test_that("Linear spline apply works", {
   sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome)
   ap_gam <- cal_apply(boosting_predictions_oob, sl_gam)
 
-  pred <-  ap_gam$.pred
+  pred <- ap_gam$.pred
   expect_equal(mean(pred), 14.87123, tolerance = 0.000001)
-  expect_equal(sd(pred),   15.00711, tolerance = 0.000001)
+  expect_equal(sd(pred), 15.00711, tolerance = 0.000001)
 })
 
 test_that("Linear spline apply works - tune_results", {
@@ -84,7 +84,7 @@ test_that("Isotonic apply works - data.frame", {
   sl_isotonic <- cal_estimate_isotonic(segment_logistic, Class)
   ap_isotonic <- cal_apply(segment_logistic, sl_isotonic)
 
-  pred_good <-  ap_isotonic$.pred_good
+  pred_good <- ap_isotonic$.pred_good
   expect_equal(mean(pred_good), 0.2839132, tolerance = 0.000001)
   expect_equal(sd(pred_good), 0.3079697, tolerance = 0.000001)
 })
@@ -122,7 +122,7 @@ test_that("Beta apply works - data.frame", {
   sl_beta <- cal_estimate_beta(segment_logistic, Class)
   ap_beta <- cal_apply(segment_logistic, sl_beta)
 
-  pred_good <-  ap_beta$.pred_good
+  pred_good <- ap_beta$.pred_good
   expect_equal(mean(pred_good), 0.3425743, tolerance = 0.000001)
   expect_equal(sd(pred_good), 0.294565, tolerance = 0.000001)
 })
@@ -144,7 +144,7 @@ test_that("Passing the data frame first returns expected abort message", {
 
   expect_error(
     cal_apply(sl_boot, segment_logistic)
-    )
+  )
 })
 
 test_that("Passing a tune_results without saved predictions causes error", {
@@ -157,4 +157,3 @@ test_that("Passing a calibration object as the first arg fails", {
   sl_beta <- cal_estimate_beta(segment_logistic, Class)
   expect_error(cal_apply(sl_beta, segment_logistic))
 })
-

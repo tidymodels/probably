@@ -7,7 +7,7 @@
 truth_estimate_map <- function(.data, truth, estimate, validate = FALSE) {
   truth_str <- tidyselect_cols(.data, {{ truth }})
 
-  if(is.integer(truth_str)) {
+  if (is.integer(truth_str)) {
     truth_str <- names(truth_str)
   }
 
@@ -67,5 +67,4 @@ check_level_consistency <- function(lvls, mapping) {
     rlang::abort(msg)
   }
   invisible(NULL)
-
 }

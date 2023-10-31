@@ -121,12 +121,11 @@ vec_cast.character.class_pred <- function(x, to, ...) {
 factorish_to_factor <- function(x, to, ..., x_arg = "", to_arg = "") {
   if (length(levels(to)) == 0L) {
     factor(x = as.character(x), levels = levels(x), ordered = is_ordered(to))
-  }
-  else {
+  } else {
     chr_x <- as.character(x)
     lvls <- levels(to)
 
-    lossy <- ! (chr_x %in% levels(to) | is.na(chr_x))
+    lossy <- !(chr_x %in% levels(to) | is.na(chr_x))
 
     locations <- which(lossy)
     chr_x[locations] <- NA_integer_

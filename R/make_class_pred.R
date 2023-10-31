@@ -72,8 +72,7 @@
 make_class_pred <- function(...,
                             levels,
                             ordered = FALSE,
-                            min_prob = 1/length(levels)) {
-
+                            min_prob = 1 / length(levels)) {
   dots <- rlang::quos(...)
   probs <- lapply(dots, rlang::eval_tidy)
 
@@ -124,7 +123,6 @@ make_class_pred <- function(...,
   x <- class_pred(x, eq_ind)
 
   x
-
 }
 
 # Make - two class -------------------------------------------------------------
@@ -136,15 +134,17 @@ make_two_class_pred <- function(estimate,
                                 threshold = 0.5,
                                 ordered = FALSE,
                                 buffer = NULL) {
-
-  if (length(levels) != 2 || !is.character(levels))
+  if (length(levels) != 2 || !is.character(levels)) {
     cli::cli_abort("{.arg levels} must be a character vector of length 2.")
+  }
 
-  if (!is.numeric(estimate))
+  if (!is.numeric(estimate)) {
     cli::cli_abort("The selected probability vector should be numeric.")
+  }
 
-  if (length(buffer) > 2 && is.numeric(buffer))
+  if (length(buffer) > 2 && is.numeric(buffer)) {
     cli::cli_abort("{.arg buffer} must be a numeric vector of length 1 or 2.")
+  }
 
   if (length(buffer) == 1) {
     buffer <- c(buffer, buffer)
@@ -155,18 +155,16 @@ make_two_class_pred <- function(estimate,
 
   if (is.null(buffer)) {
     eq_ind <- integer()
-  }
-  else {
+  } else {
     eq_ind <- which(
       estimate >= threshold - buffer[1] &
-      estimate <= threshold + buffer[2]
+        estimate <= threshold + buffer[2]
     )
   }
 
   x <- class_pred(x, eq_ind)
 
   x
-
 }
 
 # Append -----------------------------------------------------------------------
@@ -227,9 +225,8 @@ append_class_pred <- function(.data,
                               ...,
                               levels,
                               ordered = FALSE,
-                              min_prob = 1/length(levels),
+                              min_prob = 1 / length(levels),
                               name = ".class_pred") {
-
   if (!is.data.frame(.data) && ncol(.data) < 2) {
     cli::cli_abort(
       "{.arg .data} should be a data frame or tibble with at least 2 columns."
@@ -256,14 +253,13 @@ append_class_pred <- function(.data,
   # Using a mutate() automatically supports groups
   dplyr::mutate(
     .data,
-    !! name := make_class_pred(
+    !!name := make_class_pred(
       !!!prob_syms,
       levels = levels,
       ordered = ordered,
       min_prob = min_prob
     )
   )
-
 }
 
 # Util -------------------------------------------------------------------------

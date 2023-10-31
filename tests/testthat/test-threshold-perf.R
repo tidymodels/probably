@@ -40,7 +40,7 @@ get_res <- function(prob, obs, cut) {
     dplyr::mutate(
       .metric = "distance",
       # .estimate is spec currently
-      .estimate = (1 - sens_vec) ^ 2 + (1 - .estimate) ^ 2
+      .estimate = (1 - sens_vec)^2 + (1 - .estimate)^2
     )
 
   dplyr::bind_rows(.data_metrics, dist)
@@ -48,7 +48,7 @@ get_res <- function(prob, obs, cut) {
 
 # ----------------------------------------------------------------
 
-test_that('factor from numeric', {
+test_that("factor from numeric", {
   new_fac_1 <-
     recode_data(
       obs = ex_data$outcome,
@@ -60,7 +60,7 @@ test_that('factor from numeric', {
   expect_s3_class(new_fac_1, "factor")
   expect_true(isTRUE(all.equal(levels(new_fac_1), levels(ex_data$outcome))))
   expect_equal(unname(tab_1["Cl1"]), sum(ex_data$prob_est >= ex_data$prob_est[1]))
-  expect_equal(unname(tab_1["Cl2"]), sum(ex_data$prob_est <  ex_data$prob_est[1]))
+  expect_equal(unname(tab_1["Cl2"]), sum(ex_data$prob_est < ex_data$prob_est[1]))
 
   # missing data
   new_fac_2 <-
@@ -76,7 +76,7 @@ test_that('factor from numeric', {
   expect_true(isTRUE(all.equal(is.na(new_fac_2), is.na(ex_data_miss$prob_est))))
   expect_true(isTRUE(all.equal(levels(new_fac_2), levels(ex_data_miss$outcome))))
   expect_equal(unname(tab_2["Cl1"]), sum(cmpl_probs >= ex_data_miss$prob_est[1]))
-  expect_equal(unname(tab_2["Cl2"]), sum(cmpl_probs <  ex_data_miss$prob_est[1]))
+  expect_equal(unname(tab_2["Cl2"]), sum(cmpl_probs < ex_data_miss$prob_est[1]))
 
   new_fac_3 <-
     recode_data(
@@ -88,11 +88,11 @@ test_that('factor from numeric', {
   tab_3 <- table(new_fac_3)
   expect_s3_class(new_fac_3, "factor")
   expect_true(isTRUE(all.equal(levels(new_fac_3), levels(ex_data$outcome))))
-  expect_equal(unname(tab_3["Cl1"]), sum(ex_data$prob_est <  ex_data$prob_est[1]))
+  expect_equal(unname(tab_3["Cl1"]), sum(ex_data$prob_est < ex_data$prob_est[1]))
   expect_equal(unname(tab_3["Cl2"]), sum(ex_data$prob_est >= ex_data$prob_est[1]))
 })
 
-test_that('single group', {
+test_that("single group", {
   one_group_data <-
     ex_data %>%
     dplyr::group_by(group_2) %>%
@@ -102,7 +102,7 @@ test_that('single group', {
       thresholds = thr
     )
 
-  for(i in thr) {
+  for (i in thr) {
     one_group_data_obs <- one_group_data %>%
       dplyr::filter(group_2 == "A" & .threshold == i) %>%
       dplyr::select(-group_2, -.threshold) %>%
@@ -119,13 +119,13 @@ test_that('single group', {
   }
 })
 
-test_that('custom metrics', {
+test_that("custom metrics", {
   suppressPackageStartupMessages(require(yardstick))
   suppressPackageStartupMessages(require(dplyr))
 
-  cls_met_bad <-  metric_set(sens, spec, accuracy, roc_auc)
-  cls_met_good <-  metric_set(sens, spec, accuracy, mcc)
-  cls_met_other <-  metric_set(accuracy, mcc)
+  cls_met_bad <- metric_set(sens, spec, accuracy, roc_auc)
+  cls_met_good <- metric_set(sens, spec, accuracy, mcc)
+  cls_met_other <- metric_set(accuracy, mcc)
 
   expect_snapshot_error(
     segment_logistic %>%

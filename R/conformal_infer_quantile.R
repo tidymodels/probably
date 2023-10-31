@@ -41,8 +41,8 @@
 #'
 #' set.seed(2)
 #' sim_train <- sim_regression(500)
-#' sim_cal   <- sim_regression(200)
-#' sim_new   <- sim_regression(  5) %>% select(-outcome)
+#' sim_cal <- sim_regression(200)
+#' sim_new <- sim_regression(5) %>% select(-outcome)
 #'
 #' # We'll use a neural network model
 #' mlp_spec <-
@@ -57,7 +57,8 @@
 #' mlp_fit <- fit(mlp_wflow, data = sim_train)
 #'
 #' mlp_int <- int_conformal_quantile(mlp_fit, sim_train, sim_cal,
-#'                                         level = 0.90)
+#'   level = 0.90
+#' )
 #' mlp_int
 #'
 #' predict(mlp_int, sim_new)
@@ -71,7 +72,6 @@ int_conformal_quantile <- function(object, ...) {
 #' @rdname int_conformal_quantile
 int_conformal_quantile.workflow <-
   function(object, train_data, cal_data, level = 0.95, ...) {
-
     check_data_all(train_data, object)
     check_data_all(cal_data, object)
 
@@ -84,7 +84,7 @@ int_conformal_quantile.workflow <-
 
     # ------------------------------------------------------------------------------
 
-    R_low  <- quant_pred$.pred_lower - cal_data[[y_name]]
+    R_low <- quant_pred$.pred_lower - cal_data[[y_name]]
     R_high <- cal_data[[y_name]] - quant_pred$.pred_upper
     resid <- pmax(R_low, R_high)
 
@@ -106,8 +106,8 @@ int_conformal_quantile.workflow <-
 print.int_conformal_quantile <- function(x, ...) {
   cat("Split Conformal inference via Quantile Regression\n")
 
-  cat("preprocessor:",      .get_pre_type(x$wflow), "\n")
-  cat("model:",             .get_fit_type(x$wflow), "\n")
+  cat("preprocessor:", .get_pre_type(x$wflow), "\n")
+  cat("model:", .get_fit_type(x$wflow), "\n")
   cat("calibration set size:", format(x$n, big.mark = ","), "\n")
   cat("confidence level:", format(x$level, digits = 3), "\n\n")
 
@@ -125,7 +125,7 @@ predict.int_conformal_quantile <- function(object, new_data, ...) {
   quant_pred <- quant_predict(object$quant, new_data, object$level)
 
   alpha <- (1 - object$level)
-  q_ind <- ceiling( (1 - alpha) * (object$n + 1) )
+  q_ind <- ceiling((1 - alpha) * (object$n + 1))
   q_val <- object$resid[q_ind]
 
   quant_pred$.pred_lower <- quant_pred$.pred_lower - q_val
@@ -140,7 +140,8 @@ quant_train <- function(train_data, y_name, ...) {
     .ns = "quantregForest",
     x = quote(train_data %>% select(-dplyr::all_of(y_name))),
     y = quote(train_data[[y_name]]),
-    ...)
+    ...
+  )
   rlang::eval_tidy(cl)
 }
 
@@ -152,4 +153,3 @@ quant_predict <- function(fit, new_data, level) {
   quant_pred <- stats::setNames(quant_pred, c(".pred_lower", ".pred_upper"))
   quant_pred
 }
-
