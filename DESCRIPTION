@@ -13,8 +13,7 @@ Description: Models can be improved by post-processing class
     contains tools for conducting these operations as well as calibration
     tools and conformal inference techniques for regression models.
 License: MIT + file LICENSE
-URL: https://github.com/tidymodels/probably/,
-    https://probably.tidymodels.org
+URL: https://github.com/tidymodels/probably, https://probably.tidymodels.org
 BugReports: https://github.com/tidymodels/probably/issues
 Depends:
     R (>= 3.5.0)
