@@ -61,7 +61,7 @@ library(modeldata)
 
 set.seed(2)
 sim_train <- sim_regression(200)
-sim_new   <- sim_regression(  5) \%>\% select(-outcome)
+sim_new <- sim_regression(5) \%>\% select(-outcome)
 
 sim_rs <- vfold_cv(sim_train)
 

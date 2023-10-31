@@ -55,8 +55,8 @@ library(modeldata)
 
 set.seed(2)
 sim_train <- sim_regression(500)
-sim_cal   <- sim_regression(200)
-sim_new   <- sim_regression(  5) \%>\% select(-outcome)
+sim_cal <- sim_regression(200)
+sim_new <- sim_regression(5) \%>\% select(-outcome)
 
 # We'll use a neural network model
 mlp_spec <-
