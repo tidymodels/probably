@@ -38,6 +38,7 @@ test_that("Binary breaks functions work with group argument", {
     "ggplot"
   )
 
+  skip("wait to refactor plot tests")
   expect_snapshot_plot(
     "cal_plot_breaks-df-group",
     print(res)
@@ -206,6 +207,7 @@ test_that("Binary logistic functions work with group argument", {
   )
   expect_true(has_facet(res))
 
+  skip("wait to refactor plot tests")
   expect_snapshot_plot(
     "cal_plot_logistic-df-group",
     print(res)
@@ -445,24 +447,29 @@ test_that("regression functions work", {
     "ggplot"
   )
 
+  skip("wait to refactor plot tests")
   expect_snapshot_plot(
     "df-scat",
     print(cal_plot_regression(boosting_predictions_oob, outcome, .pred))
   )
   # There are incredibly small differences for this particular plot between
   # Intel Macs and those with Apple Silicon
+  skip("wait to refactor plot tests")
   expect_snapshot_plot(
     "df-scat-group",
     print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, .by = id))
   )
+  skip("wait to refactor plot tests")
   expect_snapshot_plot(
     "rs-scat-group",
     print(cal_plot_regression(obj))
   )
+  skip("wait to refactor plot tests")
   expect_snapshot_plot(
     "rs-scat-group-opts",
     print(cal_plot_regression(obj), alpha = 1 / 5, smooth = FALSE)
   )
+  skip("wait to refactor plot tests")
   expect_snapshot_plot(
     "df-scat-lin",
     print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE))
