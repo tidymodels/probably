@@ -45,6 +45,8 @@ test_that("Logistic validation with data frame input", {
 
   pred_rs <- collect_predictions(val_with_pred)
   expect_equal(sort(unique(pred_rs$.type)), c("calibrated"))
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(pred_rs),
     c(
@@ -270,6 +272,8 @@ test_that("Logistic validation with `fit_resamples`", {
     names(val_with_pred),
     c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
   )
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
     c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
@@ -300,6 +304,8 @@ test_that("Isotonic classification validation with `fit_resamples`", {
     names(val_with_pred),
     c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
   )
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
     c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
@@ -331,6 +337,8 @@ test_that("Bootstrapped isotonic classification validation with `fit_resamples`"
     names(val_with_pred),
     c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
   )
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
     c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
@@ -361,6 +369,8 @@ test_that("Beta calibration validation with `fit_resamples`", {
     names(val_with_pred),
     c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
   )
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
     c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
@@ -425,6 +435,8 @@ test_that("Linear validation with `fit_resamples`", {
     names(val_with_pred),
     c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
   )
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
     c(".pred", ".row", "outcome", ".config")
@@ -455,6 +467,8 @@ test_that("Linear validation with `fit_resamples`", {
 
   pred <- collect_predictions(val_obj)
   expect_equal(sort(unique(pred$.type)), c("uncalibrated"))
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(pred),
     c(".pred", ".row", "outcome", ".config", ".type")
@@ -463,6 +477,8 @@ test_that("Linear validation with `fit_resamples`", {
 
   pred_rs <- collect_predictions(val_with_pred)
   expect_equal(sort(unique(pred_rs$.type)), c("calibrated", "uncalibrated"))
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(pred_rs),
     c(".pred", ".row", "outcome", ".config", ".type")
@@ -492,6 +508,8 @@ test_that("Isotonic regression validation with `fit_resamples`", {
     names(val_with_pred),
     c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
   )
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
     c(".pred", ".row", "outcome", ".config")
@@ -526,6 +544,8 @@ test_that("Isotonic bootstrapped regression validation with `fit_resamples`", {
     names(val_with_pred),
     c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
   )
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
     c(".pred", ".row", "outcome", ".config")
