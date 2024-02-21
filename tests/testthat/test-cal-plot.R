@@ -37,7 +37,7 @@ test_that("Binary breaks functions work with group argument", {
 
   expect_equal(
     res$data[0,],
-    tibble::tibble(
+    dplyr::tibble(
       id = factor(0, levels = paste(0:1)),
       predicted_midpoint = double(), event_rate = double(), events = double(),
       total = integer(), lower = double(), upper = double()
@@ -231,7 +231,7 @@ test_that("Binary logistic functions work with group argument", {
 
   expect_equal(
     res$data[0,],
-    tibble::tibble(
+    dplyr::tibble(
       id = factor(0, levels = paste(0:1)),
       estimate = double(), prob = double(), lower = double(), upper = double()
     )
@@ -491,7 +491,7 @@ test_that("regression functions work", {
 
   expect_equal(
     res$data[0,],
-    tibble::tibble(outcome = numeric(0), .pred = numeric(0), id = character(0))
+    dplyr::tibble(outcome = numeric(0), .pred = numeric(0), id = character(0))
   )
 
   expect_equal(
@@ -518,7 +518,7 @@ test_that("regression functions work", {
 
   expect_equal(
     res$data[0,],
-    tibble::tibble(outcome = numeric(0), .pred = numeric(0), id = character(0))
+    dplyr::tibble(outcome = numeric(0), .pred = numeric(0), id = character(0))
   )
 
   expect_equal(
@@ -545,7 +545,7 @@ test_that("regression functions work", {
 
   expect_equal(
     res$data[0,],
-    tibble::tibble(.pred = numeric(0), .row = numeric(0),
+    dplyr::tibble(.pred = numeric(0), .row = numeric(0),
                    predictor_01 = integer(0), outcome = numeric(0),
                    .config = character())
   )
@@ -574,7 +574,7 @@ test_that("regression functions work", {
 
   expect_equal(
     res$data[0,],
-    tibble::tibble(.pred = numeric(0), .row = numeric(0),
+    dplyr::tibble(.pred = numeric(0), .row = numeric(0),
                    predictor_01 = integer(0), outcome = numeric(0),
                    .config = character())
   )
@@ -603,7 +603,7 @@ test_that("regression functions work", {
 
   expect_equal(
     res$data[0,],
-    tibble::tibble(outcome = numeric(0), .pred = numeric(0),
+    dplyr::tibble(outcome = numeric(0), .pred = numeric(0),
                    id = character())
   )
 
