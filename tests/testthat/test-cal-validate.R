@@ -48,7 +48,7 @@ test_that("Logistic validation with data frame input", {
   expect_equal(
     names(pred_rs),
     c(
-      "Class", ".row", ".config", ".pred_poor", ".pred_good", ".pred_class",
+      ".pred_class", ".pred_poor", ".pred_good", "Class", ".row", ".config",
       ".type"
     )
   )
@@ -272,7 +272,7 @@ test_that("Logistic validation with `fit_resamples`", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2", ".pred_class")
+    c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -302,7 +302,7 @@ test_that("Isotonic classification validation with `fit_resamples`", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2", ".pred_class")
+    c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -333,7 +333,7 @@ test_that("Bootstrapped isotonic classification validation with `fit_resamples`"
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2", ".pred_class")
+    c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -363,7 +363,7 @@ test_that("Beta calibration validation with `fit_resamples`", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred_class_1", ".pred_class_2", ".pred_class")
+    c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -393,7 +393,7 @@ test_that("Multinomial calibration validation with `fit_resamples`", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred_one", ".pred_two", ".pred_three", ".pred_class")
+    c(".pred_one", ".pred_two", ".pred_three", ".row", "outcome", ".config", ".pred_class")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -427,7 +427,7 @@ test_that("Linear validation with `fit_resamples`", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred")
+    c(".pred", ".row", "outcome", ".config")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -457,7 +457,7 @@ test_that("Linear validation with `fit_resamples`", {
   expect_equal(sort(unique(pred$.type)), c("uncalibrated"))
   expect_equal(
     names(pred),
-    c(".row", "outcome", ".config", ".pred", ".type")
+    c(".pred", ".row", "outcome", ".config", ".type")
   )
   expect_equal(nrow(pred), nrow(val_obj$splits[[1]]$data))
 
@@ -465,7 +465,7 @@ test_that("Linear validation with `fit_resamples`", {
   expect_equal(sort(unique(pred_rs$.type)), c("calibrated", "uncalibrated"))
   expect_equal(
     names(pred_rs),
-    c(".row", "outcome", ".config", ".pred", ".type")
+    c(".pred", ".row", "outcome", ".config", ".type")
   )
   expect_equal(nrow(pred_rs), nrow(val_obj$splits[[1]]$data) * 2)
 })
@@ -494,7 +494,7 @@ test_that("Isotonic regression validation with `fit_resamples`", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred")
+    c(".pred", ".row", "outcome", ".config")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -528,7 +528,7 @@ test_that("Isotonic bootstrapped regression validation with `fit_resamples`", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred")
+    c(".pred", ".row", "outcome", ".config")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),

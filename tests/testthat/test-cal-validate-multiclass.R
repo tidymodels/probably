@@ -50,7 +50,7 @@ test_that("Isotonic validation with `fit_resamples` - Multiclass", {
   )
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
-    c(".row", "outcome", ".config", ".pred_one", ".pred_two", ".pred_three", ".pred_class")
+    c(".pred_one", ".pred_two", ".pred_three", ".row", "outcome", ".config", ".pred_class")
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
