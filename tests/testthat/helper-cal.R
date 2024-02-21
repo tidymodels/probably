@@ -296,22 +296,6 @@ save_png <- function(code, width = 400, height = 400) {
   path
 }
 
-expect_snapshot_plot <- function(name, code) {
-  skip_on_os("windows")
-  skip_on_os("linux")
-  skip_on_os("solaris")
-
-  name <- paste0(name, ".png")
-
-  # Announce the file before touching `code`. This way, if `code`
-  # unexpectedly fails or skips, testthat will not auto-delete the
-  # corresponding snapshot file.
-  announce_snapshot_file(name = name)
-
-  path <- save_png(code)
-  expect_snapshot_file(path, name)
-}
-
 has_facet <- function(x) {
   inherits(x$facet, c("FacetWrap", "FacetGrid"))
 }
