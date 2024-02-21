@@ -33,16 +33,36 @@ test_that("Binary breaks functions work with group argument", {
     dplyr::mutate(id = dplyr::row_number() %% 2) %>%
     cal_plot_breaks(Class, .pred_good, .by = id)
 
-  expect_s3_class(
-    res,
-    "ggplot"
+  expect_s3_class(res, "ggplot")
+
+  expect_equal(
+    res$data[0,],
+    tibble::tibble(
+      id = factor(0, levels = paste(0:1)),
+      predicted_midpoint = double(), event_rate = double(), events = double(),
+      total = integer(), lower = double(), upper = double()
+    )
   )
 
-  skip("wait to refactor plot tests")
-  expect_snapshot_plot(
-    "cal_plot_breaks-df-group",
-    print(res)
+  expect_equal(
+    rlang::expr_text(res$mapping$x),
+    "~predicted_midpoint"
   )
+  expect_equal(
+    rlang::expr_text(res$mapping$colour),
+    "~id"
+  )
+  expect_equal(
+    rlang::expr_text(res$mapping$fill),
+    "~id"
+  )
+  expect_equal(
+    res$labels,
+    list(x = "Bin Midpoint", y = "Event Rate", colour = "id", fill = "id",
+         intercept = "intercept", slope = "slope", ymin = "lower",
+         ymax = "upper")
+  )
+  expect_equal(length(res$layers), 4)
 
   expect_snapshot_error(
     segment_logistic %>%
@@ -207,11 +227,35 @@ test_that("Binary logistic functions work with group argument", {
   )
   expect_true(has_facet(res))
 
-  skip("wait to refactor plot tests")
-  expect_snapshot_plot(
-    "cal_plot_logistic-df-group",
-    print(res)
+  expect_s3_class(res, "ggplot")
+
+  expect_equal(
+    res$data[0,],
+    tibble::tibble(
+      id = factor(0, levels = paste(0:1)),
+      estimate = double(), prob = double(), lower = double(), upper = double()
+    )
   )
+
+  expect_equal(
+    rlang::expr_text(res$mapping$x),
+    "~estimate"
+  )
+  expect_equal(
+    rlang::expr_text(res$mapping$colour),
+    "~id"
+  )
+  expect_equal(
+    rlang::expr_text(res$mapping$fill),
+    "~id"
+  )
+  expect_equal(
+    res$labels,
+    list(x = "Probability", y = "Predicted Event Rate", colour = "id",
+         fill = "id", intercept = "intercept", slope = "slope", ymin = "lower",
+         ymax = "upper")
+  )
+  expect_equal(length(res$layers), 3)
 
   expect_snapshot_error(
     segment_logistic %>%
@@ -442,38 +486,146 @@ test_that("regression functions work", {
 
   obj <- testthat_cal_reg()
 
-  expect_s3_class(
-    cal_plot_regression(boosting_predictions_oob, outcome, .pred),
-    "ggplot"
+  res <- cal_plot_regression(boosting_predictions_oob, outcome, .pred)
+  expect_s3_class(res, "ggplot")
+
+  expect_equal(
+    res$data[0,],
+    tibble::tibble(outcome = numeric(0), .pred = numeric(0), id = character(0))
   )
 
-  skip("wait to refactor plot tests")
-  expect_snapshot_plot(
-    "df-scat",
-    print(cal_plot_regression(boosting_predictions_oob, outcome, .pred))
+  expect_equal(
+    rlang::expr_text(res$mapping$x),
+    "~outcome"
   )
-  # There are incredibly small differences for this particular plot between
-  # Intel Macs and those with Apple Silicon
-  skip("wait to refactor plot tests")
-  expect_snapshot_plot(
-    "df-scat-group",
-    print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, .by = id))
+  expect_equal(
+    rlang::expr_text(res$mapping$y),
+    "~.pred"
   )
-  skip("wait to refactor plot tests")
-  expect_snapshot_plot(
-    "rs-scat-group",
-    print(cal_plot_regression(obj))
+  expect_null(res$mapping$colour)
+  expect_null(res$mapping$fill)
+
+  expect_equal(
+    res$labels,
+    list(x = "Observed", y = "Predicted", colour = "colour", fill = "fill",
+         intercept = "intercept", slope = "slope")
   )
-  skip("wait to refactor plot tests")
-  expect_snapshot_plot(
-    "rs-scat-group-opts",
-    print(cal_plot_regression(obj), alpha = 1 / 5, smooth = FALSE)
+  expect_equal(length(res$layers), 3)
+
+
+  res <- cal_plot_regression(boosting_predictions_oob, outcome, .pred, .by = id)
+  expect_s3_class(res, "ggplot")
+
+  expect_equal(
+    res$data[0,],
+    tibble::tibble(outcome = numeric(0), .pred = numeric(0), id = character(0))
   )
-  skip("wait to refactor plot tests")
-  expect_snapshot_plot(
-    "df-scat-lin",
-    print(cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE))
+
+  expect_equal(
+    rlang::expr_text(res$mapping$x),
+    "~outcome"
   )
+  expect_equal(
+    rlang::expr_text(res$mapping$y),
+    "~.pred"
+  )
+  expect_null(res$mapping$colour)
+  expect_null(res$mapping$fill)
+
+  expect_equal(
+    res$labels,
+    list(x = "Observed", y = "Predicted", colour = "colour", fill = "fill",
+         intercept = "intercept", slope = "slope")
+  )
+  expect_equal(length(res$layers), 3)
+
+
+  res <- cal_plot_regression(obj)
+  expect_s3_class(res, "ggplot")
+
+  expect_equal(
+    res$data[0,],
+    tibble::tibble(.pred = numeric(0), .row = numeric(0),
+                   predictor_01 = integer(0), outcome = numeric(0),
+                   .config = character())
+  )
+
+  expect_equal(
+    rlang::expr_text(res$mapping$x),
+    "~outcome"
+  )
+  expect_equal(
+    rlang::expr_text(res$mapping$y),
+    "~.pred"
+  )
+  expect_null(res$mapping$colour)
+  expect_null(res$mapping$fill)
+
+  expect_equal(
+    res$labels,
+    list(x = "Observed", y = "Predicted", colour = "colour", fill = "fill",
+         intercept = "intercept", slope = "slope")
+  )
+  expect_equal(length(res$layers), 3)
+
+
+  res <- print(cal_plot_regression(obj), alpha = 1 / 5, smooth = FALSE)
+  expect_s3_class(res, "ggplot")
+
+  expect_equal(
+    res$data[0,],
+    tibble::tibble(.pred = numeric(0), .row = numeric(0),
+                   predictor_01 = integer(0), outcome = numeric(0),
+                   .config = character())
+  )
+
+  expect_equal(
+    rlang::expr_text(res$mapping$x),
+    "~outcome"
+  )
+  expect_equal(
+    rlang::expr_text(res$mapping$y),
+    "~.pred"
+  )
+  expect_null(res$mapping$colour)
+  expect_null(res$mapping$fill)
+
+  expect_equal(
+    res$labels,
+    list(x = "Observed", y = "Predicted", colour = "colour", fill = "fill",
+         intercept = "intercept", slope = "slope")
+  )
+  expect_equal(length(res$layers), 3)
+
+
+  res <- cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE)
+  expect_s3_class(res, "ggplot")
+
+  expect_equal(
+    res$data[0,],
+    tibble::tibble(outcome = numeric(0), .pred = numeric(0),
+                   id = character())
+  )
+
+  expect_equal(
+    rlang::expr_text(res$mapping$x),
+    "~outcome"
+  )
+  expect_equal(
+    rlang::expr_text(res$mapping$y),
+    "~.pred"
+  )
+  expect_null(res$mapping$colour)
+  expect_null(res$mapping$fill)
+
+  expect_equal(
+    res$labels,
+    list(x = "Observed", y = "Predicted", colour = "colour", fill = "fill",
+         intercept = "intercept", slope = "slope")
+  )
+  expect_equal(length(res$layers), 3)
+
+
 })
 
 test_that("regression plot function errors - grouped_df", {
