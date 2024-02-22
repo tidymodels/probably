@@ -195,11 +195,11 @@ tidyselect_cols <- function(.data, x) {
 split_dplyr_groups <- function(.data) {
   if (dplyr::is_grouped_df(.data)) {
     grp_keys <- .data %>% dplyr::group_keys()
+    grp_keys <- purrr::map(grp_keys, as.character)
     grp_var <- .data %>% dplyr::group_vars()
-    grp_sym <- rlang::sym(grp_var)
     grp_data <- .data %>% tidyr::nest()
     grp_filters <-
-      purrr::map(grp_keys[[1]], ~ expr(!!parse_expr(grp_var) == !!.x))
+      purrr::pmap(grp_keys, create_filter_expr)
     grp_n <- purrr::map_int(grp_data$data, nrow)
     res <- vector(mode = "list", length = length(grp_filters))
     for (i in seq_along(res)) {
@@ -211,6 +211,11 @@ split_dplyr_groups <- function(.data) {
     res <- list(list(data = .data))
   }
   res
+}
+
+create_filter_expr <- function(...) {
+  purrr::imap(..., ~ expr(!!parse_expr(.y) == !!.x)) %>%
+    purrr::reduce(function(x, y) expr(!!x & !!y))
 }
 
 stop_null_parameters <- function(x) {
