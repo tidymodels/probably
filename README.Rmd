@@ -15,7 +15,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# probably
+# probably <a href="https://probably.tidymodels.org"><img src="man/figures/logo.png" align="right" height="138" alt="probably website" /></a>
 
 <!-- badges: start -->
 [![Codecov test coverage](https://codecov.io/gh/tidymodels/probably/branch/main/graph/badge.svg)](https://app.codecov.io/gh/tidymodels/probably?branch=main)
