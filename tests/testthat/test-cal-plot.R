@@ -543,6 +543,7 @@ test_that("regression functions work", {
   res <- cal_plot_regression(obj)
   expect_s3_class(res, "ggplot")
 
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     res$data[0,],
     dplyr::tibble(.pred = numeric(0), .row = numeric(0),
@@ -572,6 +573,7 @@ test_that("regression functions work", {
   res <- print(cal_plot_regression(obj), alpha = 1 / 5, smooth = FALSE)
   expect_s3_class(res, "ggplot")
 
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     res$data[0,],
     dplyr::tibble(.pred = numeric(0), .row = numeric(0),

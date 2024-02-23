@@ -187,34 +187,33 @@ tidyselect_cols <- function(.data, x) {
   )
 }
 
-
 # dplyr::group_map() does not pass the parent function's `...`, it overrides it
 # and there seems to be no way to change it. This function will split the the
 # data set by all the combination of the grouped variables. It will respect
 # any tidyeval variable calls made prior to calling the calibration
 split_dplyr_groups <- function(.data) {
   if (dplyr::is_grouped_df(.data)) {
-    .data %>%
-      dplyr::summarise(.groups = "drop") %>%
-      purrr::transpose() %>%
-      purrr::map(~ {
-        purrr::imap(.x, ~ expr(!!parse_expr(.y) == !!.x)) %>%
-          purrr::reduce(function(x, y) expr(!!x & !!y))
-      }) %>%
-      purrr::map(~ {
-        df <- .data %>%
-          dplyr::filter(, !!.x) %>%
-          dplyr::ungroup()
-
-        list(
-          data = df,
-          filter = .x,
-          rows = nrow(df)
-        )
-      })
+    grp_keys <- .data %>% dplyr::group_keys()
+    grp_keys <- purrr::map(grp_keys, as.character)
+    grp_var <- .data %>% dplyr::group_vars()
+    grp_data <- .data %>% tidyr::nest()
+    grp_filters <- purrr::map(grp_keys[[1]], ~ expr(!!parse_expr(grp_var) == !!.x))
+    grp_n <- purrr::map_int(grp_data$data, nrow)
+    res <- vector(mode = "list", length = length(grp_filters))
+    for (i in seq_along(res)) {
+      res[[i]]$data <- grp_data$data[[i]]
+      res[[i]]$filter <- grp_filters[[i]]
+      res[[i]]$rows <- grp_n[[i]]
+    }
   } else {
-    list(list(data = .data))
+    res <- list(list(data = .data))
   }
+  res
+}
+
+create_filter_expr <- function(...) {
+  purrr::imap(..., ~ expr(!!parse_expr(.y) == !!.x)) %>%
+    purrr::reduce(function(x, y) expr(!!x & !!y))
 }
 
 stop_null_parameters <- function(x) {

@@ -1,5 +1,7 @@
 # probably (development version)
 
+* Fixed a bug where the grouping for calibration methods was sensitive to the type of the grouping variables (#127).
+
 # probably 1.0.1
 
 * The conformal functions `int_conformal_infer_*()` were renamed to `int_conformal_*()`.

@@ -151,7 +151,7 @@
       Type: Binary
       Source class: Data Frame
       Data points: 1,010, split in 2 groups
-      Unique Predicted Values: 19
+      Unique Predicted Values: 59
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good

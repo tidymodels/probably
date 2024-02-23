@@ -401,6 +401,8 @@ test_that("Multinomial calibration validation with `fit_resamples`", {
     names(val_with_pred),
     c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
   )
+
+  skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     names(val_with_pred$.predictions_cal[[1]]),
     c(".pred_one", ".pred_two", ".pred_three", ".row", "outcome", ".config", ".pred_class")
