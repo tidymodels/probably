@@ -1,4 +1,4 @@
-# probably (development version)
+# probably 1.0.2
 
 * Fixed a bug where the grouping for calibration methods was sensitive to the type of the grouping variables (#127).
 
