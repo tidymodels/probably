@@ -187,7 +187,6 @@ tidyselect_cols <- function(.data, x) {
   )
 }
 
-
 # dplyr::group_map() does not pass the parent function's `...`, it overrides it
 # and there seems to be no way to change it. This function will split the the
 # data set by all the combination of the grouped variables. It will respect
@@ -198,8 +197,7 @@ split_dplyr_groups <- function(.data) {
     grp_keys <- purrr::map(grp_keys, as.character)
     grp_var <- .data %>% dplyr::group_vars()
     grp_data <- .data %>% tidyr::nest()
-    grp_filters <-
-      purrr::pmap(grp_keys, create_filter_expr)
+    grp_filters <- purrr::map(grp_keys[[1]], ~ expr(!!parse_expr(grp_var) == !!.x))
     grp_n <- purrr::map_int(grp_data$data, nrow)
     res <- vector(mode = "list", length = length(grp_filters))
     for (i in seq_along(res)) {
