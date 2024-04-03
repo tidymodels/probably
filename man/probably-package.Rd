@@ -4,8 +4,10 @@
 \name{probably-package}
 \alias{probably}
 \alias{probably-package}
-\title{probably: Tools for Post-Processing Class Probability Estimates}
+\title{probably: Tools for Post-Processing Predicted Values}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Models can be improved by post-processing class probabilities, by: recalibration, conversion to hard probabilities, assessment of equivocal zones, and other activities. 'probably' contains tools for conducting these operations as well as calibration tools and conformal inference techniques for regression models.
 }
 \seealso{
