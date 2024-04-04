@@ -37,6 +37,7 @@ reference:
   - starts_with("int_")
   - starts_with("control_conformal_")
   - starts_with("predict.int")
+  - bound_prediction
 
 - title: Data
   contents:
