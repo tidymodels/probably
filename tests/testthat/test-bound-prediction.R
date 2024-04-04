@@ -21,7 +21,7 @@ test_that("lower_limit bounds for numeric predictions", {
 
   res_1 <- bound_prediction(sol, lower_limit = -1)
   expect_true(all(res_1$.pred[res_1$.pred < -1] == -1))
-  expect_true(all(res_1$.pred[res_1$.pred >= -1] == sol$.pred[sol$.pred >= -1]))
+  expect_equal(res_1$.pred[sol$.pred >= -1], sol$.pred[sol$.pred >= -1])
 
   expect_snapshot(bound_prediction(sol, lower_limit = tune2()), error = TRUE)
   expect_snapshot(bound_prediction(as.matrix(sol), lower_limit = 1), error = TRUE)
@@ -50,7 +50,7 @@ test_that("upper_limit bounds for numeric predictions", {
 
   res_1 <- bound_prediction(sol, upper_limit = -1)
   expect_true(all(res_1$.pred[res_1$.pred > -1] == -1))
-  expect_true(all(res_1$.pred[res_1$.pred <= -1] == sol$.pred[sol$.pred <= -1]))
+  expect_equal(res_1$.pred[sol$.pred <= -1], sol$.pred[sol$.pred <= -1])
 
   expect_snapshot(bound_prediction(sol, upper_limit = tune2()), error = TRUE)
 })
