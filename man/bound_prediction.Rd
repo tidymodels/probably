@@ -8,14 +8,14 @@ bound_prediction(
   x,
   lower_limit = -Inf,
   upper_limit = Inf,
-  call = rlang::caller_env()
+  call = rlang::current_env()
 )
 }
 \arguments{
 \item{x}{A data frame that contains a numeric column named \code{.pred}.}
 
 \item{lower_limit, upper_limit}{Single numerics (or \code{NA}) that define
-constrains on \code{.pred}.}
+constraints on \code{.pred}.}
 
 \item{call}{The call to be displayed in warnings or errors.}
 }
@@ -23,7 +23,7 @@ constrains on \code{.pred}.}
 \code{x} with potentially adjusted values.
 }
 \description{
-For user-defined lower_limit and/or upper_limit bound, ensure that the values in the
+For user-defined \code{lower_limit} and/or \code{upper_limit} bound, ensure that the values in the
 \code{.pred} column are coerced to these bounds.
 }
 \examples{
