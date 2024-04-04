@@ -4,18 +4,26 @@
 \alias{bound_prediction}
 \title{Truncate a numeric prediction column}
 \usage{
-bound_prediction(x, lower = -Inf, upper = Inf)
+bound_prediction(
+  x,
+  lower_limit = -Inf,
+  upper_limit = Inf,
+  call = rlang::caller_env()
+)
 }
 \arguments{
 \item{x}{A data frame that contains a numeric column named \code{.pred}.}
 
-\item{lower, upper}{Single numerics (or \code{NA}) that define constrains on \code{.pred}.}
+\item{lower_limit, upper_limit}{Single numerics (or \code{NA}) that define
+constrains on \code{.pred}.}
+
+\item{call}{The call to be displayed in warnings or errors.}
 }
 \value{
 \code{x} with potentially adjusted values.
 }
 \description{
-For user-defined lower and/or upper bound, ensure that the values in the
+For user-defined lower_limit and/or upper_limit bound, ensure that the values in the
 \code{.pred} column are coerced to these bounds.
 }
 \examples{
@@ -23,5 +31,5 @@ data(solubility_test, package = "yardstick")
 
 names(solubility_test) <- c("solubility", ".pred")
 
-bound_prediction(solubility_test, lower = -1)
+bound_prediction(solubility_test, lower_limit = -1)
 }

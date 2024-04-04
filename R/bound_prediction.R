@@ -1,10 +1,11 @@
 #' Truncate a numeric prediction column
 #'
-#' For user-defined lower and/or upper bound, ensure that the values in the
+#' For user-defined lower_limit and/or upper_limit bound, ensure that the values in the
 #' `.pred` column are coerced to these bounds.
 #'
 #' @param x A data frame that contains a numeric column named `.pred`.
-#' @param lower,upper Single numerics (or `NA`) that define constrains on `.pred`.
+#' @param lower_limit,upper_limit Single numerics (or `NA`) that define
+#' constrains on `.pred`.
 #' @param call The call to be displayed in warnings or errors.
 #' @return `x` with potentially adjusted values.
 #' @examples
@@ -12,9 +13,9 @@
 #'
 #' names(solubility_test) <- c("solubility", ".pred")
 #'
-#' bound_prediction(solubility_test, lower = -1)
+#' bound_prediction(solubility_test, lower_limit = -1)
 #' @export
-bound_prediction <- function(x, lower = -Inf, upper = Inf,
+bound_prediction <- function(x, lower_limit = -Inf, upper_limit = Inf,
                              call = rlang::caller_env()) {
   if (!any(names(x) == ".pred")) {
     cli::cli_abort("The argument {.arg x} should have a column named {.code .pred}",
@@ -25,12 +26,12 @@ bound_prediction <- function(x, lower = -Inf, upper = Inf,
                    call = call)
   }
 
-  if (is.numeric(lower) & !is.na(lower)) {
-    x$.pred <- ifelse(x$.pred < lower, lower, x$.pred)
+  if (is.numeric(lower_limit) & !is.na(lower_limit)) {
+    x$.pred <- ifelse(x$.pred < lower_limit, lower_limit, x$.pred)
   }
 
-  if (is.numeric(upper) & !is.na(upper)) {
-    x$.pred <- ifelse(x$.pred > upper, upper, x$.pred)
+  if (is.numeric(upper_limit) & !is.na(upper_limit)) {
+    x$.pred <- ifelse(x$.pred > upper_limit, upper_limit, x$.pred)
   }
   x
 }
