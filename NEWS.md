@@ -1,6 +1,6 @@
 # probably (development version)
 
-* A new function `bound_prediction()` is available to constrain the values of a numeric prediction.
+* A new function `bound_prediction()` is available to constrain the values of a numeric prediction (#142).
 
 # probably 1.0.3
 
