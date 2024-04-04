@@ -26,11 +26,11 @@ bound_prediction <- function(x, lower_limit = -Inf, upper_limit = Inf,
                    call = call)
   }
 
-  if (is.numeric(lower_limit) & !is.na(lower_limit)) {
+  if (is.numeric(lower_limit) && !is.na(lower_limit)) {
     x$.pred <- ifelse(x$.pred < lower_limit, lower_limit, x$.pred)
   }
 
-  if (is.numeric(upper_limit) & !is.na(upper_limit)) {
+  if (is.numeric(upper_limit) && !is.na(upper_limit)) {
     x$.pred <- ifelse(x$.pred > upper_limit, upper_limit, x$.pred)
   }
   x

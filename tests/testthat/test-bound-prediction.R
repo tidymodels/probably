@@ -3,6 +3,9 @@ test_that("lower_limit bounds for numeric predictions", {
   library(dplyr)
   library(rlang)
   data("solubility_test", package = "modeldata")
+  tune2 <- function() call("tune", "test")
+
+  # ------------------------------------------------------------------------------
 
   expect_snapshot(bound_prediction(solubility_test, lower_limit = 2), error = TRUE)
   expect_snapshot(
@@ -19,6 +22,8 @@ test_that("lower_limit bounds for numeric predictions", {
   res_1 <- bound_prediction(sol, lower_limit = -1)
   expect_true(all(res_1$.pred[res_1$.pred < -1] == -1))
   expect_true(all(res_1$.pred[res_1$.pred >= -1] == res_1$.pred[res_1$.pred >= -1]))
+
+  expect_equal(bound_prediction(sol, lower_limit = tune2()), sol)
 })
 
 test_that("upper_limit bounds for numeric predictions", {
@@ -26,6 +31,9 @@ test_that("upper_limit bounds for numeric predictions", {
   library(dplyr)
   library(rlang)
   data("solubility_test", package = "modeldata")
+  tune2 <- function() call("tune", "test")
+
+  # ------------------------------------------------------------------------------
 
   expect_snapshot(bound_prediction(solubility_test, lower_limit = 2), error = TRUE)
   expect_snapshot(
@@ -42,4 +50,6 @@ test_that("upper_limit bounds for numeric predictions", {
   res_1 <- bound_prediction(sol, upper_limit = -1)
   expect_true(all(res_1$.pred[res_1$.pred > -1] == -1))
   expect_true(all(res_1$.pred[res_1$.pred <= -1] == res_1$.pred[res_1$.pred <= -1]))
+
+  expect_equal(bound_prediction(sol, upper_limit = tune2()), sol)
 })
