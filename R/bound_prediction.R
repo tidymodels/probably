@@ -17,20 +17,24 @@
 #' @export
 bound_prediction <- function(x, lower_limit = -Inf, upper_limit = Inf,
                              call = rlang::current_env()) {
+  check_data_frame(x, call = call)
+
   if (!any(names(x) == ".pred")) {
     cli::cli_abort("The argument {.arg x} should have a column named {.code .pred}.",
                    call = call)
   }
   if (!is.numeric(x$.pred)) {
-    cli::cli_abort("Column {.code .pred} should be numeric.",
-                   call = call)
+    cli::cli_abort("Column {.code .pred} should be numeric.", call = call)
   }
 
-  if (is.numeric(lower_limit) && !is.na(lower_limit)) {
+  check_number_decimal(lower_limit, allow_na = TRUE, call = call)
+  check_number_decimal(upper_limit, allow_na = TRUE, call = call)
+
+  if (!is.na(lower_limit)) {
     x$.pred <- ifelse(x$.pred < lower_limit, lower_limit, x$.pred)
   }
 
-  if (is.numeric(upper_limit) && !is.na(upper_limit)) {
+  if (!is.na(upper_limit)) {
     x$.pred <- ifelse(x$.pred > upper_limit, upper_limit, x$.pred)
   }
   x
