@@ -530,3 +530,18 @@ test_that("Test exceptions", {
     cal_estimate_isotonic(segment_logistic, Class, dplyr::starts_with("bad"))
   )
 })
+
+test_that("non-standard column names", {
+  # issue 145
+  seg <- segment_logistic %>%
+    rename_with(~ paste0(.x, "-1"), matches(".pred")) %>%
+    mutate(
+      Class = paste0(Class,"-1"),
+      Class = factor(Class),
+      .pred_class = ifelse(`.pred_poor-1` >= 0.5, "poor-1", "good-1")
+    )
+  calib <- cal_estimate_isotonic(seg, Class)
+  new_pred <- cal_apply(seg, calib, pred_class = .pred_class)
+  expect_named(new_pred, c(".pred_poor-1", ".pred_good-1", "Class", ".pred_class"))
+
+})

@@ -2,6 +2,8 @@
 
 * A new function `bound_prediction()` is available to constrain the values of a numeric prediction (#142).
 
+* Fixed a bug where non-standard names of class probability estimates resulted in an error for some calibration models (#145).
+
 # probably 1.0.3
 
 * Fixed a bug where the grouping for calibration methods was sensitive to the type of the grouping variables (#127).

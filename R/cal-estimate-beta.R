@@ -154,6 +154,9 @@ cal_beta_impl_grp <- function(.data,
                               estimate = NULL,
                               levels = NULL,
                               ...) {
+
+  list_names <- purrr::map_chr(estimate, rlang::expr_name)
+
   .data %>%
     split_dplyr_groups() %>%
     lapply(
@@ -165,8 +168,9 @@ cal_beta_impl_grp <- function(.data,
           location_params = location_params,
           estimate = estimate,
           ...
-        ) %>%
-          rlang::set_names(as.character(estimate))
+        )
+
+        names(estimate) <- list_names
 
         list(
           filter = x$filter,
