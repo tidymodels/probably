@@ -2,6 +2,8 @@
 
 * A new function `bound_prediction()` is available to constrain the values of a numeric prediction (#142).
 
+* Bug fix for `cal_plot_breaks()` with binary classification with custom probability column names (#144).
+ 
 # probably 1.0.3
 
 * Fixed a bug where the grouping for calibration methods was sensitive to the type of the grouping variables (#127).
