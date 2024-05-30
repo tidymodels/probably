@@ -2,7 +2,11 @@
 
 * A new function `bound_prediction()` is available to constrain the values of a numeric prediction (#142).
 
+<<<<<<< non-standard-names
 * Fixed a bug where non-standard names of class probability estimates resulted in an error for some calibration models (#145).
+=======
+* Fixed an error in `int_conformal_cv()` when grouped resampling was used (#141). 
+>>>>>>> main
 
 # probably 1.0.3
 

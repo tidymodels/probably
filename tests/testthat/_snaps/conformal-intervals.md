@@ -193,3 +193,7 @@
       Error in `control_conformal_full()`:
       ! `method` must be one of "iterative" or "grid", not "rock-paper-scissors".
 
+# group resampling to conformal CV intervals
+
+    The data were resampled using Group 2-fold cross-validation. This method was developed for V-fold cross-validation. Interval coverage is unknown for your resampling method.
+
