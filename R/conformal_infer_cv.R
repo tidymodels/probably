@@ -221,7 +221,7 @@ new_infer_cv <- function(models, resid) {
 
 check_resampling <- function(x) {
   rs <- attr(x, "rset_info")
-  if (rs$att$class != "vfold_cv") {
+  if (any(rs$att$class != "vfold_cv") | any(grepl("group_", rs$att$class))) {
     msg <- paste0(
       "The data were resampled using ", rs$label,
       ". This method was developed for V-fold cross-validation. Interval ",
