@@ -155,7 +155,7 @@ cal_beta_impl_grp <- function(.data,
                               levels = NULL,
                               ...) {
 
-  list_names <- purrr::map_chr(estimate, rlang::expr_name)
+  list_names <- purrr::map_chr(estimate, rlang::as_name)
 
   .data %>%
     split_dplyr_groups() %>%

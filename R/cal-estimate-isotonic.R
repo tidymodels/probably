@@ -271,7 +271,7 @@ cal_isoreg_impl <- function(.data,
 }
 
 cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
-  list_names <- purrr::map_chr(estimate, rlang::expr_name)
+  list_names <- purrr::map_chr(estimate, rlang::as_name)
 
   .data %>%
     split_dplyr_groups() %>%

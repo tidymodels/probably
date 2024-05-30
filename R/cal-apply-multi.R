@@ -25,11 +25,11 @@ apply_multi_predict <- function(object, .data) {
   preds <- object$estimates[[1]]$estimate %>%
     predict(newdata = .data, type = prob_type)
 
-  colnames(preds) <- purrr::map_chr(object$levels, rlang::expr_name)
+  colnames(preds) <- purrr::map_chr(object$levels, rlang::as_name)
   preds <- dplyr::as_tibble(preds)
 
   for (i in seq_along(object$levels)) {
-    lev <- rlang::expr_name(object$levels[[i]])
+    lev <- rlang::as_name(object$levels[[i]])
     .data[, lev] <- preds[, lev]
   }
   .data

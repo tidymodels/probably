@@ -141,7 +141,7 @@ apply_adjustment <- function(new_data, object) {
   }
 
   if (object$type == "one_vs_all") {
-    ols <- purrr::map_chr(object$levels, rlang::expr_name)
+    ols <- purrr::map_chr(object$levels, rlang::as_name)
     rs <- rowSums(new_data[, ols])
     for (i in seq_along(ols)) {
       new_data[, ols[i]] <- new_data[, ols[i]] / rs
