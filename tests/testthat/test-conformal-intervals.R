@@ -237,3 +237,38 @@ test_that("conformal control", {
   expect_snapshot(dput(control_conformal_full(max_iter = 2)))
   expect_snapshot(error = TRUE, control_conformal_full(method = "rock-paper-scissors"))
 })
+
+
+test_that("group resampling to conformal CV intervals", {
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("nnet")
+
+  make_data <- function(n, std_dev = 1 / 5) {
+    tibble(x = runif(n, min = -1)) %>%
+      mutate(
+        y = (x^3) + 2 * exp(-6 * (x - 0.3)^2),
+        y = y + rnorm(n, sd = std_dev)
+      )
+  }
+
+  n <- 100
+  set.seed(8383)
+  train_data <- make_data(n) %>%
+    mutate(color = sample(c('red', 'blue'), n(), replace = TRUE))
+
+  set.seed(484)
+  nnet_wflow <-
+    workflow(y ~ x, mlp(hidden_units = 2) %>% set_mode("regression"))
+
+  group_folds <- group_vfold_cv(train_data, group = color)
+
+  ctrl <- control_resamples(save_pred = TRUE, extract = I)
+
+  group_nnet_rs <-
+    nnet_wflow %>%
+    fit_resamples(group_folds, control = ctrl)
+
+  expect_snapshot_warning(int_conformal_cv(group_nnet_rs))
+
+})
+
