@@ -11,6 +11,8 @@ truth_estimate_map <- function(.data, truth, estimate, validate = FALSE) {
     truth_str <- names(truth_str)
   }
 
+  # Get the name(s) of the column(s) that have the predicted values. For binary
+  # data, this is a single column name.
   estimate_str <- .data %>%
     tidyselect_cols({{ estimate }}) %>%
     names()
@@ -21,6 +23,8 @@ truth_estimate_map <- function(.data, truth, estimate, validate = FALSE) {
 
   truth_levels <- levels(.data[[truth_str]])
 
+  # `est_map` maps the levels of the outcome to the corresponding column(s) in
+  # the data
   if (length(truth_levels) > 0) {
     if (all(substr(estimate_str, 1, 6) == ".pred_")) {
       est_map <- purrr::map(
@@ -33,10 +37,11 @@ truth_estimate_map <- function(.data, truth, estimate, validate = FALSE) {
         }
       )
     } else {
-      est_map <- purrr::map(
-        seq_along(truth_levels),
-        ~ sym(estimate_str[[.x]])
-      )
+      if (length(estimate_str) == 1) {
+        est_map <- list(sym(estimate_str), NULL)
+      } else {
+        est_map <- purrr::map(seq_along(truth_levels), ~ sym(estimate_str[[.x]]))
+      }
     }
     if (validate) {
       check_level_consistency(truth_levels, est_map)

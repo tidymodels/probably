@@ -673,3 +673,10 @@ test_that("don't facet if there is only one .config", {
   expect_null(res_regression$data[[".config"]])
   expect_s3_class(res_regression, "ggplot")
 })
+
+test_that("custom names for cal_plot_breaks()", {
+  data(segment_logistic)
+  segment_logistic_1 <- dplyr::rename(segment_logistic, good_prob = .pred_good)
+  p <- cal_plot_breaks(segment_logistic_1, Class, good_prob)
+  expect_s3_class(p, "ggplot")
+})
