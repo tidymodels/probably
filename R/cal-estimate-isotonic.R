@@ -271,6 +271,8 @@ cal_isoreg_impl <- function(.data,
 }
 
 cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
+  list_names <- purrr::map_chr(estimate, rlang::as_name)
+
   .data %>%
     split_dplyr_groups() %>%
     lapply(
@@ -281,8 +283,9 @@ cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
           estimate = estimate,
           sampled = sampled,
           ... = ...
-        ) %>%
-          rlang::set_names(as.character(estimate))
+        )
+
+        names(iso_model) <- list_names
 
         list(
           filter = x$filter,

@@ -192,7 +192,7 @@ cal_adjust_update <- function(.data,
       res[, pred_name] <- NULL
     }
 
-    col_names <- as.character(object$levels)
+    col_names <- purrr::map_chr(object$levels, rlang::as_name)
     factor_levels <- names(object$levels)
 
     predictions <- res[, col_names] %>%
