@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   equivocal-zones: equivocal-zones.html
   where-to-use: where-to-use.html
-last_built: 2024-06-05T15:30Z
+last_built: 2024-06-05T16:07Z
 urls:
   reference: https://probably.tidymodels.org/reference
   article: https://probably.tidymodels.org/articles
