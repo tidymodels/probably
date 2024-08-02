@@ -1,159 +1,55 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://probably.tidymodels.org/dev/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/articles/equivocal-zones.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/articles/where-to-use.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/index.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/append_class_pred.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/as_class_pred.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/boosting_predictions.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/bound_prediction.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_apply.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_binary_tables.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_beta.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_isotonic.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_isotonic_boot.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_linear.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_logistic.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_estimate_multinomial.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_plot_breaks.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_plot_logistic.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_plot_regression.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_plot_windowed.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_beta.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_isotonic.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_isotonic_boot.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_linear.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_logistic.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/cal_validate_multinomial.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/class_pred.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/collect_metrics.cal_rset.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/collect_predictions.cal_rset.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/control_conformal_full.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/int_conformal_cv.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/int_conformal_full.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/int_conformal_quantile.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/int_conformal_split.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/is_class_pred.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/levels.class_pred.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/locate-equivocal.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/make_class_pred.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/predict.int_conformal_full.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/probably-package.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/reexports.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/reportable_rate.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/required_pkgs.cal_object.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/segment_naive_bayes.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/species_probs.html</loc>
-  </url>
-  <url>
-    <loc>https://probably.tidymodels.org/dev/reference/threshold_perf.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://probably.tidymodels.org/dev/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/LICENSE-text.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/LICENSE.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/articles/equivocal-zones.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/articles/index.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/articles/where-to-use.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/authors.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/index.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/news/index.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/append_class_pred.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/as_class_pred.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/boosting_predictions.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/bound_prediction.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_apply.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_binary_tables.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_estimate_beta.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_estimate_isotonic.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_estimate_isotonic_boot.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_estimate_linear.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_estimate_logistic.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_estimate_multinomial.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_plot_breaks.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_plot_logistic.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_plot_regression.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_plot_windowed.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_validate_beta.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_validate_isotonic.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_validate_isotonic_boot.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_validate_linear.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_validate_logistic.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/cal_validate_multinomial.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/class_pred.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/collect_metrics.cal_rset.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/collect_predictions.cal_rset.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/control_conformal_full.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/index.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/int_conformal_cv.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/int_conformal_full.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/int_conformal_quantile.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/int_conformal_split.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/is_class_pred.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/levels.class_pred.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/locate-equivocal.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/make_class_pred.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/predict.int_conformal_full.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/probably-package.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/reexports.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/reportable_rate.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/required_pkgs.cal_object.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/segment_naive_bayes.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/species_probs.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/threshold_perf.html</loc></url>
 </urlset>
+
