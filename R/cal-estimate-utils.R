@@ -211,11 +211,6 @@ split_dplyr_groups <- function(.data) {
   res
 }
 
-create_filter_expr <- function(...) {
-  purrr::imap(..., ~ expr(!!parse_expr(.y) == !!.x)) %>%
-    purrr::reduce(function(x, y) expr(!!x & !!y))
-}
-
 stop_null_parameters <- function(x) {
   if (!is.null(x)) {
     rlang::abort("The `parameters` argument is only valid for `tune_results`.")
