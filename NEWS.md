@@ -8,7 +8,7 @@
 
 * Fixed an error in `int_conformal_cv()` when grouped resampling was used (#141). 
 
-* Fixed an issue where the `distance` metric appeared inconsistently when using `threshold_perf()` with custom metric sets (#149).
+* Fixed an issue where the `distance` metric appeared inconsistently when using `threshold_perf()` with custom metric sets (@jrwinget, #149).
 
 # probably 1.0.3
 
