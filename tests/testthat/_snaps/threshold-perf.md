@@ -9,13 +9,13 @@
         dplyr::count(.metric)
     Output
       # A tibble: 5 x 2
-        .metric      n
-        <chr>    <int>
-      1 accuracy    21
-      2 distance    21
-      3 mcc         21
-      4 sens        21
-      5 spec        21
+        .metric         n
+        <chr>       <int>
+      1 accuracy       21
+      2 distance       21
+      3 mcc            21
+      4 sensitivity    21
+      5 specificity    21
 
 ---
 

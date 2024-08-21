@@ -32,11 +32,11 @@ get_res <- function(prob, obs, cut) {
 
   # Create the `distance` metric data frame
   sens_vec <- .data_metrics %>%
-    dplyr::filter(.metric == "sens") %>%
+    dplyr::filter(.metric == "sensitivity") %>%
     dplyr::pull(.estimate)
 
   dist <- .data_metrics %>%
-    dplyr::filter(.metric == "spec") %>%
+    dplyr::filter(.metric == "specificity") %>%
     dplyr::mutate(
       .metric = "distance",
       # .estimate is spec currently
@@ -123,8 +123,8 @@ test_that("custom metrics", {
   suppressPackageStartupMessages(require(yardstick))
   suppressPackageStartupMessages(require(dplyr))
 
-  cls_met_bad <- metric_set(sens, spec, accuracy, roc_auc)
-  cls_met_good <- metric_set(sens, spec, accuracy, mcc)
+  cls_met_bad <- metric_set(sensitivity, specificity, accuracy, roc_auc)
+  cls_met_good <- metric_set(sensitivity, specificity, accuracy, mcc)
   cls_met_other <- metric_set(accuracy, mcc)
 
   expect_snapshot_error(

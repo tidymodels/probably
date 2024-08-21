@@ -199,11 +199,11 @@ threshold_perf.data.frame <- function(.data,
     # Create the `distance` metric data frame
     # and add it on
     sens_vec <- .data_metrics %>%
-      dplyr::filter(.metric == "sens") %>%
+      dplyr::filter(.metric == "sensitivity") %>%
       dplyr::pull(.estimate)
 
     dist <- .data_metrics %>%
-      dplyr::filter(.metric == "spec") %>%
+      dplyr::filter(.metric == "specificity") %>%
       dplyr::mutate(
         .metric = "distance",
         # .estimate is specificity currently. This recodes as distance
@@ -232,7 +232,9 @@ expand_preds <- function(.data, threshold, inc = NULL) {
 check_thresholded_metrics <- function(x) {
   y <- dplyr::as_tibble(x)
   if (!all(y$class == "class_metric")) {
-    rlang::abort("All metrics must be of type 'class_metric' (e.g. `sensitivity()`, ect)")
+    rlang::abort(
+      "All metrics must be of type 'class_metric' (e.g. `sensitivity()`, ect)"
+    )
   }
   # check to see if sensitivity and specificity are in the lists
   has_sens <-
