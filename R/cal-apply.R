@@ -118,6 +118,7 @@ cal_adjust <- function(object, .data, pred_class) {
   UseMethod("cal_adjust")
 }
 
+#' @export
 cal_adjust.cal_estimate_isotonic <- function(object, .data, pred_class) {
   apply_interval_impl(
     object = object,
@@ -126,6 +127,7 @@ cal_adjust.cal_estimate_isotonic <- function(object, .data, pred_class) {
   )
 }
 
+#' @export
 cal_adjust.cal_estimate_isotonic_boot <- function(object, .data, pred_class) {
   apply_interval_impl(
     object = object,
@@ -134,6 +136,7 @@ cal_adjust.cal_estimate_isotonic_boot <- function(object, .data, pred_class) {
   )
 }
 
+#' @export
 cal_adjust.cal_estimate_beta <- function(object,
                                          .data,
                                          pred_class = NULL,
@@ -144,6 +147,7 @@ cal_adjust.cal_estimate_beta <- function(object,
   )
 }
 
+#' @export
 cal_adjust.cal_multi <- function(object, .data, pred_class) {
   cal_apply_multi(
     object = object,
@@ -152,6 +156,7 @@ cal_adjust.cal_multi <- function(object, .data, pred_class) {
   )
 }
 
+#' @export
 cal_adjust.cal_binary <- function(object, .data, pred_class) {
   cal_apply_binary(
     object = object,
@@ -160,6 +165,7 @@ cal_adjust.cal_binary <- function(object, .data, pred_class) {
   )
 }
 
+#' @export
 cal_adjust.cal_regression <- function(object, .data, pred_class) {
   cal_apply_regression(
     object = object,
@@ -192,7 +198,7 @@ cal_adjust_update <- function(.data,
       res[, pred_name] <- NULL
     }
 
-    col_names <- purrr::map_chr(object$levels, rlang::as_name)
+    col_names <- nm_levels(object$levels)
     factor_levels <- names(object$levels)
 
     predictions <- res[, col_names] %>%

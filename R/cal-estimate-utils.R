@@ -98,18 +98,22 @@ cal_class_name <- function(x) {
   UseMethod("cal_class_name")
 }
 
+#' @export
 cal_class_name.data.frame <- function(x) {
   "Data Frame"
 }
 
+#' @export
 cal_class_name.tune_results <- function(x) {
   "Tune Results"
 }
 
+#' @export
 cal_class_name.tune_results <- function(x) {
   "Tune Results"
 }
 
+#' @export
 cal_class_name.rset <- function(x) {
   "Resampled data set"
 }

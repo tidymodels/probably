@@ -4,6 +4,7 @@ cal_apply_regression <- function(object, .data, pred_class) {
   UseMethod("cal_apply_regression")
 }
 
+#' @export
 cal_apply_regression.cal_estimate_linear_spline <-
   function(object, .data, pred_class = NULL, ...) {
     apply_reg_predict(
@@ -12,6 +13,7 @@ cal_apply_regression.cal_estimate_linear_spline <-
     )
   }
 
+#' @export
 cal_apply_regression.cal_estimate_linear <-
   cal_apply_regression.cal_estimate_linear_spline
 
