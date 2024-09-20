@@ -41,8 +41,8 @@ apply_model_predict <- function(object, .data) {
           preds <- predict(.x$estimate, newdata = new_data, type = "response")
           preds <- 1 - preds
           lvls <- nm_levels(object$levels)
-          new_data[ lvls[1] ] <- preds
-          new_data[ lvls[2] ] <- 1 - preds
+          new_data[lvls[1]] <- preds
+          new_data[lvls[2]] <- 1 - preds
           new_data
         }
       ) %>%

@@ -31,7 +31,7 @@ apply_multi_predict <- function(object, .data) {
   preds <- dplyr::as_tibble(preds)
 
   for (i in seq_along(lvls)) {
-    .data[, lvls[i] ] <- preds[, lvls[i] ]
+    .data[, lvls[i]] <- preds[, lvls[i]]
   }
   .data
 }
