@@ -137,7 +137,8 @@ apply_beta_single <- function(model, df, est_name) {
 
 apply_adjustment <- function(new_data, object) {
   if (object$type == "binary") {
-    new_data[, object$levels[[2]]] <- 1 - new_data[, object$levels[[1]]]
+    lvls <- nm_levels(object$levels)
+    new_data[, lvls[[2]]] <- 1 - new_data[, lvls[[1]]]
   }
 
   if (object$type == "one_vs_all") {

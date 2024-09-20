@@ -73,3 +73,7 @@ check_level_consistency <- function(lvls, mapping) {
   }
   invisible(NULL)
 }
+
+nm_levels <- function(x) {
+  purrr::map_chr(x, ~ rlang::as_name(.x))
+}

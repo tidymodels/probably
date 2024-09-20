@@ -37,6 +37,17 @@ test_that("Logistic estimates work - data.frame", {
     bin_with_configs() %>%
     cal_estimate_logistic(truth = Class, smooth = FALSE)
   expect_true(are_groups_configs(lgst_configs))
+
+  # ------------------------------------------------------------------------------
+
+  data(two_class_example, package = "modeldata")
+  two_cls_plist <- two_class_example[0,]
+  two_cls_mod <-
+    cal_estimate_logistic(two_class_example, truth = truth, estimate = c(Class1, Class2))
+
+  two_cls_res <- cal_apply(two_class_example, two_cls_mod, pred_class = predicted)
+  expect_equal(two_cls_res[0,], two_cls_plist)
+
 })
 
 test_that("Logistic estimates work - tune_results", {
@@ -532,6 +543,7 @@ test_that("Test exceptions", {
 })
 
 test_that("non-standard column names", {
+  library(dplyr)
   # issue 145
   seg <- segment_logistic %>%
     rename_with(~ paste0(.x, "-1"), matches(".pred")) %>%
