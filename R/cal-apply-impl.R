@@ -23,7 +23,7 @@ apply_interval_column <- function(.data, est_filter, estimates) {
   }
 
   ret <- estimates %>%
-    purrr::transpose() %>%
+    purrr::list_transpose(simplify = FALSE) %>%
     purrr::imap(~ {
       apply_interval_estimate(
         estimate = .x,

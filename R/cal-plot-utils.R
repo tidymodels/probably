@@ -153,7 +153,7 @@
     )
 
   cuts %>%
-    purrr::transpose() %>%
+    purrr::list_transpose(simplify = FALSE) %>%
     purrr::map_df(
       ~ {
         rf <- .data$.estimate >= .x$lower_cut & .data$.estimate <= .x$upper_cut
