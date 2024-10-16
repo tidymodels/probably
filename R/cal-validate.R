@@ -297,10 +297,11 @@ cal_validate_isotonic_boot.tune_results <- function(.data,
 #'
 #' library(dplyr)
 #'
-#' segment_logistic %>%
-#'   rsample::vfold_cv() %>%
-#'   cal_validate_beta(Class)
-#'
+#' if (rlang::is_installed("betacal")) {
+#'   segment_logistic %>%
+#'     rsample::vfold_cv() %>%
+#'     cal_validate_beta(Class)
+#' }
 #' @export
 cal_validate_beta <- function(.data,
                               truth = NULL,

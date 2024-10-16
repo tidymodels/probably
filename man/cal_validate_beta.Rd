@@ -104,10 +104,11 @@ average of the metrics before, and after the calibration.
 
 library(dplyr)
 
-segment_logistic \%>\%
-  rsample::vfold_cv() \%>\%
-  cal_validate_beta(Class)
-
+if (rlang::is_installed("betacal")) {
+  segment_logistic \%>\%
+    rsample::vfold_cv() \%>\%
+    cal_validate_beta(Class)
+}
 }
 \seealso{
 \url{https://www.tidymodels.org/learn/models/calibration/},
