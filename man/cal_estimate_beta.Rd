@@ -95,9 +95,11 @@ one. This final step might compromise the calibration.
 }
 
 \examples{
-# It will automatically identify the probability columns
-# if passed a model fitted with tidymodels
-cal_estimate_beta(segment_logistic, Class)
+if (rlang::is_installed("betacal")) {
+ # It will automatically identify the probability columns
+  # if passed a model fitted with tidymodels
+  cal_estimate_beta(segment_logistic, Class)
+}
 }
 \references{
 Meelis Kull, Telmo M. Silva Filho, Peter Flach "Beyond sigmoids:

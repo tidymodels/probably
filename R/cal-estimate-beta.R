@@ -15,9 +15,11 @@
 #' \url{https://www.tidymodels.org/learn/models/calibration/},
 #' [cal_validate_beta()]
 #' @examples
-#' # It will automatically identify the probability columns
-#' # if passed a model fitted with tidymodels
-#' cal_estimate_beta(segment_logistic, Class)
+#' if (rlang::is_installed("betacal")) {
+#'  # It will automatically identify the probability columns
+#'   # if passed a model fitted with tidymodels
+#'   cal_estimate_beta(segment_logistic, Class)
+#' }
 #' @export
 cal_estimate_beta <- function(.data,
                               truth = NULL,
