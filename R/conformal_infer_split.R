@@ -28,7 +28,7 @@
 #' @references
 #' Lei, Jing, et al. "Distribution-free predictive inference for regression."
 #' _Journal of the American Statistical Association_ 113.523 (2018): 1094-1111.
-#' @examplesIf !probably:::is_cran_check()
+#' @examplesIf !probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip", "nnet"))
 #' library(workflows)
 #' library(dplyr)
 #' library(parsnip)

@@ -51,7 +51,7 @@ stop the computations for other types of resamples, but we have no way of
 knowing whether the results are appropriate.
 }
 \examples{
-\dontshow{if (!probably:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (!probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(workflows)
 library(dplyr)
 library(parsnip)

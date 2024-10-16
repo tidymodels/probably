@@ -33,7 +33,7 @@
 #' Rina Foygel Barber, Emmanuel J. Candès, Aaditya Ramdas, Ryan J. Tibshirani
 #' "Predictive inference with the jackknife+," _The Annals of Statistics_,
 #' 49(1), 486-507, 2021
-#' @examplesIf !probably:::is_cran_check()
+#' @examplesIf !probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip"))
 #' library(workflows)
 #' library(dplyr)
 #' library(parsnip)
