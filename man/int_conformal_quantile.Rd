@@ -46,7 +46,7 @@ Note that the because of the method used to construct the interval, it is
 possible that the prediction intervals will not include the predicted value.
 }
 \examples{
-\dontshow{if (!probably:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (!probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip", "quantregForest"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 library(workflows)
 library(dplyr)
 library(parsnip)

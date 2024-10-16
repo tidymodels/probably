@@ -31,7 +31,7 @@
 #' @references
 #' Romano, Yaniv, Evan Patterson, and Emmanuel Candes. "Conformalized quantile
 #' regression." _Advances in neural information processing systems_ 32 (2019).
-#' @examplesIf !probably:::is_cran_check()
+#' @examplesIf !probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip", "quantregForest"))
 #' library(workflows)
 #' library(dplyr)
 #' library(parsnip)

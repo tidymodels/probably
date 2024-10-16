@@ -1,4 +1,6 @@
 test_that("Logistic validation with data frame input", {
+  skip_if_not_installed("rsample")
+
   df <- testthat_cal_sampled()
   val_obj <- cal_validate_logistic(df, Class)
   val_with_pred <- cal_validate_logistic(df, Class, save_pred = TRUE, smooth = TRUE)
@@ -59,6 +61,9 @@ test_that("Logistic validation with data frame input", {
 
 
 test_that("Beta validation with data frame input", {
+  skip_if_not_installed("betacal")
+  skip_if_not_installed("rsample")
+
   df <- testthat_cal_sampled()
   val_obj <- cal_validate_beta(df, Class)
   val_with_pred <- cal_validate_beta(df, Class, save_pred = TRUE)
@@ -87,6 +92,8 @@ test_that("Beta validation with data frame input", {
 
 
 test_that("Isotonic validation classification with data frame input", {
+  skip_if_not_installed("rsample")
+
   df <- testthat_cal_sampled()
   val_obj <- cal_validate_isotonic(df, Class)
   val_with_pred <- cal_validate_isotonic(df, Class, save_pred = TRUE)
@@ -114,6 +121,8 @@ test_that("Isotonic validation classification with data frame input", {
 })
 
 test_that("Bootstrapped Isotonic classification validation with data frame input", {
+  skip_if_not_installed("rsample")
+
   df <- testthat_cal_sampled()
   val_obj <- cal_validate_isotonic_boot(df, Class)
   val_with_pred <- cal_validate_isotonic_boot(df, Class, save_pred = TRUE)
@@ -141,6 +150,9 @@ test_that("Bootstrapped Isotonic classification validation with data frame input
 })
 
 test_that("Multinomial classification validation with data frame input", {
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("nnet")
+
   df <- rsample::vfold_cv(testthat_cal_sim_multi())
   val_obj <- cal_validate_multinomial(df, class)
   val_with_pred <- cal_validate_multinomial(df, class, save_pred = TRUE, smooth = TRUE)
@@ -350,6 +362,7 @@ test_that("Bootstrapped isotonic classification validation with `fit_resamples`"
 })
 
 test_that("Beta calibration validation with `fit_resamples`", {
+  skip_if_not_installed("betacal")
   res <- testthat_cal_fit_rs()
   val_obj <- cal_validate_beta(res$binary)
   val_with_pred <- cal_validate_beta(res$binary, save_pred = TRUE)
@@ -382,6 +395,9 @@ test_that("Beta calibration validation with `fit_resamples`", {
 })
 
 test_that("Multinomial calibration validation with `fit_resamples`", {
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("nnet")
+
   res <- testthat_cal_fit_rs()
   val_obj <- cal_validate_multinomial(res$multin)
   val_with_pred <- cal_validate_multinomial(res$multin, save_pred = TRUE, smooth = TRUE)
@@ -564,6 +580,10 @@ test_that("Isotonic bootstrapped regression validation with `fit_resamples`", {
 
 
 test_that("validation functions error with tune_results input", {
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("nnet")
+  skip_if_not_installed("beta")
+
   expect_snapshot_error(
     cal_validate_beta(testthat_cal_binary())
   )

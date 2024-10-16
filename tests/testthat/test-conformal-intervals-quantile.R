@@ -1,6 +1,7 @@
 test_that("split conformal quantile intervals", {
   skip_if_not_installed("modeldata")
   skip_if_not_installed("nnet")
+  skip_if_not_installed("quantregForest")
 
   # ----------------------------------------------------------------------------
 
