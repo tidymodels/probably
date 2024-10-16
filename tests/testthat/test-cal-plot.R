@@ -279,6 +279,8 @@ test_that("logistic plot function errors - grouped_df", {
 })
 
 test_that("Binary windowed functions work", {
+  skip_if_not_installed("modeldata")
+
   x30 <- .cal_table_windowed(
     segment_logistic,
     truth = Class,

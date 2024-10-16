@@ -213,7 +213,7 @@
       Type: Regression
       Source class: Data Frame
       Data points: 2,000
-      Unique Predicted Values: 43
+      Unique Predicted Values: 40
       Truth variable: `outcome`
       Estimate variables:
       `.pred` ==> predictions
@@ -229,7 +229,7 @@
       Type: Regression
       Source class: Data Frame
       Data points: 2,000, split in 10 groups
-      Unique Predicted Values: 11
+      Unique Predicted Values: 16
       Truth variable: `outcome`
       Estimate variables:
       `.pred` ==> predictions
@@ -373,7 +373,7 @@
 ---
 
     Code
-      print(mtnl_isotonic)
+      print(mtnl_beta)
     Message
       
       -- Probability Calibration 
