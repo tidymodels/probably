@@ -166,9 +166,11 @@ calibration," <em>Electronic Journal of Statistics</em> 11(2), 5052-5080, (2017)
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># It will automatically identify the probability columns</span></span></span>
-<span class="r-in"><span><span class="co"># if passed a model fitted with tidymodels</span></span></span>
-<span class="r-in"><span><span class="fu">cal_estimate_beta</span><span class="op">(</span><span class="va">segment_logistic</span>, <span class="va">Class</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">rlang</span><span class="fu">::</span><span class="fu"><a href="https://rlang.r-lib.org/reference/is_installed.html" class="external-link">is_installed</a></span><span class="op">(</span><span class="st">"betacal"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span> <span class="co"># It will automatically identify the probability columns</span></span></span>
+<span class="r-in"><span>  <span class="co"># if passed a model fitted with tidymodels</span></span></span>
+<span class="r-in"><span>  <span class="fu">cal_estimate_beta</span><span class="op">(</span><span class="va">segment_logistic</span>, <span class="va">Class</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── Probability Calibration </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Method: <span style="color: #008700;">Beta calibration</span></span>
