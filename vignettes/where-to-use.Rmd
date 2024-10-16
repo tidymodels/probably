@@ -12,7 +12,15 @@ editor_options:
 ---
 
 ```{r setup, include = FALSE}
+# For "no suggests" CRAN check
+if (rlang::is_installed(c("modeldata", "rsample"))) {
+  run <- TRUE
+} else {
+  run <- FALSE
+}
+
 knitr::opts_chunk$set(
+  eval = run,
   collapse = TRUE,
   comment = "#>",
   fig.width = 7,
