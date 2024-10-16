@@ -51,6 +51,8 @@ test_that("Logistic estimates work - data.frame", {
 })
 
 test_that("Logistic estimates work - tune_results", {
+  skip_if_not_installed("modeldata")
+
   tl_logistic <- cal_estimate_logistic(testthat_cal_binary(), smooth = FALSE)
   expect_cal_type(tl_logistic, "binary")
   expect_cal_method(tl_logistic, "Logistic regression")
@@ -101,6 +103,8 @@ test_that("Logistic spline estimates work - data.frame", {
 })
 
 test_that("Logistic spline estimates work - tune_results", {
+  skip_if_not_installed("modeldata")
+
   tl_gam <- cal_estimate_logistic(testthat_cal_binary())
   expect_cal_type(tl_gam, "binary")
   expect_cal_method(tl_gam, "Generalized additive model")
@@ -154,6 +158,8 @@ test_that("Isotonic estimates work - data.frame", {
 })
 
 test_that("Isotonic estimates work - tune_results", {
+  skip_if_not_installed("modeldata")
+
   set.seed(100)
   tl_isotonic <- cal_estimate_isotonic(testthat_cal_binary())
   expect_cal_type(tl_isotonic, "binary")
@@ -250,6 +256,8 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
 })
 
 test_that("Isotonic Bootstrapped estimates work - tune_results", {
+  skip_if_not_installed("modeldata")
+
   set.seed(100)
   tl_isotonic <- cal_estimate_isotonic_boot(testthat_cal_binary())
   expect_cal_type(tl_isotonic, "binary")
@@ -286,6 +294,7 @@ test_that("Isotonic Bootstrapped estimates errors - grouped_df", {
 
 # ----------------------------------- Beta -------------------------------------
 test_that("Beta estimates work - data.frame", {
+  skip_if_not_installed("betacal")
   sl_beta <- cal_estimate_beta(segment_logistic, Class, smooth = FALSE)
   expect_cal_type(sl_beta, "binary")
   expect_cal_method(sl_beta, "Beta calibration")
@@ -319,6 +328,9 @@ test_that("Beta estimates work - data.frame", {
 })
 
 test_that("Beta estimates work - tune_results", {
+  skip_if_not_installed("betacal")
+  skip_if_not_installed("modeldata")
+
   tl_beta <- cal_estimate_beta(testthat_cal_binary())
   expect_cal_type(tl_beta, "binary")
   expect_cal_method(tl_beta, "Beta calibration")
@@ -335,20 +347,21 @@ test_that("Beta estimates work - tune_results", {
 
   set.seed(100)
   suppressWarnings(
-    mtnl_isotonic <- cal_estimate_beta(testthat_cal_multiclass())
+    mtnl_beta <- cal_estimate_beta(testthat_cal_multiclass())
   )
-  expect_cal_type(mtnl_isotonic, "one_vs_all")
-  expect_cal_method(mtnl_isotonic, "Beta calibration")
-  expect_snapshot(print(mtnl_isotonic))
-  expect_true(are_groups_configs(mtnl_isotonic))
+  expect_cal_type(mtnl_beta, "one_vs_all")
+  expect_cal_method(mtnl_beta, "Beta calibration")
+  expect_snapshot(print(mtnl_beta))
+  expect_true(are_groups_configs(mtnl_beta))
 
   expect_equal(
     testthat_cal_multiclass_count(),
-    nrow(cal_apply(testthat_cal_multiclass(), mtnl_isotonic))
+    nrow(cal_apply(testthat_cal_multiclass(), mtnl_beta))
   )
 })
 
 test_that("Beta estimates errors - grouped_df", {
+  skip_if_not_installed("betacal")
   expect_snapshot_error(
     cal_estimate_beta(dplyr::group_by(mtcars, vs))
   )
@@ -356,6 +369,9 @@ test_that("Beta estimates errors - grouped_df", {
 
 # ------------------------------ Multinomial -----------------------------------
 test_that("Multinomial estimates work - data.frame", {
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("nnet")
+
   sp_multi <- cal_estimate_multinomial(species_probs, Species, smooth = FALSE)
   expect_cal_type(sp_multi, "multiclass")
   expect_cal_method(sp_multi, "Multinomial regression")
@@ -390,6 +406,9 @@ test_that("Multinomial estimates work - data.frame", {
 })
 
 test_that("Multinomial estimates work - tune_results", {
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("nnet")
+
   tl_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = FALSE)
   expect_cal_type(tl_multi, "multiclass")
   expect_cal_method(tl_multi, "Multinomial regression")
@@ -421,6 +440,9 @@ test_that("Multinomial estimates work - tune_results", {
 })
 
 test_that("Multinomial estimates errors - grouped_df", {
+  skip_if_not_installed("modeldata")
+  skip_if_not_installed("nnet")
+
   expect_snapshot_error(
     cal_estimate_multinomial(dplyr::group_by(mtcars, vs))
   )

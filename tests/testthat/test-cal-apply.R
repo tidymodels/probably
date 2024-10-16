@@ -8,6 +8,8 @@ test_that("Logistic apply works - data.frame", {
 })
 
 test_that("Logistic apply works - tune_results", {
+  skip_if_not_installed("modeldata")
+
   tct <- testthat_cal_binary()
   tl_logistic <- cal_estimate_logistic(tct, smooth = FALSE)
   tap_logistic <- cal_apply(tct, tl_logistic)
@@ -27,6 +29,8 @@ test_that("Logistic spline apply works", {
 })
 
 test_that("Logistic spline apply works - tune_results", {
+  skip_if_not_installed("modeldata")
+
   tct <- testthat_cal_binary()
   tl_gam <- cal_estimate_logistic(tct)
   tap_gam <- cal_apply(tct, tl_gam)
@@ -90,6 +94,8 @@ test_that("Isotonic apply works - data.frame", {
 })
 
 test_that("Isotonic apply works - tune_results", {
+  skip_if_not_installed("modeldata")
+
   tct <- testthat_cal_binary()
   tl_isotonic <- cal_estimate_isotonic(tct)
   tap_isotonic <- cal_apply(tct, tl_isotonic)
@@ -107,6 +113,8 @@ test_that("Isotonic Bootstrapped apply works - data.frame", {
 })
 
 test_that("Isotonic Bootstrapped apply works - tune_results", {
+  skip_if_not_installed("modeldata")
+
   tct <- testthat_cal_binary()
   tl_boot <- cal_estimate_isotonic_boot(tct)
   tap_boot <- cal_apply(tct, tl_boot)
@@ -119,6 +127,7 @@ test_that("Isotonic Bootstrapped apply works - tune_results", {
 # ------------------------------------------------------------------------------
 
 test_that("Beta apply works - data.frame", {
+  skip_if_not_installed("betacal")
   sl_beta <- cal_estimate_beta(segment_logistic, Class)
   ap_beta <- cal_apply(segment_logistic, sl_beta)
 
@@ -128,6 +137,9 @@ test_that("Beta apply works - data.frame", {
 })
 
 test_that("Beta apply works - tune_results", {
+  skip_if_not_installed("betacal")
+  skip_if_not_installed("modeldata")
+
   tct <- testthat_cal_binary()
   tl_beta <- cal_estimate_beta(tct)
   tap_beta <- cal_apply(tct, tl_beta)
@@ -148,12 +160,16 @@ test_that("Passing the data frame first returns expected abort message", {
 })
 
 test_that("Passing a tune_results without saved predictions causes error", {
+  skip_if_not_installed("betacal")
+  skip_if_not_installed("modeldata")
+
   tct <- testthat_cal_binary()
   tl_beta <- cal_estimate_beta(tct)
   expect_error(cal_apply(tune::ames_grid_search, tl_beta))
 })
 
 test_that("Passing a calibration object as the first arg fails", {
+  skip_if_not_installed("betacal")
   sl_beta <- cal_estimate_beta(segment_logistic, Class)
   expect_error(cal_apply(sl_beta, segment_logistic))
 })

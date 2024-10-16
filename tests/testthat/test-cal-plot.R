@@ -72,6 +72,8 @@ test_that("Binary breaks functions work with group argument", {
 })
 
 test_that("Multi-class breaks functions work", {
+  skip_if_not_installed("modeldata")
+
   x10 <- .cal_table_breaks(species_probs, Species, dplyr::starts_with(".pred"))
 
   expect_equal(
@@ -123,6 +125,8 @@ test_that("breaks plot function errors - grouped_df", {
 })
 
 test_that("Binary logistic functions work", {
+  skip_if_not_installed("modeldata")
+
   x20 <- .cal_table_logistic(segment_logistic, Class, .pred_good)
 
   model20 <- mgcv::gam(Class ~ s(.pred_good, k = 10),
