@@ -17,6 +17,8 @@ if (rlang::is_installed(c("modeldata", "rsample"))) {
   run <- TRUE
 } else {
   run <- FALSE
+  # For in-line code
+  correct_bad <- max_j_index_threshold <- NA
 }
 
 knitr::opts_chunk$set(
