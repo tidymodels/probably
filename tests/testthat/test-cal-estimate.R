@@ -515,6 +515,8 @@ test_that("Linear estimates errors - grouped_df", {
 
 # ----------------------------- Linear Spline --------------------------------
 test_that("Linear spline estimates work - data.frame", {
+  skip_if_not_installed("modeldata")
+
   sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome)
   expect_cal_type(sl_gam, "regression")
   expect_cal_method(sl_gam, "Generalized additive model")
@@ -561,6 +563,8 @@ test_that("Linear spline estimates work - tune_results", {
 
 # ----------------------------------- Other ------------------------------------
 test_that("Non-default names used for estimate columns", {
+  skip_if_not_installed("modeldata")
+
   new_segment <- segment_logistic
   colnames(new_segment) <- c("poor", "good", "Class")
 
