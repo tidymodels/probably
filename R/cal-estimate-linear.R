@@ -65,25 +65,31 @@
 #' These methods estimate the relationship in the unmodified predicted values
 #' and then remove that trend when [cal_apply()] is invoked.
 #' @export
-cal_estimate_linear <- function(.data,
-                                truth = NULL,
-                                estimate = dplyr::matches("^.pred$"),
-                                smooth = TRUE,
-                                parameters = NULL,
-                                ...,
-                                .by = NULL) {
+cal_estimate_linear <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::matches("^.pred$"),
+  smooth = TRUE,
+  residual_analysis = FALSE,
+  parameters = NULL,
+  ...,
+  .by = NULL
+) {
   UseMethod("cal_estimate_linear")
 }
 
 #' @export
 #' @rdname cal_estimate_linear
-cal_estimate_linear.data.frame <- function(.data,
-                                           truth = NULL,
-                                           estimate = dplyr::matches("^.pred$"),
-                                           smooth = TRUE,
-                                           parameters = NULL,
-                                           ...,
-                                           .by = NULL) {
+cal_estimate_linear.data.frame <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::matches("^.pred$"),
+  smooth = TRUE,
+  residual_analysis = FALSE,
+  parameters = NULL,
+  ...,
+  .by = NULL
+) {
   stop_null_parameters(parameters)
 
   group <- get_group_argument({{ .by }}, .data)
@@ -94,6 +100,7 @@ cal_estimate_linear.data.frame <- function(.data,
     truth = {{ truth }},
     estimate = {{ estimate }},
     smooth = smooth,
+    residual_analysis = residual_analysis,
     source_class = cal_class_name(.data),
     ...
   )
@@ -101,12 +108,15 @@ cal_estimate_linear.data.frame <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_linear
-cal_estimate_linear.tune_results <- function(.data,
-                                             truth = NULL,
-                                             estimate = dplyr::matches("^.pred$"),
-                                             smooth = TRUE,
-                                             parameters = NULL,
-                                             ...) {
+cal_estimate_linear.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::matches("^.pred$"),
+  smooth = TRUE,
+  residual_analysis = FALSE,
+  parameters = NULL,
+  ...
+) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -122,6 +132,7 @@ cal_estimate_linear.tune_results <- function(.data,
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
       smooth = smooth,
+      residual_analysis = residual_analysis,
       source_class = cal_class_name(.data),
       ...
     )
@@ -129,12 +140,15 @@ cal_estimate_linear.tune_results <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_linear
-cal_estimate_linear.grouped_df <- function(.data,
-                                           truth = NULL,
-                                           estimate = NULL,
-                                           smooth = TRUE,
-                                           parameters = NULL,
-                                           ...) {
+cal_estimate_linear.grouped_df <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  residual_analysis = FALSE,
+  parameters = NULL,
+  ...
+) {
   abort_if_grouped_df()
 }
 
@@ -145,23 +159,37 @@ required_pkgs.cal_estimate_linear_spline <- function(x, ...) {
   c("mgcv", "probably")
 }
 
-
 #--------------------------- Implementation ------------------------------------
-cal_linear_impl <- function(.data,
-                            truth = NULL,
-                            estimate = dplyr::starts_with(".pred"),
-                            type,
-                            smooth,
-                            source_class = NULL,
-                            ...) {
-  if (smooth) {
-    model <- "linear_spline"
-    method <- "Generalized additive model"
-    additional_class <- "cal_estimate_linear_spline"
+cal_linear_impl <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  type,
+  smooth,
+  residual_analysis,
+  source_class = NULL,
+  ...
+) {
+  if (residual_analysis) {
+    if (smooth) {
+      model <- "linear_spline"
+      method <- "Generalized additive model"
+      additional_class <- c("cal_estimate_linear_spline", "residual_adjustment")
+    } else {
+      model <- "glm"
+      method <- "Linear"
+      additional_class <- c("cal_estimate_linear", "residual_adjustment")
+    }
   } else {
-    model <- "glm"
-    method <- "Linear"
-    additional_class <- "cal_estimate_linear"
+    if (smooth) {
+      model <- "linear_spline"
+      method <- "Generalized additive model"
+      additional_class <- "cal_estimate_linear_spline"
+    } else {
+      model <- "glm"
+      method <- "Linear"
+      additional_class <- "cal_estimate_linear"
+    }
   }
 
   truth <- enquo(truth)
@@ -180,6 +208,7 @@ cal_linear_impl <- function(.data,
       truth = !!truth,
       estimate = levels[[1]],
       run_model = model,
+      residual_analysis = residual_analysis,
       ...
     )
 
@@ -199,7 +228,15 @@ cal_linear_impl <- function(.data,
   res
 }
 
-cal_linear_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
+cal_linear_impl_grp <- function(
+  .data,
+  truth,
+  estimate,
+  run_model,
+  residual_analysis,
+  group,
+  ...
+) {
   .data %>%
     dplyr::group_by({{ group }}, .add = TRUE) %>%
     split_dplyr_groups() %>%
@@ -210,6 +247,7 @@ cal_linear_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
           truth = {{ truth }},
           estimate = estimate,
           run_model = run_model,
+          residual_analysis = residual_analysis,
           ... = ...
         )
         list(
@@ -220,24 +258,38 @@ cal_linear_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
     )
 }
 
-cal_linear_impl_single <- function(.data, truth, estimate, run_model, ...) {
+cal_linear_impl_single <- function(
+  .data,
+  truth,
+  estimate,
+  run_model,
+  residual_analysis,
+  ...
+) {
   truth <- ensym(truth)
 
-  if (run_model == "linear_spline") {
-    f_model <- expr(!!truth ~ s(!!estimate))
-    init_model <- mgcv::gam(f_model, data = .data, ...)
-    model <- butcher::butcher(init_model)
+  if (residual_analysis) {
+    .data$.resid <- .data[[truth]] - .data[[estimate]]
+    if (run_model == "linear_spline") {
+      f_model <- expr(.resid ~ s(!!estimate))
+      init_model <- mgcv::gam(f_model, data = .data, ...)
+    } else {
+      f_model <- expr(.resid ~ !!estimate)
+      init_model <- glm(f_model, data = .data, ...)
+    }
+  } else {
+    if (run_model == "linear_spline") {
+      f_model <- expr(!!truth ~ s(!!estimate))
+      init_model <- mgcv::gam(f_model, data = .data, ...)
+    } else {
+      f_model <- expr(!!truth ~ !!estimate)
+      init_model <- glm(f_model, data = .data, ...)
+    }
   }
 
-  if (run_model == "glm") {
-    f_model <- expr(!!truth ~ !!estimate)
-    init_model <- glm(f_model, data = .data, ...)
-    model <- butcher::butcher(init_model)
-  }
-
+  model <- butcher::butcher(init_model)
   model
 }
-
 
 #' @export
 print.cal_estimate_linear <- function(x, ...) {

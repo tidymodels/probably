@@ -21,20 +21,22 @@ print.cal_regression <- function(x, ...) {
 }
 
 print_cls_cal <- function(x, upv = FALSE, ...) {
-  print_type <-
-    switch(x$type,
-      "binary" = "Binary",
-      "multiclass" = "Multiclass",
-      "one_vs_all" = "Multiclass (1 v All)",
-      "regression" = "Regression",
-      NA_character_
-    )
+  print_type <- switch(
+    x$type,
+    "binary" = "Binary",
+    "multiclass" = "Multiclass",
+    "one_vs_all" = "Multiclass (1 v All)",
+    "regression" = "Regression",
+    NA_character_
+  )
 
-  cli::cli_div(theme = list(
-    span.val0 = list(color = "blue"),
-    span.val1 = list(color = "yellow"),
-    span.val2 = list(color = "darkgreen")
-  ))
+  cli::cli_div(
+    theme = list(
+      span.val0 = list(color = "blue"),
+      span.val1 = list(color = "yellow"),
+      span.val2 = list(color = "darkgreen")
+    )
+  )
   rows <- prettyNum(x$rows, ",")
   cli::cli_h3("Probability Calibration")
   cli::cli_text("Method: {.val2 {x$method}}")
@@ -63,16 +65,19 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
   cli::cli_end()
 }
 
-
 print_reg_cal <- function(x, upv = FALSE, ...) {
-  cli::cli_div(theme = list(
-    span.val0 = list(color = "blue"),
-    span.val1 = list(color = "yellow"),
-    span.val2 = list(color = "darkgreen")
-  ))
+  adjust_resid <- ifelse(inherits(x, "residual_adjustment"), "yes", "no")
+  cli::cli_div(
+    theme = list(
+      span.val0 = list(color = "blue"),
+      span.val1 = list(color = "yellow"),
+      span.val2 = list(color = "darkgreen")
+    )
+  )
   rows <- prettyNum(x$rows, ",")
   cli::cli_h3("Regression Calibration")
   cli::cli_text("Method: {.val2 {x$method}}")
+  cli::cli_text("Adjust Using Residuals: {.val2 {adjust_resid}}")
   cli::cli_text("Source class: {.val2 {x$source_class}}")
   if (length(x$estimates) == 1) {
     cli::cli_text("Data points: {.val2 {rows}}")
@@ -120,13 +125,15 @@ cal_class_name.rset <- function(x) {
 
 # ------------------------------- Utils ----------------------------------------
 
-as_regression_cal_object <- function(estimate,
-                                     truth,
-                                     levels,
-                                     method,
-                                     rows,
-                                     additional_class = NULL,
-                                     source_class = NULL) {
+as_regression_cal_object <- function(
+  estimate,
+  truth,
+  levels,
+  method,
+  rows,
+  additional_class = NULL,
+  source_class = NULL
+) {
   truth <- enquo(truth)
 
   as_cal_object(
@@ -141,14 +148,16 @@ as_regression_cal_object <- function(estimate,
   )
 }
 
-as_cal_object <- function(estimate,
-                          truth,
-                          levels,
-                          method,
-                          rows,
-                          additional_classes = NULL,
-                          source_class = NULL,
-                          type = NULL) {
+as_cal_object <- function(
+  estimate,
+  truth,
+  levels,
+  method,
+  rows,
+  additional_classes = NULL,
+  source_class = NULL,
+  type = NULL
+) {
   if (length(levels) == 1) {
     type <- "regression"
     obj_class <- "cal_regression"
@@ -201,7 +210,10 @@ split_dplyr_groups <- function(.data) {
     grp_keys <- purrr::map(grp_keys, as.character)
     grp_var <- .data %>% dplyr::group_vars()
     grp_data <- .data %>% tidyr::nest()
-    grp_filters <- purrr::map(grp_keys[[1]], ~ expr(!!parse_expr(grp_var) == !!.x))
+    grp_filters <- purrr::map(
+      grp_keys[[1]],
+      ~expr(!!parse_expr(grp_var) == !!.x)
+    )
     grp_n <- purrr::map_int(grp_data$data, nrow)
     res <- vector(mode = "list", length = length(grp_filters))
     for (i in seq_along(res)) {
