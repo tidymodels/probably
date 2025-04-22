@@ -13,8 +13,8 @@ truth_estimate_map <- function(.data, truth, estimate, validate = FALSE) {
 
   # Get the name(s) of the column(s) that have the predicted values. For binary
   # data, this is a single column name.
-  estimate_str <- .data %>%
-    tidyselect_cols({{ estimate }}) %>%
+  estimate_str <- .data |>
+    tidyselect_cols({{ estimate }}) |>
     names()
 
   if (length(estimate_str) == 0) {

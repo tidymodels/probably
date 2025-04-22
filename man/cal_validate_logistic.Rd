@@ -107,8 +107,8 @@ library(dplyr)
 # ---------------------------------------------------------------------------
 # classification example
 
-segment_logistic \%>\%
-  rsample::vfold_cv() \%>\%
+segment_logistic |>
+  rsample::vfold_cv() |>
   cal_validate_logistic(Class)
 
 }

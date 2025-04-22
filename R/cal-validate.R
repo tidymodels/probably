@@ -42,8 +42,8 @@
 #' # ---------------------------------------------------------------------------
 #' # classification example
 #'
-#' segment_logistic %>%
-#'   rsample::vfold_cv() %>%
+#' segment_logistic |>
+#'   rsample::vfold_cv() |>
 #'   cal_validate_logistic(Class)
 #'
 #' @inheritParams cal_estimate_logistic
@@ -128,8 +128,8 @@ cal_validate_logistic.tune_results <- function(.data,
 #'
 #' library(dplyr)
 #'
-#' segment_logistic %>%
-#'   rsample::vfold_cv() %>%
+#' segment_logistic |>
+#'   rsample::vfold_cv() |>
 #'   cal_validate_isotonic(Class)
 #'
 #' @export
@@ -213,8 +213,8 @@ cal_validate_isotonic.tune_results <- function(.data,
 #'
 #' library(dplyr)
 #'
-#' segment_logistic %>%
-#'   rsample::vfold_cv() %>%
+#' segment_logistic |>
+#'   rsample::vfold_cv() |>
 #'   cal_validate_isotonic_boot(Class)
 #'
 #' @export
@@ -298,8 +298,8 @@ cal_validate_isotonic_boot.tune_results <- function(.data,
 #' library(dplyr)
 #'
 #' if (rlang::is_installed("betacal")) {
-#'   segment_logistic %>%
-#'     rsample::vfold_cv() %>%
+#'   segment_logistic |>
+#'     rsample::vfold_cv() |>
 #'     cal_validate_beta(Class)
 #' }
 #' @export
@@ -378,8 +378,8 @@ cal_validate_beta.tune_results <- function(.data,
 #'
 #' library(dplyr)
 #'
-#' species_probs %>%
-#'   rsample::vfold_cv() %>%
+#' species_probs |>
+#'   rsample::vfold_cv() |>
 #'   cal_validate_multinomial(Species)
 #'
 #' @export
@@ -506,7 +506,7 @@ cal_validate <- function(rset,
     rlang::abort("No calibration function provided")
   }
 
-  outcomes <- dplyr::select(rset$splits[[1]]$data, {{ truth }}) %>% purrr::pluck(1)
+  outcomes <- dplyr::select(rset$splits[[1]]$data, {{ truth }}) |> purrr::pluck(1)
   model_mode <- get_problem_type(outcomes)
 
   metrics <- check_validation_metrics(metrics, model_mode)
@@ -531,8 +531,8 @@ cal_validate <- function(rset,
     if (cals[[1]]$type == "binary") {
       estimate_cols <- cals[[1]]$levels[[1]]
     } else {
-      estimate_cols <- cals[[1]]$levels %>%
-        purrr::map(as_name) %>%
+      estimate_cols <- cals[[1]]$levels |>
+        purrr::map(as_name) |>
         purrr::reduce(c)
     }
   } else if (model_mode == "regression") {
@@ -632,9 +632,9 @@ type_sum.cal_object <- function(x, ...) {
 #' reg_stats <- metric_set(rmse, ccc)
 #'
 #' set.seed(828)
-#' boosting_predictions_oob %>%
+#' boosting_predictions_oob |>
 #'   # Resample with 10-fold cross-validation
-#'   vfold_cv() %>%
+#'   vfold_cv() |>
 #'   cal_validate_linear(truth = outcome, smooth = FALSE, metrics = reg_stats)
 #' @export
 cal_validate_linear <- function(.data,
@@ -698,7 +698,7 @@ cal_validate_linear.rset <- function(.data,
 
 convert_resamples <- function(x) {
   predictions <-
-    tune::collect_predictions(x, summarize = TRUE) %>%
+    tune::collect_predictions(x, summarize = TRUE) |>
     dplyr::arrange(.row)
   for (i in seq_along(x$splits)) {
     x$splits[[i]]$data <- predictions

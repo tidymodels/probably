@@ -23,7 +23,7 @@ apply_multi_predict <- function(object, .data) {
   } else {
     prob_type <- "probs"
   }
-  preds <- object$estimates[[1]]$estimate %>%
+  preds <- object$estimates[[1]]$estimate |>
     predict(newdata = .data, type = prob_type)
 
   lvls <- nm_levels(object$levels)

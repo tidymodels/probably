@@ -59,7 +59,7 @@
 #' # Set the threshold to multiple values
 #' thresholds <- seq(0.5, 0.9, by = 0.1)
 #'
-#' segment_logistic %>%
+#' segment_logistic |>
 #'   threshold_perf(Class, .pred_good, thresholds)
 #'
 #' # ---------------------------------------------------------------------------
@@ -68,22 +68,22 @@
 #' # Let's mock some resampled data
 #' resamples <- 5
 #'
-#' mock_resamples <- resamples %>%
+#' mock_resamples <- resamples |>
 #'   replicate(
 #'     expr = sample_n(segment_logistic, 100, replace = TRUE),
 #'     simplify = FALSE
-#'   ) %>%
+#'   ) |>
 #'   bind_rows(.id = "resample")
 #'
-#' resampled_threshold_perf <- mock_resamples %>%
-#'   group_by(resample) %>%
+#' resampled_threshold_perf <- mock_resamples |>
+#'   group_by(resample) |>
 #'   threshold_perf(Class, .pred_good, thresholds)
 #'
 #' resampled_threshold_perf
 #'
 #' # Average over the resamples
-#' resampled_threshold_perf %>%
-#'   group_by(.metric, .threshold) %>%
+#' resampled_threshold_perf |>
+#'   group_by(.metric, .threshold) |>
 #'   summarise(.estimate = mean(.estimate))
 #'
 #' @export
@@ -167,11 +167,11 @@ threshold_perf.data.frame <- function(.data,
     .data <- stats::na.omit(.data)
   }
 
-  .data <- .data %>%
+  .data <- .data |>
     expand_preds(
       threshold = thresholds,
       inc = c("truth", "prob", rs_ch)
-    ) %>%
+    ) |>
     dplyr::mutate(
       alt_pred = recode_data(
         obs = truth,
@@ -182,9 +182,9 @@ threshold_perf.data.frame <- function(.data,
     )
 
   if (!is.null(rs_id)) {
-    .data <- .data %>% dplyr::group_by(!!!rs_id, .threshold)
+    .data <- .data |> dplyr::group_by(!!!rs_id, .threshold)
   } else {
-    .data <- .data %>% dplyr::group_by(.threshold)
+    .data <- .data |> dplyr::group_by(.threshold)
   }
 
 
@@ -198,12 +198,12 @@ threshold_perf.data.frame <- function(.data,
   if (measure_sens_spec) {
     # Create the `distance` metric data frame
     # and add it on
-    sens_vec <- .data_metrics %>%
-      dplyr::filter(.metric == "sensitivity") %>%
+    sens_vec <- .data_metrics |>
+      dplyr::filter(.metric == "sensitivity") |>
       dplyr::pull(.estimate)
 
-    dist <- .data_metrics %>%
-      dplyr::filter(.metric == "specificity") %>%
+    dist <- .data_metrics |>
+      dplyr::filter(.metric == "specificity") |>
       dplyr::mutate(
         .metric = "distance",
         # .estimate is specificity currently. This recodes as distance

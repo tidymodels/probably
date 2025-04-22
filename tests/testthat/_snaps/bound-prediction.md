@@ -9,8 +9,8 @@
 ---
 
     Code
-      solubility_test %>% mutate(.pred = format(prediction)) %>% bound_prediction(
-        lower_limit = 2)
+      bound_prediction(mutate(solubility_test, .pred = format(prediction)),
+      lower_limit = 2)
     Condition
       Error in `bound_prediction()`:
       ! Column `.pred` should be numeric.
@@ -42,8 +42,8 @@
 ---
 
     Code
-      solubility_test %>% mutate(.pred = format(prediction)) %>% bound_prediction(
-        lower_limit = 2)
+      bound_prediction(mutate(solubility_test, .pred = format(prediction)),
+      lower_limit = 2)
     Condition
       Error in `bound_prediction()`:
       ! Column `.pred` should be numeric.

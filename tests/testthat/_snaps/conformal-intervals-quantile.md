@@ -4,11 +4,11 @@
 
 ---
 
-    The following required columns are missing: 'predictor_01'.
+    The required column "predictor_01" is missing.
 
 ---
 
-    The following required columns are missing: 'predictor_01'.
+    The required column "predictor_01" is missing.
 
 ---
 

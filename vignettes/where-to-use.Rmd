@@ -51,7 +51,7 @@ data("lending_club")
 
 # I think it makes more sense to have "good" as the first level
 # By default it comes as the second level
-lending_club <- lending_club %>%
+lending_club <- lending_club |>
   mutate(Class = relevel(Class, "good"))
 
 # There are a number of columns in this data set, but we will only use a few
@@ -85,7 +85,7 @@ We'll use parsnip's `logistic_reg()` to create a model specification for logisti
 
 ```{r}
 logi_reg <- logistic_reg()
-logi_reg_glm <- logi_reg %>% set_engine("glm")
+logi_reg_glm <- logi_reg |> set_engine("glm")
 
 # A small model specification that defines the type of model you are
 # using and the engine
@@ -106,7 +106,7 @@ The output of the parsnip `fit()` call is a parsnip `model_fit` object, but the 
 Now let's predict on our testing set, and use `type = "prob"` to get _class probabilities_ back rather than hard predictions. We will use these with probably to investigate performance.
 
 ```{r}
-predictions <- logi_reg_fit %>%
+predictions <- logi_reg_fit |>
   predict(new_data = lending_test, type = "prob")
 
 head(predictions, n = 2)
@@ -119,34 +119,34 @@ lending_test_pred
 With our class probabilities in hand, we can use `make_two_class_pred()` to convert these probabilities into hard predictions using a threshold. A threshold of `0.5` just says that if the predicted probability is above `0.5`, then classify this prediction as a "good" loan, otherwise, bad.
 
 ```{r}
-hard_pred_0.5 <- lending_test_pred %>%
+hard_pred_0.5 <- lending_test_pred |>
   mutate(
     .pred = make_two_class_pred(
       estimate = .pred_good,
       levels = levels(Class),
       threshold = .5
     )
-  ) %>%
+  ) |>
   select(Class, contains(".pred"))
 
-hard_pred_0.5 %>%
+hard_pred_0.5 |>
   count(.truth = Class, .pred)
 ```
 
 Hmm, with a `0.5` threshold, almost all of the loans were predicted as "good". Perhaps this has something to do with the large class imbalance. On the other hand, the bank might want to be more stringent with what is classified as a "good" loan, and might require a probability of `0.75` as the threshold.
 
 ```{r}
-hard_pred_0.75 <- lending_test_pred %>%
+hard_pred_0.75 <- lending_test_pred |>
   mutate(
     .pred = make_two_class_pred(
       estimate = .pred_good,
       levels = levels(Class),
       threshold = .75
     )
-  ) %>%
+  ) |>
   select(Class, contains(".pred"))
 
-hard_pred_0.75 %>%
+hard_pred_0.75 |>
   count(.truth = Class, .pred)
 ```
 
@@ -185,10 +185,10 @@ Now, this is not the only way to optimize things. If you care about low false po
 `threshold_perf()` will recalculate a number of metrics across varying thresholds. One of these is `j_index`.
 
 ```{r}
-threshold_data <- lending_test_pred %>%
+threshold_data <- lending_test_pred |>
   threshold_perf(Class, .pred_good, thresholds = seq(0.5, 1, by = 0.0025))
 
-threshold_data %>%
+threshold_data |>
   filter(.threshold %in% c(0.5, 0.6, 0.7))
 ```
 
@@ -198,16 +198,16 @@ With `ggplot2`, we can easily visualize this varying performance to find our opt
 #| fig-alt: "Line chart. `good` threshold along the x-axis, metric estimate along the y-axis. 3 lines are shown for the following three metrics; j_index, sens, and spec. A vertical line is spaced at x = 0.945. The range on the x-axis is 0.5 to 1, and 0 to 1 on the y-axis. Reading from the left, sens starts at y = 1, starts decreasing around x = 0.8, ending at 0 for x = 1. spec follows the same path but starting at 0 and ending at 1. j_index starts at 0, increases at around 0.8, to a high around 0.945. Sens and spec cross each other at x = 0.945."
 library(ggplot2)
 
-threshold_data <- threshold_data %>%
-  filter(.metric != "distance") %>%
+threshold_data <- threshold_data |>
+  filter(.metric != "distance") |>
   mutate(group = case_when(
     .metric == "sens" | .metric == "spec" ~ "1",
     TRUE ~ "2"
   ))
 
-max_j_index_threshold <- threshold_data %>%
-  filter(.metric == "j_index") %>%
-  filter(.estimate == max(.estimate)) %>%
+max_j_index_threshold <- threshold_data |>
+  filter(.metric == "j_index") |>
+  filter(.estimate == max(.estimate)) |>
   pull(.threshold)
 
 ggplot(threshold_data, aes(x = .threshold, y = .estimate, color = .metric, alpha = group)) +
@@ -227,7 +227,7 @@ ggplot(threshold_data, aes(x = .threshold, y = .estimate, color = .metric, alpha
 It's clear from this visual that the optimal threshold is very high, exactly `r max_j_index_threshold`. This is pretty high, so again, this optimization method won't be useful for all cases. To wrap up, here are all of the test set metrics for that threshold value.
 
 ```{r}
-threshold_data %>%
+threshold_data |>
   filter(.threshold == max_j_index_threshold)
 ```
 
