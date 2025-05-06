@@ -350,7 +350,7 @@ cal_plot_breaks_impl <- function(.data,
 
   res <- .data %>%
     dplyr::group_by(!!group, .add = TRUE) %>%
-    dplyr::group_map(~ {# TODO make function
+    dplyr::group_map(~ {
       grp <- .cal_table_breaks_grp(
         .data = .x,
         truth = !!truth,

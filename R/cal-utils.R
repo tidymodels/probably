@@ -29,7 +29,7 @@ truth_estimate_map <- function(.data, truth, estimate, validate = FALSE) {
     if (all(substr(estimate_str, 1, 6) == ".pred_")) {
       est_map <- purrr::map(
         truth_levels,
-        ~ {# TODO make function
+        ~ {
           match <- paste0(".pred_", .x) == estimate_str
           if (any(match)) {
             sym(estimate_str[match])

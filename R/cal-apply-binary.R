@@ -32,7 +32,7 @@ apply_model_predict <- function(object, .data) {
   if (object$type == "binary") {
     .data <- object$estimates %>%
       purrr::map(
-        ~ {   # TODO make function
+        ~ {
           if (is.null(.x$filter)) {
             new_data <- .data
           } else {

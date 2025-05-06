@@ -161,7 +161,7 @@ cal_beta_impl_grp <- function(.data,
 
   .data %>%
     split_dplyr_groups() %>%
-    lapply(# TODO make function
+    lapply(
       function(x) {
         estimate <- cal_beta_impl_estimate(
           .data = x$data,
@@ -190,7 +190,7 @@ cal_beta_impl_estimate <- function(.data,
                                    ...) {
   lapply(
     seq_along(estimate),
-    function(x) {# TODO make function
+    function(x) {
       cal_beta_impl_single(
         .data = .data,
         truth = {{ truth }},

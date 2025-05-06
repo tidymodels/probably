@@ -256,7 +256,7 @@ cal_plot_logistic_impl <- function(.data,
 
   res <- .data %>%
     dplyr::group_by(!!group, .add = TRUE) %>%
-    dplyr::group_map(~ {# TODO make function
+    dplyr::group_map(~ {
       grp <- .cal_class_grps(
         .data = .x,
         truth = !!truth,

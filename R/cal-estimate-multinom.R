@@ -163,7 +163,7 @@ cal_multinom_impl_grp <- function(.data, truth, levels, smooth, ...) {
   .data %>%
     split_dplyr_groups() %>%
     lapply(
-      function(x) {# TODO make function
+      function(x) {
         estimate <- cal_multinom_impl_single(
           .data = x$data,
           truth = !!truth,

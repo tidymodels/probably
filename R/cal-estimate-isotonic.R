@@ -244,13 +244,13 @@ cal_isoreg_impl <- function(.data,
 
   iso_flip <- map(
     seq_len(length(iso_model[[1]])),
-    ~ {# TODO make function
+    ~ {
       x <- .x
       map(iso_model, ~ .x[[x]])
     }
   ) %>%
     purrr::map(
-      ~ {# TODO make function
+      ~ {
         x <- .x
         list(
           filter = x[[1]]$filter,
@@ -276,7 +276,7 @@ cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
   .data %>%
     split_dplyr_groups() %>%
     lapply(
-      function(x) {# TODO make function
+      function(x) {
         iso_model <- cal_isoreg_impl_estimate(
           .data = x$data,
           truth = {{ truth }},
@@ -302,7 +302,7 @@ cal_isoreg_impl_estimate <- function(.data,
                                      ...) {
   lapply(
     seq_along(estimate),
-    function(x) {# TODO make function
+    function(x) {
       cal_isoreg_impl_single(
         .data = .data,
         truth = {{ truth }},
