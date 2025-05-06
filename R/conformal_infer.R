@@ -341,7 +341,7 @@ grid_one <- function(new_data, model, train_data, level, ctrl) {
 compute_bound <- function(x, predicted) {
   x <- x[stats::complete.cases(x), ]
   if (all(x$difference < 0)) {
-    rlang::warn("Could not determine bounds.")
+    cli::cli_warn("Could not determine bounds.")
     res <-
       dplyr::tibble(
         .pred_lower = NA_real_,
@@ -424,15 +424,14 @@ optimize_one <- function(new_data, model, train_data, level, ctrl) {
 
 get_root <- function(x, ctrl) {
   if (inherits(x, "try-error")) {
-    msg <- c(
+    cli::cli_warn(c(
       "Could not finish the search process due to the following error:",
       "i" = conditionMessage(attr(x, "condition"))
-    )
-    rlang::warn(msg)
+    ))
     return(NA_real_)
   }
   if (x$iter == ctrl$max_iter) {
-    rlang::warn("Search did not converge.")
+    cli::cli_warn("Search did not converge.")
     return(NA_real_)
   }
   return(x$root)

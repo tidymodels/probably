@@ -222,20 +222,22 @@ new_infer_cv <- function(models, resid) {
 check_resampling <- function(x) {
   rs <- attr(x, "rset_info")
   if (any(rs$att$class != "vfold_cv") | any(grepl("group_", rs$att$class))) {
-    msg <- paste0(
-      "The data were resampled using ", rs$label,
-      ". This method was developed for V-fold cross-validation. Interval ",
-      "coverage is unknown for your resampling method."
+    cli::cli_warn(
+      c(
+        "The data were resampled using {rs$label}.",
+        "i" = "This method was developed for V-fold cross-validation.",
+        "i" = "Interval coverage is unknown for your resampling method."
+      )
     )
-    rlang::warn(msg)
   } else {
     if (rs$att$repeats > 1) {
-      msg <- paste0(
-        rs$att$repeats, " repeats were used. This method was developed for ",
-        "basic V-fold cross-validation. Interval coverage is unknown for multiple ",
-        "repeats."
+      cli::cli_warn(
+        c(
+          "{rs$att$repeats} repeats were used.",
+          "i" = "This method was developed for basic V-fold cross-validation.",
+          "i" = "Interval coverage is unknown for multiple repeats."
+        )
       )
-      rlang::warn(msg)
     }
   }
   invisible(NULL)

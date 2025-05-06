@@ -69,7 +69,7 @@ cal_validate_logistic.resample_results <-
            save_pred = FALSE,
            ...) {
     if (!is.null(truth)) {
-      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -152,7 +152,7 @@ cal_validate_isotonic.resample_results <-
            save_pred = FALSE,
            ...) {
     if (!is.null(truth)) {
-      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -237,7 +237,7 @@ cal_validate_isotonic_boot.resample_results <-
            save_pred = FALSE,
            ...) {
     if (!is.null(truth)) {
-      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -322,7 +322,7 @@ cal_validate_beta.resample_results <-
            save_pred = FALSE,
            ...) {
     if (!is.null(truth)) {
-      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -402,7 +402,7 @@ cal_validate_multinomial.resample_results <-
            save_pred = FALSE,
            ...) {
     if (!is.null(truth)) {
-      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -656,7 +656,7 @@ cal_validate_linear.resample_results <-
            save_pred = FALSE,
            ...) {
     if (!is.null(truth)) {
-      rlang::warn("'truth' is automaticaly set when this type of object is used.")
+      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original

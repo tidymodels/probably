@@ -70,11 +70,15 @@
 
 ---
 
-    2 repeats were used. This method was developed for basic V-fold cross-validation. Interval coverage is unknown for multiple repeats.
+    2 repeats were used.
+    i This method was developed for basic V-fold cross-validation.
+    i Interval coverage is unknown for multiple repeats.
 
 ---
 
-    The data were resampled using Bootstrap sampling. This method was developed for V-fold cross-validation. Interval coverage is unknown for your resampling method.
+    The data were resampled using Bootstrap sampling.
+    i This method was developed for V-fold cross-validation.
+    i Interval coverage is unknown for your resampling method.
 
 ---
 
@@ -195,5 +199,7 @@
 
 # group resampling to conformal CV intervals
 
-    The data were resampled using Group 2-fold cross-validation. This method was developed for V-fold cross-validation. Interval coverage is unknown for your resampling method.
+    The data were resampled using Group 2-fold cross-validation.
+    i This method was developed for V-fold cross-validation.
+    i Interval coverage is unknown for your resampling method.
 

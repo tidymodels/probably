@@ -320,7 +320,7 @@ cal_plot_impl <- function(tbl, x, y,
     level1 <- levels[[1]]
 
     if (length(levels) > 1 & !is_tune_results) {
-      rlang::warn(paste0("Multiple class columns identified. Using: `", level1, "`"))
+      cli::cli_warn("Multiple class columns identified. Using: {.code {level1}}")
     }
 
     truth_values <- 1:2
