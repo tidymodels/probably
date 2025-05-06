@@ -8,10 +8,10 @@
 <title>Where does probably fit in? • probably</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/Source_Code_Pro-0.4.9/font.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Source_Sans_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/Source_Code_Pro-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Where does probably fit in?">
 <meta name="robots" content="noindex">
 <script defer data-domain="probably.tidymodels.org,all.tidymodels.org" src="https://plausible.io/js/plausible.js"></script>
@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Davis
 Vaughan</h4>
             
-            <h4 data-toc-skip class="date">2024-10-16</h4>
+            <h4 data-toc-skip class="date">2025-05-06</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/main/vignettes/where-to-use.Rmd" class="external-link"><code>vignettes/where-to-use.Rmd</code></a></small>
       <div class="d-none name"><code>where-to-use.Rmd</code></div>
@@ -180,44 +180,82 @@ model formula.</p>
 <span><span class="co">#&gt;     sub_grade, family = stats::binomial, data = data)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coefficients:</span></span>
-<span><span class="co">#&gt;                        (Intercept)                          annual_inc  </span></span>
-<span><span class="co">#&gt;                         -5.670e+00                           1.915e-06  </span></span>
-<span><span class="co">#&gt; verification_statusSource_Verified         verification_statusVerified  </span></span>
-<span><span class="co">#&gt;                          4.324e-02                           3.364e-01  </span></span>
-<span><span class="co">#&gt;                        sub_gradeA2                         sub_gradeA3  </span></span>
-<span><span class="co">#&gt;                          9.508e-02                           1.149e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeA4                         sub_gradeA5  </span></span>
-<span><span class="co">#&gt;                         -5.591e-02                           1.510e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeB1                         sub_gradeB2  </span></span>
-<span><span class="co">#&gt;                          1.637e+00                           1.177e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeB3                         sub_gradeB4  </span></span>
-<span><span class="co">#&gt;                          1.467e+00                           1.975e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeB5                         sub_gradeC1  </span></span>
-<span><span class="co">#&gt;                          2.125e+00                           2.234e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeC2                         sub_gradeC3  </span></span>
-<span><span class="co">#&gt;                          2.176e+00                           2.380e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeC4                         sub_gradeC5  </span></span>
-<span><span class="co">#&gt;                          2.724e+00                           3.084e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeD1                         sub_gradeD2  </span></span>
-<span><span class="co">#&gt;                          3.105e+00                           2.816e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeD3                         sub_gradeD4  </span></span>
-<span><span class="co">#&gt;                          3.165e+00                           3.125e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeD5                         sub_gradeE1  </span></span>
-<span><span class="co">#&gt;                          3.507e+00                           3.621e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeE2                         sub_gradeE3  </span></span>
-<span><span class="co">#&gt;                          3.272e+00                           3.542e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeE4                         sub_gradeE5  </span></span>
-<span><span class="co">#&gt;                          3.428e+00                           3.468e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeF1                         sub_gradeF2  </span></span>
-<span><span class="co">#&gt;                          3.717e+00                           4.096e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeF3                         sub_gradeF4  </span></span>
-<span><span class="co">#&gt;                          3.681e+00                           3.662e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeF5                         sub_gradeG1  </span></span>
-<span><span class="co">#&gt;                          3.586e+00                           4.168e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeG2                         sub_gradeG3  </span></span>
-<span><span class="co">#&gt;                          4.162e+00                           4.422e+00  </span></span>
-<span><span class="co">#&gt;                        sub_gradeG4                         sub_gradeG5  </span></span>
-<span><span class="co">#&gt;                          5.102e+00                          -8.226e+00  </span></span>
+<span><span class="co">#&gt;                        (Intercept)  </span></span>
+<span><span class="co">#&gt;                         -5.670e+00  </span></span>
+<span><span class="co">#&gt;                         annual_inc  </span></span>
+<span><span class="co">#&gt;                          1.915e-06  </span></span>
+<span><span class="co">#&gt; verification_statusSource_Verified  </span></span>
+<span><span class="co">#&gt;                          4.324e-02  </span></span>
+<span><span class="co">#&gt;        verification_statusVerified  </span></span>
+<span><span class="co">#&gt;                          3.364e-01  </span></span>
+<span><span class="co">#&gt;                        sub_gradeA2  </span></span>
+<span><span class="co">#&gt;                          9.508e-02  </span></span>
+<span><span class="co">#&gt;                        sub_gradeA3  </span></span>
+<span><span class="co">#&gt;                          1.149e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeA4  </span></span>
+<span><span class="co">#&gt;                         -5.591e-02  </span></span>
+<span><span class="co">#&gt;                        sub_gradeA5  </span></span>
+<span><span class="co">#&gt;                          1.510e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeB1  </span></span>
+<span><span class="co">#&gt;                          1.637e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeB2  </span></span>
+<span><span class="co">#&gt;                          1.177e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeB3  </span></span>
+<span><span class="co">#&gt;                          1.467e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeB4  </span></span>
+<span><span class="co">#&gt;                          1.975e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeB5  </span></span>
+<span><span class="co">#&gt;                          2.125e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeC1  </span></span>
+<span><span class="co">#&gt;                          2.234e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeC2  </span></span>
+<span><span class="co">#&gt;                          2.176e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeC3  </span></span>
+<span><span class="co">#&gt;                          2.380e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeC4  </span></span>
+<span><span class="co">#&gt;                          2.724e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeC5  </span></span>
+<span><span class="co">#&gt;                          3.084e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeD1  </span></span>
+<span><span class="co">#&gt;                          3.105e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeD2  </span></span>
+<span><span class="co">#&gt;                          2.816e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeD3  </span></span>
+<span><span class="co">#&gt;                          3.165e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeD4  </span></span>
+<span><span class="co">#&gt;                          3.125e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeD5  </span></span>
+<span><span class="co">#&gt;                          3.507e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeE1  </span></span>
+<span><span class="co">#&gt;                          3.621e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeE2  </span></span>
+<span><span class="co">#&gt;                          3.272e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeE3  </span></span>
+<span><span class="co">#&gt;                          3.542e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeE4  </span></span>
+<span><span class="co">#&gt;                          3.428e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeE5  </span></span>
+<span><span class="co">#&gt;                          3.468e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeF1  </span></span>
+<span><span class="co">#&gt;                          3.717e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeF2  </span></span>
+<span><span class="co">#&gt;                          4.096e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeF3  </span></span>
+<span><span class="co">#&gt;                          3.681e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeF4  </span></span>
+<span><span class="co">#&gt;                          3.662e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeF5  </span></span>
+<span><span class="co">#&gt;                          3.586e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeG1  </span></span>
+<span><span class="co">#&gt;                          4.168e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeG2  </span></span>
+<span><span class="co">#&gt;                          4.162e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeG3  </span></span>
+<span><span class="co">#&gt;                          4.422e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeG4  </span></span>
+<span><span class="co">#&gt;                          5.102e+00  </span></span>
+<span><span class="co">#&gt;                        sub_gradeG5  </span></span>
+<span><span class="co">#&gt;                         -8.226e+00  </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Degrees of Freedom: 7391 Total (i.e. Null);  7354 Residual</span></span>
 <span><span class="co">#&gt; Null Deviance:       3019 </span></span>
@@ -449,7 +487,7 @@ metrics for that threshold value.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
   </div></footer>
