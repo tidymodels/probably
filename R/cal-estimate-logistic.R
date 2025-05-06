@@ -165,13 +165,10 @@ cal_logistic_impl <- function(.data,
       source_class = source_class
     )
   } else {
-    msg <- paste(
-      "The number of outcome factor levels isn't consistent with",
-      "the calibration method. Only two class `truth` factors are",
-      "allowed. The given levels were:",
-      paste0("'", levels, "'", collapse = ", ")
+    cli::cli_abort(
+      "The {.arg truth} column has {length(levels)} levels ({.val {levels}}),
+       but only two-class factors are allowed for this calibration method."
     )
-    rlang::abort(msg)
   }
 
   res

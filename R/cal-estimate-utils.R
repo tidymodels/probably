@@ -163,7 +163,7 @@ as_cal_object <- function(estimate,
     }
     obj_class <- "cal_multi"
   } else {
-    rlang::abort("Can't translate 'levels' to a class.")
+    cli::cli_abort("Cannot translate {.arg levels} to a class.")
   }
 
   str_truth <- as_name(enquo(truth))
@@ -217,6 +217,6 @@ split_dplyr_groups <- function(.data) {
 
 stop_null_parameters <- function(x) {
   if (!is.null(x)) {
-    rlang::abort("The `parameters` argument is only valid for `tune_results`.")
+    cli::cli_abort("The {.arg parameters} argument is only valid for {.code tune_results}.")
   }
 }

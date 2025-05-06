@@ -50,15 +50,15 @@ new_class_pred <- function(x, labels, ordered = FALSE, equivocal = "[EQ]", ..., 
 class_pred <- function(x = factor(), which = integer(), equivocal = "[EQ]") {
   # Check invariants
   if (!is.factor(x)) {
-    abort("`x` must be a factor.")
+    cli::cli_abort("{.arg x} must be a factor.")
   }
 
   if (!is.numeric(which)) {
-    abort("`which` must be a numeric.")
+    cli::cli_abort("`which` must be numeric.")
   }
 
   if (!rlang::is_scalar_character(equivocal)) {
-    abort("`equivocal` must be a length 1 character.")
+    cli::cli_abort("{.arg equivocal} must be length 1 character.")
   }
 
   # which can be double, but convert to integer and warn about
@@ -70,20 +70,15 @@ class_pred <- function(x = factor(), which = integer(), equivocal = "[EQ]") {
 
   # which cannot go outside the range of the number of values in x
   if (length(which) > 0L && max(which) > length(x)) {
-    msg <- paste0("The largest value of `which` can be ", length(x), ".")
-    abort(msg)
+    cli::cli_abort("The largest value of {.arg which} can be {length(x)}.")
   }
 
   labs <- levels(x)
 
   # Check for `equivocal` in labels. Not allowed.
   if (equivocal %in% labs) {
-    msg <- paste0(
-      "`\"", equivocal, "\"`",
-      "is reserved for equivocal values",
-      "and must not already be a level."
-    )
-    abort(msg)
+    cli::cli_abort("{.arg equivocal} is reserved for equivocal values and must
+                   not already be a level.")
   }
 
   # rip out the underlying integer structure

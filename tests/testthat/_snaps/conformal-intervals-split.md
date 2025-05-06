@@ -1,6 +1,6 @@
 # split conformal intervals
 
-    No known 'int_conformal_split' methods for this type of object.
+    No known `int_conformal_split()` methods for this type of object.
 
 ---
 

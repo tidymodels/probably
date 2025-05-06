@@ -50,7 +50,7 @@ apply_interval_estimate <- function(estimate, df, est_name) {
     if (test_name %in% df_names) {
       est_name <- test_name
     } else {
-      rlang::abort(paste0("Variable: ", est_name, " was not found in data"))
+      cli::cli_abort("Variable {.var {est_name}} was not found in data.")
     }
   }
 

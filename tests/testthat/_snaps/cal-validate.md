@@ -4,5 +4,5 @@
 
 # Isotonic classification validation with `fit_resamples`
 
-    'truth' is automaticaly set when this type of object is used.
+    `truth` is automatically set when this type of object is used.
 
