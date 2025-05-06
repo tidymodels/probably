@@ -64,12 +64,13 @@ check_level_consistency <- function(lvls, mapping) {
     cols <- mapping[!null_map]
     cols < purrr::map_chr(cols, as.character)
     cols <- paste0(cols, collapse = ", ")
-    msg <- paste0(
-      "We can't connect the specified prediction columns to some factor levels (",
-      missings, "). The selected columns were ", cols, ". Are there more ",
-      "columns to add in the function call?"
+    cli::cli_abort(
+      c(
+        "We can't connect the specified prediction columns to {.val {missings}}.",
+        "i" = "The selected columns were {.val {cols}}.",
+        "i" = "Are there more columns to add in the function call?"
+      )
     )
-    rlang::abort(msg)
   }
   invisible(NULL)
 }

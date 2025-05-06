@@ -76,7 +76,7 @@ int_conformal_cv <- function(object, ...) {
 #' @export
 #' @rdname int_conformal_cv
 int_conformal_cv.default <- function(object, ...) {
-  rlang::abort("No known 'int_conformal_cv' methods for this type of object.")
+  cli::cli_abort("No known {.fn int_conformal_cv} methods for this type of object.")
 }
 
 #' @export
@@ -153,19 +153,19 @@ print.int_conformal_cv <- function(x, ...) {
 
 new_infer_cv <- function(models, resid) {
   if (!is.numeric(resid)) {
-    rlang::abort("Absolute residuals should be numeric")
+    cli::cli_abort("Absolute residuals should be numeric.")
   }
   na_resid <- is.na(resid)
   if (all(na_resid)) {
-    rlang::abort("All of the absolute residuals are missing.")
+    cli::cli_abort("All of the absolute residuals are missing.")
   }
 
   if (!is.list(models)) {
-    rlang::abort("The model list should be... a list")
+    cli::cli_abort("The model list should be... a list.")
   }
   is_wflow <- purrr::map_lgl(models, workflows::is_trained_workflow)
   if (all(!is_wflow)) {
-    rlang::abort(".extracts does not contain fitted workflows")
+    cli::cli_abort("The {.arg .extracts} argument does not contain fitted workflows.")
   }
   if (any(!is_wflow)) {
     models <- models[is_wflow]
@@ -222,20 +222,22 @@ new_infer_cv <- function(models, resid) {
 check_resampling <- function(x) {
   rs <- attr(x, "rset_info")
   if (any(rs$att$class != "vfold_cv") | any(grepl("group_", rs$att$class))) {
-    msg <- paste0(
-      "The data were resampled using ", rs$label,
-      ". This method was developed for V-fold cross-validation. Interval ",
-      "coverage is unknown for your resampling method."
+    cli::cli_warn(
+      c(
+        "The data were resampled using {rs$label}.",
+        "i" = "This method was developed for V-fold cross-validation.",
+        "i" = "Interval coverage is unknown for your resampling method."
+      )
     )
-    rlang::warn(msg)
   } else {
     if (rs$att$repeats > 1) {
-      msg <- paste0(
-        rs$att$repeats, " repeats were used. This method was developed for ",
-        "basic V-fold cross-validation. Interval coverage is unknown for multiple ",
-        "repeats."
+      cli::cli_warn(
+        c(
+          "{rs$att$repeats} repeats were used.",
+          "i" = "This method was developed for basic V-fold cross-validation.",
+          "i" = "Interval coverage is unknown for multiple repeats."
+        )
       )
-      rlang::warn(msg)
     }
   }
   invisible(NULL)
@@ -247,36 +249,33 @@ check_parameters <- function(x, param, call = rlang::caller_env()) {
     dplyr::distinct(.config, !!!rlang::syms(prms))
   remain <- dplyr::inner_join(mtr, param, by = names(param))
   if (nrow(remain) > 1) {
-    msg <-
-      paste0(
-        "The `parameters` argument selected ", nrow(remain), " submodels. Only ",
-        "1 should be selected."
-      )
-    rlang::abort(msg, call = call)
+    cli::cli_abort(
+      "The {.arg parameters} argument selected {nrow(remain)} submodels.
+      Only 1 should be selected.",
+      call = call
+    )
   }
   invisible(NULL)
 }
 
 check_extras <- function(x, call = rlang::caller_env()) {
   if (!any(names(x) == ".extracts")) {
-    msg <-
-      paste0(
-        "The output must contain a column called '.extracts' that contains the ",
-        "fitted workflow objects. See the documentation on the 'extract' ",
-        "argument of the control function (e.g., `control_grid()` or ",
-        "`control_resamples()`, etc.)."
-      )
-    rlang::abort(msg)
+    cli::cli_abort(
+      "The output must contain a column called {.code .extracts} that contains
+       the fitted workflow objects. See the documentation on the {.code extract}
+       argument of the control function (e.g., {.fn control_grid} or
+       {.fn control_resamples}, etc.).",
+      call = call
+    )
   }
   if (!any(names(x) == ".predictions")) {
-    msg <-
-      paste0(
-        "The output must contain a column called '.predictions' that contains the ",
-        "holdout predictions. See the documentation on the 'save_pred' ",
-        "argument of the control function (e.g., `control_grid()` or ",
-        "`control_resamples()`, etc.)."
-      )
-    rlang::abort(msg, cal = call)
+    cli::cli_abort(
+      "The output must contain a column called {.code .predictions} that
+      contains the holdout predictions. See the documentation on the
+      {.code save_pred} argument of the control function (e.g.,
+      {.fn control_grid} or {.fn control_resamples}, etc.).",
+      call = call
+    )
   }
   invisible(NULL)
 }

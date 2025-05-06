@@ -1,14 +1,14 @@
 # split conformal intervals
 
-    No known 'int_conformal_split' methods for this type of object.
+    No known `int_conformal_split()` methods for this type of object.
 
 ---
 
-    The following required columns are missing: 'outcome'.
+    The required column "outcome" is missing.
 
 ---
 
-    The following required columns are missing: 'predictor_01'.
+    The required column "predictor_01" is missing.
 
 ---
 

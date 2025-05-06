@@ -68,10 +68,11 @@ cal_apply.tune_results <- function(.data,
   cal_pkg_check(required_pkgs(object))
 
   if (!(".predictions" %in% colnames(.data))) {
-    rlang::abort(
-      paste0(
-        "The `tune_results` object does not contain columns with predictions",
-        " Refit with the control argument `save_pred = TRUE` to save these columns."
+    cli::cli_abort(
+      c(
+        "The {.arg .data} object does not contain columns with predictions.",
+        "i" = "Refit with the control argument {.code save_pred = TRUE} to save
+           these columns."
       )
     )
   }
@@ -104,11 +105,13 @@ cal_apply.cal_object <- function(.data,
                                  parameters = NULL,
                                  ...) {
   if ("data.frame" %in% class(object)) {
-    rlang::abort(paste0(
-      "`cal_apply()` expects the data as the first argument,",
-      " and the object as the second argument. Please reverse",
-      " the order of the arguments and try again."
-    ))
+    cli::cli_abort(
+      c(
+        "{.fn cal_apply} expects the data as the first argument, and the object
+         as the second argument.",
+        "i" = "Please reverse the order of the arguments and try again."
+      )
+    )
   }
 }
 

@@ -65,7 +65,7 @@ int_conformal_split <- function(object, ...) {
 #' @export
 #' @rdname int_conformal_split
 int_conformal_split.default <- function(object, ...) {
-  rlang::abort("No known 'int_conformal_split' methods for this type of object.")
+  cli::cli_abort("No known {.fn int_conformal_split} methods for this type of object.")
 }
 
 #' @export
