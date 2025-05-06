@@ -17,9 +17,9 @@ test_that("split conformal quantile intervals", {
   sim_new <- sim_regression(2)
 
   wflow <-
-    workflow() %>%
-    add_model(parsnip::linear_reg()) %>%
-    add_formula(outcome ~ .) %>%
+    workflow() |>
+    add_model(parsnip::linear_reg()) |>
+    add_formula(outcome ~ .) |>
     fit(sim_data)
 
   # ------------------------------------------------------------------------------

@@ -94,7 +94,7 @@ head(boosting_predictions_test)
 
 y_rng <- extendrange(boosting_predictions_test$outcome)
 
-boosting_predictions_test \%>\%
+boosting_predictions_test |>
   ggplot(aes(outcome, .pred)) +
   geom_abline(lty = 2) +
   geom_point(alpha = 1 / 2) +
@@ -106,14 +106,14 @@ boosting_predictions_test \%>\%
 # Smoothed trend removal
 
 smoothed_cal <-
-  boosting_predictions_oob \%>\%
+  boosting_predictions_oob |>
   # It will automatically identify the predicted value columns when the
   # standard tidymodels naming conventions are used.
   cal_estimate_linear(outcome)
 smoothed_cal
 
-boosting_predictions_test \%>\%
-  cal_apply(smoothed_cal) \%>\%
+boosting_predictions_test |>
+  cal_apply(smoothed_cal) |>
   ggplot(aes(outcome, .pred)) +
   geom_abline(lty = 2) +
   geom_point(alpha = 1 / 2) +

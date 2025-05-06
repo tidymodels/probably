@@ -39,7 +39,7 @@
 ---
 
     Code
-      int_conformal_full(wflow %>% extract_fit_parsnip(), sim_new)
+      int_conformal_full(extract_fit_parsnip(wflow), sim_new)
     Condition
       Error in `int_conformal_full()`:
       ! No known `int_conformal_full()` methods for this type of object.
@@ -104,7 +104,7 @@
 ---
 
     Code
-      int_conformal_cv(good_res %>% dplyr::select(-.predictions))
+      int_conformal_cv(dplyr::select(good_res, -.predictions))
     Condition
       Error in `int_conformal_cv()`:
       ! The output must contain a column called `.predictions` that contains the holdout predictions. See the documentation on the `save_pred` argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
@@ -112,7 +112,7 @@
 ---
 
     Code
-      int_conformal_cv(good_res %>% dplyr::select(-.extracts))
+      int_conformal_cv(dplyr::select(good_res, -.extracts))
     Condition
       Error in `int_conformal_cv()`:
       ! The output must contain a column called `.extracts` that contains the fitted workflow objects. See the documentation on the `extract` argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).

@@ -28,7 +28,7 @@
 #'
 #' y_rng <- extendrange(boosting_predictions_test$outcome)
 #'
-#' boosting_predictions_test %>%
+#' boosting_predictions_test |>
 #'   ggplot(aes(outcome, .pred)) +
 #'   geom_abline(lty = 2) +
 #'   geom_point(alpha = 1 / 2) +
@@ -40,14 +40,14 @@
 #' # Smoothed trend removal
 #'
 #' smoothed_cal <-
-#'   boosting_predictions_oob %>%
+#'   boosting_predictions_oob |>
 #'   # It will automatically identify the predicted value columns when the
 #'   # standard tidymodels naming conventions are used.
 #'   cal_estimate_linear(outcome)
 #' smoothed_cal
 #'
-#' boosting_predictions_test %>%
-#'   cal_apply(smoothed_cal) %>%
+#' boosting_predictions_test |>
+#'   cal_apply(smoothed_cal) |>
 #'   ggplot(aes(outcome, .pred)) +
 #'   geom_abline(lty = 2) +
 #'   geom_point(alpha = 1 / 2) +
@@ -116,8 +116,8 @@ cal_estimate_linear.tune_results <- function(.data,
     ...
   )
 
-  tune_args$predictions %>%
-    dplyr::group_by(!!tune_args$group) %>%
+  tune_args$predictions |>
+    dplyr::group_by(!!tune_args$group) |>
     cal_linear_impl(
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
@@ -200,9 +200,9 @@ cal_linear_impl <- function(.data,
 }
 
 cal_linear_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
-  .data %>%
-    dplyr::group_by({{ group }}, .add = TRUE) %>%
-    split_dplyr_groups() %>%
+  .data |>
+    dplyr::group_by({{ group }}, .add = TRUE) |>
+    split_dplyr_groups() |>
     lapply(
       function(x) {
         estimate <- cal_linear_impl_single(

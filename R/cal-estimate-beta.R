@@ -75,8 +75,8 @@ cal_estimate_beta.tune_results <- function(.data,
     ...
   )
 
-  tune_args$predictions %>%
-    dplyr::group_by(!!tune_args$group) %>%
+  tune_args$predictions |>
+    dplyr::group_by(!!tune_args$group) |>
     cal_beta_impl(
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
@@ -159,8 +159,8 @@ cal_beta_impl_grp <- function(.data,
 
   list_names <- purrr::map_chr(estimate, rlang::as_name)
 
-  .data %>%
-    split_dplyr_groups() %>%
+  .data |>
+    split_dplyr_groups() |>
     lapply(
       function(x) {
         estimate <- cal_beta_impl_estimate(

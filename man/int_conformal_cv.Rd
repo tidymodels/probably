@@ -61,13 +61,13 @@ library(modeldata)
 
 set.seed(2)
 sim_train <- sim_regression(200)
-sim_new <- sim_regression(5) \%>\% select(-outcome)
+sim_new <- sim_regression(5) |> select(-outcome)
 
 sim_rs <- vfold_cv(sim_train)
 
 # We'll use a neural network model
 mlp_spec <-
-  mlp(hidden_units = 5, penalty = 0.01) \%>\%
+  mlp(hidden_units = 5, penalty = 0.01) |>
   set_mode("regression")
 
 # Use a control function that saves the predictions as well as the models.
@@ -78,7 +78,7 @@ ctrl <- control_resamples(save_pred = TRUE, extract = I)
 
 set.seed(3)
 nnet_res <-
-  mlp_spec \%>\%
+  mlp_spec |>
   fit_resamples(outcome ~ ., resamples = sim_rs, control = ctrl)
 
 nnet_int_obj <- int_conformal_cv(nnet_res)

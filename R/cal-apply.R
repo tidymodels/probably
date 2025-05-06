@@ -204,9 +204,8 @@ cal_adjust_update <- function(.data,
     col_names <- nm_levels(object$levels)
     factor_levels <- names(object$levels)
 
-    predictions <- res[, col_names] %>%
-      max.col(ties.method = "first") %>%
-      factor_levels[.] %>%
+    predictions <- res[, col_names] |> max.col(ties.method = "first")
+    predictions <- factor_levels[predictions] |>
       factor(levels = factor_levels)
 
     res[, pred_name] <- predictions

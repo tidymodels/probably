@@ -197,10 +197,10 @@ tidyselect_cols <- function(.data, x) {
 # any tidyeval variable calls made prior to calling the calibration
 split_dplyr_groups <- function(.data) {
   if (dplyr::is_grouped_df(.data)) {
-    grp_keys <- .data %>% dplyr::group_keys()
+    grp_keys <- .data |> dplyr::group_keys()
     grp_keys <- purrr::map(grp_keys, as.character)
-    grp_var <- .data %>% dplyr::group_vars()
-    grp_data <- .data %>% tidyr::nest()
+    grp_var <- .data |> dplyr::group_vars()
+    grp_data <- .data |> tidyr::nest()
     grp_filters <- purrr::map(grp_keys[[1]], ~ expr(!!parse_expr(grp_var) == !!.x))
     grp_n <- purrr::map_int(grp_data$data, nrow)
     res <- vector(mode = "list", length = length(grp_filters))

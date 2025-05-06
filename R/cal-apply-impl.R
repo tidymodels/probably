@@ -1,14 +1,14 @@
 #---------------------------------- >> Interval --------------------------------
 apply_interval_impl <- function(object, .data, multi = FALSE, method = "auto") {
   # Iterates through each group
-  new_data <- object$estimates %>%
+  new_data <- object$estimates |>
     purrr::map(~ {
       apply_interval_column(
         .data = .data,
         est_filter = .x$filter,
         estimates = .x$estimates
       )
-    }) %>%
+    }) |>
     purrr::reduce(dplyr::bind_rows)
 
   apply_adjustment(new_data, object)
@@ -22,8 +22,8 @@ apply_interval_column <- function(.data, est_filter, estimates) {
     df <- dplyr::filter(.data, !!est_filter)
   }
 
-  ret <- estimates %>%
-    purrr::list_transpose(simplify = FALSE) %>%
+  ret <- estimates |>
+    purrr::list_transpose(simplify = FALSE) |>
     purrr::imap(~ {
       apply_interval_estimate(
         estimate = .x,
@@ -54,7 +54,7 @@ apply_interval_estimate <- function(estimate, df, est_name) {
     }
   }
 
-  ret <- estimate %>%
+  ret <- estimate |>
     purrr::map(
       apply_interval_single,
       df = df,
@@ -62,8 +62,8 @@ apply_interval_estimate <- function(estimate, df, est_name) {
     )
 
   if (length(estimate) > 1) {
-    ret <- ret %>%
-      data.frame() %>%
+    ret <- ret |>
+      data.frame() |>
       rowMeans()
   } else {
     ret <- ret[[1]]
@@ -88,14 +88,14 @@ apply_interval_single <- function(estimates_table, df, est_name) {
 
 apply_beta_impl <- function(object, .data) {
   # Iterates through each group
-  new_data <- object$estimates %>%
+  new_data <- object$estimates |>
     purrr::map(~ {
       apply_beta_column(
         .data = .data,
         est_filter = .x$filter,
         estimates = .x$estimate
       )
-    }) %>%
+    }) |>
     purrr::reduce(dplyr::bind_rows)
 
   apply_adjustment(new_data, object)
@@ -109,7 +109,7 @@ apply_beta_column <- function(.data, est_filter, estimates) {
     df <- dplyr::filter(.data, !!est_filter)
   }
 
-  ret <- estimates %>%
+  ret <- estimates |>
     purrr::imap(~ {
       apply_beta_single(
         model = .x,

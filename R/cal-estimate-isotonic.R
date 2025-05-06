@@ -77,8 +77,8 @@ cal_estimate_isotonic.tune_results <- function(.data,
     ...
   )
 
-  tune_args$predictions %>%
-    dplyr::group_by(!!tune_args$group) %>%
+  tune_args$predictions |>
+    dplyr::group_by(!!tune_args$group) |>
     cal_isoreg_impl(
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
@@ -171,8 +171,8 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
     ...
   )
 
-  tune_args$predictions %>%
-    dplyr::group_by(!!tune_args$group) %>%
+  tune_args$predictions |>
+    dplyr::group_by(!!tune_args$group) |>
     cal_isoreg_impl(
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
@@ -248,7 +248,7 @@ cal_isoreg_impl <- function(.data,
       x <- .x
       map(iso_model, ~ .x[[x]])
     }
-  ) %>%
+  ) |>
     purrr::map(
       ~ {
         x <- .x
@@ -273,8 +273,8 @@ cal_isoreg_impl <- function(.data,
 cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
   list_names <- purrr::map_chr(estimate, rlang::as_name)
 
-  .data %>%
-    split_dplyr_groups() %>%
+  .data |>
+    split_dplyr_groups() |>
     lapply(
       function(x) {
         iso_model <- cal_isoreg_impl_estimate(
