@@ -2,7 +2,7 @@
 apply_interval_impl <- function(object, .data, multi = FALSE, method = "auto") {
   # Iterates through each group
   new_data <- object$estimates %>%
-    purrr::map(~ {
+    purrr::map(~ {# TODO make function
       apply_interval_column(
         .data = .data,
         est_filter = .x$filter,
@@ -24,7 +24,7 @@ apply_interval_column <- function(.data, est_filter, estimates) {
 
   ret <- estimates %>%
     purrr::list_transpose(simplify = FALSE) %>%
-    purrr::imap(~ {
+    purrr::imap(~ {# TODO make function
       apply_interval_estimate(
         estimate = .x,
         df = df,
@@ -89,7 +89,7 @@ apply_interval_single <- function(estimates_table, df, est_name) {
 apply_beta_impl <- function(object, .data) {
   # Iterates through each group
   new_data <- object$estimates %>%
-    purrr::map(~ {
+    purrr::map(~ {# TODO make function
       apply_beta_column(
         .data = .data,
         est_filter = .x$filter,
@@ -110,7 +110,7 @@ apply_beta_column <- function(.data, est_filter, estimates) {
   }
 
   ret <- estimates %>%
-    purrr::imap(~ {
+    purrr::imap(~ {# TODO make function
       apply_beta_single(
         model = .x,
         df = df,

@@ -23,7 +23,7 @@ apply_reg_predict <- function(object, .data) {
   .pred_name <- rlang::expr_deparse(object$levels$predictions)
   .data <- object$estimates %>%
     purrr::map(
-      ~ {
+      ~ {# TODO make function
         if (is.null(.x$filter)) {
           new_data <- .data
         } else {

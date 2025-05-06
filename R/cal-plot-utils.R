@@ -28,7 +28,7 @@
   if (method == "breaks") {
     res <- purrr::imap(
       no_levels,
-      ~ {
+      ~ {# TODO make function
         .cal_cut_grps(
           .data = .data,
           truth = !!truth,
@@ -45,7 +45,7 @@
   if (method == "model") {
     res <- purrr::imap(
       no_levels,
-      ~ {
+      ~ {# TODO make function
         .cal_model_grps(
           .data = .data,
           truth = !!truth,
@@ -154,7 +154,7 @@
   cuts %>%
     purrr::list_transpose(simplify = FALSE) %>%
     purrr::map_df(
-      ~ {
+      ~ {# TODO make function
         rf <- .data$.estimate >= .x$lower_cut & .data$.estimate <= .x$upper_cut
         ret <- .data[rf, ]
         ret <- process_midpoint(ret, conf_level = conf_level)

@@ -179,7 +179,7 @@ cal_logistic_impl_grp <- function(.data, truth, estimate, run_model, group, ...)
     dplyr::group_by({{ group }}, .add = TRUE) %>%
     split_dplyr_groups() %>%
     lapply(
-      function(x) {
+      function(x) {# TODO make function
         estimate <- cal_logistic_impl_single(
           .data = x$data,
           truth = {{ truth }},

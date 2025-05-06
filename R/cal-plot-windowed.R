@@ -281,7 +281,7 @@ cal_plot_windowed_impl <- function(.data,
 
   res <- .data %>%
     dplyr::group_by(!!group, .add = TRUE) %>%
-    dplyr::group_map(~ {
+    dplyr::group_map(~ {# TODO make function
       grp <- .cal_table_windowed_grp(
         .data = .x,
         truth = !!truth,
