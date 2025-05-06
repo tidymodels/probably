@@ -47,7 +47,7 @@
 #' make_two_class_pred(good, lvls, buffer = c(0.05, 0.15))
 #'
 #' # These functions are useful alongside dplyr::mutate()
-#' segment_logistic %>%
+#' segment_logistic |>
 #'   mutate(
 #'     .class_pred = make_two_class_pred(
 #'       estimate = .pred_good,
@@ -59,7 +59,7 @@
 #' # Multi-class example
 #' # Note that we provide class probability columns in the same
 #' # order as the levels
-#' species_probs %>%
+#' species_probs |>
 #'   mutate(
 #'     .class_pred = make_class_pred(
 #'       .pred_bobcat, .pred_coyote, .pred_gray_fox,
@@ -202,7 +202,7 @@ make_two_class_pred <- function(estimate,
 #'
 #' library(dplyr)
 #'
-#' species_probs %>%
+#' species_probs |>
 #'   mutate(
 #'     .class_pred = make_class_pred(
 #'       .pred_bobcat, .pred_coyote, .pred_gray_fox,

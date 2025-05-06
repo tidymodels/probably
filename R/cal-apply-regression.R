@@ -21,7 +21,7 @@ cal_apply_regression.cal_estimate_linear <-
 
 apply_reg_predict <- function(object, .data) {
   .pred_name <- rlang::expr_deparse(object$levels$predictions)
-  .data <- object$estimates %>%
+  .data <- object$estimates |>
     purrr::map(
       ~ {
         if (is.null(.x$filter)) {
@@ -33,7 +33,7 @@ apply_reg_predict <- function(object, .data) {
         new_data[.pred_name] <- preds
         new_data
       }
-    ) %>%
+    ) |>
     purrr::reduce(dplyr::bind_rows)
   .data
 }

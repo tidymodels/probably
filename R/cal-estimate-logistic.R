@@ -93,8 +93,8 @@ cal_estimate_logistic.tune_results <- function(.data,
     ...
   )
 
-  tune_args$predictions %>%
-    dplyr::group_by(!!tune_args$group) %>%
+  tune_args$predictions |>
+    dplyr::group_by(!!tune_args$group) |>
     cal_logistic_impl(
       truth = !!tune_args$truth,
       estimate = !!tune_args$estimate,
@@ -175,9 +175,9 @@ cal_logistic_impl <- function(.data,
 }
 
 cal_logistic_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
-  .data %>%
-    dplyr::group_by({{ group }}, .add = TRUE) %>%
-    split_dplyr_groups() %>%
+  .data |>
+    dplyr::group_by({{ group }}, .add = TRUE) |>
+    split_dplyr_groups() |>
     lapply(
       function(x) {
         estimate <- cal_logistic_impl_single(

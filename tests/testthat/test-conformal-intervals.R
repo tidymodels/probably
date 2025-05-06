@@ -16,9 +16,9 @@ test_that("bad inputs to conformal intervals", {
   set.seed(111)
   sim_data <- sim_regression(500)
   wflow <-
-    workflow() %>%
-    add_model(parsnip::linear_reg()) %>%
-    add_formula(outcome ~ .) %>%
+    workflow() |>
+    add_model(parsnip::linear_reg()) |>
+    add_formula(outcome ~ .) |>
     fit(sim_data)
 
   set.seed(182)
@@ -30,26 +30,26 @@ test_that("bad inputs to conformal intervals", {
   set.seed(382)
   cv <- vfold_cv(sim_data, v = 2)
   good_res <-
-    parsnip::linear_reg() %>% fit_resamples(outcome ~ ., cv, control = ctrl)
+    parsnip::linear_reg() |> fit_resamples(outcome ~ ., cv, control = ctrl)
 
   set.seed(382)
   cv <- vfold_cv(sim_data, v = 2, repeats = 2)
   rep_res <-
-    parsnip::linear_reg() %>% fit_resamples(outcome ~ ., cv, control = ctrl)
+    parsnip::linear_reg() |> fit_resamples(outcome ~ ., cv, control = ctrl)
 
   set.seed(382)
   bt <- bootstraps(sim_data, times = 2)
   bt_res <-
-    parsnip::linear_reg() %>% fit_resamples(outcome ~ ., bt, control = ctrl)
+    parsnip::linear_reg() |> fit_resamples(outcome ~ ., bt, control = ctrl)
 
   # ----------------------------------------------------------------------------
 
   set.seed(121212)
   sim_cls_data <- sim_classification(100)
   wflow_cls <-
-    workflow() %>%
-    add_model(parsnip::logistic_reg()) %>%
-    add_formula(class ~ .) %>%
+    workflow() |>
+    add_model(parsnip::logistic_reg()) |>
+    add_formula(class ~ .) |>
     fit(sim_cls_data)
 
   sim_cls_new <- sim_classification(2)
@@ -82,7 +82,7 @@ test_that("bad inputs to conformal intervals", {
 
   expect_snapshot(
     error = TRUE,
-    int_conformal_full(wflow %>% extract_fit_parsnip(), sim_new)
+    int_conformal_full(wflow |> extract_fit_parsnip(), sim_new)
   )
 
   expect_snapshot(
@@ -121,11 +121,11 @@ test_that("bad inputs to conformal intervals", {
   )
   expect_snapshot(
     error = TRUE,
-    int_conformal_cv(good_res %>% dplyr::select(-.predictions))
+    int_conformal_cv(good_res |> dplyr::select(-.predictions))
   )
   expect_snapshot(
     error = TRUE,
-    int_conformal_cv(good_res %>% dplyr::select(-.extracts))
+    int_conformal_cv(good_res |> dplyr::select(-.extracts))
   )
 
   expect_snapshot(
@@ -154,15 +154,15 @@ test_that("conformal intervals", {
   sim_small <- sim_data[1:25, ]
 
   wflow <-
-    workflow() %>%
-    add_model(parsnip::linear_reg()) %>%
-    add_formula(outcome ~ .) %>%
+    workflow() |>
+    add_model(parsnip::linear_reg()) |>
+    add_formula(outcome ~ .) |>
     fit(sim_data)
 
   wflow_small <-
-    workflow() %>%
-    add_model(parsnip::linear_reg()) %>%
-    add_formula(outcome ~ .) %>%
+    workflow() |>
+    add_model(parsnip::linear_reg()) |>
+    add_formula(outcome ~ .) |>
     fit(sim_small)
 
   set.seed(182)
@@ -182,10 +182,10 @@ test_that("conformal intervals", {
   set.seed(382)
   cv <- vfold_cv(sim_data, v = 2)
   cv_res <-
-    parsnip::linear_reg() %>% fit_resamples(outcome ~ ., cv, control = ctrl)
+    parsnip::linear_reg() |> fit_resamples(outcome ~ ., cv, control = ctrl)
   grid_res <-
-    parsnip::mlp(penalty = tune()) %>%
-    set_mode("regression") %>%
+    parsnip::mlp(penalty = tune()) |>
+    set_mode("regression") |>
     tune_grid(outcome ~ ., cv, grid = 2, control = ctrl)
 
   # ----------------------------------------------------------------------------
@@ -244,7 +244,7 @@ test_that("group resampling to conformal CV intervals", {
   skip_if_not_installed("nnet")
 
   make_data <- function(n, std_dev = 1 / 5) {
-    tibble(x = runif(n, min = -1)) %>%
+    tibble(x = runif(n, min = -1)) |>
       mutate(
         y = (x^3) + 2 * exp(-6 * (x - 0.3)^2),
         y = y + rnorm(n, sd = std_dev)
@@ -253,19 +253,19 @@ test_that("group resampling to conformal CV intervals", {
 
   n <- 100
   set.seed(8383)
-  train_data <- make_data(n) %>%
+  train_data <- make_data(n) |>
     mutate(color = sample(c('red', 'blue'), n(), replace = TRUE))
 
   set.seed(484)
   nnet_wflow <-
-    workflow(y ~ x, mlp(hidden_units = 2) %>% set_mode("regression"))
+    workflow(y ~ x, mlp(hidden_units = 2) |> set_mode("regression"))
 
   group_folds <- group_vfold_cv(train_data, group = color)
 
   ctrl <- control_resamples(save_pred = TRUE, extract = I)
 
   group_nnet_rs <-
-    nnet_wflow %>%
+    nnet_wflow |>
     fit_resamples(group_folds, control = ctrl)
 
   expect_snapshot_warning(int_conformal_cv(group_nnet_rs))

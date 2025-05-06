@@ -74,16 +74,16 @@
 #'
 #' preds <- predict(model, segment_logistic, type = "response")
 #'
-#' gl <- segment_logistic %>%
+#' gl <- segment_logistic |>
 #'   mutate(.pred_good = 1 - preds, source = "glm")
 #'
 #' combined <- bind_rows(mutate(segment_logistic, source = "original"), gl)
 #'
-#' combined %>%
+#' combined |>
 #'   cal_plot_logistic(Class, .pred_good, .by = source)
 #'
 #' # The grouping can be faceted in ggplot2
-#' combined %>%
+#' combined |>
 #'   cal_plot_logistic(Class, .pred_good, .by = source) +
 #'   facet_wrap(~source) +
 #'   theme(legend.position = "")
@@ -348,8 +348,8 @@ cal_plot_breaks_impl <- function(.data,
     estimate = !!estimate
   )
 
-  res <- .data %>%
-    dplyr::group_by(!!group, .add = TRUE) %>%
+  res <- .data |>
+    dplyr::group_by(!!group, .add = TRUE) |>
     dplyr::group_map(~ {
       grp <- .cal_table_breaks_grp(
         .data = .x,
@@ -360,7 +360,7 @@ cal_plot_breaks_impl <- function(.data,
         levels = levels
       )
       dplyr::bind_cols(.y, grp)
-    }) %>%
+    }) |>
     dplyr::bind_rows()
 
   if (length(levels) > 2) {

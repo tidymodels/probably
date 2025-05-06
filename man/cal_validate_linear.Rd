@@ -74,9 +74,9 @@ head(boosting_predictions_test)
 reg_stats <- metric_set(rmse, ccc)
 
 set.seed(828)
-boosting_predictions_oob \%>\%
+boosting_predictions_oob |>
   # Resample with 10-fold cross-validation
-  vfold_cv() \%>\%
+  vfold_cv() |>
   cal_validate_linear(truth = outcome, smooth = FALSE, metrics = reg_stats)
 }
 \seealso{

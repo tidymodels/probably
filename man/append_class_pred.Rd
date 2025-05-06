@@ -56,7 +56,7 @@ data frame.
 
 library(dplyr)
 
-species_probs \%>\%
+species_probs |>
   mutate(
     .class_pred = make_class_pred(
       .pred_bobcat, .pred_coyote, .pred_gray_fox,

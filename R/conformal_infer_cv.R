@@ -43,13 +43,13 @@
 #'
 #' set.seed(2)
 #' sim_train <- sim_regression(200)
-#' sim_new <- sim_regression(5) %>% select(-outcome)
+#' sim_new <- sim_regression(5) |> select(-outcome)
 #'
 #' sim_rs <- vfold_cv(sim_train)
 #'
 #' # We'll use a neural network model
 #' mlp_spec <-
-#'   mlp(hidden_units = 5, penalty = 0.01) %>%
+#'   mlp(hidden_units = 5, penalty = 0.01) |>
 #'   set_mode("regression")
 #'
 #' # Use a control function that saves the predictions as well as the models.
@@ -60,7 +60,7 @@
 #'
 #' set.seed(3)
 #' nnet_res <-
-#'   mlp_spec %>%
+#'   mlp_spec |>
 #'   fit_resamples(outcome ~ ., resamples = sim_rs, control = ctrl)
 #'
 #' nnet_int_obj <- int_conformal_cv(nnet_res)
@@ -89,7 +89,7 @@ int_conformal_cv.resample_results <- function(object, ...) {
 
   y_name <- tune::.get_tune_outcome_names(object)
   resids <-
-    tune::collect_predictions(object, summarize = TRUE) %>%
+    tune::collect_predictions(object, summarize = TRUE) |>
     dplyr::mutate(.abs_resid = abs(.pred - !!rlang::sym(y_name)))
 
   new_infer_cv(model_list, resids$.abs_resid)
@@ -106,7 +106,7 @@ int_conformal_cv.tune_results <- function(object, parameters, ...) {
   y_name <- tune::.get_tune_outcome_names(object)
 
   resids <-
-    tune::collect_predictions(object, parameters = parameters, summarize = TRUE) %>%
+    tune::collect_predictions(object, parameters = parameters, summarize = TRUE) |>
     dplyr::mutate(.abs_resid = abs(.pred - !!rlang::sym(y_name)))
 
   new_infer_cv(model_list, resids$.abs_resid)
@@ -118,10 +118,10 @@ predict.int_conformal_cv <- function(object, new_data, level = 0.95, ...) {
   mean_pred <-
     purrr::map_dfr(
       object$models,
-      ~ predict(.x, new_data) %>% parsnip::add_rowindex()
-    ) %>%
-    dplyr::group_by(.row) %>%
-    dplyr::summarize(estimate = mean(.pred, na.rm = TRUE), .groups = "drop") %>%
+      ~ predict(.x, new_data) |> parsnip::add_rowindex()
+    ) |>
+    dplyr::group_by(.row) |>
+    dplyr::summarize(estimate = mean(.pred, na.rm = TRUE), .groups = "drop") |>
     purrr::pluck("estimate")
   lower <-
     purrr::map_dbl(
@@ -188,15 +188,15 @@ new_infer_cv <- function(models, resid) {
 }
 
 .get_pre_type <- function(x) {
-  cls <- x %>%
-    workflows::extract_preprocessor() %>%
+  cls <- x |>
+    workflows::extract_preprocessor() |>
     class()
   cls <- cls[!grepl("butchered", cls)]
   cls[1]
 }
 
 .get_fit_type <- function(x) {
-  fitted <- x %>% workflows::extract_fit_parsnip()
+  fitted <- x |> workflows::extract_fit_parsnip()
   res <- paste0(class(fitted$spec)[1], " (engine = ", fitted$spec$engine, ")")
   res
 }
@@ -207,10 +207,10 @@ new_infer_cv <- function(models, resid) {
   } else {
     by_vars <- names(prm)
     res <-
-      x %>%
-      dplyr::select(.extracts) %>%
-      tidyr::unnest(.extracts) %>%
-      dplyr::inner_join(prm, by = by_vars) %>%
+      x |>
+      dplyr::select(.extracts) |>
+      tidyr::unnest(.extracts) |>
+      dplyr::inner_join(prm, by = by_vars) |>
       purrr::pluck(".extracts")
   }
   res
@@ -245,7 +245,7 @@ check_resampling <- function(x) {
 
 check_parameters <- function(x, param, call = rlang::caller_env()) {
   prms <- tune::.get_tune_parameter_names(x)
-  mtr <- tune::collect_metrics(x) %>%
+  mtr <- tune::collect_metrics(x) |>
     dplyr::distinct(.config, !!!rlang::syms(prms))
   remain <- dplyr::inner_join(mtr, param, by = names(param))
   if (nrow(remain) > 1) {
