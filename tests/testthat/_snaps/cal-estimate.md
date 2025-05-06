@@ -16,11 +16,13 @@
 
 ---
 
-    We can't connect the specified prediction columns to some factor levels (good). The selected columns were .pred_poor. Are there more columns to add in the function call?
+    We can't connect the specified prediction columns to "good".
+    i The selected columns were ".pred_poor".
+    i Are there more columns to add in the function call?
 
 ---
 
-    The number of outcome factor levels isn't consistent with the calibration method. Only two class `truth` factors are allowed. The given levels were: 'VF', 'F', 'M', 'L'
+    The `truth` column has 4 levels (VF, F, M, and L), but only two-class factors are allowed for this calibration method.
 
 ---
 
@@ -62,7 +64,7 @@
 
 ---
 
-    The number of outcome factor levels isn't consistent with the calibration method. Only two class `truth` factors are allowed. The given levels were: '.pred_one', '.pred_two', '.pred_three'
+    The `truth` column has 3 levels (.pred_one, .pred_two, and .pred_three), but only two-class factors are allowed for this calibration method.
 
 # Logistic estimates errors - grouped_df
 

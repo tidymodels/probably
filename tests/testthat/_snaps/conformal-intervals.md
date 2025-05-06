@@ -34,7 +34,7 @@
       int_conformal_full(workflow(), sim_new)
     Condition
       Error in `int_conformal_full()`:
-      ! 'object' should be a fitted workflow object.
+      ! `object` should be a fitted workflow object.
 
 ---
 
@@ -42,7 +42,7 @@
       int_conformal_full(wflow %>% extract_fit_parsnip(), sim_new)
     Condition
       Error in `int_conformal_full()`:
-      ! No known 'int_conformal_full' methods for this type of object.
+      ! No known `int_conformal_full()` methods for this type of object.
 
 ---
 
@@ -50,23 +50,23 @@
       int_conformal_full(wflow_cls, sim_cls_new)
     Condition
       Error in `int_conformal_full()`:
-      ! 'object' should be a regression model.
+      ! `object` should be a regression model.
 
 ---
 
     Code
       predict(basic_obj, sim_new[, 3:5])
     Condition
-      Error in `validate_column_names()`:
-      ! The following required columns are missing: 'predictor_01', 'predictor_05', 'predictor_06', 'predictor_07', 'predictor_08', 'predictor_09', 'predictor_10', 'predictor_11', 'predictor_12', 'predictor_13', 'predictor_14', 'predictor_15', 'predictor_16', 'predictor_17', 'predictor_18', 'predictor_19', 'predictor_20'.
+      Error in `hardhat::forge()`:
+      ! The required columns "predictor_01", "predictor_05", "predictor_06", "predictor_07", "predictor_08", "predictor_09", "predictor_10", "predictor_11", "predictor_12", "predictor_13", "predictor_14", "predictor_15", "predictor_16", "predictor_17", "predictor_18", "predictor_19", and "predictor_20" are missing.
 
 ---
 
     Code
       int_conformal_full(wflow, train_data = sim_cls_data)
     Condition
-      Error in `validate_column_names()`:
-      ! The following required columns are missing: 'predictor_01', 'predictor_02', 'predictor_03', 'predictor_04', 'predictor_05', 'predictor_06', 'predictor_07', 'predictor_08', 'predictor_09', 'predictor_10', 'predictor_11', 'predictor_12', 'predictor_13', 'predictor_14', 'predictor_15', 'predictor_16', 'predictor_17', 'predictor_18', 'predictor_19', 'predictor_20'.
+      Error in `hardhat::forge()`:
+      ! The required columns "predictor_01", "predictor_02", "predictor_03", "predictor_04", "predictor_05", "predictor_06", "predictor_07", "predictor_08", "predictor_09", "predictor_10", "predictor_11", "predictor_12", "predictor_13", "predictor_14", "predictor_15", "predictor_16", "predictor_17", "predictor_18", "predictor_19", and "predictor_20" are missing.
 
 ---
 
@@ -95,23 +95,23 @@
       int_conformal_cv(workflow())
     Condition
       Error in `int_conformal_cv()`:
-      ! No known 'int_conformal_cv' methods for this type of object.
+      ! No known `int_conformal_cv()` methods for this type of object.
 
 ---
 
     Code
       int_conformal_cv(good_res %>% dplyr::select(-.predictions))
     Condition
-      Error in `check_extras()`:
-      ! The output must contain a column called '.predictions' that contains the holdout predictions. See the documentation on the 'save_pred' argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
+      Error in `int_conformal_cv()`:
+      ! The output must contain a column called `.predictions` that contains the holdout predictions. See the documentation on the `save_pred` argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
 
 ---
 
     Code
       int_conformal_cv(good_res %>% dplyr::select(-.extracts))
     Condition
-      Error in `check_extras()`:
-      ! The output must contain a column called '.extracts' that contains the fitted workflow objects. See the documentation on the 'extract' argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
+      Error in `int_conformal_cv()`:
+      ! The output must contain a column called `.extracts` that contains the fitted workflow objects. See the documentation on the `extract` argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
 
 ---
 
@@ -120,8 +120,8 @@
     Condition
       Error in `map()`:
       i In index: 1.
-      Caused by error in `validate_column_names()`:
-      ! The following required columns are missing: 'predictor_01', 'predictor_05', 'predictor_06', 'predictor_07', 'predictor_08', 'predictor_09', 'predictor_10', 'predictor_11', 'predictor_12', 'predictor_13', 'predictor_14', 'predictor_15', 'predictor_16', 'predictor_17', 'predictor_18', 'predictor_19', 'predictor_20'.
+      Caused by error in `hardhat::forge()`:
+      ! The required columns "predictor_01", "predictor_05", "predictor_06", "predictor_07", "predictor_08", "predictor_09", "predictor_10", "predictor_11", "predictor_12", "predictor_13", "predictor_14", "predictor_15", "predictor_16", "predictor_17", "predictor_18", "predictor_19", and "predictor_20" are missing.
 
 ---
 

@@ -134,9 +134,7 @@ cal_multinom_impl <- function(.data, truth, estimate, source_class, smooth, ...)
   levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
 
   if (length(levels) == 2) {
-    rlang::abort(
-      "This function is meant to be used with a multi-class outcomes only"
-    )
+    cli::cli_abort("This function is meant to be used with multi-class outcomes only.")
   }
 
   model <- cal_multinom_impl_grp(

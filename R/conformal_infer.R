@@ -69,7 +69,7 @@ int_conformal_full <- function(object, ...) {
 #' @export
 #' @rdname int_conformal_full
 int_conformal_full.default <- function(object, ...) {
-  rlang::abort("No known 'int_conformal_full' methods for this type of object.")
+  cli::cli_abort("No known {.fn int_conformal_full} methods for this type of object.")
 }
 
 #' @export
@@ -195,10 +195,10 @@ get_mode <- function(x) {
 
 check_workflow <- function(x, call = rlang::caller_env()) {
   if (!workflows::is_trained_workflow(x)) {
-    rlang::abort("'object' should be a fitted workflow object.", call = call)
+    cli::cli_abort("{.arg object} should be a fitted workflow object.", call = call)
   }
   if (get_mode(x) != "regression") {
-    rlang::abort("'object' should be a regression model.", call = call)
+    cli::cli_abort("{.arg object} should be a regression model.", call = call)
   }
 }
 
@@ -233,11 +233,14 @@ var_model <- function(object, train_data, call = caller_env()) {
     )
 
   if (inherits(var_mod, "try-error")) {
-    msg <- c(
-      "The model to estimate the possible interval length failed with the following message:",
-      "i" = conditionMessage(attr(var_mod, "condition"))
+    cli::cli_abort(
+      c(
+        "The model to estimate the possible interval length failed with the
+        following message:",
+        "i" = "{conditionMessage(attr(var_mod, 'condition'))}"
+      ),
+      call = call
     )
-    rlang::abort(msg, call = call)
   }
 
   var_mod

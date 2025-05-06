@@ -114,7 +114,7 @@ regression_plot_impl <- function(.data, truth, estimate, group,
 
   if (length(gp_vars)) {
     if (length(gp_vars) > 1) {
-      rlang::abort("Plot does not support more than one grouping variable")
+      cli::cli_abort("Plot does not support more than one grouping variable")
     }
     has_groups <- TRUE
     dplyr_group <- parse_expr(gp_vars)
@@ -176,7 +176,7 @@ assert_truth_numeric <- function(.data, truth) {
     y <- .data[[truth_name]]
 
     if (!is.numeric(y)) {
-      rlang::abort(paste0("'", truth_name, "' should be a numeric vector."))
+      cli::cli_abort("{.val {truth_name}}' should be a numeric vector.")
     }
   }
 }

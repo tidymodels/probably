@@ -27,7 +27,7 @@
 
 # Event level handling works
 
-    Invalid event_level entry: invalid. Valid entries are 'first', 'second', or 'auto'
+    Invalid `event_level` entry: invalid. Valid entries are "first", "second", or "auto".
 
 # regression plot function errors - grouped_df
 

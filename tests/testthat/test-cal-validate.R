@@ -582,7 +582,7 @@ test_that("Isotonic bootstrapped regression validation with `fit_resamples`", {
 test_that("validation functions error with tune_results input", {
   skip_if_not_installed("modeldata")
   skip_if_not_installed("nnet")
-  skip_if_not_installed("beta")
+  skip_if_not_installed("betacal")
 
   expect_snapshot_error(
     cal_validate_beta(testthat_cal_binary())

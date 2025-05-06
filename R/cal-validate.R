@@ -459,7 +459,7 @@ get_problem_type <- function(x) {
   } else if (inherits(x, "Surv")) {
     res <- "censored regression"
   } else {
-    rlang::abort("Cannot determine the type of calibration problem.")
+    cli::cli_abort("Cannot determine the type of calibration problem.")
   }
   res
 }
@@ -471,21 +471,21 @@ check_validation_metrics <- function(metrics, model_mode) {
     } else if (model_mode == "classification") {
       metrics <- yardstick::metric_set(yardstick::brier_class)
     } else {
-      rlang::abort("unknown mode")
+      cli::cli_abort("Unknown mode {.val {model_mode}}")
     }
   } else {
     metric_info <- dplyr::as_tibble(metrics)
     if (model_mode == "regression") {
       if (any(metric_info$class != "numeric_metric")) {
-        rlang::abort("Metric type should be 'numeric_metric'")
+        cli::cli_abort("Metric type should be {.val numeric_metric}")
       }
     } else if (model_mode == "classification") {
       allowed <- c("prob_metric", "class_metric")
       if (any(!(metric_info$class %in% allowed))) {
-        rlang::abort("Metric type should be 'prob_metric' or 'class_metric'")
+        cli::cli_abort("Metric type should be {.val prob_metric} or {.val class_metric}.")
       }
     } else {
-      rlang::abort("unknown mode")
+      cli::cli_abort("Unknown mode {.val {model_mode}}")
     }
   }
   metrics
@@ -503,7 +503,7 @@ cal_validate <- function(rset,
   estimate <- enquo(estimate)
 
   if (is.null(cal_function)) {
-    rlang::abort("No calibration function provided")
+    cli::cli_abort("No calibration function provided")
   }
 
   outcomes <- dplyr::select(rset$splits[[1]]$data, {{ truth }}) %>% purrr::pluck(1)
@@ -765,7 +765,7 @@ collect_metrics.cal_rset <- function(x, summarize = TRUE, ...) {
 collect_predictions.cal_rset <- function(x, summarize = TRUE, ...) {
   has_no_preds <- !any(grepl("^\\.predictions", names(x)))
   if (has_no_preds) {
-    rlang::abort("There are no saved prediction columns to collect.", call = NULL)
+    cli::cli_abort("There are no saved prediction columns to collect.")
   }
   res <- NULL
 

@@ -18,8 +18,7 @@
   }
 
   if (length_levels > 2 & lev == 2) {
-    msg <- "Only 'event_level' of 'auto' is valid for multi-class models"
-    rlang::abort(msg)
+    cli::cli_abort("Only {.val auto} {.arg event_level} is valid for multi-class models.")
   }
 
   no_levels <- levels
@@ -206,11 +205,8 @@ process_level <- function(x) {
     ret <- 2
   }
   if (is.null(ret)) {
-    msg <- paste0(
-      "Invalid event_level entry: ", x,
-      ". Valid entries are 'first', 'second', or 'auto'"
-    )
-    rlang::abort(msg)
+    cli::cli_abort("Invalid {.arg event_level} entry: {x}. Valid entries are
+                   {.val first}, {.val second}, or {.val auto}.")
   }
   ret
 }
@@ -284,7 +280,7 @@ cal_plot_impl <- function(tbl, x, y,
 
   if (length(gp_vars)) {
     if (length(gp_vars) > 1) {
-      rlang::abort("Plot does not support more than one grouping variable")
+      cli::cli_abort("Plot does not support more than one grouping variable.")
     }
     has_groups <- TRUE
     dplyr_group <- parse_expr(gp_vars)

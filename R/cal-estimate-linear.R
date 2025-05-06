@@ -172,7 +172,7 @@ cal_linear_impl <- function(.data,
     # check outcome type:
     y <- rlang::eval_tidy(levels[[1]], .data)
     if (!is.vector(y) || !is.numeric(y) || is.factor(y)) {
-      rlang::abort("Predictions should be a single numeric vector.")
+      cli::cli_abort("Predictions should be a single numeric vector.")
     }
 
     lin_model <- cal_linear_impl_grp(
@@ -193,7 +193,7 @@ cal_linear_impl <- function(.data,
       source_class = source_class
     )
   } else {
-    rlang::abort("Outcome data should be a single numeric vector.")
+    cli::cli_abort("Outcome data should be a single numeric vector.")
   }
 
   res

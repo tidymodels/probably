@@ -9,11 +9,13 @@ cal_pkg_check <- function(pkgs = NULL) {
     pkg_str <- paste0(not_installed, collapse = ", ")
     install_cmd <- paste0("install.packages(", pkg_str, ")")
 
-    cli::cli_abort(paste(
-      "{n_pkgs} package{?s} ({.pkg {not_installed}}) {?is/are} needed ",
-      "for this calibration but {?is/are} not installed.",
-      "To install run: {.run {install_cmd}}"
-    ))
+    cli::cli_abort(
+      c(
+        "{n_pkgs} package{?s} ({.pkg {not_installed}}) {?is/are} needed for
+         this calibration but {?is/are} not installed.",
+        "i" = "To install run: {.run {install_cmd}}"
+      )
+    )
   }
   invisible()
 }
