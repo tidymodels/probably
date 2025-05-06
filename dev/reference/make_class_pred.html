@@ -281,7 +281,7 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reportable: 89.8%</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># These functions are useful alongside dplyr::mutate()</span></span></span>
-<span class="r-in"><span><span class="va">segment_logistic</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="va">segment_logistic</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    .class_pred <span class="op">=</span> <span class="fu">make_two_class_pred</span><span class="op">(</span></span></span>
 <span class="r-in"><span>      estimate <span class="op">=</span> <span class="va">.pred_good</span>,</span></span>
@@ -307,7 +307,7 @@ default, <code>NULL</code>, is interpreted as no equivocal zone.</p></dd>
 <span class="r-in"><span><span class="co"># Multi-class example</span></span></span>
 <span class="r-in"><span><span class="co"># Note that we provide class probability columns in the same</span></span></span>
 <span class="r-in"><span><span class="co"># order as the levels</span></span></span>
-<span class="r-in"><span><span class="va">species_probs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span><span class="va">species_probs</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    .class_pred <span class="op">=</span> <span class="fu">make_class_pred</span><span class="op">(</span></span></span>
 <span class="r-in"><span>      <span class="va">.pred_bobcat</span>, <span class="va">.pred_coyote</span>, <span class="va">.pred_gray_fox</span>,</span></span>
