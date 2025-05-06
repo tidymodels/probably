@@ -30,7 +30,7 @@ cal_apply_binary.cal_estimate_logistic_spline <- function(object,
 
 apply_model_predict <- function(object, .data) {
   if (object$type == "binary") {
-    .data <- object$estimates %>%
+    .data <- object$estimates |>
       purrr::map(
         ~ {
           if (is.null(.x$filter)) {
@@ -45,7 +45,7 @@ apply_model_predict <- function(object, .data) {
           new_data[lvls[2]] <- 1 - preds
           new_data
         }
-      ) %>%
+      ) |>
       purrr::reduce(dplyr::bind_rows)
   }
   .data

@@ -17,7 +17,7 @@ testthat_cal_binary <- function() {
 
       sim_data <- modeldata::sim_classification(500)
 
-      rec <- recipes::recipe(class ~ ., data = sim_data) %>%
+      rec <- recipes::recipe(class ~ ., data = sim_data) |>
         recipes::step_ns(linear_01, deg_free = tune::tune("linear_01"))
 
       ret <- tune::tune_grid(
@@ -83,8 +83,8 @@ testthat_cal_multiclass <- function() {
         mtry = tune(),
         min_n = tune(),
         trees = 200
-      ) %>%
-        parsnip::set_mode("classification") %>%
+      ) |>
+        parsnip::set_mode("classification") |>
         parsnip::set_engine("ranger")
 
       ret <- tune::tune_grid(
@@ -137,10 +137,10 @@ testthat_cal_sim_multi <- function() {
 
       model <- randomForest::randomForest(class ~ ., train)
 
-      ret <- model %>%
-        predict(test, type = "prob") %>%
-        as.data.frame() %>%
-        dplyr::rename_all(~ paste0(".pred_", .x)) %>%
+      ret <- model |>
+        predict(test, type = "prob") |>
+        as.data.frame() |>
+        dplyr::rename_all(~ paste0(".pred_", .x)) |>
         dplyr::mutate(class = test$class)
 
       saveRDS(ret, ret_file, version = 2)
@@ -168,7 +168,7 @@ testthat_cal_reg <- function() {
 
       sim_data <- modeldata::sim_regression(100)[, 1:3]
 
-      rec <- recipes::recipe(outcome ~ ., data = sim_data) %>%
+      rec <- recipes::recipe(outcome ~ ., data = sim_data) |>
         recipes::step_ns(predictor_01, deg_free = tune::tune("predictor_01"))
 
       ret <- tune::tune_grid(
@@ -235,23 +235,23 @@ testthat_cal_fit_rs <- function() {
 
       set.seed(111)
       rs_bin <-
-        modeldata::sim_classification(100)[, 1:3] %>%
-        dplyr::rename(outcome = class) %>%
-        vfold_cv() %>%
+        modeldata::sim_classification(100)[, 1:3] |>
+        dplyr::rename(outcome = class) |>
+        vfold_cv() |>
         fit_resamples(logistic_reg(), outcome ~ ., resamples = ., control = ctrl)
       set.seed(112)
       rs_mlt <-
-        sim_multinom_df(500) %>%
-        dplyr::rename(outcome = class) %>%
-        vfold_cv() %>%
-        fit_resamples(mlp() %>% set_mode("classification"),
+        sim_multinom_df(500) |>
+        dplyr::rename(outcome = class) |>
+        vfold_cv() |>
+        fit_resamples(mlp() |> set_mode("classification"),
           outcome ~ .,
           resamples = ., control = ctrl
         )
       set.seed(113)
       rs_reg <-
-        modeldata::sim_regression(100)[, 1:3] %>%
-        vfold_cv() %>%
+        modeldata::sim_regression(100)[, 1:3] |>
+        vfold_cv() |>
         fit_resamples(linear_reg(), outcome ~ ., resamples = ., control = ctrl)
 
       ret <- list(binary = rs_bin, multin = rs_mlt, reg = rs_reg)
@@ -332,7 +332,7 @@ are_groups_configs <- function(x) {
 
 bin_with_configs <- function() {
   set.seed(1)
-  segment_logistic %>%
+  segment_logistic |>
     dplyr::mutate(.config = sample(letters[1:2], nrow(segment_logistic), replace = TRUE))
 }
 
@@ -340,8 +340,8 @@ mnl_with_configs <- function() {
   data("hpc_cv", package = "modeldata")
 
   set.seed(1)
-  hpc_cv %>%
-    dplyr::mutate(.config = sample(letters[1:2], nrow(hpc_cv), replace = TRUE))
+  modeldata::hpc_cv |>
+    dplyr::mutate(.config = sample(letters[1:2], nrow(modeldata::hpc_cv), replace = TRUE))
 }
 
 reg_with_configs <- function() {
@@ -349,8 +349,8 @@ reg_with_configs <- function() {
 
   set.seed(1)
 
-  solubility_test %>%
-    dplyr::mutate(.config = sample(letters[1:2], nrow(solubility_test), replace = TRUE))
+  modeldata::solubility_test |>
+    dplyr::mutate(.config = sample(letters[1:2], nrow(modeldata::solubility_test), replace = TRUE))
 }
 
 holdout_length <- function(x) {

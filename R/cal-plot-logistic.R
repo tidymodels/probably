@@ -254,8 +254,8 @@ cal_plot_logistic_impl <- function(.data,
     estimate = !!estimate
   )
 
-  res <- .data %>%
-    dplyr::group_by(!!group, .add = TRUE) %>%
+  res <- .data |>
+    dplyr::group_by(!!group, .add = TRUE) |>
     dplyr::group_map(~ {
       grp <- .cal_class_grps(
         .data = .x,
@@ -267,7 +267,7 @@ cal_plot_logistic_impl <- function(.data,
         method = "model"
       )
       dplyr::bind_cols(.y, grp)
-    }) %>%
+    }) |>
     dplyr::bind_rows()
 
   if (length(levels) > 2) {

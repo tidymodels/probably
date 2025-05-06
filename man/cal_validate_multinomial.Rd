@@ -104,8 +104,8 @@ average of the metrics before, and after the calibration.
 
 library(dplyr)
 
-species_probs \%>\%
-  rsample::vfold_cv() \%>\%
+species_probs |>
+  rsample::vfold_cv() |>
   cal_validate_multinomial(Species)
 
 }

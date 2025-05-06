@@ -61,17 +61,17 @@
   }
 
   if (length(res) > 1) {
-    res <- res %>%
-      purrr::set_names(names(levels)) %>%
-      purrr::imap(~ dplyr::mutate(.x, !!truth := .y)) %>%
-      purrr::reduce(dplyr::bind_rows) %>%
+    res <- res |>
+      purrr::set_names(names(levels)) |>
+      purrr::imap(~ dplyr::mutate(.x, !!truth := .y)) |>
+      purrr::reduce(dplyr::bind_rows) |>
       dplyr::select(!!truth, dplyr::everything())
   } else {
     res <- res[[1]]
   }
 
   if (method == "breaks") {
-    res <- res %>%
+    res <- res |>
       dplyr::select(predicted_midpoint, dplyr::everything())
   }
 
@@ -97,8 +97,8 @@
     lev_no <- 0
   }
 
-  prep_data <- .data %>%
-    dplyr::select(truth = !!truth, estimate = !!estimate) %>%
+  prep_data <- .data |>
+    dplyr::select(truth = !!truth, estimate = !!estimate) |>
     dplyr::mutate(
       truth = ifelse(as.integer(truth) == level, lev_yes, lev_no)
     )
@@ -146,14 +146,14 @@
     lev_no <- 0
   }
 
-  .data <- .data %>%
+  .data <- .data |>
     dplyr::mutate(
       .is_val = ifelse(as.integer(!!truth) == level, lev_yes, lev_no),
       .estimate = !!estimate
     )
 
-  cuts %>%
-    purrr::list_transpose(simplify = FALSE) %>%
+  cuts |>
+    purrr::list_transpose(simplify = FALSE) |>
     purrr::map_df(
       ~ {
         rf <- .data$.estimate >= .x$lower_cut & .data$.estimate <= .x$upper_cut

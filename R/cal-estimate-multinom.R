@@ -25,16 +25,16 @@
 #'
 #' set.seed(2)
 #' rf_fit <-
-#'   rand_forest() %>%
-#'   set_mode("classification") %>%
-#'   set_engine("randomForest") %>%
+#'   rand_forest() |>
+#'   set_mode("classification") |>
+#'   set_engine("randomForest") |>
 #'   fit(class ~ ., data = tr_dat)
 #'
 #' cal_pred <-
-#'   predict(rf_fit, cal_dat, type = "prob") %>%
+#'   predict(rf_fit, cal_dat, type = "prob") |>
 #'   bind_cols(cal_dat)
 #' te_pred <-
-#'   predict(rf_fit, te_dat, type = "prob") %>%
+#'   predict(rf_fit, te_dat, type = "prob") |>
 #'   bind_cols(te_dat)
 #'
 #' cal_plot_windowed(cal_pred, truth = class, window_size = 0.1, step_size = 0.03)
@@ -99,8 +99,8 @@ cal_estimate_multinomial.tune_results <-
       ...
     )
 
-    tune_args$predictions %>%
-      dplyr::group_by(!!tune_args$group) %>%
+    tune_args$predictions |>
+      dplyr::group_by(!!tune_args$group) |>
       cal_multinom_impl(
         truth = !!tune_args$truth,
         estimate = !!tune_args$estimate,
@@ -162,8 +162,8 @@ cal_multinom_impl <- function(.data, truth, estimate, source_class, smooth, ...)
 
 cal_multinom_impl_grp <- function(.data, truth, levels, smooth, ...) {
   truth <- enquo(truth)
-  .data %>%
-    split_dplyr_groups() %>%
+  .data |>
+    split_dplyr_groups() |>
     lapply(
       function(x) {
         estimate <- cal_multinom_impl_single(

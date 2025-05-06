@@ -27,16 +27,16 @@ get_res <- function(prob, obs, cut) {
 
   mets <- yardstick::metric_set(sensitivity, specificity, j_index)
 
-  .data_metrics <- dat %>%
+  .data_metrics <- dat |>
     mets(obs, estimate = cls)
 
   # Create the `distance` metric data frame
-  sens_vec <- .data_metrics %>%
-    dplyr::filter(.metric == "sensitivity") %>%
+  sens_vec <- .data_metrics |>
+    dplyr::filter(.metric == "sensitivity") |>
     dplyr::pull(.estimate)
 
-  dist <- .data_metrics %>%
-    dplyr::filter(.metric == "specificity") %>%
+  dist <- .data_metrics |>
+    dplyr::filter(.metric == "specificity") |>
     dplyr::mutate(
       .metric = "distance",
       # .estimate is spec currently
@@ -94,8 +94,8 @@ test_that("factor from numeric", {
 
 test_that("single group", {
   one_group_data <-
-    ex_data %>%
-    dplyr::group_by(group_2) %>%
+    ex_data |>
+    dplyr::group_by(group_2) |>
     threshold_perf(
       outcome,
       prob_est,
@@ -103,9 +103,9 @@ test_that("single group", {
     )
 
   for (i in thr) {
-    one_group_data_obs <- one_group_data %>%
-      dplyr::filter(group_2 == "A" & .threshold == i) %>%
-      dplyr::select(-group_2, -.threshold) %>%
+    one_group_data_obs <- one_group_data |>
+      dplyr::filter(group_2 == "A" & .threshold == i) |>
+      dplyr::select(-group_2, -.threshold) |>
       as.data.frame()
 
     one_group_data_exp <-
@@ -113,7 +113,7 @@ test_that("single group", {
         ex_data$prob_est[ex_data$group_2 == "A"],
         ex_data$outcome[ex_data$group_2 == "A"],
         i
-      ) %>%
+      ) |>
       as.data.frame()
     expect_equal(one_group_data_obs, one_group_data_exp)
   }
@@ -128,19 +128,19 @@ test_that("custom metrics", {
   cls_met_other <- metric_set(accuracy, mcc)
 
   expect_snapshot_error(
-    segment_logistic %>%
+    segment_logistic |>
       threshold_perf(Class, .pred_good, metrics = cls_met_bad)
   )
 
   expect_snapshot(
-    segment_logistic %>%
-      threshold_perf(Class, .pred_good, metrics = cls_met_good) %>%
+    segment_logistic |>
+      threshold_perf(Class, .pred_good, metrics = cls_met_good) |>
       dplyr::count(.metric)
   )
 
   expect_snapshot(
-    segment_logistic %>%
-      threshold_perf(Class, .pred_good, metrics = cls_met_other) %>%
+    segment_logistic |>
+      threshold_perf(Class, .pred_good, metrics = cls_met_other) |>
       dplyr::count(.metric)
   )
 })

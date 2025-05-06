@@ -144,9 +144,9 @@ predict.int_conformal_full <- function(object, new_data, level = 0.95, ...) {
   # split new_data for row-wise processing
 
   new_nest <-
-    dplyr::bind_cols(new_data, new_pred) %>%
-    dplyr::mutate(.row = dplyr::row_number()) %>%
-    dplyr::group_by(.row) %>%
+    dplyr::bind_cols(new_data, new_pred) |>
+    dplyr::mutate(.row = dplyr::row_number()) |>
+    dplyr::group_by(.row) |>
     tidyr::nest()
 
   # ------------------------------------------------------------------------------
@@ -187,9 +187,9 @@ get_outcome_name <- function(x) {
 }
 
 get_mode <- function(x) {
-  x %>%
-    hardhat::extract_fit_parsnip() %>%
-    purrr::pluck("spec") %>%
+  x |>
+    hardhat::extract_fit_parsnip() |>
+    purrr::pluck("spec") |>
     purrr::pluck("mode")
 }
 
@@ -278,7 +278,7 @@ trial_fit <- function(trial, trial_data, wflow, level) {
 
   # Compute the abs residuals then more statistics
   tmp_res <-
-    augment(tmp_fit, trial_data) %>%
+    augment(tmp_fit, trial_data) |>
     dplyr::mutate(
       .abs_resid = abs(!!rlang::sym(y_name) - .pred)
     )

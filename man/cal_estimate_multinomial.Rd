@@ -98,16 +98,16 @@ te_dat <- sim_multinomial(500, eqn_1 = f[[1]], eqn_2 = f[[2]], eqn_3 = f[[3]])
 
 set.seed(2)
 rf_fit <-
-  rand_forest() \%>\%
-  set_mode("classification") \%>\%
-  set_engine("randomForest") \%>\%
+  rand_forest() |>
+  set_mode("classification") |>
+  set_engine("randomForest") |>
   fit(class ~ ., data = tr_dat)
 
 cal_pred <-
-  predict(rf_fit, cal_dat, type = "prob") \%>\%
+  predict(rf_fit, cal_dat, type = "prob") |>
   bind_cols(cal_dat)
 te_pred <-
-  predict(rf_fit, te_dat, type = "prob") \%>\%
+  predict(rf_fit, te_dat, type = "prob") |>
   bind_cols(te_dat)
 
 cal_plot_windowed(cal_pred, truth = class, window_size = 0.1, step_size = 0.03)

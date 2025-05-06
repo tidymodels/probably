@@ -279,8 +279,8 @@ cal_plot_windowed_impl <- function(.data,
     estimate = !!estimate
   )
 
-  res <- .data %>%
-    dplyr::group_by(!!group, .add = TRUE) %>%
+  res <- .data |>
+    dplyr::group_by(!!group, .add = TRUE) |>
     dplyr::group_map(~ {
       grp <- .cal_table_windowed_grp(
         .data = .x,
@@ -292,7 +292,7 @@ cal_plot_windowed_impl <- function(.data,
         levels = levels
       )
       dplyr::bind_cols(.y, grp)
-    }) %>%
+    }) |>
     dplyr::bind_rows()
 
 
