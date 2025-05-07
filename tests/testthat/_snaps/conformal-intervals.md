@@ -34,7 +34,7 @@
       int_conformal_full(workflow(), sim_new)
     Condition
       Error in `int_conformal_full()`:
-      ! 'object' should be a fitted workflow object.
+      ! `object` should be a fitted workflow object.
 
 ---
 
@@ -42,7 +42,7 @@
       int_conformal_full(extract_fit_parsnip(wflow), sim_new)
     Condition
       Error in `int_conformal_full()`:
-      ! No known 'int_conformal_full' methods for this type of object.
+      ! No known `int_conformal_full()` methods for this type of object.
 
 ---
 
@@ -50,7 +50,7 @@
       int_conformal_full(wflow_cls, sim_cls_new)
     Condition
       Error in `int_conformal_full()`:
-      ! 'object' should be a regression model.
+      ! `object` should be a regression model.
 
 ---
 
@@ -70,11 +70,15 @@
 
 ---
 
-    2 repeats were used. This method was developed for basic V-fold cross-validation. Interval coverage is unknown for multiple repeats.
+    2 repeats were used.
+    i This method was developed for basic V-fold cross-validation.
+    i Interval coverage is unknown for multiple repeats.
 
 ---
 
-    The data were resampled using Bootstrap sampling. This method was developed for V-fold cross-validation. Interval coverage is unknown for your resampling method.
+    The data were resampled using Bootstrap sampling.
+    i This method was developed for V-fold cross-validation.
+    i Interval coverage is unknown for your resampling method.
 
 ---
 
@@ -95,23 +99,23 @@
       int_conformal_cv(workflow())
     Condition
       Error in `int_conformal_cv()`:
-      ! No known 'int_conformal_cv' methods for this type of object.
+      ! No known `int_conformal_cv()` methods for this type of object.
 
 ---
 
     Code
       int_conformal_cv(dplyr::select(good_res, -.predictions))
     Condition
-      Error in `check_extras()`:
-      ! The output must contain a column called '.predictions' that contains the holdout predictions. See the documentation on the 'save_pred' argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
+      Error in `int_conformal_cv()`:
+      ! The output must contain a column called `.predictions` that contains the holdout predictions. See the documentation on the `save_pred` argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
 
 ---
 
     Code
       int_conformal_cv(dplyr::select(good_res, -.extracts))
     Condition
-      Error in `check_extras()`:
-      ! The output must contain a column called '.extracts' that contains the fitted workflow objects. See the documentation on the 'extract' argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
+      Error in `int_conformal_cv()`:
+      ! The output must contain a column called `.extracts` that contains the fitted workflow objects. See the documentation on the `extract` argument of the control function (e.g., `control_grid()` or `control_resamples()`, etc.).
 
 ---
 
@@ -195,5 +199,7 @@
 
 # group resampling to conformal CV intervals
 
-    The data were resampled using Group 2-fold cross-validation. This method was developed for V-fold cross-validation. Interval coverage is unknown for your resampling method.
+    The data were resampled using Group 2-fold cross-validation.
+    i This method was developed for V-fold cross-validation.
+    i Interval coverage is unknown for your resampling method.
 

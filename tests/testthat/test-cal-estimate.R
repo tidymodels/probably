@@ -15,7 +15,7 @@ test_that("Logistic estimates work - data.frame", {
 
   data(hpc_cv, package = "yardstick")
   expect_snapshot_error(
-    hpc_cv |> cal_estimate_logistic(truth = obs, estimate = c(VF:L))
+    modeldata::hpc_cv |> cal_estimate_logistic(truth = obs, estimate = c(VF:L))
   )
 
   sl_logistic_group <- segment_logistic |>

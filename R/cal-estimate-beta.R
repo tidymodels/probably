@@ -232,11 +232,11 @@ cal_beta_impl_single <- function(.data,
   }
 
   if (location_params > 1) {
-    rlang::abort("Invalid `location_params`, allowed values are 1 and 0")
+    cli::cli_abort("Invalid {.arg location_params}, allowed values are 1 and 0.")
   }
 
   if (is.null(parameters)) {
-    rlang::abort("Invalid `shape_params`, allowed values are 1 and 2")
+    cli::cli_abort("Invalid {.arg shape_params}, allowed values are 1 and 2.")
   }
 
   prevent_output <- utils::capture.output(
@@ -263,12 +263,14 @@ check_cal_groups <- function(group, .data, call = rlang::env_parent()) {
   }
   has_no_groups <- rlang::quo_is_null(group)
   if (has_no_groups) {
-    msg <- paste(
-      "The data have several values of '.config' but no 'groups'",
-      "argument was passed. This will inappropriately pool the",
-      "data."
+    cli::cli_abort(
+      c(
+        "The data have several values of {.code .config} but no {.code groups}
+         argument was passed.",
+        "i" = "This will inappropriately pool the data."
+      ),
+      call = call
     )
-    rlang::abort(msg, call = call)
   }
   invisible(NULL)
 }

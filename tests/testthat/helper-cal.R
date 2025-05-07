@@ -340,8 +340,8 @@ mnl_with_configs <- function() {
   data("hpc_cv", package = "modeldata")
 
   set.seed(1)
-  hpc_cv |>
-    dplyr::mutate(.config = sample(letters[1:2], nrow(hpc_cv), replace = TRUE))
+  modeldata::hpc_cv |>
+    dplyr::mutate(.config = sample(letters[1:2], nrow(modeldata::hpc_cv), replace = TRUE))
 }
 
 reg_with_configs <- function() {
@@ -349,8 +349,8 @@ reg_with_configs <- function() {
 
   set.seed(1)
 
-  solubility_test |>
-    dplyr::mutate(.config = sample(letters[1:2], nrow(solubility_test), replace = TRUE))
+  modeldata::solubility_test |>
+    dplyr::mutate(.config = sample(letters[1:2], nrow(modeldata::solubility_test), replace = TRUE))
 }
 
 holdout_length <- function(x) {

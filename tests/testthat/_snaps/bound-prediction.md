@@ -1,7 +1,7 @@
 # lower_limit bounds for numeric predictions
 
     Code
-      bound_prediction(solubility_test, lower_limit = 2)
+      bound_prediction(modeldata::solubility_test, lower_limit = 2)
     Condition
       Error in `bound_prediction()`:
       ! The argument `x` should have a column named `.pred`.
@@ -9,7 +9,7 @@
 ---
 
     Code
-      bound_prediction(mutate(solubility_test, .pred = format(prediction)),
+      bound_prediction(mutate(modeldata::solubility_test, .pred = format(prediction)),
       lower_limit = 2)
     Condition
       Error in `bound_prediction()`:
@@ -34,7 +34,7 @@
 # upper_limit bounds for numeric predictions
 
     Code
-      bound_prediction(solubility_test, lower_limit = 2)
+      bound_prediction(modeldata::solubility_test, lower_limit = 2)
     Condition
       Error in `bound_prediction()`:
       ! The argument `x` should have a column named `.pred`.
@@ -42,7 +42,7 @@
 ---
 
     Code
-      bound_prediction(mutate(solubility_test, .pred = format(prediction)),
+      bound_prediction(mutate(modeldata::solubility_test, .pred = format(prediction)),
       lower_limit = 2)
     Condition
       Error in `bound_prediction()`:
