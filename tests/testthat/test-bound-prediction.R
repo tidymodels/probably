@@ -15,7 +15,7 @@ test_that("lower_limit bounds for numeric predictions", {
     error = TRUE)
 
   sol <- modeldata::solubility_test |> set_names(c("solubility", ".pred"))
-
+  
   expect_equal(bound_prediction(sol), sol)
   expect_equal(bound_prediction(sol, lower_limit = NA), sol)
 
