@@ -118,6 +118,99 @@ cal_class_name.rset <- function(x) {
   "Resampled data set"
 }
 
+# ------------------------------- Data Ingestion -------------------------------
+
+
+get_tune_data <- function(x, parameters = NULL) {
+  .data <- collect_predictions(
+    x,
+    summarize = TRUE,
+    parameters = parameters
+  )
+
+  num_configs <- vctrs::vec_unique_count(.data$.config)
+  if (num_configs > 1) {
+    group <- ".config"
+  } else {
+    group <- character(0)
+  }
+
+  truth <- .get_tune_outcome_names(x)
+  lvls <- levels(.data[[truth]])
+
+  if (is.null(lvls)) {
+    estimate <- ".pred"
+    lvl_map <- rlang::syms(estimate)
+    names(lvl_map) <- "predictions"
+  } else {
+    estimate <- paste0(".pred_", lvls)
+    lvl_map <- rlang::syms(estimate)
+    names(lvl_map) <- lvls
+  }
+
+  list(
+    truth = truth,
+    estimate = estimate,
+    group = group,
+    predictions = .data[, c(truth, estimate, group)],
+    levels = lvls,
+    map = lvl_map,
+    source = "tune_results"
+  )
+}
+
+get_prediction_data <- function(
+    .data,
+    truth = NULL,
+    estimate = dplyr::starts_with(".pred_")
+) {
+  if (!tibble::is_tibble(.data)) {
+    data <- tibble::as_tibble(.data)
+  }
+
+  truth <- names(tidyselect::eval_select(rlang::enquo(truth), .data))
+  estimate <- names(tidyselect::eval_select(rlang::enquo(estimate), .data))
+
+  lvls <- levels(.data[[truth]])
+
+  if (!is.null(lvls)) {
+    if (length(lvls) != length(estimate)) {
+      cli::cli_abort(
+        "The selectors in {.arg estimate} resolves {length(estimate)} values
+        ({.val {estimate}}) but there are {length(lvls)} class levels
+        ({.val {lvls}})."
+      )
+    }
+    lvl_map <- rlang::syms(estimate)
+    names(lvl_map) <- lvls
+  } else {
+    lvl_map <- rlang::syms(estimate)
+    names(lvl_map) <- "predictions"
+  }
+
+  nms <- names(.data)
+  if (any(nms == ".config")) {
+    num_configs <- vctrs::vec_unique_count(.data$.config)
+    if (num_configs > 1) {
+      group <- ".config"
+    } else {
+      group <- character(0)
+    }
+  } else {
+    group <- character(0)
+  }
+
+  list(
+    truth = truth,
+    estimate = estimate,
+    group = group,
+    predictions = .data[, c(truth, estimate, group)],
+    levels = lvls,
+    map = lvl_map,
+    source = "data"
+  )
+}
+
 # ------------------------------- Utils ----------------------------------------
 
 as_regression_cal_object <- function(estimate,
@@ -219,4 +312,48 @@ stop_null_parameters <- function(x) {
   if (!is.null(x)) {
     cli::cli_abort("The {.arg parameters} argument is only valid for {.code tune_results}.")
   }
+}
+
+# ------------------------------- GAM Helpers ----------------------------------
+
+f_from_str <- function(y, x, smooth = FALSE) {
+  if (smooth) {
+    x <- paste0("s(", x, ")")
+  }
+  trms <- paste0(x, collapse = "+")
+  f <- paste(y, "~", trms)
+  f <- stats::as.formula(f)
+  attr(f, ".Environment") <- rlang::base_env()
+  f
+}
+
+# mgcv multinomial models needs a list of formulas, one for each level, and
+# only the first one requires a LHS
+mtnl_f_from_str <- function(y, x) {
+  num_class <- length(x)
+  res <- vector(mode = "list", length = num_class - 1)
+  for (i in seq_along(res)) {
+    if (i == 1) {
+      res[[i]] <- f_from_str(y, x[-i], smooth = TRUE)
+    } else {
+      res[[i]] <- f_from_str(NULL, x[-i], smooth = TRUE)
+    }
+  }
+  res
+}
+
+check_data_for_gam <- function(.data, estimate, min_unique = 10) {
+  predictors <- .data[, estimate]
+  num_unique <- lapply(predictors, vctrs::vec_unique_count)
+  num_unique <- unlist(num_unique)
+  not_enough <- num_unique < min_unique
+  if (any(not_enough)) {
+    n <- sum(not_enough)
+    cli::cli_warn(
+      "Some prediction columns ({.val {names(not_enough)[not_enough]}}) had
+      fewer than {min_unique} unique values. An unsmoothed model will be used
+      instead.", call = NULL
+    )
+  }
+  !any(not_enough)
 }

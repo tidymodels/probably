@@ -125,11 +125,13 @@ cal_estimate_multinomial.grouped_df <- function(.data,
 #' @keywords internal
 #' @export
 required_pkgs.cal_estimate_multinomial <- function(x, ...) {
+  # TODO check `smooth` and choose either mgcv or nnet
   c("nnet", "probably")
 }
 
 cal_multinom_impl <- function(.data, truth, estimate, source_class, smooth, ...) {
   truth <- enquo(truth)
+
 
   levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
 
@@ -205,6 +207,7 @@ cal_multinom_impl_single <- function(.data,
     all_f <- purrr::map(seq_along(levels), ~rhs_only)
     all_f[[1]] <- both_sides
 
+    # TODO check for failure
     model <- mgcv::gam(all_f, data = .data, family = mgcv::multinom(max_int))
 
     # Nuke environments saved in formulas
@@ -219,12 +222,12 @@ cal_multinom_impl_single <- function(.data,
 
     f_model <- expr(!!ensym(truth) ~ !!levels_formula)
 
+    # TODO check for failure
     prevent_output <- utils::capture.output(
       model <- nnet::multinom(formula = f_model, data = .data, ...)
     )
     model$terms <- clean_env(model$terms)
   }
-
 
   model
 }
@@ -232,4 +235,53 @@ cal_multinom_impl_single <- function(.data,
 clean_env <- function(x) {
   attr(x, ".Environment") <- rlang::base_env()
   x
+}
+
+fit_mtnl_model <- function(.data, smooth, estimate, outcome, ...) {
+  # Check to see if the GAM is estimable given the data
+  if (smooth) {
+    smooth_ok <- check_data_for_gam(.data, tmp$estimate)
+    if (!smooth_ok) {
+      smooth <- FALSE
+    }
+  }
+  if (smooth) {
+    # multinomial gams in mgcv needs zero-based integers as the outcome
+    .data[[outcome]] <- as.numeric(.data[[outcome]]) - 1
+    max_int <- max(.data[[outcome]], na.rm = TRUE)
+
+    f <- mtnl_f_from_str(outcome, estimate)
+    # TODO check for failures
+    model <- mgcv::gam(f, data = .data, family = mgcv::multinom(max_int))
+    model$terms <- clean_env(model$terms)
+  } else {
+    f <- f_from_str(outcome, estimate[-length(estimate)])
+    # TODO check for failures
+    prevent_output <- utils::capture.output(
+      model <- nnet::multinom(formula = f, data = .data, ...)
+    )
+    model$terms <- clean_env(model$terms)
+  }
+
+  model
+}
+
+mtnl_loop <- function(info, smooth = TRUE) {
+  if (length(info$group) > 0) {
+    grp_df <- info$predictions[info$group]
+  } else {
+    grp_df <- tibble::tibble(group = rep(1, nrow(info$predictions)))
+  }
+
+  nst_df <- vctrs::vec_split(x = info$predictions, by = grp_df)
+
+  fits <-
+    lapply(
+      nst_df$val,
+      probably:::fit_mtnl_model,
+      smooth = smooth,
+      estimate = tune_info$estimate,
+      tune_info$truth
+    )
+  list(fits = fits, filter = NA)
 }
