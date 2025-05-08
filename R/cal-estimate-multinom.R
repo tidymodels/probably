@@ -169,6 +169,10 @@ fit_multinomial_model <- function(.data, smooth, estimate, outcome, ...) {
 
 
 multinomial_loop <- function(info, smooth = TRUE, ...) {
+  if (length(info$levels) == 2) {
+    cli::cli_abort("This function is meant to be used with multi-class outcomes only.")
+  }
+
   grp_df <- make_group_df(info)
   nst_df <- vctrs::vec_split(x = info$predictions, by = grp_df)
   fltrs <- make_cal_filters(nst_df$key)
