@@ -70,15 +70,16 @@ cal_estimate_multinomial.data.frame <-
     info <- get_prediction_data(
       .data,
       truth = {{ truth }},
-      estimate = {{ estimate }}
+      estimate = {{ estimate }},
+      .by = {{ .by }}
     )
 
     model <- multinomial_loop(info, smooth, ...)
 
     as_cal_object(
       estimate = model,
-      levels = info$levels,
-      truth = truth,
+      levels = info$map,
+      truth = info$truth,
       method = if (!smooth) "Multinomial regression" else "Generalized additive model",
       rows = nrow(info$predictions),
       additional_classes = "cal_estimate_multinomial",
@@ -103,8 +104,8 @@ cal_estimate_multinomial.tune_results <-
 
     as_cal_object(
       estimate = model,
-      levels = info$levels,
-      truth = truth,
+      levels = info$map,
+      truth = info$truth,
       method = if (!smooth) "Multinomial regression" else "Generalized additive model",
       rows = nrow(info$predictions),
       additional_classes = "cal_estimate_multinomial",
