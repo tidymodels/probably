@@ -135,7 +135,7 @@ get_tune_data <- function(x, parameters = NULL) {
     group <- character(0)
   }
 
-  truth <- .get_tune_outcome_names(x)
+  truth <- tune::.get_tune_outcome_names(x)
   lvls <- levels(.data[[truth]])
 
   if (is.null(lvls)) {
@@ -162,14 +162,16 @@ get_tune_data <- function(x, parameters = NULL) {
 get_prediction_data <- function(
     .data,
     truth = NULL,
-    estimate = dplyr::starts_with(".pred_")
+    estimate = dplyr::starts_with(".pred_"),
+    .by = NULL
 ) {
-  if (!tibble::is_tibble(.data)) {
-    data <- tibble::as_tibble(.data)
+  if (!inherits(.data, "tbl_df")) {
+    data <- dplyr::as_tibble(.data)
   }
 
   truth <- names(tidyselect::eval_select(rlang::enquo(truth), .data))
   estimate <- names(tidyselect::eval_select(rlang::enquo(estimate), .data))
+  by_vars <- names(tidyselect::eval_select(rlang::enquo(.by), .data))
 
   lvls <- levels(.data[[truth]])
 
@@ -199,6 +201,9 @@ get_prediction_data <- function(
   } else {
     group <- character(0)
   }
+  group <- c(group, by_vars)
+
+  # TODO make 2+ groupings work for filter and checks in get_group_argument
 
   list(
     truth = truth,
@@ -259,7 +264,13 @@ as_cal_object <- function(estimate,
     cli::cli_abort("Cannot translate {.arg levels} to a class.")
   }
 
-  str_truth <- as_name(enquo(truth))
+  # TODO remove this when everything is updated/refactored
+  refactored <- c("cal_estimate_multinomial")
+  if (additional_classes %in% refactored) {
+    str_truth <- truth
+  } else {
+    str_truth <- as_name(enquo(truth))
+  }
 
   structure(
     list(
@@ -317,15 +328,25 @@ stop_null_parameters <- function(x) {
 make_group_df <- function(info) {
   if (length(info$group) > 0) {
     grp_df <- info$predictions[info$group]
+    # TODO check for zero variance and clean if needed
+    if (length(info$group) > 1) {
+      cli::cli_abort(
+        c(
+          x = "{.arg .by} cannot select more than one column.",
+          i = "The following columns were selected:",
+          i = "{info$group}"
+        ),
+        call = NULL
+      )
+    }
   } else {
-    grp_df <- tibble::tibble(group = rep(1, nrow(info$predictions)))
+    grp_df <- dplyr::tibble(group = rep(1, nrow(info$predictions)))
   }
   grp_df
 }
 
 make_cal_filters <- function(key) {
   nm_chr <- names(key)
-  nm_sym <- rlang::syms(nm_chr)
   num_combo <- nrow(key)
   num_vars <- ncol(key)
   key <- unclass(key)
@@ -334,8 +355,8 @@ make_cal_filters <- function(key) {
     vals <- key[[i]]
     unq_vals <- vctrs::vec_unique_count(vals)
     if (unq_vals > 1) {
-      gvar <- nm_sym[[i]]
-      res[[i]] <- purrr::map(vals, ~ expr(!!rlang::expr(!!gvar) == !!.x))
+      gvar <- nm_chr[[i]]
+      res[[i]] <- purrr::map(vals, ~ rlang::expr(!!rlang::parse_expr(gvar) == !!.x))
     }
   }
 
