@@ -314,6 +314,38 @@ stop_null_parameters <- function(x) {
   }
 }
 
+make_group_df <- function(info) {
+  if (length(info$group) > 0) {
+    grp_df <- info$predictions[info$group]
+  } else {
+    grp_df <- tibble::tibble(group = rep(1, nrow(info$predictions)))
+  }
+  grp_df
+}
+
+make_cal_filters <- function(key) {
+  nm_chr <- names(key)
+  nm_sym <- rlang::syms(nm_chr)
+  num_combo <- nrow(key)
+  num_vars <- ncol(key)
+  key <- unclass(key)
+  res <- vector(mode = "list", length = length(key)) # default value is already NULL
+  for (i in seq_along(res)) {
+    vals <- key[[i]]
+    unq_vals <- vctrs::vec_unique_count(vals)
+    if (unq_vals > 1) {
+      gvar <- nm_sym[[i]]
+      res[[i]] <- purrr::map(vals, ~ expr(!!rlang::expr(!!gvar) == !!.x))
+    }
+  }
+
+  if (num_vars > 1) {
+    cli::cli_abort("Only a single grouping columns is currently supported.",
+                   call = FALSE)
+  }
+  res
+}
+
 # ------------------------------- GAM Helpers ----------------------------------
 
 f_from_str <- function(y, x, smooth = FALSE) {
@@ -329,14 +361,14 @@ f_from_str <- function(y, x, smooth = FALSE) {
 
 # mgcv multinomial models needs a list of formulas, one for each level, and
 # only the first one requires a LHS
-mtnl_f_from_str <- function(y, x) {
+multinomial_f_from_str <- function(y, x) {
   num_class <- length(x)
   res <- vector(mode = "list", length = num_class - 1)
   for (i in seq_along(res)) {
     if (i == 1) {
-      res[[i]] <- f_from_str(y, x[-i], smooth = TRUE)
+      res[[i]] <- f_from_str(y, x[-length(x)], smooth = TRUE)
     } else {
-      res[[i]] <- f_from_str(NULL, x[-i], smooth = TRUE)
+      res[[i]] <- f_from_str(NULL, x[-length(x)], smooth = TRUE)
     }
   }
   res

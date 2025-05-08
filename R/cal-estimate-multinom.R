@@ -67,17 +67,23 @@ cal_estimate_multinomial.data.frame <-
            .by = NULL) {
     stop_null_parameters(parameters)
 
-    group <- get_group_argument({{ .by }}, .data)
-    .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
+    info <- get_prediction_data(
+      .data,
+      truth = {{ truth }},
+      estimate = {{ estimate }}
+    )
 
-    truth <- enquo(truth)
-    cal_multinom_impl(
-      .data = .data,
-      truth = !!truth,
-      estimate = {{ estimate }},
+    model <- multinomial_loop(info, smooth, ...)
+
+    as_cal_object(
+      estimate = model,
+      levels = info$levels,
+      truth = truth,
+      method = if (!smooth) "Multinomial regression" else "Generalized additive model",
+      rows = nrow(info$predictions),
+      additional_classes = "cal_estimate_multinomial",
       source_class = cal_class_name(.data),
-      smooth = smooth,
-      ...
+      type = "multiclass"
     )
   }
 
@@ -90,24 +96,21 @@ cal_estimate_multinomial.tune_results <-
            smooth = TRUE,
            parameters = NULL,
            ...) {
-    tune_args <- tune_results_args(
-      .data = .data,
-      truth = {{ truth }},
-      estimate = {{ estimate }},
-      event_level = "first",
-      parameters = parameters,
-      ...
-    )
 
-    tune_args$predictions |>
-      dplyr::group_by(!!tune_args$group) |>
-      cal_multinom_impl(
-        truth = !!tune_args$truth,
-        estimate = !!tune_args$estimate,
-        source_class = cal_class_name(.data),
-        smooth = smooth,
-        ...
-      )
+    info <- get_tune_data(.data, parameters)
+
+    model <- multinomial_loop(info, smooth, ...)
+
+    as_cal_object(
+      estimate = model,
+      levels = info$levels,
+      truth = truth,
+      method = if (!smooth) "Multinomial regression" else "Generalized additive model",
+      rows = nrow(info$predictions),
+      additional_classes = "cal_estimate_multinomial",
+      source_class = cal_class_name(.data),
+      type = "multiclass"
+    )
   }
 
 #' @export
@@ -129,118 +132,15 @@ required_pkgs.cal_estimate_multinomial <- function(x, ...) {
   c("nnet", "probably")
 }
 
-cal_multinom_impl <- function(.data, truth, estimate, source_class, smooth, ...) {
-  truth <- enquo(truth)
-
-
-  levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
-
-  if (length(levels) == 2) {
-    cli::cli_abort("This function is meant to be used with multi-class outcomes only.")
-  }
-
-  model <- cal_multinom_impl_grp(
-    .data = .data,
-    truth = !!truth,
-    levels = levels,
-    smooth = smooth,
-    ...
-  )
-
-  as_cal_object(
-    estimate = model,
-    levels = levels,
-    truth = !!truth,
-    method = if (!smooth) "Multinomial regression" else "Generalized additive model",
-    rows = nrow(.data),
-    additional_classes = "cal_estimate_multinomial",
-    source_class = source_class,
-    type = "multiclass"
-  )
-}
-
-
-cal_multinom_impl_grp <- function(.data, truth, levels, smooth, ...) {
-  truth <- enquo(truth)
-  .data |>
-    split_dplyr_groups() |>
-    lapply(
-      function(x) {
-        estimate <- cal_multinom_impl_single(
-          .data = x$data,
-          truth = !!truth,
-          levels = levels,
-          smooth = smooth,
-          ... = ...
-        )
-        list(
-          filter = x$filter,
-          estimate = estimate
-        )
-      }
-    )
-}
-
-cal_multinom_impl_single <- function(.data,
-                                     truth = NULL,
-                                     levels = NULL,
-                                     smooth = TRUE,
-                                     ...) {
-  truth <- enquo(truth)
-  num_lvls <- length(levels)
-  levels <- levels[1:(length(levels) - 1)]
-
-  if (smooth) {
-    # multinomial gams in mgcv needs zero-based integers as the outcome
-
-    class_col <- deparse(ensym(truth))
-    .data[[class_col]] <- as.numeric(.data[[class_col]]) - 1
-    max_int <- max(.data[[class_col]], na.rm = TRUE)
-
-    # It also needs a list of formulas, one for each level, and the first one
-    # requires a LHS
-
-    smooths <- purrr::map(levels, ~ call2(.fn = "s", expr(!!.x)))
-    rhs_f <- purrr::reduce(smooths, function(x, y) expr(!!x + !!y))
-    rhs_only <- new_formula(lhs = NULL, rhs = rhs_f)
-    both_sides <- new_formula(lhs = ensym(truth), rhs = rhs_f)
-    all_f <- purrr::map(seq_along(levels), ~rhs_only)
-    all_f[[1]] <- both_sides
-
-    # TODO check for failure
-    model <- mgcv::gam(all_f, data = .data, family = mgcv::multinom(max_int))
-
-    # Nuke environments saved in formulas
-    # # TODO This next line causes a failure for unknown reasons. Look into it more
-    # model$formula <- purrr::map(model$formula, clean_env)
-    model$terms <- clean_env(model$terms)
-  } else {
-    levels_formula <- purrr::reduce(
-      levels,
-      function(x, y) expr(!!x + !!y)
-    )
-
-    f_model <- expr(!!ensym(truth) ~ !!levels_formula)
-
-    # TODO check for failure
-    prevent_output <- utils::capture.output(
-      model <- nnet::multinom(formula = f_model, data = .data, ...)
-    )
-    model$terms <- clean_env(model$terms)
-  }
-
-  model
-}
-
 clean_env <- function(x) {
   attr(x, ".Environment") <- rlang::base_env()
   x
 }
 
-fit_mtnl_model <- function(.data, smooth, estimate, outcome, ...) {
+fit_multinomial_model <- function(.data, smooth, estimate, outcome, ...) {
   # Check to see if the GAM is estimable given the data
   if (smooth) {
-    smooth_ok <- check_data_for_gam(.data, tmp$estimate)
+    smooth_ok <- check_data_for_gam(.data, estimate)
     if (!smooth_ok) {
       smooth <- FALSE
     }
@@ -250,9 +150,9 @@ fit_mtnl_model <- function(.data, smooth, estimate, outcome, ...) {
     .data[[outcome]] <- as.numeric(.data[[outcome]]) - 1
     max_int <- max(.data[[outcome]], na.rm = TRUE)
 
-    f <- mtnl_f_from_str(outcome, estimate)
+    f <- multinomial_f_from_str(outcome, estimate)
     # TODO check for failures
-    model <- mgcv::gam(f, data = .data, family = mgcv::multinom(max_int))
+    model <- mgcv::gam(f, data = .data, family = mgcv::multinom(max_int), ...)
     model$terms <- clean_env(model$terms)
   } else {
     f <- f_from_str(outcome, estimate[-length(estimate)])
@@ -266,22 +166,21 @@ fit_mtnl_model <- function(.data, smooth, estimate, outcome, ...) {
   model
 }
 
-mtnl_loop <- function(info, smooth = TRUE) {
-  if (length(info$group) > 0) {
-    grp_df <- info$predictions[info$group]
-  } else {
-    grp_df <- tibble::tibble(group = rep(1, nrow(info$predictions)))
-  }
 
+multinomial_loop <- function(info, smooth = TRUE, ...) {
+  grp_df <- make_group_df(info)
   nst_df <- vctrs::vec_split(x = info$predictions, by = grp_df)
+  fltrs <- make_cal_filters(nst_df$key)
 
   fits <-
     lapply(
       nst_df$val,
-      probably:::fit_mtnl_model,
+      fit_multinomial_model,
       smooth = smooth,
-      estimate = tune_info$estimate,
-      tune_info$truth
+      estimate = info$estimate,
+      info$truth,
+      ...
     )
-  list(fits = fits, filter = NA)
+
+  purrr::map2(fits, fltrs, ~ list(filter = .y, estimate = .x))
 }
