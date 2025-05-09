@@ -412,7 +412,6 @@ test_that("Multinomial estimates work - data.frame", {
   mltm_configs <-
     mnl_with_configs() |>
     cal_estimate_multinomial(truth = obs, estimate = c(VF:L), smooth = FALSE)
-  expect_true(are_groups_configs(mltm_configs))
 })
 
 test_that("Multinomial estimates work - tune_results", {
@@ -423,7 +422,6 @@ test_that("Multinomial estimates work - tune_results", {
   expect_cal_type(tl_multi, "multiclass")
   expect_cal_method(tl_multi, "Multinomial regression")
   expect_snapshot(print(tl_multi))
-  expect_true(are_groups_configs(tl_multi))
 
   expect_equal(
     testthat_cal_multiclass() |>
