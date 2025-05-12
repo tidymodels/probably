@@ -325,22 +325,22 @@ stop_null_parameters <- function(x) {
   }
 }
 
-make_group_df <- function(info) {
-  if (length(info$group) > 0) {
-    grp_df <- info$predictions[info$group]
+make_group_df <- function(predictions, group) {
+  if (length(group) > 0) {
+    grp_df <- predictions[group]
     # TODO check for zero variance and clean if needed
-    if (length(info$group) > 1) {
+    if (length(group) > 1) {
       cli::cli_abort(
         c(
           x = "{.arg .by} cannot select more than one column.",
           i = "The following columns were selected:",
-          i = "{info$group}"
+          i = "{group}"
         ),
         call = NULL
       )
     }
   } else {
-    grp_df <- dplyr::tibble(group = rep(1, nrow(info$predictions)))
+    grp_df <- dplyr::tibble(group = rep(1, nrow(predictions)))
   }
   grp_df
 }

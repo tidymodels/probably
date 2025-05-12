@@ -74,7 +74,7 @@ cal_estimate_multinomial.data.frame <-
       .by = {{ .by }}
     )
 
-    model <- multinomial_loop(info, smooth, ...)
+    model <- mtnml_fit_over_groups(info, smooth, ...)
 
     as_cal_object(
       estimate = model,
@@ -100,7 +100,7 @@ cal_estimate_multinomial.tune_results <-
 
     info <- get_tune_data(.data, parameters)
 
-    model <- multinomial_loop(info, smooth, ...)
+    model <- mtnml_fit_over_groups(info, smooth, ...)
 
     as_cal_object(
       estimate = model,
@@ -168,12 +168,12 @@ fit_multinomial_model <- function(.data, smooth, estimate, outcome, ...) {
 }
 
 
-multinomial_loop <- function(info, smooth = TRUE, ...) {
+mtnml_fit_over_groups <- function(info, smooth = TRUE, ...) {
   if (length(info$levels) == 2) {
     cli::cli_abort("This function is meant to be used with multi-class outcomes only.")
   }
 
-  grp_df <- make_group_df(info)
+  grp_df <- make_group_df(info$predictions, group = info$group)
   nst_df <- vctrs::vec_split(x = info$predictions, by = grp_df)
   fltrs <- make_cal_filters(nst_df$key)
 
