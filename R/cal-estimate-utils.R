@@ -178,7 +178,7 @@ get_prediction_data <- function(
   if (!is.null(lvls)) {
     if (length(lvls) != length(estimate)) {
       cli::cli_abort(
-        "The selectors in {.arg estimate} resolves {length(estimate)} values
+        "The selectors in {.arg estimate} resolves to {length(estimate)} values
         ({.val {estimate}}) but there are {length(lvls)} class levels
         ({.val {lvls}})."
       )
