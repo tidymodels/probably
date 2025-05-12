@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">probably</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9001</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -103,6 +103,9 @@ the estimate columns names from the calibration object.</p>
 <span class="r-in"><span><span class="co"># classification example</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">w_calibration</span> <span class="op">&lt;-</span> <span class="fu"><a href="cal_estimate_logistic.html">cal_estimate_logistic</a></span><span class="op">(</span><span class="va">segment_logistic</span>, <span class="va">Class</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Registered S3 method overwritten by 'butcher':</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   method                 from    </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   as.character.dev_topic generics</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">cal_apply</span><span class="op">(</span><span class="va">segment_logistic</span>, <span class="va">w_calibration</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 1,010 × 3</span></span>
