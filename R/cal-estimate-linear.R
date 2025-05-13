@@ -171,7 +171,7 @@ required_pkgs.cal_estimate_linear_spline <- function(x, ...) {
 #--------------------------- Implementation ------------------------------------
 
 fit_regression_model <- function(.data, smooth, estimate, outcome, ...) {
-  # Check to see if the GAM is estimable given the data
+
   if (smooth) {
     smooth_ok <- check_data_for_gam(.data, estimate)
     if (!smooth_ok) {

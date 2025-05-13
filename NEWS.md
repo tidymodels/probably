@@ -12,6 +12,8 @@
 
 * Fixed an issue where the `distance` metric appeared inconsistently when using `threshold_perf()` with custom metric sets (@jrwinget, #149).
 
+* `cal_estimate_linear()` and `cal_estimate_logistic()` now sets `smooth = FALSE` if data contains too few unique observations for splines to be fit, throwing a warning instead of an error (#167).
+
 # probably 1.0.3
 
 * Fixed a bug where the grouping for calibration methods was sensitive to the type of the grouping variables (#127).
