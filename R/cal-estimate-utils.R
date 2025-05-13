@@ -395,18 +395,17 @@ multinomial_f_from_str <- function(y, x) {
   res
 }
 
-check_data_for_gam <- function(.data, estimate, min_unique = 10) {
+turn_off_smooth_if_too_few_unique <- function(.data, estimate, smooth, min_vals = 10) {
   predictors <- .data[, estimate]
-  num_unique <- lapply(predictors, vctrs::vec_unique_count)
-  num_unique <- unlist(num_unique)
-  not_enough <- num_unique < min_unique
-  if (any(not_enough)) {
-    n <- sum(not_enough)
-    cli::cli_warn(
-      "Some prediction columns ({.val {names(not_enough)[not_enough]}}) had
-      fewer than {min_unique} unique values. An unsmoothed model will be used
-      instead.", call = NULL
-    )
+  if (smooth) {
+    n_unique <- purrr::map_int(predictors, vctrs::vec_unique_count)
+    if (min(n_unique) < min_vals) {
+      smooth <- FALSE
+      cli::cli_warn(
+        "Too few unique observations for spline-based calibrator.
+        Setting {.code smooth = FALSE}."
+      )
+    }
   }
-  !any(not_enough)
+  smooth
 }
