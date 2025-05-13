@@ -265,7 +265,8 @@ as_cal_object <- function(estimate,
   }
 
   # TODO remove this when everything is updated/refactored
-  refactored <- c("cal_estimate_multinomial", "cal_estimate_linear", "cal_estimate_linear_spline")
+  refactored <- c("cal_estimate_multinomial", "cal_estimate_linear",
+                  "cal_estimate_linear_spline", "cal_estimate_beta")
   if (additional_classes %in% refactored) {
     str_truth <- truth
   } else {
