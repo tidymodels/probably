@@ -131,7 +131,7 @@
       sl_gam <- cal_estimate_logistic(segment_logistic, Class, smooth = TRUE)
     Condition
       Warning:
-      Too few unique observations for spline-based calibrator. Switching to logistic.
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
 
 ---
 
@@ -139,7 +139,7 @@
       sl_gam <- cal_estimate_logistic(segment_logistic, Class, .by = id, smooth = TRUE)
     Condition
       Warning:
-      Too few unique observations for spline-based calibrator. Switching to logistic.
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
 
 # Isotonic estimates work - data.frame
 
@@ -607,7 +607,7 @@
       sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)
     Condition
       Warning:
-      Too few unique observations for spline-based calibrator. Switching to linear.
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
 
 ---
 
@@ -616,7 +616,7 @@
         smooth = TRUE)
     Condition
       Warning:
-      Too few unique observations for spline-based calibrator. Switching to linear.
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
 
 # Non-default names used for estimate columns
 

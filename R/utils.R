@@ -99,3 +99,32 @@ abort_if_grouped_df <- function(call = rlang::caller_env()) {
     call = call
   )
 }
+
+turn_off_smooth_if_too_few_unique <- function(.data, estimate, smooth) {
+  if (smooth) {
+    estimate_name <- names(tidyselect::eval_select(estimate, .data))
+    estimate_name <- estimate_name[length(estimate_name)]
+
+    if (inherits(.data, "grouped_df")) {
+      n_unique <- .data |> 
+        dplyr::summarise(
+          dplyr::across(dplyr::all_of(estimate_name), dplyr::n_distinct)
+        ) |>
+        dplyr::pull(dplyr::all_of(estimate_name)) |>
+        min()
+    } else {
+      n_unique <- dplyr::n_distinct(
+        dplyr::pull(.data, dplyr::all_of(estimate_name))
+      )
+    }
+
+    if (n_unique < 10) {
+      smooth <- FALSE
+      cli::cli_warn(
+        "Too few unique observations for spline-based calibrator.
+        Setting {.code smooth = FALSE}."
+      )
+    }
+  }
+  smooth
+}

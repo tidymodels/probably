@@ -598,7 +598,7 @@ test_that("Linear spline switches to linear if too few unique", {
     x = 1:5,
     length.out = nrow(boosting_predictions_oob)
   )
-
+  
   expect_snapshot(
     sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)
   )
