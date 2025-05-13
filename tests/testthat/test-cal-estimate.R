@@ -444,7 +444,6 @@ test_that("Passing a binary outcome causes error", {
 
 test_that("Linear spline switches to linear if too few unique", {
   skip_if_not_installed("modeldata")
-  skip("until refactored")
 
   boosting_predictions_oob$.pred <- rep(
     x = 1:5,
@@ -457,8 +456,8 @@ test_that("Linear spline switches to linear if too few unique", {
   sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
 
   expect_identical(
-    sl_gam,
-    sl_lm
+    sl_gam$estimate,
+    sl_lm$estimate
   )
 
   expect_snapshot(
@@ -467,8 +466,8 @@ test_that("Linear spline switches to linear if too few unique", {
   sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id, smooth = FALSE)
 
   expect_identical(
-    sl_gam,
-    sl_lm
+    sl_gam$estimate,
+    sl_lm$estimate
   )
 })
 

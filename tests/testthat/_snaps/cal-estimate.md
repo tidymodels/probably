@@ -125,22 +125,6 @@
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
 
-# Logistic spline switches to linear if too few unique
-
-    Code
-      sl_gam <- cal_estimate_logistic(segment_logistic, Class, smooth = TRUE)
-    Condition
-      Warning:
-      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
-
----
-
-    Code
-      sl_gam <- cal_estimate_logistic(segment_logistic, Class, .by = id, smooth = TRUE)
-    Condition
-      Warning:
-      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
-
 # Isotonic estimates work - data.frame
 
     Code
@@ -520,6 +504,24 @@
       sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id,
         smooth = TRUE)
     Condition
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
       Warning:
       Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
 

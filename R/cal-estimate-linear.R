@@ -171,13 +171,8 @@ required_pkgs.cal_estimate_linear_spline <- function(x, ...) {
 #--------------------------- Implementation ------------------------------------
 
 fit_regression_model <- function(.data, smooth, estimate, outcome, ...) {
+  smooth <- turn_off_smooth_if_too_few_unique(.data, estimate, smooth)
 
-  if (smooth) {
-    smooth_ok <- check_data_for_gam(.data, estimate)
-    if (!smooth_ok) {
-      smooth <- FALSE
-    }
-  }
   if (smooth) {
     f_model <- rlang::expr(!!rlang::sym(outcome) ~ s(!!rlang::sym(estimate)))
     f_model <- stats::as.formula(f_model)
