@@ -506,6 +506,42 @@
     x This function does not work with grouped data frames.
     i Apply `dplyr::ungroup()` and use the `.by` argument.
 
+# Linear spline switches to linear if too few unique
+
+    Code
+      sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)
+    Condition
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+
+---
+
+    Code
+      sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id,
+        smooth = TRUE)
+    Condition
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+
+# Multinomial spline switches to linear if too few unique
+
+    Code
+      sl_gam <- cal_estimate_multinomial(smol_species_probs, Species, smooth = TRUE)
+    Condition
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+
+---
+
+    Code
+      sl_gam <- cal_estimate_multinomial(smol_by_species_probs, Species, .by = id,
+        smooth = TRUE)
+    Condition
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+
 # Linear estimates work - data.frame
 
     Code
@@ -600,23 +636,6 @@
       Data points: 750, split in 10 groups
       Truth variable: `outcome`
       Estimate variable: `.pred`
-
-# Linear spline switches to linear if too few unique
-
-    Code
-      sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)
-    Condition
-      Warning:
-      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
-
----
-
-    Code
-      sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id,
-        smooth = TRUE)
-    Condition
-      Warning:
-      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
 
 # Non-default names used for estimate columns
 

@@ -531,7 +531,7 @@ test_that("Multinomial spline switches to linear if too few unique", {
 
   smol_species_probs <-
     species_probs |>
-    slice_head(n = 2, by = Species)
+    dplyr::slice_head(n = 2, by = Species)
 
   expect_snapshot(
     sl_gam <- cal_estimate_multinomial(smol_species_probs, Species, smooth = TRUE)
@@ -545,8 +545,8 @@ test_that("Multinomial spline switches to linear if too few unique", {
 
   smol_by_species_probs <-
     species_probs |>
-    slice_head(n = 4, by = Species) |>
-    mutate(id = rep(1:2, 6))
+    dplyr::slice_head(n = 4, by = Species) |>
+    dplyr::mutate(id = rep(1:2, 6))
 
   expect_snapshot(
     sl_gam <- cal_estimate_multinomial(smol_by_species_probs, Species, .by = id, smooth = TRUE)
