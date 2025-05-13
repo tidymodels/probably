@@ -519,7 +519,7 @@
 ---
 
     x `.by` cannot select more than one column.
-    i The following 2 columns were selected:
+    i The following columns were selected:
     i group1 and group2
 
 # Linear estimates work - tune_results
@@ -569,7 +569,7 @@
 ---
 
     x `.by` cannot select more than one column.
-    i The following 2 columns were selected:
+    i The following columns were selected:
     i group1 and group2
 
 # Linear spline estimates work - tune_results

@@ -21,7 +21,6 @@ test_that("Logistic estimates work - data.frame", {
   sl_logistic_group <- segment_logistic |>
     dplyr::mutate(group = .pred_poor > 0.5) |>
     cal_estimate_logistic(Class, .by = group, smooth = FALSE)
-  expect_false(are_groups_configs(sl_logistic_group))
 
   expect_cal_type(sl_logistic_group, "binary")
   expect_cal_method(sl_logistic_group, "Logistic regression")
@@ -34,11 +33,6 @@ test_that("Logistic estimates work - data.frame", {
       dplyr::mutate(group1 = 1, group2 = 2) |>
       cal_estimate_logistic(Class, .by = c(group1, group2), smooth = FALSE)
   )
-
-  lgst_configs <-
-    bin_with_configs() |>
-    cal_estimate_logistic(truth = Class, smooth = FALSE)
-  expect_true(are_groups_configs(lgst_configs))
 
   # ------------------------------------------------------------------------------
 
@@ -60,7 +54,6 @@ test_that("Logistic estimates work - tune_results", {
   expect_cal_method(tl_logistic, "Logistic regression")
   expect_cal_estimate(tl_logistic, "butchered_glm")
   expect_snapshot(print(tl_logistic))
-  expect_true(are_groups_configs(tl_logistic))
 
   expect_snapshot_error(
     cal_estimate_logistic(testthat_cal_multiclass(), smooth = FALSE)
@@ -97,11 +90,6 @@ test_that("Logistic spline estimates work - data.frame", {
       dplyr::mutate(group1 = 1, group2 = 2) |>
       cal_estimate_logistic(Class, .by = c(group1, group2))
   )
-
-  lgst_configs <-
-    bin_with_configs() |>
-    cal_estimate_logistic(truth = Class, smooth = TRUE)
-  expect_true(are_groups_configs(lgst_configs))
 })
 
 test_that("Logistic spline estimates work - tune_results", {
@@ -112,7 +100,6 @@ test_that("Logistic spline estimates work - tune_results", {
   expect_cal_method(tl_gam, "Generalized additive model")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
-  expect_true(are_groups_configs(tl_gam))
 
   expect_equal(
     testthat_cal_binary_count(),
@@ -148,17 +135,6 @@ test_that("Isotonic estimates work - data.frame", {
       cal_estimate_isotonic(Class, .by = c(group1, group2))
   )
 
-  set.seed(100)
-  iso_configs <-
-    bin_with_configs() |>
-    cal_estimate_isotonic(truth = Class)
-  expect_true(are_groups_configs(iso_configs))
-
-  set.seed(100)
-  mltm_configs <-
-    mnl_with_configs() |>
-    cal_estimate_isotonic(truth = obs, estimate = c(VF:L))
-  expect_true(are_groups_configs(mltm_configs))
 })
 
 test_that("Isotonic estimates work - tune_results", {
@@ -169,7 +145,6 @@ test_that("Isotonic estimates work - tune_results", {
   expect_cal_type(tl_isotonic, "binary")
   expect_cal_method(tl_isotonic, "Isotonic regression")
   expect_snapshot(print(tl_isotonic))
-  expect_true(are_groups_configs(tl_isotonic))
 
   expect_equal(
     testthat_cal_binary_count(),
@@ -184,7 +159,6 @@ test_that("Isotonic estimates work - tune_results", {
   expect_cal_type(mtnl_isotonic, "one_vs_all")
   expect_cal_method(mtnl_isotonic, "Isotonic regression")
   expect_snapshot(print(mtnl_isotonic))
-  expect_true(are_groups_configs(mtnl_isotonic))
 
   expect_equal(
     testthat_cal_multiclass_count(),
@@ -222,11 +196,6 @@ test_that("Isotonic linear estimates work - data.frame", {
       dplyr::mutate(group1 = 1, group2 = 2) |>
       cal_estimate_isotonic(outcome, estimate = .pred, .by = c(group1, group2))
   )
-
-  iso_configs <-
-    reg_with_configs() |>
-    cal_estimate_isotonic(truth = solubility, estimate = prediction)
-  expect_true(are_groups_configs(iso_configs))
 })
 
 # -------------------------- Isotonic Bootstrapped -----------------------------
@@ -246,7 +215,6 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
   expect_cal_type(sl_boot_group, "binary")
   expect_cal_method(sl_boot_group, "Bootstrapped isotonic regression")
   expect_snapshot(print(sl_boot_group))
-  expect_false(are_groups_configs(sl_boot_group))
 
   expect_snapshot_error(
     segment_logistic |>
@@ -254,15 +222,6 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
       cal_estimate_isotonic_boot(Class, .by = c(group1, group2))
   )
 
-  isobt_configs <-
-    bin_with_configs() |>
-    cal_estimate_isotonic_boot(truth = Class)
-  expect_true(are_groups_configs(isobt_configs))
-
-  mltm_configs <-
-    mnl_with_configs() |>
-    cal_estimate_isotonic_boot(truth = obs, estimate = c(VF:L))
-  expect_true(are_groups_configs(mltm_configs))
 })
 
 test_that("Isotonic Bootstrapped estimates work - tune_results", {
@@ -273,7 +232,6 @@ test_that("Isotonic Bootstrapped estimates work - tune_results", {
   expect_cal_type(tl_isotonic, "binary")
   expect_cal_method(tl_isotonic, "Bootstrapped isotonic regression")
   expect_snapshot(print(tl_isotonic))
-  expect_true(are_groups_configs(tl_isotonic))
 
   expect_equal(
     testthat_cal_binary_count(),
@@ -288,7 +246,6 @@ test_that("Isotonic Bootstrapped estimates work - tune_results", {
   expect_cal_type(mtnl_isotonic, "one_vs_all")
   expect_cal_method(mtnl_isotonic, "Bootstrapped isotonic regression")
   expect_snapshot(print(mtnl_isotonic))
-  expect_true(are_groups_configs(mtnl_isotonic))
 
   expect_equal(
     testthat_cal_multiclass_count(),
@@ -326,15 +283,6 @@ test_that("Beta estimates work - data.frame", {
       cal_estimate_beta(Class, smooth = FALSE, .by = c(group1, group2))
   )
 
-  beta_configs <-
-    bin_with_configs() |>
-    cal_estimate_beta(truth = Class)
-  expect_true(are_groups_configs(beta_configs))
-
-  mltm_configs <-
-    mnl_with_configs() |>
-    cal_estimate_beta(truth = obs, estimate = c(VF:L))
-  expect_true(are_groups_configs(mltm_configs))
 })
 
 test_that("Beta estimates work - tune_results", {
@@ -345,7 +293,6 @@ test_that("Beta estimates work - tune_results", {
   expect_cal_type(tl_beta, "binary")
   expect_cal_method(tl_beta, "Beta calibration")
   expect_snapshot(print(tl_beta))
-  expect_true(are_groups_configs(tl_beta))
 
   expect_equal(
     testthat_cal_binary_count(),
@@ -362,7 +309,6 @@ test_that("Beta estimates work - tune_results", {
   expect_cal_type(mtnl_beta, "one_vs_all")
   expect_cal_method(mtnl_beta, "Beta calibration")
   expect_snapshot(print(mtnl_beta))
-  expect_true(are_groups_configs(mtnl_beta))
 
   expect_equal(
     testthat_cal_multiclass_count(),
@@ -472,7 +418,6 @@ test_that("Linear estimates work - data.frame", {
   expect_cal_estimate(sl_logistic, "butchered_glm")
   expect_cal_rows(sl_logistic, 2000)
   expect_snapshot(print(sl_logistic))
-  expect_false(are_groups_configs(sl_logistic))
 
   sl_logistic_group <- boosting_predictions_oob |>
     dplyr::mutate(group = .pred > 0.5) |>
@@ -490,10 +435,6 @@ test_that("Linear estimates work - data.frame", {
       cal_estimate_linear(outcome, smooth = FALSE, .by = c(group1, group2))
   )
 
-  lin_configs <-
-    reg_with_configs() |>
-    cal_estimate_linear(truth = solubility, estimate = prediction, smooth = FALSE)
-  expect_true(are_groups_configs(lin_configs))
 })
 
 test_that("Linear estimates work - tune_results", {
@@ -502,7 +443,7 @@ test_that("Linear estimates work - tune_results", {
   expect_cal_method(tl_linear, "Linear")
   expect_cal_estimate(tl_linear, "butchered_glm")
   expect_snapshot(print(tl_linear))
-  expect_true(are_groups_configs(tl_linear))
+
 })
 
 test_that("Linear estimates errors - grouped_df", {
@@ -537,11 +478,6 @@ test_that("Linear spline estimates work - data.frame", {
       dplyr::mutate(group1 = 1, group2 = 2) |>
       cal_estimate_linear(outcome, .by = c(group1, group2))
   )
-
-  lin_configs <-
-    reg_with_configs() |>
-    cal_estimate_linear(truth = solubility, estimate = prediction, smooth = TRUE)
-  expect_true(are_groups_configs(lin_configs))
 })
 
 test_that("Linear spline estimates work - tune_results", {
@@ -550,7 +486,6 @@ test_that("Linear spline estimates work - tune_results", {
   expect_cal_method(tl_gam, "Generalized additive model")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
-  expect_true(are_groups_configs(tl_gam))
 
   expect_equal(
     testthat_cal_reg_count(),

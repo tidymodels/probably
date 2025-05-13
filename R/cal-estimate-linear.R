@@ -86,17 +86,35 @@ cal_estimate_linear.data.frame <- function(.data,
                                            .by = NULL) {
   stop_null_parameters(parameters)
 
-  group <- get_group_argument({{ .by }}, .data)
-  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
-
-  cal_linear_impl(
-    .data = .data,
+  info <- get_prediction_data(
+    .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    smooth = smooth,
-    source_class = cal_class_name(.data),
-    ...
+    .by = {{ .by }}
   )
+
+  model_fit <- lin_reg_fit_over_groups(info, smooth, ...)
+
+  if (smooth) {
+    model <- "linear_spline"
+    method <- "Generalized additive model"
+    additional_class <- "cal_estimate_linear_spline"
+  } else {
+    model <- "glm"
+    method <- "Linear"
+    additional_class <- "cal_estimate_linear"
+  }
+
+  as_regression_cal_object(
+    estimate = model_fit,
+    levels = info$map,
+    truth = info$truth,
+    method = method,
+    rows = nrow(.data),
+    additional_class = additional_class,
+    source_class = cal_class_name(.data)
+  )
+
 }
 
 #' @export
@@ -107,24 +125,29 @@ cal_estimate_linear.tune_results <- function(.data,
                                              smooth = TRUE,
                                              parameters = NULL,
                                              ...) {
-  tune_args <- tune_results_args(
-    .data = .data,
-    truth = {{ truth }},
-    estimate = {{ estimate }},
-    event_level = NA_character_,
-    parameters = parameters,
-    ...
-  )
+  info <- get_tune_data(.data, parameters)
 
-  tune_args$predictions |>
-    dplyr::group_by(!!tune_args$group) |>
-    cal_linear_impl(
-      truth = !!tune_args$truth,
-      estimate = !!tune_args$estimate,
-      smooth = smooth,
-      source_class = cal_class_name(.data),
-      ...
-    )
+  model_fit <- lin_reg_fit_over_groups(info, smooth, ...)
+
+  if (smooth) {
+    model <- "linear_spline"
+    method <- "Generalized additive model"
+    additional_class <- "cal_estimate_linear_spline"
+  } else {
+    model <- "glm"
+    method <- "Linear"
+    additional_class <- "cal_estimate_linear"
+  }
+
+  as_regression_cal_object(
+    estimate = model_fit,
+    levels = info$map,
+    truth = info$truth,
+    method = method,
+    rows = nrow(info$predictions),
+    additional_class = additional_class,
+    source_class = cal_class_name(.data)
+  )
 }
 
 #' @export
@@ -145,97 +168,52 @@ required_pkgs.cal_estimate_linear_spline <- function(x, ...) {
   c("mgcv", "probably")
 }
 
-
 #--------------------------- Implementation ------------------------------------
-cal_linear_impl <- function(.data,
-                            truth = NULL,
-                            estimate = dplyr::starts_with(".pred"),
-                            type,
-                            smooth,
-                            source_class = NULL,
-                            ...) {
+
+fit_regression_model <- function(.data, smooth, estimate, outcome, ...) {
+  # Check to see if the GAM is estimable given the data
   if (smooth) {
-    model <- "linear_spline"
-    method <- "Generalized additive model"
-    additional_class <- "cal_estimate_linear_spline"
-  } else {
-    model <- "glm"
-    method <- "Linear"
-    additional_class <- "cal_estimate_linear"
-  }
-
-  truth <- enquo(truth)
-
-  levels <- truth_estimate_map(.data, !!truth, {{ estimate }})
-
-  if (length(levels) == 1) {
-    # check outcome type:
-    y <- rlang::eval_tidy(levels[[1]], .data)
-    if (!is.vector(y) || !is.numeric(y) || is.factor(y)) {
-      cli::cli_abort("Predictions should be a single numeric vector.")
+    smooth_ok <- check_data_for_gam(.data, estimate)
+    if (!smooth_ok) {
+      smooth <- FALSE
     }
-
-    lin_model <- cal_linear_impl_grp(
-      .data = .data,
-      truth = !!truth,
-      estimate = levels[[1]],
-      run_model = model,
-      ...
-    )
-
-    res <- as_regression_cal_object(
-      estimate = lin_model,
-      levels = levels,
-      truth = !!truth,
-      method = method,
-      rows = nrow(.data),
-      additional_class = additional_class,
-      source_class = source_class
-    )
-  } else {
-    cli::cli_abort("Outcome data should be a single numeric vector.")
   }
-
-  res
-}
-
-cal_linear_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
-  .data |>
-    dplyr::group_by({{ group }}, .add = TRUE) |>
-    split_dplyr_groups() |>
-    lapply(
-      function(x) {
-        estimate <- cal_linear_impl_single(
-          .data = x$data,
-          truth = {{ truth }},
-          estimate = estimate,
-          run_model = run_model,
-          ... = ...
-        )
-        list(
-          filter = x$filter,
-          estimate = estimate
-        )
-      }
-    )
-}
-
-cal_linear_impl_single <- function(.data, truth, estimate, run_model, ...) {
-  truth <- ensym(truth)
-
-  if (run_model == "linear_spline") {
-    f_model <- expr(!!truth ~ s(!!estimate))
+  if (smooth) {
+    f_model <- rlang::expr(!!rlang::sym(outcome) ~ s(!!rlang::sym(estimate)))
+    f_model <- stats::as.formula(f_model)
     init_model <- mgcv::gam(f_model, data = .data, ...)
     model <- butcher::butcher(init_model)
-  }
-
-  if (run_model == "glm") {
-    f_model <- expr(!!truth ~ !!estimate)
-    init_model <- glm(f_model, data = .data, ...)
+  } else {
+    f_model <- rlang::expr(!!rlang::sym(outcome) ~ !!rlang::sym(estimate))
+    f_model <- stats::as.formula(f_model)
+    init_model <- stats::glm(f_model, data = .data, ...)
     model <- butcher::butcher(init_model)
   }
 
   model
+}
+
+
+lin_reg_fit_over_groups <- function(info, smooth = TRUE, ...) {
+  if (length(info$levels) == 2) {
+    cli::cli_abort("This function is meant to be used with multi-class outcomes only.")
+  }
+
+  grp_df <- make_group_df(info$predictions, group = info$group)
+  nst_df <- vctrs::vec_split(x = info$predictions, by = grp_df)
+  fltrs <- make_cal_filters(nst_df$key)
+
+  fits <-
+    lapply(
+      nst_df$val,
+      fit_regression_model,
+      smooth = smooth,
+      estimate = info$estimate,
+      info$truth,
+      ...
+    )
+
+  purrr::map2(fits, fltrs, ~ list(filter = .y, estimate = .x))
 }
 
 
