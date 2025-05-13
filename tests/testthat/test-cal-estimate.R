@@ -558,6 +558,34 @@ test_that("Linear spline estimates work - tune_results", {
   )
 })
 
+test_that("Linear spline switches to linear if too few unique", {
+  skip_if_not_installed("modeldata")
+
+  boosting_predictions_oob$.pred <- rep(
+    x = 1:5,
+    length.out = nrow(boosting_predictions_oob)
+  )
+
+  expect_snapshot(
+    sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)
+  )
+  sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
+
+  expect_identical(
+    sl_gam,
+    sl_lm
+  )
+
+  expect_snapshot(
+    sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id, smooth = TRUE)
+  )
+  sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id, smooth = FALSE)
+
+  expect_identical(
+    sl_gam,
+    sl_lm
+  )
+})
 
 # ----------------------------------- Other ------------------------------------
 test_that("Non-default names used for estimate columns", {

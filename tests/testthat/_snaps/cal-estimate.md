@@ -585,6 +585,23 @@
       Truth variable: `outcome`
       Estimate variable: `.pred`
 
+# Linear spline switches to linear if too few unique
+
+    Code
+      sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)
+    Condition
+      Warning:
+      Too few unique observations for spline-based calibrator. Switching to linear.
+
+---
+
+    Code
+      sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id,
+        smooth = TRUE)
+    Condition
+      Warning:
+      Too few unique observations for spline-based calibrator. Switching to linear.
+
 # Non-default names used for estimate columns
 
     Code

@@ -155,6 +155,31 @@ cal_linear_impl <- function(.data,
                             source_class = NULL,
                             ...) {
   if (smooth) {
+    estimate_name <- names(tidyselect::eval_select(enquo(estimate), .data))
+
+    if (inherits(.data, "grouped_df")) {
+      n_unique <- .data |> 
+        dplyr::summarise(
+          dplyr::across(dplyr::all_of(estimate_name), dplyr::n_distinct)
+        ) |>
+        dplyr::pull(dplyr::all_of(estimate_name)) |>
+        min()
+    } else {
+      n_unique <- dplyr::n_distinct(
+        dplyr::pull(.data, dplyr::all_of(estimate_name))
+      )
+    }
+
+    if (n_unique < 10) {
+      smooth <- FALSE
+      cli::cli_warn(
+        "Too few unique observations for spline-based calibrator.
+        Switching to linear."
+      )
+    }
+  }
+  
+  if (smooth) {
     model <- "linear_spline"
     method <- "Generalized additive model"
     additional_class <- "cal_estimate_linear_spline"
