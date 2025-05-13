@@ -154,6 +154,7 @@ cal_linear_impl <- function(.data,
                             smooth,
                             source_class = NULL,
                             ...) {
+
   if (smooth) {
     model <- "linear_spline"
     method <- "Generalized additive model"

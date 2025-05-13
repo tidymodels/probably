@@ -139,13 +139,8 @@ clean_env <- function(x) {
 }
 
 fit_multinomial_model <- function(.data, smooth, estimate, outcome, ...) {
-  # Check to see if the GAM is estimable given the data
-  if (smooth) {
-    smooth_ok <- check_data_for_gam(.data, estimate)
-    if (!smooth_ok) {
-      smooth <- FALSE
-    }
-  }
+  smooth <- turn_off_smooth_if_too_few_unique(.data, estimate, smooth)
+
   if (smooth) {
     # multinomial gams in mgcv needs zero-based integers as the outcome
     .data[[outcome]] <- as.numeric(.data[[outcome]]) - 1

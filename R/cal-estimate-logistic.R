@@ -132,6 +132,7 @@ cal_logistic_impl <- function(.data,
                               smooth,
                               source_class = NULL,
                               ...) {
+
   if (smooth) {
     model <- "logistic_spline"
     method <- "Generalized additive model"
