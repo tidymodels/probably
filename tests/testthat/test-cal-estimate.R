@@ -120,6 +120,39 @@ test_that("Logistic spline estimates work - tune_results", {
   )
 })
 
+test_that("Logistic spline switches to linear if too few unique", {
+  skip_if_not_installed("modeldata")
+
+  segment_logistic$.pred_good <- rep(
+    x = 1,
+    length.out = nrow(segment_logistic)
+  )
+
+  expect_snapshot(
+    sl_gam <- cal_estimate_logistic(segment_logistic, Class, smooth = TRUE)
+  )
+  sl_lm <- cal_estimate_logistic(segment_logistic, Class, smooth = FALSE)
+
+  expect_identical(
+    sl_gam,
+    sl_lm
+  )
+
+  segment_logistic$id <- rep(
+    x = 1:2,
+    length.out = nrow(segment_logistic)
+  )
+  expect_snapshot(
+    sl_gam <- cal_estimate_logistic(segment_logistic, Class, .by = id, smooth = TRUE)
+  )
+  sl_lm <- cal_estimate_logistic(segment_logistic, Class, .by = id, smooth = FALSE)
+
+  expect_identical(
+    sl_gam,
+    sl_lm
+  )
+})
+
 # --------------------------------- Isotonic -----------------------------------
 test_that("Isotonic estimates work - data.frame", {
   skip_if_not_installed("modeldata")

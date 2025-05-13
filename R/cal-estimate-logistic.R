@@ -133,6 +133,32 @@ cal_logistic_impl <- function(.data,
                               source_class = NULL,
                               ...) {
   if (smooth) {
+    estimate_name <- names(tidyselect::eval_select(enquo(estimate), .data))
+    estimate_name <- estimate_name[length(estimate_name)]
+
+    if (inherits(.data, "grouped_df")) {
+      n_unique <- .data |> 
+        dplyr::summarise(
+          dplyr::across(dplyr::all_of(estimate_name), dplyr::n_distinct)
+        ) |>
+        dplyr::pull(dplyr::all_of(estimate_name)) |>
+        min()
+    } else {
+      n_unique <- dplyr::n_distinct(
+        dplyr::pull(.data, dplyr::all_of(estimate_name))
+      )
+    }
+
+    if (n_unique < 10) {
+      smooth <- FALSE
+      cli::cli_warn(
+        "Too few unique observations for spline-based calibrator.
+        Switching to logistic."
+      )
+    }
+  }
+
+  if (smooth) {
     model <- "logistic_spline"
     method <- "Generalized additive model"
     additional_class <- "cal_estimate_logistic_spline"
