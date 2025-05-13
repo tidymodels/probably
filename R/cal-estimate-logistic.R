@@ -132,7 +132,6 @@ cal_logistic_impl <- function(.data,
                               smooth,
                               source_class = NULL,
                               ...) {
-  smooth <- turn_off_smooth_if_too_few_unique(.data, enquo(estimate), smooth)
 
   if (smooth) {
     model <- "logistic_spline"

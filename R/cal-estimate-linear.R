@@ -154,8 +154,7 @@ cal_linear_impl <- function(.data,
                             smooth,
                             source_class = NULL,
                             ...) {
-  smooth <- turn_off_smooth_if_too_few_unique(.data, enquo(estimate), smooth)
-  
+
   if (smooth) {
     model <- "linear_spline"
     method <- "Generalized additive model"
