@@ -86,6 +86,7 @@ print_reg_cal <- function(x, upv = FALSE, ...) {
     upv_no <- prettyNum(nrow(x$estimates[[1]]$estimate[[1]]), ",")
     cli::cli_text("Unique Predicted Values: {.val2 {upv_no}}")
   }
+  x$truth <- rlang::sym(x$truth)
   cli::cli_text("Truth variable: `{.val0 {x$truth}}`")
   cli::cli_text("Estimate variable: {.val1 `{x$levels[[1]]}`}")
 
@@ -225,11 +226,10 @@ as_regression_cal_object <- function(estimate,
                                      rows,
                                      additional_class = NULL,
                                      source_class = NULL) {
-  truth <- enquo(truth)
 
   as_cal_object(
     estimate = estimate,
-    truth = !!truth,
+    truth = truth,
     levels = levels,
     method = method,
     rows = rows,
@@ -265,7 +265,7 @@ as_cal_object <- function(estimate,
   }
 
   # TODO remove this when everything is updated/refactored
-  refactored <- c("cal_estimate_multinomial")
+  refactored <- c("cal_estimate_multinomial", "cal_estimate_linear", "cal_estimate_linear_spline")
   if (additional_classes %in% refactored) {
     str_truth <- truth
   } else {
@@ -346,24 +346,41 @@ make_group_df <- function(predictions, group) {
 }
 
 make_cal_filters <- function(key) {
+  unq_vals <- purrr::map_int(key, vctrs::vec_unique_count)
+  zv <- unq_vals == 1
+  if (any(zv)) {
+    key <- key[, !zv]
+  }
+
   nm_chr <- names(key)
   num_combo <- nrow(key)
   num_vars <- ncol(key)
-  key <- unclass(key)
-  res <- vector(mode = "list", length = length(key)) # default value is already NULL
-  for (i in seq_along(res)) {
-    vals <- key[[i]]
-    unq_vals <- vctrs::vec_unique_count(vals)
-    if (unq_vals > 1) {
-      gvar <- nm_chr[[i]]
-      res[[i]] <- purrr::map(vals, ~ rlang::expr(!!rlang::parse_expr(gvar) == !!.x))
+  # if (num_vars > 1) {
+  #   cli::cli_abort(
+  #     "Only a single grouping columns is currently supported.",
+  #     call = FALSE
+  #   )
+  # }
+
+  if (num_combo == 0 | num_vars == 0) {
+    return(list(NULL))
+  }
+
+  res <- vector(mode = "list", length = num_combo)
+  for (i in seq_len(num_vars)) {
+    gvar <- nm_chr[[i]]
+    tmp <- purrr::map(
+      key[[i]],
+      ~ rlang::expr(!!rlang::parse_expr(gvar) == !!.x)
+    )
+
+    if (i == 1) {
+      res <- tmp
+    } else {
+      res <- purrr::map2(res, tmp, ~  rlang::expr(!!.x & !!.y))
     }
   }
 
-  if (num_vars > 1) {
-    cli::cli_abort("Only a single grouping columns is currently supported.",
-                   call = FALSE)
-  }
   res
 }
 

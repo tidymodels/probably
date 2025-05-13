@@ -125,22 +125,6 @@
       `.pred_class_1` ==> class_1
       `.pred_class_2` ==> class_2
 
-# Logistic spline switches to linear if too few unique
-
-    Code
-      sl_gam <- cal_estimate_logistic(segment_logistic, Class, smooth = TRUE)
-    Condition
-      Warning:
-      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
-
----
-
-    Code
-      sl_gam <- cal_estimate_logistic(segment_logistic, Class, .by = id, smooth = TRUE)
-    Condition
-      Warning:
-      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
-
 # Isotonic estimates work - data.frame
 
     Code
@@ -522,6 +506,24 @@
     Condition
       Warning:
       Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
 
 # Multinomial spline switches to linear if too few unique
 
@@ -571,7 +573,7 @@
 ---
 
     x `.by` cannot select more than one column.
-    i The following 2 columns were selected:
+    i The following columns were selected:
     i group1 and group2
 
 # Linear estimates work - tune_results
@@ -621,7 +623,7 @@
 ---
 
     x `.by` cannot select more than one column.
-    i The following 2 columns were selected:
+    i The following columns were selected:
     i group1 and group2
 
 # Linear spline estimates work - tune_results
