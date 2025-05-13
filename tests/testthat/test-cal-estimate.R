@@ -496,6 +496,69 @@ test_that("Passing a binary outcome causes error", {
   )
 })
 
+test_that("Linear spline switches to linear if too few unique", {
+  skip_if_not_installed("modeldata")
+  skip("until refactored")
+
+  boosting_predictions_oob$.pred <- rep(
+    x = 1:5,
+    length.out = nrow(boosting_predictions_oob)
+  )
+
+  expect_snapshot(
+    sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)
+  )
+  sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
+
+  expect_identical(
+    sl_gam,
+    sl_lm
+  )
+
+  expect_snapshot(
+    sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id, smooth = TRUE)
+  )
+  sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id, smooth = FALSE)
+
+  expect_identical(
+    sl_gam,
+    sl_lm
+  )
+})
+
+test_that("Multinomial spline switches to linear if too few unique", {
+  skip_if_not_installed("modeldata")
+
+  smol_species_probs <-
+    species_probs |>
+    slice_head(n = 2, by = Species)
+
+  expect_snapshot(
+    sl_gam <- cal_estimate_multinomial(smol_species_probs, Species, smooth = TRUE)
+  )
+  sl_glm <- cal_estimate_multinomial(smol_species_probs, Species, smooth = FALSE)
+
+  expect_identical(
+    sl_gam$estimates,
+    sl_glm$estimates
+  )
+
+  smol_by_species_probs <-
+    species_probs |>
+    slice_head(n = 4, by = Species) |>
+    mutate(id = rep(1:2, 6))
+
+  expect_snapshot(
+    sl_gam <- cal_estimate_multinomial(smol_by_species_probs, Species, .by = id, smooth = TRUE)
+  )
+  sl_glm <- cal_estimate_multinomial(smol_by_species_probs, Species, .by = id, smooth = FALSE)
+
+  expect_identical(
+    sl_gam$estimates,
+    sl_glm$estimates
+  )
+})
+
 # --------------------------------- Linear -----------------------------------
 test_that("Linear estimates work - data.frame", {
   skip_if_not_installed("modeldata")
