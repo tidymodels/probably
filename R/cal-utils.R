@@ -62,7 +62,7 @@ check_level_consistency <- function(lvls, mapping) {
     missings <- lvls[null_map]
     missings <- paste0(missings, collapse = ", ")
     cols <- mapping[!null_map]
-    cols < purrr::map_chr(cols, as.character)
+    cols <- purrr::map_chr(cols, as.character)
     cols <- paste0(cols, collapse = ", ")
     cli::cli_abort(
       c(
