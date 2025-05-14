@@ -187,7 +187,6 @@ cal_adjust_update <- function(.data,
   } else {
     pred_class <- quo(NULL)
   }
-
   res <- cal_adjust(
     object = object,
     .data = .data,
@@ -205,8 +204,8 @@ cal_adjust_update <- function(.data,
     factor_levels <- names(object$levels)
 
     predictions <- res[, col_names] |> max.col(ties.method = "first")
-    predictions <- factor_levels[predictions] |>
-      factor(levels = factor_levels)
+    predictions <- factor_levels[predictions]
+    predictions <- factor(predictions, levels = factor_levels)
 
     res[, pred_name] <- predictions
   }
