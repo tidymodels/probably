@@ -353,7 +353,7 @@
 ---
 
     x `.by` cannot select more than one column.
-    i The following 2 columns were selected:
+    i The following columns were selected:
     i group1 and group2
 
 # Beta estimates work - tune_results
