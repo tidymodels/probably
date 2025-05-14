@@ -60,7 +60,7 @@ cal_estimate_beta.data.frame <- function(
     estimate = model,
     levels = info$map,
     truth = info$truth,
-    method =  "Beta calibration",
+    method = "Beta calibration",
     rows = nrow(info$predictions),
     source_class = cal_class_name(.data),
     additional_classes = "cal_estimate_beta"
@@ -78,7 +78,6 @@ cal_estimate_beta.tune_results <- function(
     parameters = NULL,
     ...
 ) {
-
   info <- get_tune_data(.data, parameters)
 
   model <- beta_fit_over_groups(info, shape_params, location_params, ...)
@@ -87,7 +86,7 @@ cal_estimate_beta.tune_results <- function(
     estimate = model,
     levels = info$map,
     truth = info$truth,
-    method =  "Beta calibration",
+    method = "Beta calibration",
     rows = nrow(info$predictions),
     source_class = cal_class_name(.data),
     additional_classes = "cal_estimate_beta"
@@ -118,10 +117,6 @@ required_pkgs.cal_estimate_beta <- function(x, ...) {
 # ----------------------------- Implementation ---------------------------------
 
 beta_fit_over_groups <- function(info, shape_params, location_params, ...) {
-  if (length(info$levels) != 2) {
-    cli::cli_abort("This function is meant to be used with two-class outcomes only.")
-  }
-
   grp_df <- make_group_df(info$predictions, group = info$group)
   nst_df <- vctrs::vec_split(x = info$predictions, by = grp_df)
   fltrs <- make_cal_filters(nst_df$key)
@@ -129,7 +124,7 @@ beta_fit_over_groups <- function(info, shape_params, location_params, ...) {
   fits <-
     lapply(
       nst_df$val,
-      fit_beta_model,
+      fit_all_beta_models,
       truth = info$truth,
       shape = shape_params,
       location = location_params,
@@ -140,6 +135,46 @@ beta_fit_over_groups <- function(info, shape_params, location_params, ...) {
   purrr::map2(fits, fltrs, ~ list(filter = .y, estimate = .x))
 }
 
+
+fit_all_beta_models <- function(
+    .data,
+    truth = NULL,
+    shape = 2,
+    location = 1,
+    estimate = NULL,
+    ...
+) {
+  lvls <- levels(.data[[truth]])
+  num_lvls <- length(lvls)
+
+  if (num_lvls == 2) {
+    res <- fit_beta_model(
+      .data,
+      truth = truth,
+      shape = shape,
+      location = location,
+      estimate = estimate,
+      ...
+    )
+    res <- list(res)
+    names(res) <- estimate[1]
+  } else {
+    # 1-versus-all, loop over classes and redefine
+    res <- fit_over_classes(
+      fit_beta_model,
+      .data = .data,
+      truth = truth,
+      estimate = estimate,
+      shape = shape,
+      location = location,
+      ...
+    )
+    names(res) <- estimate
+  }
+  res
+}
+
+
 fit_beta_model <- function(
     .data,
     truth = NULL,
@@ -149,8 +184,9 @@ fit_beta_model <- function(
     ...
 ) {
   outcome_data <- .data[[truth]]
-  outcome_data <- as.integer(outcome_data) - 1
-  prob_data <- .data[[ estimate[1] ]]
+  lvls <- levels(outcome_data)
+  outcome_data <- ifelse(outcome_data == lvls[1], 1, 0)
+  prob_data <- .data[[estimate[1]]]
 
   parameters <- NULL
 
@@ -187,6 +223,8 @@ fit_beta_model <- function(
 
   beta_model$model <- butcher::butcher(beta_model$model)
 
+  # for easier printing and identification; print method below
+  class(beta_model) <- c("betacal", class(beta_model))
   beta_model
 }
 
@@ -212,4 +250,11 @@ check_cal_groups <- function(group, .data, call = rlang::env_parent()) {
     )
   }
   invisible(NULL)
+}
+
+
+#' @export
+print.betacal <- function(x, ...) {
+  cli::cli_inform("Beta calibration ({x$parameters}) using {x$model$df.null} samples")
+  invisible(x)
 }
