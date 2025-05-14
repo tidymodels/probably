@@ -184,6 +184,9 @@ get_prediction_data <- function(
         ({.val {lvls}})."
       )
     }
+
+    estimate <- check_tm_format(estimate, lvls)
+
     lvl_map <- rlang::syms(estimate)
     names(lvl_map) <- lvls
   } else {
@@ -215,6 +218,18 @@ get_prediction_data <- function(
     map = lvl_map,
     source = "data"
   )
+}
+
+check_tm_format <- function(estimate, lvls) {
+  # Check to see if the probability columns use the tidymodels convention and
+  # then make sure that they are ordered correctly.
+
+  tm_nms <- paste0(".pred_", lvls)
+  if (identical(sort(estimate), sort(tm_nms))) {
+
+    estimate <- tm_nms
+  }
+  estimate
 }
 
 # ------------------------------- Utils ----------------------------------------
@@ -426,4 +441,36 @@ turn_off_smooth_if_too_few_unique <- function(.data, estimate, smooth, min_vals 
     }
   }
   smooth
+}
+
+# ------------------------------ 1 versus all helpers --------------------------
+
+fit_over_classes <- function(.fn, .data, truth, estimate, ...) {
+  lvls <- levels(.data[[ truth ]])
+  prob_cols <- estimate
+
+  res <- purrr::map2(
+    lvls,
+    estimate,
+    fit_1_vs_all,
+    .fn,
+    .data = .data,
+    truth = truth,
+    estimate = estimate,
+    ...
+  )
+  names(res) <- lvls
+  res
+}
+
+fit_1_vs_all <- function(class, prob_col, .fn, .data, truth, estimate, ...) {
+
+  # Redefine the outcome class as the current class level
+  outcome <- .data[[ truth ]]
+  new_class <- ifelse(outcome == class, class, ".other")
+  new_class <- factor(new_class, levels = c(class, ".other"))
+  .data[[ truth ]] <- new_class
+
+  res <- .fn(.data, truth = truth, estimate = prob_col, ...)
+  res
 }
