@@ -31,22 +31,26 @@
 #'
 #' cal_estimate_isotonic(boosting_predictions_oob, outcome, .pred)
 #' @export
-cal_estimate_isotonic <- function(.data,
-                                  truth = NULL,
-                                  estimate = dplyr::starts_with(".pred"),
-                                  parameters = NULL,
-                                  ...) {
+cal_estimate_isotonic <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  parameters = NULL,
+  ...
+) {
   UseMethod("cal_estimate_isotonic")
 }
 
 #' @export
 #' @rdname cal_estimate_isotonic
-cal_estimate_isotonic.data.frame <- function(.data,
-                                             truth = NULL,
-                                             estimate = dplyr::starts_with(".pred"),
-                                             parameters = NULL,
-                                             ...,
-                                             .by = NULL) {
+cal_estimate_isotonic.data.frame <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  parameters = NULL,
+  ...,
+  .by = NULL
+) {
   stop_null_parameters(parameters)
 
   group <- get_group_argument({{ .by }}, .data)
@@ -63,11 +67,13 @@ cal_estimate_isotonic.data.frame <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_isotonic
-cal_estimate_isotonic.tune_results <- function(.data,
-                                               truth = NULL,
-                                               estimate = dplyr::starts_with(".pred"),
-                                               parameters = NULL,
-                                               ...) {
+cal_estimate_isotonic.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  parameters = NULL,
+  ...
+) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -88,11 +94,13 @@ cal_estimate_isotonic.tune_results <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_isotonic
-cal_estimate_isotonic.grouped_df <- function(.data,
-                                             truth = NULL,
-                                             estimate = NULL,
-                                             parameters = NULL,
-                                             ...) {
+cal_estimate_isotonic.grouped_df <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  parameters = NULL,
+  ...
+) {
   abort_if_grouped_df()
 }
 
@@ -116,12 +124,14 @@ cal_estimate_isotonic.grouped_df <- function(.data,
 #' # dplyr selector functions are also supported
 #' cal_estimate_isotonic_boot(segment_logistic, Class, dplyr::starts_with(".pred"))
 #' @export
-cal_estimate_isotonic_boot <- function(.data,
-                                       truth = NULL,
-                                       estimate = dplyr::starts_with(".pred"),
-                                       times = 10,
-                                       parameters = NULL,
-                                       ...) {
+cal_estimate_isotonic_boot <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  times = 10,
+  parameters = NULL,
+  ...
+) {
   UseMethod("cal_estimate_isotonic_boot")
 }
 
@@ -129,16 +139,17 @@ cal_estimate_isotonic_boot <- function(.data,
 #  - figure out type of problem by class of `truth`
 #  - set default for `estimate` as null and move logic inside with trith info
 
-
 #' @export
 #' @rdname cal_estimate_isotonic_boot
-cal_estimate_isotonic_boot.data.frame <- function(.data,
-                                                  truth = NULL,
-                                                  estimate = dplyr::starts_with(".pred"),
-                                                  times = 10,
-                                                  parameters = NULL,
-                                                  ...,
-                                                  .by = NULL) {
+cal_estimate_isotonic_boot.data.frame <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  times = 10,
+  parameters = NULL,
+  ...,
+  .by = NULL
+) {
   stop_null_parameters(parameters)
 
   group <- get_group_argument({{ .by }}, .data)
@@ -156,12 +167,14 @@ cal_estimate_isotonic_boot.data.frame <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_isotonic_boot
-cal_estimate_isotonic_boot.tune_results <- function(.data,
-                                                    truth = NULL,
-                                                    estimate = dplyr::starts_with(".pred"),
-                                                    times = 10,
-                                                    parameters = NULL,
-                                                    ...) {
+cal_estimate_isotonic_boot.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  times = 10,
+  parameters = NULL,
+  ...
+) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -184,23 +197,27 @@ cal_estimate_isotonic_boot.tune_results <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_isotonic_boot
-cal_estimate_isotonic_boot.grouped_df <- function(.data,
-                                                  truth = NULL,
-                                                  estimate = NULL,
-                                                  times = 10,
-                                                  parameters = NULL,
-                                                  ...) {
+cal_estimate_isotonic_boot.grouped_df <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  times = 10,
+  parameters = NULL,
+  ...
+) {
   abort_if_grouped_df()
 }
 
 #------------------------------ Implementation ---------------------------------
-cal_isoreg_impl <- function(.data,
-                            truth,
-                            estimate,
-                            sampled = FALSE,
-                            times = 1,
-                            source_class = NULL,
-                            ...) {
+cal_isoreg_impl <- function(
+  .data,
+  truth,
+  estimate,
+  sampled = FALSE,
+  times = 1,
+  source_class = NULL,
+  ...
+) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -240,7 +257,6 @@ cal_isoreg_impl <- function(.data,
     addl_class <- "cal_estimate_isotonic_boot"
     method <- "Bootstrapped isotonic regression"
   }
-
 
   iso_flip <- map(
     seq_len(length(iso_model[[1]])),
@@ -295,11 +311,13 @@ cal_isoreg_impl_grp <- function(.data, truth, estimate, sampled, ...) {
     )
 }
 
-cal_isoreg_impl_estimate <- function(.data,
-                                     truth,
-                                     estimate,
-                                     sampled = FALSE,
-                                     ...) {
+cal_isoreg_impl_estimate <- function(
+  .data,
+  truth,
+  estimate,
+  sampled = FALSE,
+  ...
+) {
   lapply(
     seq_along(estimate),
     function(x) {
@@ -316,12 +334,14 @@ cal_isoreg_impl_estimate <- function(.data,
 }
 
 
-cal_isoreg_impl_single <- function(.data,
-                                   truth,
-                                   estimate,
-                                   level,
-                                   sampled = FALSE,
-                                   ...) {
+cal_isoreg_impl_single <- function(
+  .data,
+  truth,
+  estimate,
+  level,
+  sampled = FALSE,
+  ...
+) {
   estimate <- estimate[[level]]
   sorted_data <- dplyr::arrange(.data, !!estimate)
 
