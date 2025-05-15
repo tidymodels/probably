@@ -132,7 +132,7 @@ beta_fit_over_groups <- function(info, shape_params, location_params, ...) {
       ...
     )
 
-  purrr::map2(fits, fltrs, ~ list(filter = .y, estimate = .x))
+  purrr::map2(fits, fltrs, ~ list(filter = .y, estimates = .x))
 }
 
 
