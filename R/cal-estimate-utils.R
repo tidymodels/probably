@@ -174,6 +174,11 @@ get_prediction_data <- function(
   estimate <- names(tidyselect::eval_select(rlang::enquo(estimate), .data))
   by_vars <- names(tidyselect::eval_select(rlang::enquo(.by), .data))
 
+  # So that we ignore non-numeric columns that are accidentally selected such
+  # as `.pred_class`
+  is_num_est <- purrr::map_lgl(.data[,estimate], is.numeric)
+  estimate <- estimate[is_num_est]
+
   lvls <- levels(.data[[truth]])
 
   if (!is.null(lvls)) {
