@@ -148,7 +148,7 @@ test_that("Isotonic estimates work - data.frame", {
   set.seed(100)
   sl_isotonic <- cal_estimate_isotonic(segment_logistic, Class)
   expect_cal_type(sl_isotonic, "binary")
-  expect_cal_method(sl_isotonic, "Isotonic regression")
+  expect_cal_method(sl_isotonic, "Isotonic regression calibration")
   expect_cal_rows(sl_isotonic)
   expect_snapshot(print(sl_isotonic))
 
@@ -158,7 +158,7 @@ test_that("Isotonic estimates work - data.frame", {
     cal_estimate_isotonic(Class, .by = group)
 
   expect_cal_type(sl_isotonic_group, "binary")
-  expect_cal_method(sl_isotonic_group, "Isotonic regression")
+  expect_cal_method(sl_isotonic_group, "Isotonic regression calibration")
   expect_cal_rows(sl_isotonic_group)
   expect_snapshot(print(sl_isotonic_group))
 
@@ -177,7 +177,7 @@ test_that("Isotonic estimates work - tune_results", {
   set.seed(100)
   tl_isotonic <- cal_estimate_isotonic(testthat_cal_binary())
   expect_cal_type(tl_isotonic, "binary")
-  expect_cal_method(tl_isotonic, "Isotonic regression")
+  expect_cal_method(tl_isotonic, "Isotonic regression calibration")
   expect_snapshot(print(tl_isotonic))
 
   expect_equal(
@@ -191,7 +191,7 @@ test_that("Isotonic estimates work - tune_results", {
   set.seed(100)
   mtnl_isotonic <- cal_estimate_isotonic(testthat_cal_multiclass())
   expect_cal_type(mtnl_isotonic, "one_vs_all")
-  expect_cal_method(mtnl_isotonic, "Isotonic regression")
+  expect_cal_method(mtnl_isotonic, "Isotonic regression calibration")
   expect_snapshot(print(mtnl_isotonic))
 
   expect_equal(
@@ -212,7 +212,7 @@ test_that("Isotonic linear estimates work - data.frame", {
   set.seed(2983)
   sl_logistic <- cal_estimate_isotonic(boosting_predictions_oob, outcome, estimate = .pred)
   expect_cal_type(sl_logistic, "regression")
-  expect_cal_method(sl_logistic, "Isotonic regression")
+  expect_cal_method(sl_logistic, "Isotonic regression calibration")
   expect_cal_rows(sl_logistic, 2000)
   expect_snapshot(print(sl_logistic))
 
@@ -221,7 +221,7 @@ test_that("Isotonic linear estimates work - data.frame", {
     cal_estimate_isotonic(outcome, estimate = .pred, .by = id)
 
   expect_cal_type(sl_logistic_group, "regression")
-  expect_cal_method(sl_logistic_group, "Isotonic regression")
+  expect_cal_method(sl_logistic_group, "Isotonic regression calibration")
   expect_cal_rows(sl_logistic_group, 2000)
   expect_snapshot(print(sl_logistic_group))
 
@@ -239,7 +239,7 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
   set.seed(1)
   sl_boot <- cal_estimate_isotonic_boot(segment_logistic, Class)
   expect_cal_type(sl_boot, "binary")
-  expect_cal_method(sl_boot, "Bootstrapped isotonic regression")
+  expect_cal_method(sl_boot, "Bootstrapped isotonic regression calibration")
   expect_snapshot(print(sl_boot))
 
   sl_boot_group <- segment_logistic |>
@@ -247,7 +247,7 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
     cal_estimate_isotonic_boot(Class, .by = group)
 
   expect_cal_type(sl_boot_group, "binary")
-  expect_cal_method(sl_boot_group, "Bootstrapped isotonic regression")
+  expect_cal_method(sl_boot_group, "Bootstrapped isotonic regression calibration")
   expect_snapshot(print(sl_boot_group))
 
   expect_snapshot_error(
@@ -264,7 +264,7 @@ test_that("Isotonic Bootstrapped estimates work - tune_results", {
   set.seed(100)
   tl_isotonic <- cal_estimate_isotonic_boot(testthat_cal_binary())
   expect_cal_type(tl_isotonic, "binary")
-  expect_cal_method(tl_isotonic, "Bootstrapped isotonic regression")
+  expect_cal_method(tl_isotonic, "Bootstrapped isotonic regression calibration")
   expect_snapshot(print(tl_isotonic))
 
   expect_equal(
@@ -278,7 +278,7 @@ test_that("Isotonic Bootstrapped estimates work - tune_results", {
   set.seed(100)
   mtnl_isotonic <- cal_estimate_isotonic_boot(testthat_cal_multiclass())
   expect_cal_type(mtnl_isotonic, "one_vs_all")
-  expect_cal_method(mtnl_isotonic, "Bootstrapped isotonic regression")
+  expect_cal_method(mtnl_isotonic, "Bootstrapped isotonic regression calibration")
   expect_snapshot(print(mtnl_isotonic))
 
   expect_equal(

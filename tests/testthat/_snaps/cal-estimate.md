@@ -132,11 +132,11 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic regression
+      Method: Isotonic regression calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
-      Unique Predicted Values: 66
+      Unique Predicted Values: 78
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -149,11 +149,11 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic regression
+      Method: Isotonic regression calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010, split in 2 groups
-      Unique Predicted Values: 59
+      Unique Predicted Values: 77
       Truth variable: `Class`
       Estimate variables:
       `.pred_good` ==> good
@@ -162,7 +162,7 @@
 ---
 
     x `.by` cannot select more than one column.
-    i The following 2 columns were selected:
+    i The following columns were selected:
     i group1 and group2
 
 # Isotonic estimates work - tune_results
@@ -172,11 +172,11 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic regression
+      Method: Isotonic regression calibration
       Type: Binary
-      Source class:
+      Source class: Tune Results
       Data points: 4,000, split in 8 groups
-      Unique Predicted Values: 86
+      Unique Predicted Values: 92
       Truth variable: `class`
       Estimate variables:
       `.pred_class_1` ==> class_1
@@ -189,9 +189,9 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic regression
+      Method: Isotonic regression calibration
       Type: Multiclass (1 v All)
-      Source class:
+      Source class: Tune Results
       Data points: 5,000, split in 10 groups
       Truth variable: `class`
       Estimate variables:
@@ -211,11 +211,11 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic regression
+      Method: Isotonic regression calibration
       Type: Regression
       Source class: Data Frame
       Data points: 2,000
-      Unique Predicted Values: 40
+      Unique Predicted Values: 47
       Truth variable: `outcome`
       Estimate variables:
       `.pred` ==> predictions
@@ -227,11 +227,11 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic regression
+      Method: Isotonic regression calibration
       Type: Regression
       Source class: Data Frame
       Data points: 2,000, split in 10 groups
-      Unique Predicted Values: 16
+      Unique Predicted Values: 18
       Truth variable: `outcome`
       Estimate variables:
       `.pred` ==> predictions
@@ -239,7 +239,7 @@
 ---
 
     x `.by` cannot select more than one column.
-    i The following 2 columns were selected:
+    i The following columns were selected:
     i group1 and group2
 
 # Isotonic Bootstrapped estimates work - data.frame
@@ -249,7 +249,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Bootstrapped isotonic regression
+      Method: Bootstrapped isotonic regression calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
@@ -265,7 +265,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Bootstrapped isotonic regression
+      Method: Bootstrapped isotonic regression calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010, split in 2 groups
@@ -277,7 +277,7 @@
 ---
 
     x `.by` cannot select more than one column.
-    i The following 2 columns were selected:
+    i The following columns were selected:
     i group1 and group2
 
 # Isotonic Bootstrapped estimates work - tune_results
@@ -287,7 +287,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Bootstrapped isotonic regression
+      Method: Bootstrapped isotonic regression calibration
       Type: Binary
       Source class: Tune Results
       Data points: 4,000, split in 8 groups
@@ -303,7 +303,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Bootstrapped isotonic regression
+      Method: Bootstrapped isotonic regression calibration
       Type: Multiclass (1 v All)
       Source class: Tune Results
       Data points: 5,000, split in 10 groups
@@ -646,11 +646,11 @@
     Message
       
       -- Probability Calibration 
-      Method: Isotonic regression
+      Method: Isotonic regression calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
-      Unique Predicted Values: 66
+      Unique Predicted Values: 78
       Truth variable: `Class`
       Estimate variables:
       `good` ==> good
