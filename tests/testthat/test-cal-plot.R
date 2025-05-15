@@ -29,6 +29,7 @@ test_that("Binary breaks functions work", {
 })
 
 test_that("Binary breaks functions work with group argument", {
+  skip_if_not_installed("ggplot2", minimum_version = "3.5.2")
   res <- segment_logistic |>
     dplyr::mutate(id = dplyr::row_number() %% 2) |>
     cal_plot_breaks(Class, .pred_good, .by = id)
@@ -58,9 +59,7 @@ test_that("Binary breaks functions work with group argument", {
   )
   expect_equal(
     res$labels,
-    list(x = "Bin Midpoint", y = "Event Rate", colour = "id", fill = "id",
-         intercept = "intercept", slope = "slope", ymin = "lower",
-         ymax = "upper")
+    list(x = "Bin Midpoint", y = "Event Rate")
   )
   expect_equal(length(res$layers), 4)
 
@@ -221,6 +220,7 @@ test_that("Binary logistic functions work", {
 })
 
 test_that("Binary logistic functions work with group argument", {
+  skip_if_not_installed("ggplot2", minimum_version = "3.5.2")
   res <- segment_logistic |>
     dplyr::mutate(id = dplyr::row_number() %% 2) |>
     cal_plot_logistic(Class, .pred_good, .by = id)
@@ -255,9 +255,7 @@ test_that("Binary logistic functions work with group argument", {
   )
   expect_equal(
     res$labels,
-    list(x = "Probability", y = "Predicted Event Rate", colour = "id",
-         fill = "id", intercept = "intercept", slope = "slope", ymin = "lower",
-         ymax = "upper")
+    list(x = "Probability", y = "Predicted Event Rate")
   )
   expect_equal(length(res$layers), 3)
 
@@ -488,6 +486,7 @@ test_that("Some general exceptions", {
 # ------------------------------------------------------------------------------
 
 test_that("regression functions work", {
+  skip_if_not_installed("ggplot2", minimum_version = "3.5.2")
   skip_if(R.version[["arch"]] != "aarch64") # see note below
 
   obj <- testthat_cal_reg()
@@ -513,8 +512,7 @@ test_that("regression functions work", {
 
   expect_equal(
     res$labels,
-    list(x = "Observed", y = "Predicted", colour = "colour", fill = "fill",
-         intercept = "intercept", slope = "slope")
+    list(x = "Observed", y = "Predicted")
   )
   expect_equal(length(res$layers), 3)
 
@@ -540,8 +538,7 @@ test_that("regression functions work", {
 
   expect_equal(
     res$labels,
-    list(x = "Observed", y = "Predicted", colour = "colour", fill = "fill",
-         intercept = "intercept", slope = "slope")
+    list(x = "Observed", y = "Predicted")
   )
   expect_equal(length(res$layers), 3)
 
@@ -570,8 +567,7 @@ test_that("regression functions work", {
 
   expect_equal(
     res$labels,
-    list(x = "Observed", y = "Predicted", colour = "colour", fill = "fill",
-         intercept = "intercept", slope = "slope")
+    list(x = "Observed", y = "Predicted")
   )
   expect_equal(length(res$layers), 3)
 
@@ -600,8 +596,7 @@ test_that("regression functions work", {
 
   expect_equal(
     res$labels,
-    list(x = "Observed", y = "Predicted", colour = "colour", fill = "fill",
-         intercept = "intercept", slope = "slope")
+    list(x = "Observed", y = "Predicted")
   )
   expect_equal(length(res$layers), 3)
 
@@ -628,8 +623,7 @@ test_that("regression functions work", {
 
   expect_equal(
     res$labels,
-    list(x = "Observed", y = "Predicted", colour = "colour", fill = "fill",
-         intercept = "intercept", slope = "slope")
+    list(x = "Observed", y = "Predicted")
   )
   expect_equal(length(res$layers), 3)
 
