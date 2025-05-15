@@ -67,17 +67,36 @@ cal_estimate_logistic.data.frame <- function(
 ) {
   stop_null_parameters(parameters)
 
-  group <- get_group_argument({{ .by }}, .data)
-  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
-
-  cal_logistic_impl(
-    .data = .data,
+  info <- get_prediction_data(
+    .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    smooth = smooth,
-    source_class = cal_class_name(.data),
-    ...
+    .by = {{ .by }}
   )
+
+  model <- logistic_fit_over_groups(info, smooth, ...)
+
+  if (smooth) {
+    model <- "logistic_spline"
+    method <- "Generalized additive model calibration"
+    additional_class <- "cal_estimate_logistic_spline"
+  } else {
+    model <- "glm"
+    method <- "Logistic regression calibration"
+    additional_class <- "cal_estimate_logistic"
+  }
+
+  as_cal_object(
+    estimate = model,
+    levels = info$map,
+    truth = info$truth,
+    method = method,
+    rows = nrow(info$predictions),
+    additional_classes = additional_class,
+    source_class = cal_class_name(.data),
+    type = "binary"
+  )
+
 }
 
 #' @export
@@ -90,24 +109,31 @@ cal_estimate_logistic.tune_results <- function(
   parameters = NULL,
   ...
 ) {
-  tune_args <- tune_results_args(
-    .data = .data,
-    truth = {{ truth }},
-    estimate = {{ estimate }},
-    event_level = "first",
-    parameters = parameters,
-    ...
-  )
 
-  tune_args$predictions |>
-    dplyr::group_by(!!tune_args$group) |>
-    cal_logistic_impl(
-      truth = !!tune_args$truth,
-      estimate = !!tune_args$estimate,
-      smooth = smooth,
-      source_class = cal_class_name(.data),
-      ...
-    )
+  info <- get_tune_data(.data, parameters)
+
+  model <- logistic_fit_over_groups(info, smooth, ...)
+
+  if (smooth) {
+    model <- "logistic_spline"
+    method <- "Generalized additive model calibration"
+    additional_class <- "cal_estimate_logistic_spline"
+  } else {
+    model <- "glm"
+    method <- "Logistic regression calibration"
+    additional_class <- "cal_estimate_logistic"
+  }
+
+  as_cal_object(
+    estimate = model,
+    levels = info$map,
+    truth = info$truth,
+    method = method,
+    rows = nrow(info$predictions),
+    additional_classes = additional_class,
+    source_class = cal_class_name(.data),
+    type = "binary"
+  )
 }
 
 #' @export
