@@ -29,7 +29,7 @@ test_that("Binary breaks functions work", {
 })
 
 test_that("Binary breaks functions work with group argument", {
-  skip_if_not_installed("ggplot2", minimum_version = "3.5.2")
+  skip_if_not_installed("ggplot2", minimum_version = "3.5.2.9000")
   res <- segment_logistic |>
     dplyr::mutate(id = dplyr::row_number() %% 2) |>
     cal_plot_breaks(Class, .pred_good, .by = id)
@@ -220,7 +220,7 @@ test_that("Binary logistic functions work", {
 })
 
 test_that("Binary logistic functions work with group argument", {
-  skip_if_not_installed("ggplot2", minimum_version = "3.5.2")
+  skip_if_not_installed("ggplot2", minimum_version = "3.5.2.9000")
   res <- segment_logistic |>
     dplyr::mutate(id = dplyr::row_number() %% 2) |>
     cal_plot_logistic(Class, .pred_good, .by = id)
@@ -486,7 +486,7 @@ test_that("Some general exceptions", {
 # ------------------------------------------------------------------------------
 
 test_that("regression functions work", {
-  skip_if_not_installed("ggplot2", minimum_version = "3.5.2")
+  skip_if_not_installed("ggplot2", minimum_version = "3.5.2.9000")
   skip_if(R.version[["arch"]] != "aarch64") # see note below
 
   obj <- testthat_cal_reg()
