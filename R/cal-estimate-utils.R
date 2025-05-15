@@ -284,21 +284,11 @@ as_cal_object <- function(estimate,
     cli::cli_abort("Cannot translate {.arg levels} to a class.")
   }
 
-  # TODO remove this when everything is updated/refactored
-  refactored <- c("cal_estimate_multinomial", "cal_estimate_linear",
-                  "cal_estimate_linear_spline", "cal_estimate_beta",
-                  "cal_estimate_isotonic", "cal_estimate_isotonic_boot")
-  if (additional_classes %in% refactored) {
-    str_truth <- truth
-  } else {
-    str_truth <- as_name(enquo(truth))
-  }
-
   structure(
     list(
       type = type,
       method = method,
-      truth = str_truth,
+      truth = truth,
       levels = levels,
       rows = rows,
       source_class = source_class,
