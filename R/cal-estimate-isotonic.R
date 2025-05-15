@@ -157,17 +157,25 @@ cal_estimate_isotonic_boot.data.frame <- function(
 ) {
   stop_null_parameters(parameters)
 
-  group <- get_group_argument({{ .by }}, .data)
-  .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
-
-  cal_isoreg_impl(
-    .data = .data,
+  info <- get_prediction_data(
+    .data,
     truth = {{ truth }},
     estimate = {{ estimate }},
-    times = times,
-    source_class = cal_class_name(.data),
-    ...
+    .by = {{ .by }}
   )
+
+  model <- isoreg_fit_over_groups(info, times = times, ...)
+
+  as_cal_object(
+    estimate = model,
+    levels = info$map,
+    truth = info$truth,
+    method = "Bootstrapped isotonic regression calibration",
+    rows = nrow(info$predictions),
+    source_class = cal_class_name(.data),
+    additional_classes = "cal_estimate_isotonic_boot"
+  )
+
 }
 
 #' @export
@@ -180,24 +188,21 @@ cal_estimate_isotonic_boot.tune_results <- function(
   parameters = NULL,
   ...
 ) {
-  tune_args <- tune_results_args(
-    .data = .data,
-    truth = {{ truth }},
-    estimate = {{ estimate }},
-    event_level = "first", # or null for regression
-    parameters = parameters,
-    ...
+
+  info <- get_tune_data(.data, parameters)
+
+  model <- isoreg_fit_over_groups(info, times = times, ...)
+
+  as_cal_object(
+    estimate = model,
+    levels = info$map,
+    truth = info$truth,
+    method = "Bootstrapped isotonic regression calibration",
+    rows = nrow(info$predictions),
+    source_class = cal_class_name(.data),
+    additional_classes = "cal_estimate_isotonic_boot"
   )
 
-  tune_args$predictions |>
-    dplyr::group_by(!!tune_args$group) |>
-    cal_isoreg_impl(
-      truth = !!tune_args$truth,
-      estimate = !!tune_args$estimate,
-      times = times,
-      source_class = cal_class_name(.data),
-      ...
-    )
 }
 
 #' @export
@@ -353,7 +358,7 @@ isoreg_fit_over_groups <- function(info, sampled = TRUE, times = 1, ...) {
       fit_ensemble_isoreg_models,
       truth = info$truth,
       estimate = info$estimate,
-      sampled = sampled,
+      times = times,
       ...
     )
 
