@@ -174,6 +174,11 @@ get_prediction_data <- function(
   estimate <- names(tidyselect::eval_select(rlang::enquo(estimate), .data))
   by_vars <- names(tidyselect::eval_select(rlang::enquo(.by), .data))
 
+  # So that we ignore non-numeric columns that are accidentally selected such
+  # as `.pred_class`
+  is_num_est <- purrr::map_lgl(.data[,estimate], is.numeric)
+  estimate <- estimate[is_num_est]
+
   lvls <- levels(.data[[truth]])
 
   if (!is.null(lvls)) {
@@ -281,7 +286,8 @@ as_cal_object <- function(estimate,
 
   # TODO remove this when everything is updated/refactored
   refactored <- c("cal_estimate_multinomial", "cal_estimate_linear",
-                  "cal_estimate_linear_spline", "cal_estimate_beta")
+                  "cal_estimate_linear_spline", "cal_estimate_beta",
+                  "cal_estimate_isotonic", "cal_estimate_isotonic_boot")
   if (additional_classes %in% refactored) {
     str_truth <- truth
   } else {

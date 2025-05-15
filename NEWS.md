@@ -1,5 +1,7 @@
 # probably (development version)
 
+* A bug was fixed where `cal_estimate_isotonic()` always used a bootstrap sample.
+
 * Transition from the magrittr pipe to the base R pipe.
 
 * A new function `bound_prediction()` is available to constrain the values of a numeric prediction (#142).

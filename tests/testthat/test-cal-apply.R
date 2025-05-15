@@ -89,8 +89,8 @@ test_that("Isotonic apply works - data.frame", {
   ap_isotonic <- cal_apply(segment_logistic, sl_isotonic)
 
   pred_good <- ap_isotonic$.pred_good
-  expect_equal(mean(pred_good), 0.2839132, tolerance = 0.000001)
-  expect_equal(sd(pred_good), 0.3079697, tolerance = 0.000001)
+  expect_equal(mean(pred_good), 0.3015192, tolerance = 0.000001)
+  expect_equal(sd(pred_good), 0.2870775, tolerance = 0.000001)
 })
 
 test_that("Isotonic apply works - tune_results", {
