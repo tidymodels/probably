@@ -4,7 +4,7 @@ test_that("Logistic estimates work - data.frame", {
 
   sl_logistic <- cal_estimate_logistic(segment_logistic, Class, smooth = FALSE)
   expect_cal_type(sl_logistic, "binary")
-  expect_cal_method(sl_logistic, "Logistic regression")
+  expect_cal_method(sl_logistic, "Logistic regression calibration")
   expect_cal_estimate(sl_logistic, "butchered_glm")
   expect_cal_rows(sl_logistic)
   expect_snapshot(print(sl_logistic))
@@ -23,7 +23,7 @@ test_that("Logistic estimates work - data.frame", {
     cal_estimate_logistic(Class, .by = group, smooth = FALSE)
 
   expect_cal_type(sl_logistic_group, "binary")
-  expect_cal_method(sl_logistic_group, "Logistic regression")
+  expect_cal_method(sl_logistic_group, "Logistic regression calibration")
   expect_cal_estimate(sl_logistic_group, "butchered_glm")
   expect_cal_rows(sl_logistic_group)
   expect_snapshot(print(sl_logistic_group))
@@ -51,7 +51,7 @@ test_that("Logistic estimates work - tune_results", {
 
   tl_logistic <- cal_estimate_logistic(testthat_cal_binary(), smooth = FALSE)
   expect_cal_type(tl_logistic, "binary")
-  expect_cal_method(tl_logistic, "Logistic regression")
+  expect_cal_method(tl_logistic, "Logistic regression calibration")
   expect_cal_estimate(tl_logistic, "butchered_glm")
   expect_snapshot(print(tl_logistic))
 
@@ -70,7 +70,7 @@ test_that("Logistic estimates errors - grouped_df", {
 test_that("Logistic spline estimates work - data.frame", {
   sl_gam <- cal_estimate_logistic(segment_logistic, Class)
   expect_cal_type(sl_gam, "binary")
-  expect_cal_method(sl_gam, "Generalized additive model")
+  expect_cal_method(sl_gam, "Generalized additive model calibration")
   expect_cal_estimate(sl_gam, "butchered_gam")
   expect_cal_rows(sl_gam)
   expect_snapshot(print(sl_gam))
@@ -80,7 +80,7 @@ test_that("Logistic spline estimates work - data.frame", {
     cal_estimate_logistic(Class, .by = group)
 
   expect_cal_type(sl_gam_group, "binary")
-  expect_cal_method(sl_gam_group, "Generalized additive model")
+  expect_cal_method(sl_gam_group, "Generalized additive model calibration")
   expect_cal_estimate(sl_gam_group, "butchered_gam")
   expect_cal_rows(sl_gam_group)
   expect_snapshot(print(sl_gam_group))
@@ -97,7 +97,7 @@ test_that("Logistic spline estimates work - tune_results", {
 
   tl_gam <- cal_estimate_logistic(testthat_cal_binary())
   expect_cal_type(tl_gam, "binary")
-  expect_cal_method(tl_gam, "Generalized additive model")
+  expect_cal_method(tl_gam, "Generalized additive model calibration")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
 
