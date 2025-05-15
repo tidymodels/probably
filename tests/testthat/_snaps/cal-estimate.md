@@ -5,7 +5,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Logistic regression
+      Method: Logistic regression calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
@@ -16,13 +16,11 @@
 
 ---
 
-    We can't connect the specified prediction columns to "good".
-    i The selected columns were ".pred_poor".
-    i Are there more columns to add in the function call?
+    The selectors in `estimate` resolves to 1 values (".pred_poor") but there are 2 class levels ("good" and "poor").
 
 ---
 
-    The `truth` column has 4 levels (VF, F, M, and L), but only two-class factors are allowed for this calibration method.
+    The `truth` column has 4 levels ("VF", "F", "M", and "L"), but only two-class factors are allowed for this calibration method.
 
 ---
 
@@ -31,7 +29,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Logistic regression
+      Method: Logistic regression calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010, split in 2 groups
@@ -43,7 +41,7 @@
 ---
 
     x `.by` cannot select more than one column.
-    i The following 2 columns were selected:
+    i The following columns were selected:
     i group1 and group2
 
 # Logistic estimates work - tune_results
@@ -53,7 +51,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Logistic regression
+      Method: Logistic regression calibration
       Type: Binary
       Source class: Tune Results
       Data points: 4,000, split in 8 groups
@@ -64,7 +62,7 @@
 
 ---
 
-    The `truth` column has 3 levels (.pred_one, .pred_two, and .pred_three), but only two-class factors are allowed for this calibration method.
+    The `truth` column has 3 levels ("one", "two", and "three"), but only two-class factors are allowed for this calibration method.
 
 # Logistic estimates errors - grouped_df
 
@@ -78,7 +76,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Generalized additive model
+      Method: Generalized additive model calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010
@@ -94,7 +92,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Generalized additive model
+      Method: Generalized additive model calibration
       Type: Binary
       Source class: Data Frame
       Data points: 1,010, split in 2 groups
@@ -106,7 +104,7 @@
 ---
 
     x `.by` cannot select more than one column.
-    i The following 2 columns were selected:
+    i The following columns were selected:
     i group1 and group2
 
 # Logistic spline estimates work - tune_results
@@ -116,7 +114,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Generalized additive model
+      Method: Generalized additive model calibration
       Type: Binary
       Source class: Tune Results
       Data points: 4,000, split in 8 groups

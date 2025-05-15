@@ -77,11 +77,9 @@ cal_estimate_logistic.data.frame <- function(
   model <- logistic_fit_over_groups(info, smooth, ...)
 
   if (smooth) {
-    model <- "logistic_spline"
     method <- "Generalized additive model calibration"
     additional_class <- "cal_estimate_logistic_spline"
   } else {
-    model <- "glm"
     method <- "Logistic regression calibration"
     additional_class <- "cal_estimate_logistic"
   }
@@ -115,11 +113,9 @@ cal_estimate_logistic.tune_results <- function(
   model <- logistic_fit_over_groups(info, smooth, ...)
 
   if (smooth) {
-    model <- "logistic_spline"
     method <- "Generalized additive model calibration"
     additional_class <- "cal_estimate_logistic_spline"
   } else {
-    model <- "glm"
     method <- "Logistic regression calibration"
     additional_class <- "cal_estimate_logistic"
   }
@@ -159,99 +155,45 @@ required_pkgs.cal_estimate_logistic_spline <- function(x, ...) {
 
 
 #--------------------------- Implementation ------------------------------------
-cal_logistic_impl <- function(
-  .data,
-  truth = NULL,
-  estimate = dplyr::starts_with(".pred_"),
-  type,
-  smooth,
-  source_class = NULL,
-  ...
-) {
+
+fit_logistic_model <- function(.data, smooth, estimate, outcome, ...) {
+  smooth <- turn_off_smooth_if_too_few_unique(.data, estimate, smooth)
+
+  f <- f_from_str(outcome, estimate[-length(estimate)], smooth)
   if (smooth) {
-    model <- "logistic_spline"
-    method <- "Generalized additive model"
-    additional_class <- "cal_estimate_logistic_spline"
+    # TODO check for failures
+    model <- mgcv::gam(f, data = .data, family = "binomial", ...)
   } else {
-    model <- "glm"
-    method <- "Logistic regression"
-    additional_class <- "cal_estimate_logistic"
+    # TODO check for failures
+    model <- glm(f, data = .data, family = "binomial", ...)
+
+}
+  model <- butcher::butcher(model)
+  model
   }
 
-  truth <- enquo(truth)
-
-  levels <- truth_estimate_map(.data, !!truth, {{ estimate }}, validate = TRUE)
-
-  if (length(levels) == 2) {
-    log_model <- cal_logistic_impl_grp(
-      .data = .data,
-      truth = !!truth,
-      estimate = levels[[1]],
-      run_model = model,
-      ...
-    )
-
-    res <- as_cal_object(
-      estimate = log_model,
-      levels = levels,
-      truth = !!truth,
-      method = method,
-      rows = nrow(.data),
-      additional_classes = additional_class,
-      source_class = source_class
-    )
-  } else {
+logistic_fit_over_groups <- function(info, smooth = TRUE, ...) {
+  if (length(info$levels) > 2) {
     cli::cli_abort(
-      "The {.arg truth} column has {length(levels)} levels ({.val {levels}}),
+      "The {.arg truth} column has {length(info$levels)} levels ({.val {info$levels}}),
        but only two-class factors are allowed for this calibration method."
     )
   }
 
-  res
-}
+  grp_df <- make_group_df(info$predictions, group = info$group)
+  nst_df <- vctrs::vec_split(x = info$predictions, by = grp_df)
+  fltrs <- make_cal_filters(nst_df$key)
 
-cal_logistic_impl_grp <- function(
-  .data,
-  truth,
-  estimate,
-  run_model,
-  group,
-  ...
-) {
-  .data |>
-    dplyr::group_by({{ group }}, .add = TRUE) |>
-    split_dplyr_groups() |>
+  fits <-
     lapply(
-      function(x) {
-        estimate <- cal_logistic_impl_single(
-          .data = x$data,
-          truth = {{ truth }},
-          estimate = estimate,
-          run_model = run_model,
-          ... = ...
-        )
-        list(
-          filter = x$filter,
-          estimate = estimate
-        )
-      }
+      nst_df$val,
+      fit_logistic_model,
+      smooth = smooth,
+      estimate = info$estimate,
+      info$truth,
+      ...
     )
+
+  purrr::map2(fits, fltrs, ~ list(filter = .y, estimate = .x))
 }
 
-cal_logistic_impl_single <- function(.data, truth, estimate, run_model, ...) {
-  truth <- ensym(truth)
-
-  if (run_model == "logistic_spline") {
-    f_model <- expr(!!truth ~ s(!!estimate))
-    init_model <- mgcv::gam(f_model, data = .data, family = "binomial", ...)
-    model <- butcher::butcher(init_model)
-  }
-
-  if (run_model == "glm") {
-    f_model <- expr(!!truth ~ !!estimate)
-    init_model <- glm(f_model, data = .data, family = "binomial", ...)
-    model <- butcher::butcher(init_model)
-  }
-
-  model
-}
