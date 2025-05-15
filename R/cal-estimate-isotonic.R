@@ -340,15 +340,17 @@ cal_isoreg_impl_estimate <- function(
 
 # ------------------------------------------------------------------------------
 
-isoreg_fit_over_groups <- function(info, sampled = TRUE, ...) {
+isoreg_fit_over_groups <- function(info, sampled = TRUE, times = 1, ...) {
   grp_df <- make_group_df(info$predictions, group = info$group)
   nst_df <- vctrs::vec_split(x = info$predictions, by = grp_df)
   fltrs <- make_cal_filters(nst_df$key)
 
+  # ensemble here
+
   fits <-
     lapply(
       nst_df$val,
-      fit_all_isoreg_models,
+      fit_ensemble_isoreg_models,
       truth = info$truth,
       estimate = info$estimate,
       sampled = sampled,
@@ -356,6 +358,35 @@ isoreg_fit_over_groups <- function(info, sampled = TRUE, ...) {
     )
 
   purrr::map2(fits, fltrs, ~ list(filter = .y, estimate = .x))
+}
+
+fit_ensemble_isoreg_models <- function(
+    .data,
+    truth = NULL,
+    estimate = NULL,
+    sampled = FALSE,
+    times = 1,
+    ...
+) {
+
+  is_sampled <- times > 1
+
+  iso_models <- purrr::map(
+    sample.int(10000, times),
+    ~ withr::with_seed(
+      .x,
+      {
+        fit_all_isoreg_models(
+          .data,
+          truth = truth,
+          estimate = estimate,
+          sampled = is_sampled,
+          ...
+        )
+      }
+    )
+  )
+  iso_models
 }
 
 fit_all_isoreg_models <- function(
