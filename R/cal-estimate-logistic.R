@@ -77,11 +77,9 @@ cal_estimate_logistic.data.frame <- function(
   model <- logistic_fit_over_groups(info, smooth, ...)
 
   if (smooth) {
-    model <- "logistic_spline"
     method <- "Generalized additive model calibration"
     additional_class <- "cal_estimate_logistic_spline"
   } else {
-    model <- "glm"
     method <- "Logistic regression calibration"
     additional_class <- "cal_estimate_logistic"
   }
@@ -115,11 +113,9 @@ cal_estimate_logistic.tune_results <- function(
   model <- logistic_fit_over_groups(info, smooth, ...)
 
   if (smooth) {
-    model <- "logistic_spline"
     method <- "Generalized additive model calibration"
     additional_class <- "cal_estimate_logistic_spline"
   } else {
-    model <- "glm"
     method <- "Logistic regression calibration"
     additional_class <- "cal_estimate_logistic"
   }
@@ -255,3 +251,46 @@ cal_logistic_impl_single <- function(.data, truth, estimate, run_model, ...) {
 
   model
 }
+
+
+fit_logistic_model <- function(.data, smooth, estimate, outcome, ...) {
+  smooth <- turn_off_smooth_if_too_few_unique(.data, estimate, smooth)
+
+  f <- f_from_str(outcome, estimate[-length(estimate)], smooth)
+  if (smooth) {
+    # TODO check for failures
+    model <- mgcv::gam(f, data = .data, family = "binomial", ...)
+  } else {
+    # TODO check for failures
+    model <- glm(f, data = .data, family = "binomial", ...)
+
+}
+  model <- butcher::butcher(model)
+  model
+  }
+
+logistic_fit_over_groups <- function(info, smooth = TRUE, ...) {
+  if (length(info$levels) > 2) {
+    cli::cli_abort(
+      "The {.arg truth} column has {length(info$levels)} levels ({.val {info$levels}}),
+       but only two-class factors are allowed for this calibration method."
+    )
+  }
+
+  grp_df <- make_group_df(info$predictions, group = info$group)
+  nst_df <- vctrs::vec_split(x = info$predictions, by = grp_df)
+  fltrs <- make_cal_filters(nst_df$key)
+
+  fits <-
+    lapply(
+      nst_df$val,
+      fit_logistic_model,
+      smooth = smooth,
+      estimate = info$estimate,
+      info$truth,
+      ...
+    )
+
+  purrr::map2(fits, fltrs, ~ list(filter = .y, estimate = .x))
+}
+
