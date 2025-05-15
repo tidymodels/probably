@@ -43,24 +43,28 @@
 #' \url{https://www.tidymodels.org/learn/models/calibration/},
 #' [cal_validate_logistic()]
 #' @export
-cal_estimate_logistic <- function(.data,
-                                  truth = NULL,
-                                  estimate = dplyr::starts_with(".pred_"),
-                                  smooth = TRUE,
-                                  parameters = NULL,
-                                  ...) {
+cal_estimate_logistic <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+) {
   UseMethod("cal_estimate_logistic")
 }
 
 #' @export
 #' @rdname cal_estimate_logistic
-cal_estimate_logistic.data.frame <- function(.data,
-                                             truth = NULL,
-                                             estimate = dplyr::starts_with(".pred_"),
-                                             smooth = TRUE,
-                                             parameters = NULL,
-                                             ...,
-                                             .by = NULL) {
+cal_estimate_logistic.data.frame <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...,
+  .by = NULL
+) {
   stop_null_parameters(parameters)
 
   group <- get_group_argument({{ .by }}, .data)
@@ -78,12 +82,14 @@ cal_estimate_logistic.data.frame <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_logistic
-cal_estimate_logistic.tune_results <- function(.data,
-                                               truth = NULL,
-                                               estimate = dplyr::starts_with(".pred_"),
-                                               smooth = TRUE,
-                                               parameters = NULL,
-                                               ...) {
+cal_estimate_logistic.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -106,12 +112,14 @@ cal_estimate_logistic.tune_results <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_logistic
-cal_estimate_logistic.grouped_df <- function(.data,
-                                             truth = NULL,
-                                             estimate = NULL,
-                                             smooth = TRUE,
-                                             parameters = NULL,
-                                             ...) {
+cal_estimate_logistic.grouped_df <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+) {
   abort_if_grouped_df()
 }
 
@@ -125,14 +133,15 @@ required_pkgs.cal_estimate_logistic_spline <- function(x, ...) {
 
 
 #--------------------------- Implementation ------------------------------------
-cal_logistic_impl <- function(.data,
-                              truth = NULL,
-                              estimate = dplyr::starts_with(".pred_"),
-                              type,
-                              smooth,
-                              source_class = NULL,
-                              ...) {
-
+cal_logistic_impl <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  type,
+  smooth,
+  source_class = NULL,
+  ...
+) {
   if (smooth) {
     model <- "logistic_spline"
     method <- "Generalized additive model"
@@ -175,7 +184,14 @@ cal_logistic_impl <- function(.data,
   res
 }
 
-cal_logistic_impl_grp <- function(.data, truth, estimate, run_model, group, ...) {
+cal_logistic_impl_grp <- function(
+  .data,
+  truth,
+  estimate,
+  run_model,
+  group,
+  ...
+) {
   .data |>
     dplyr::group_by({{ group }}, .add = TRUE) |>
     split_dplyr_groups() |>
