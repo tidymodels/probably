@@ -16,5 +16,5 @@ utils::globalVariables(c(
   ".bin", ".is_val", "event_rate", "events", "lower",
   "predicted_midpoint", "total", "upper", ".config",
   ".adj_estimate", ".rounded", ".pred", ".bound", "pred_val", ".extracts",
-  ".x", ".type", ".metrics"
+  ".x", ".type", ".metrics", "cal_data"
 ))
