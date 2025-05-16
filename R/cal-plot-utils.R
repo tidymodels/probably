@@ -1,7 +1,7 @@
 #--------------------------------- Table ---------------------------------------
 
 # This function iterates through each of the class levels. For binary it selects
-# the appropiate one based on the `event_level` selected
+# the appropriate one based on the `event_level` selected
 .cal_class_grps <- function(.data, truth, cuts, levels, event_level, conf_level,
                             method = "breaks", smooth = NULL) {
   truth <- enquo(truth)
@@ -149,18 +149,19 @@
 
   cuts |>
     purrr::list_transpose(simplify = FALSE) |>
-    purrr::map_df(
-      ~ {
-        rf <- .data$.estimate >= .x$lower_cut & .data$.estimate <= .x$upper_cut
-        ret <- .data[rf, ]
-        ret <- process_midpoint(ret, conf_level = conf_level)
-        if (!is.null(ret)) {
-          pm <- .x$lower_cut + ((.x$upper_cut - .x$lower_cut) / 2)
-          ret$predicted_midpoint <- pm
-        }
-        ret
-      }
-    )
+    purrr::map_df(mid_point, pred_data = .data, conf_level = conf_level)
+}
+
+
+mid_point <- function(x, pred_data, conf_level) {
+  rf <- pred_data$.estimate >= x$lower_cut & pred_data$.estimate <= x$upper_cut
+  ret <- pred_data[rf, ]
+  ret <- process_midpoint(ret, conf_level = conf_level)
+  if (!is.null(ret)) {
+    pm <- x$lower_cut + ((x$upper_cut - x$lower_cut) / 2)
+    ret$predicted_midpoint <- pm
+  }
+  ret
 }
 
 process_midpoint <- function(.data, conf_level = 0.95) {
@@ -202,7 +203,7 @@ process_level <- function(x) {
   }
   if (is.null(ret)) {
     cli::cli_abort("Invalid {.arg event_level} entry: {x}. Valid entries are
-                   {.val first}, {.val second}, or {.val auto}.")
+                   {.val first}, {.val second}, or {.val auto}.", call = NULL)
   }
   ret
 }

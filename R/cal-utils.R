@@ -55,7 +55,6 @@ truth_estimate_map <- function(.data, truth, estimate, validate = FALSE) {
   purrr::discard(res, is.null)
 }
 
-
 check_level_consistency <- function(lvls, mapping) {
   null_map <- purrr::map_lgl(mapping, is_null)
   if (any(null_map) | length(lvls) != length(mapping)) {
