@@ -396,6 +396,16 @@ make_cal_filters <- function(key) {
   res
 }
 
+check_req_pkgs <- function(x, unsmooth = character(0)) {
+  gam_mod <- purrr::map_lgl(x$estimates, ~ inherits(.x$estimate, "gam"))
+  if (any(gam_mod)) {
+    res <- c("mgcv", "probably")
+  } else {
+    res <- c(unsmooth, "probably")
+  }
+  res
+}
+
 # ------------------------------- GAM Helpers ----------------------------------
 
 f_from_str <- function(y, x, smooth = FALSE) {

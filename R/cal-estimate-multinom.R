@@ -76,13 +76,22 @@ cal_estimate_multinomial.data.frame <-
 
     model <- mtnml_fit_over_groups(info, smooth, ...)
 
+    if (smooth) {
+      method <- "Generalized additive model calibration"
+      additional_class <- c("cal_estimate_multinomial_spline",
+                            "cal_estimate_multinomial")
+    } else {
+      method <- "Multinomial regression calibration"
+      additional_class <- "cal_estimate_multinomial"
+    }
+
     as_cal_object(
       estimate = model,
       levels = info$map,
       truth = info$truth,
-      method = if (!smooth) "Multinomial regression" else "Generalized additive model",
+      method = method,
       rows = nrow(info$predictions),
-      additional_classes = "cal_estimate_multinomial",
+      additional_classes = additional_class,
       source_class = cal_class_name(.data),
       type = "multiclass"
     )
@@ -102,11 +111,17 @@ cal_estimate_multinomial.tune_results <-
 
     model <- mtnml_fit_over_groups(info, smooth, ...)
 
+    if (!smooth) {
+      model_label <- "Multinomial regression calibration"
+    } else {
+      model_label <- "Generalized additive model calibration"
+    }
+
     as_cal_object(
       estimate = model,
       levels = info$map,
       truth = info$truth,
-      method = if (!smooth) "Multinomial regression" else "Generalized additive model",
+      method = model_label,
       rows = nrow(info$predictions),
       additional_classes = "cal_estimate_multinomial",
       source_class = cal_class_name(.data),
@@ -128,9 +143,23 @@ cal_estimate_multinomial.grouped_df <- function(.data,
 #' @rdname required_pkgs.cal_object
 #' @keywords internal
 #' @export
+required_pkgs.cal_estimate_multinomial_spline <- function(x, ...) {
+  check_req_pkgs(x, unsmooth = "nnet")
+}
+
+#' @rdname required_pkgs.cal_object
+#' @keywords internal
+#' @export
 required_pkgs.cal_estimate_multinomial <- function(x, ...) {
-  # TODO check `smooth` and choose either mgcv or nnet
-  c("nnet", "probably")
+  # for legacy objects that all have this class.
+  check_req_pkgs(x, unsmooth = "nnet")
+}
+
+#' @rdname required_pkgs.cal_object
+#' @keywords internal
+#' @export
+required_pkgs.cal_estimate_multinomial <- function(x, ...) {
+  check_req_pkgs(x, unsmooth = "nnet")
 }
 
 clean_env <- function(x) {

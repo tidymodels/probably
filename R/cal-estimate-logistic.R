@@ -150,9 +150,15 @@ cal_estimate_logistic.grouped_df <- function(
 #' @keywords internal
 #' @export
 required_pkgs.cal_estimate_logistic_spline <- function(x, ...) {
-  c("mgcv", "probably")
+  check_req_pkgs(x)
 }
 
+#' @rdname required_pkgs.cal_object
+#' @keywords internal
+#' @export
+required_pkgs.cal_estimate_logistic <- function(x, ...) {
+  c("probably")
+}
 
 #--------------------------- Implementation ------------------------------------
 
