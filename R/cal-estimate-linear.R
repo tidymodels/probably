@@ -97,11 +97,11 @@ cal_estimate_linear.data.frame <- function(.data,
 
   if (smooth) {
     model <- "linear_spline"
-    method <- "Generalized additive model"
+    method <- "Generalized additive model calibration"
     additional_class <- "cal_estimate_linear_spline"
   } else {
     model <- "glm"
-    method <- "Linear"
+    method <- "Linear calibration"
     additional_class <- "cal_estimate_linear"
   }
 
@@ -131,11 +131,11 @@ cal_estimate_linear.tune_results <- function(.data,
 
   if (smooth) {
     model <- "linear_spline"
-    method <- "Generalized additive model"
+    method <- "Generalized additive model calibration"
     additional_class <- "cal_estimate_linear_spline"
   } else {
     model <- "glm"
-    method <- "Linear"
+    method <- "Linear calibration"
     additional_class <- "cal_estimate_linear"
   }
 
@@ -165,7 +165,14 @@ cal_estimate_linear.grouped_df <- function(.data,
 #' @keywords internal
 #' @export
 required_pkgs.cal_estimate_linear_spline <- function(x, ...) {
-  c("mgcv", "probably")
+  check_req_pkgs(x)
+}
+
+#' @rdname required_pkgs.cal_object
+#' @keywords internal
+#' @export
+required_pkgs.cal_estimate_linear <- function(x, ...) {
+  c("probably")
 }
 
 #--------------------------- Implementation ------------------------------------

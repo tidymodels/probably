@@ -27,6 +27,10 @@ test_that("Logistic estimates work - data.frame", {
   expect_cal_estimate(sl_logistic_group, "butchered_glm")
   expect_cal_rows(sl_logistic_group)
   expect_snapshot(print(sl_logistic_group))
+  expect_equal(
+    required_pkgs(sl_logistic_group),
+    "probably"
+  )
 
   expect_snapshot_error(
     segment_logistic |>
@@ -43,6 +47,10 @@ test_that("Logistic estimates work - data.frame", {
 
   two_cls_res <- cal_apply(two_class_example, two_cls_mod, pred_class = predicted)
   expect_equal(two_cls_res[0,], two_cls_plist)
+  expect_equal(
+    required_pkgs(two_cls_mod),
+    c("mgcv", "probably")
+  )
 
 })
 
@@ -100,6 +108,10 @@ test_that("Logistic spline estimates work - tune_results", {
   expect_cal_method(tl_gam, "Generalized additive model calibration")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
+  expect_equal(
+    required_pkgs(tl_gam),
+    c("mgcv", "probably")
+  )
 
   expect_equal(
     testthat_cal_binary_count(),
@@ -364,22 +376,30 @@ test_that("Multinomial estimates work - data.frame", {
 
   sp_multi <- cal_estimate_multinomial(species_probs, Species, smooth = FALSE)
   expect_cal_type(sp_multi, "multiclass")
-  expect_cal_method(sp_multi, "Multinomial regression")
+  expect_cal_method(sp_multi, "Multinomial regression calibration")
   expect_cal_rows(sp_multi, n = 110)
   expect_snapshot(print(sp_multi))
+  expect_equal(
+    required_pkgs(sp_multi),
+    c("nnet", "probably")
+  )
 
   sp_smth_multi <- cal_estimate_multinomial(species_probs, Species, smooth = TRUE)
   expect_cal_type(sp_smth_multi, "multiclass")
-  expect_cal_method(sp_smth_multi, "Generalized additive model")
+  expect_cal_method(sp_smth_multi, "Generalized additive model calibration")
   expect_cal_rows(sp_smth_multi, n = 110)
   expect_snapshot(print(sp_smth_multi))
+  expect_equal(
+    required_pkgs(sp_smth_multi),
+    c("mgcv", "probably")
+  )
 
   sl_multi_group <- species_probs |>
     dplyr::mutate(group = .pred_bobcat > 0.5) |>
     cal_estimate_multinomial(Species, smooth = FALSE, .by = group)
 
   expect_cal_type(sl_multi_group, "multiclass")
-  expect_cal_method(sl_multi_group, "Multinomial regression")
+  expect_cal_method(sl_multi_group, "Multinomial regression calibration")
   expect_cal_rows(sl_multi_group, n = 110)
   expect_snapshot(print(sl_multi_group))
 
@@ -400,7 +420,7 @@ test_that("Multinomial estimates work - tune_results", {
 
   tl_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = FALSE)
   expect_cal_type(tl_multi, "multiclass")
-  expect_cal_method(tl_multi, "Multinomial regression")
+  expect_cal_method(tl_multi, "Multinomial regression calibration")
   expect_snapshot(print(tl_multi))
 
   expect_equal(
@@ -414,7 +434,7 @@ test_that("Multinomial estimates work - tune_results", {
 
   tl_smth_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = TRUE)
   expect_cal_type(tl_smth_multi, "multiclass")
-  expect_cal_method(tl_smth_multi, "Generalized additive model")
+  expect_cal_method(tl_smth_multi, "Generalized additive model calibration")
   expect_snapshot(print(tl_smth_multi))
 
   expect_equal(
@@ -508,22 +528,26 @@ test_that("Multinomial spline switches to linear if too few unique", {
 test_that("Linear estimates work - data.frame", {
   skip_if_not_installed("modeldata")
 
-  sl_logistic <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
-  expect_cal_type(sl_logistic, "regression")
-  expect_cal_method(sl_logistic, "Linear")
-  expect_cal_estimate(sl_logistic, "butchered_glm")
-  expect_cal_rows(sl_logistic, 2000)
-  expect_snapshot(print(sl_logistic))
+  sl_linear <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
+  expect_cal_type(sl_linear, "regression")
+  expect_cal_method(sl_linear, "Linear calibration")
+  expect_cal_estimate(sl_linear, "butchered_glm")
+  expect_cal_rows(sl_linear, 2000)
+  expect_snapshot(print(sl_linear))
+  expect_equal(
+    required_pkgs(sl_linear),
+    c("probably")
+  )
 
-  sl_logistic_group <- boosting_predictions_oob |>
+  sl_linear_group <- boosting_predictions_oob |>
     dplyr::mutate(group = .pred > 0.5) |>
     cal_estimate_linear(outcome, smooth = FALSE, .by = group)
 
-  expect_cal_type(sl_logistic_group, "regression")
-  expect_cal_method(sl_logistic_group, "Linear")
-  expect_cal_estimate(sl_logistic_group, "butchered_glm")
-  expect_cal_rows(sl_logistic_group, 2000)
-  expect_snapshot(print(sl_logistic_group))
+  expect_cal_type(sl_linear_group, "regression")
+  expect_cal_method(sl_linear_group, "Linear calibration")
+  expect_cal_estimate(sl_linear_group, "butchered_glm")
+  expect_cal_rows(sl_linear_group, 2000)
+  expect_snapshot(print(sl_linear_group))
 
   expect_snapshot_error(
     boosting_predictions_oob |>
@@ -536,7 +560,7 @@ test_that("Linear estimates work - data.frame", {
 test_that("Linear estimates work - tune_results", {
   tl_linear <- cal_estimate_linear(testthat_cal_reg(), outcome, smooth = FALSE)
   expect_cal_type(tl_linear, "regression")
-  expect_cal_method(tl_linear, "Linear")
+  expect_cal_method(tl_linear, "Linear calibration")
   expect_cal_estimate(tl_linear, "butchered_glm")
   expect_snapshot(print(tl_linear))
 
@@ -554,17 +578,21 @@ test_that("Linear spline estimates work - data.frame", {
 
   sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome)
   expect_cal_type(sl_gam, "regression")
-  expect_cal_method(sl_gam, "Generalized additive model")
+  expect_cal_method(sl_gam, "Generalized additive model calibration")
   expect_cal_estimate(sl_gam, "butchered_gam")
   expect_cal_rows(sl_gam, 2000)
   expect_snapshot(print(sl_gam))
+  expect_equal(
+    required_pkgs(sl_gam),
+    c("mgcv", "probably")
+  )
 
   sl_gam_group <- boosting_predictions_oob |>
     dplyr::mutate(group = .pred > 0.5) |>
     cal_estimate_linear(outcome, .by = group)
 
   expect_cal_type(sl_gam_group, "regression")
-  expect_cal_method(sl_gam_group, "Generalized additive model")
+  expect_cal_method(sl_gam_group, "Generalized additive model calibration")
   expect_cal_estimate(sl_gam_group, "butchered_gam")
   expect_cal_rows(sl_gam_group, 2000)
   expect_snapshot(print(sl_gam_group))
@@ -579,7 +607,7 @@ test_that("Linear spline estimates work - data.frame", {
 test_that("Linear spline estimates work - tune_results", {
   tl_gam <- cal_estimate_linear(testthat_cal_reg(), outcome)
   expect_cal_type(tl_gam, "regression")
-  expect_cal_method(tl_gam, "Generalized additive model")
+  expect_cal_method(tl_gam, "Generalized additive model calibration")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
 
