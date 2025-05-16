@@ -1,5 +1,3 @@
-skip("Until refactoring is finished")
-
 test_that("Logistic validation with data frame input", {
   skip_if_not_installed("rsample")
 
