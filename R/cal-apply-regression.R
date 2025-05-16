@@ -19,20 +19,24 @@ cal_apply_regression.cal_estimate_linear <-
 
 #---------------------------- Adjust implementations ---------------------------
 
+numeric_repredict <- function(x, predict_data, prd_nm) {
+  if (is.null(x$filter)) {
+    new_data <- predict_data
+  } else {
+    new_data <- dplyr::filter(predict_data, !!x$filter)
+  }
+  preds <- predict(x$estimate, newdata = new_data, type = "response")
+  new_data[prd_nm] <- preds
+  new_data
+}
+
 apply_reg_predict <- function(object, .data) {
-  .pred_name <- rlang::expr_deparse(object$levels$predictions)
-  .data <- object$estimates |>
+  .data <-
     purrr::map(
-      ~ {
-        if (is.null(.x$filter)) {
-          new_data <- .data
-        } else {
-          new_data <- dplyr::filter(.data, !!.x$filter)
-        }
-        preds <- predict(.x$estimate, newdata = new_data, type = "response")
-        new_data[.pred_name] <- preds
-        new_data
-      }
+      object$estimates,
+      numeric_repredict,
+      predict_data = .data,
+      prd_nm = rlang::expr_deparse(object$levels$predictions)
     ) |>
     purrr::reduce(dplyr::bind_rows)
   .data

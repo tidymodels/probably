@@ -28,34 +28,30 @@
   if (method == "breaks") {
     res <- purrr::imap(
       no_levels,
-      ~ {
-        .cal_cut_grps(
-          .data = .data,
-          truth = !!truth,
-          estimate = !!.x,
-          cuts = cuts,
-          level = as.integer(.y),
-          lev = lev,
-          conf_level = conf_level
-        )
-      }
+      ~ .cal_cut_grps(
+        .data = .data,
+        truth = !!truth,
+        estimate = !!.x,
+        cuts = cuts,
+        level = as.integer(.y),
+        lev = lev,
+        conf_level = conf_level
+      )
     )
   }
 
   if (method == "model") {
     res <- purrr::imap(
       no_levels,
-      ~ {
-        .cal_model_grps(
-          .data = .data,
-          truth = !!truth,
-          estimate = !!.x,
-          smooth = smooth,
-          level = as.integer(.y),
-          lev = lev,
-          conf_level = conf_level
-        )
-      }
+      ~ .cal_model_grps(
+        .data = .data,
+        truth = !!truth,
+        estimate = !!.x,
+        smooth = smooth,
+        level = as.integer(.y),
+        lev = lev,
+        conf_level = conf_level
+      )
     )
   }
 
