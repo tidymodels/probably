@@ -156,6 +156,7 @@ cal_plot_windowed_impl <- function(.data,
                                    event_level = c("auto", "first", "second"),
                                    is_tune_results = FALSE,
                                    ...) {
+  rlang::arg_match0(event_level, c("auto", "first", "second"), error_call = NULL)
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -281,9 +282,11 @@ cal_plot_windowed_impl <- function(.data,
 
   res <- .data |>
     dplyr::group_by(!!group, .add = TRUE) |>
-    dplyr::group_map(~ {
-      grp <- .cal_table_windowed_grp(
-        .data = .x,
+    dplyr::group_nest(.key = "cal_data") |>
+    dplyr::mutate(
+      res = map(
+        cal_data,
+        .cal_table_windowed_grp,
         truth = !!truth,
         window_size = window_size,
         step_size = step_size,
@@ -291,10 +294,9 @@ cal_plot_windowed_impl <- function(.data,
         event_level = event_level,
         levels = levels
       )
-      dplyr::bind_cols(.y, grp)
-    }) |>
-    dplyr::bind_rows()
-
+    ) |>
+    dplyr::select(-cal_data) |>
+    tidyr::unnest(cols = c(res))
 
   if (length(levels) > 2) {
     res <- dplyr::group_by(res, !!truth, .add = TRUE)
