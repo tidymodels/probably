@@ -1,7 +1,7 @@
 # Linear estimates work - data.frame
 
     Code
-      print(sl_logistic)
+      print(sl_linear)
     Message
       
       -- Regression Calibration 
@@ -14,7 +14,7 @@
 ---
 
     Code
-      print(sl_logistic_group)
+      print(sl_linear_group)
     Message
       
       -- Regression Calibration 
