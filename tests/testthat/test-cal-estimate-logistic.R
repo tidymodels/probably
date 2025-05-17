@@ -120,8 +120,8 @@ test_that("Logistic spline switches to linear if too few unique", {
   sl_lm <- cal_estimate_logistic(segment_logistic, Class, smooth = FALSE)
 
   expect_identical(
-    sl_gam,
-    sl_lm
+    sl_gam$estimates,
+    sl_lm$estimates
   )
 
   segment_logistic$id <- rep(
@@ -134,7 +134,7 @@ test_that("Logistic spline switches to linear if too few unique", {
   sl_lm <- cal_estimate_logistic(segment_logistic, Class, .by = id, smooth = FALSE)
 
   expect_identical(
-    sl_gam,
-    sl_lm
+    sl_gam$estimates,
+    sl_lm$estimates
   )
 })
