@@ -177,6 +177,11 @@ cal_adjust.cal_regression <- function(object, .data, pred_class) {
   )
 }
 
+#' @export
+cal_adjust.cal_estimate_none <- function(object, .data, pred_class) {
+  .data
+}
+
 cal_adjust_update <- function(.data,
                               object,
                               pred_class = NULL,

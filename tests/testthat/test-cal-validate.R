@@ -179,6 +179,67 @@ test_that("Multinomial classification validation with data frame input", {
   )
 })
 
+test_that("Validation without calibration with data frame input", {
+  skip_if_not_installed("rsample")
+
+  df <- testthat_cal_sampled()
+  val_obj <- cal_validate_none(df, Class)
+  val_with_pred <- cal_validate_none(df, Class, save_pred = TRUE)
+
+  expect_s3_class(val_obj, "data.frame")
+  expect_s3_class(val_obj, "cal_rset")
+  expect_equal(nrow(val_obj), nrow(df))
+  expect_equal(names(val_obj), c("splits", "id", ".metrics", ".metrics_cal"))
+
+  expect_s3_class(val_with_pred, "data.frame")
+  expect_s3_class(val_with_pred, "cal_rset")
+  expect_equal(nrow(val_with_pred), nrow(df))
+  expect_equal(
+    names(val_with_pred),
+    c("splits", "id", ".metrics", ".metrics_cal", ".predictions_cal")
+  )
+  expect_equal(
+    names(val_with_pred$.predictions_cal[[1]]),
+    c(".pred_poor", ".pred_good", "Class", ".row", ".pred_class")
+  )
+  expect_equal(
+    purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
+    purrr::map_int(val_with_pred$.predictions_cal, nrow)
+  )
+
+  # ----------------------------------------------------------------------------
+
+  met <- collect_metrics(val_obj)
+  expect_equal(met$.type, c("uncalibrated", "calibrated"))
+  expect_equal(
+    names(met),
+    c(".metric", ".type", ".estimator", "mean", "n", "std_err", ".config")
+  )
+
+  met_rs <- collect_metrics(val_obj, summarize = FALSE)
+  expect_equal(sort(unique(met_rs$.type)), c("calibrated", "uncalibrated"))
+  expect_equal(
+    names(met_rs),
+    c("id", ".metric", ".type", ".estimator", ".estimate", ".config")
+  )
+  expect_equal(nrow(met_rs), nrow(df) * 2)
+
+  expect_snapshot_error(collect_predictions(val_obj))
+
+  pred_rs <- collect_predictions(val_with_pred)
+  expect_equal(sort(unique(pred_rs$.type)), c("calibrated"))
+
+  skip_if_not_installed("tune", "1.2.0")
+  expect_equal(
+    names(pred_rs),
+    c(
+      ".pred_class", ".pred_poor", ".pred_good", "Class", ".row", ".config",
+      ".type"
+    )
+  )
+  expect_equal(nrow(pred_rs), nrow(df$splits[[1]]$data))
+})
+
 # ------------------------------------------------------------------------------
 
 test_that("Linear validation with data frame input", {
@@ -429,8 +490,39 @@ test_that("Multinomial calibration validation with `fit_resamples`", {
   )
 })
 
+test_that("Validation without calibration with `fit_resamples`", {
+  res <- testthat_cal_fit_rs()
+  val_obj <- cal_validate_none(res$binary)
+  val_with_pred <- cal_validate_none(res$binary, save_pred = TRUE)
+
+  expect_s3_class(val_obj, "data.frame")
+  expect_s3_class(val_obj, "cal_rset")
+  expect_equal(nrow(val_obj), nrow(res$binary))
+  expect_equal(
+    names(val_obj),
+    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal")
+  )
+
+  expect_s3_class(val_with_pred, "data.frame")
+  expect_s3_class(val_with_pred, "cal_rset")
+  expect_equal(nrow(val_with_pred), nrow(res$binary))
+  expect_equal(
+    names(val_with_pred),
+    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+  )
+
+  skip_if_not_installed("tune", "1.2.0")
+  expect_equal(
+    names(val_with_pred$.predictions_cal[[1]]),
+    c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
+  )
+  expect_equal(
+    purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
+    purrr::map_int(val_with_pred$.predictions_cal, nrow)
+  )
+})
+
 # ------------------------------------------------------------------------------
-# TODO change this and add other calibration methods
 
 test_that("Linear validation with `fit_resamples`", {
   res <- testthat_cal_fit_rs()
@@ -601,5 +693,8 @@ test_that("validation functions error with tune_results input", {
   )
   expect_snapshot_error(
     cal_validate_multinomial(testthat_cal_binary())
+  )
+  expect_snapshot_error(
+    cal_validate_none(testthat_cal_binary())
   )
 })

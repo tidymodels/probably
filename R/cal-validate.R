@@ -692,6 +692,109 @@ cal_validate_linear.rset <- function(.data,
   )
 }
 
+# ------------------------------- None -----------------------------------------
+#' Measure performance without using calibration
+#' @inherit cal_validate_logistic
+#' @inheritParams cal_estimate_none
+#' @details
+#' This function exists to have a complete API for all calibration methods. It
+#' returns the same results "with and without calibration" which, in this case,
+#' is always without calibration.
+#'
+#' There are two ways to pass the data in:
+#'
+#'  - If you have a data frame of predictions, an `rset` object can be created
+#'    via \pkg{rsample} functions. See the example below.
+#'
+#'  - If you have already made a resampling object from the original data and
+#'    used it with [tune::fit_resamples()], you can pass that object to the
+#'    calibration function and it will use the same resampling scheme. If a
+#'    different resampling scheme should be used, run
+#'    [tune::collect_predictions()] on the object and use the process in the
+#'    previous bullet point.
+#'
+#' Please note that these functions do not apply to `tune_result` objects. The
+#' notion of "validation" implies that the tuning parameter selection has been
+#' resolved.
+#'
+#' `collect_predictions()` can be used to aggregate the metrics for analysis.
+#'
+#' @seealso [cal_apply()], [cal_estimate_none()]
+#' @examples
+#'
+#' library(dplyr)
+#'
+#' species_probs |>
+#'   rsample::vfold_cv() |>
+#'   cal_validate_none(Species) |>
+#'   collect_metrics()
+#'
+#' @export
+cal_validate_none <- function(.data,
+                              truth = NULL,
+                              estimate = dplyr::starts_with(".pred_"),
+                              metrics = NULL,
+                              save_pred = FALSE,
+                              ...) {
+  UseMethod("cal_validate_none")
+}
+
+#' @export
+#' @rdname cal_validate_none
+cal_validate_none.resample_results <-
+  function(.data,
+           truth = NULL,
+           estimate = dplyr::starts_with(".pred_"),
+           metrics = NULL,
+           save_pred = FALSE,
+           ...) {
+    if (!is.null(truth)) {
+      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
+    }
+    truth <- tune::.get_tune_outcome_names(.data)
+    # Change splits$data to be the predictions instead of the original
+    # training data and save as rset
+    .data <- convert_resamples(.data)
+    cal_validate(
+      rset = .data,
+      truth = !!truth,
+      estimate = {{ estimate }},
+      cal_function = "none",
+      metrics = metrics,
+      save_pred = save_pred,
+      ...
+    )
+  }
+
+#' @export
+#' @rdname cal_validate_none
+cal_validate_none.rset <- function(.data,
+                                   truth = NULL,
+                                   estimate = dplyr::starts_with(".pred_"),
+                                   metrics = NULL,
+                                   save_pred = FALSE,
+                                   ...) {
+  cal_validate(
+    rset = .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    cal_function = "none",
+    metrics = metrics,
+    save_pred = save_pred,
+    ...
+  )
+}
+
+#' @export
+#' @rdname cal_validate_none
+cal_validate_none.tune_results <- function(.data,
+                                           truth = NULL,
+                                           estimate = NULL,
+                                           metrics = NULL,
+                                           save_pred = FALSE,
+                                           ...) {
+  abort_if_tune_result()
+}
 
 # ------------------------------------------------------------------------------
 # convert a resample_results to an rset that can be used by the validate function
