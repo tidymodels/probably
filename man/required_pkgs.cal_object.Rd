@@ -5,7 +5,9 @@
 \name{required_pkgs.cal_estimate_beta}
 \alias{required_pkgs.cal_estimate_beta}
 \alias{required_pkgs.cal_estimate_linear_spline}
+\alias{required_pkgs.cal_estimate_linear}
 \alias{required_pkgs.cal_estimate_logistic_spline}
+\alias{required_pkgs.cal_estimate_logistic}
 \alias{required_pkgs.cal_estimate_multinomial}
 \alias{required_pkgs.cal_estimate_none}
 \alias{required_pkgs.cal_object}
@@ -16,7 +18,13 @@ calibrations}
 
 \method{required_pkgs}{cal_estimate_linear_spline}(x, ...)
 
+\method{required_pkgs}{cal_estimate_linear}(x, ...)
+
 \method{required_pkgs}{cal_estimate_logistic_spline}(x, ...)
+
+\method{required_pkgs}{cal_estimate_logistic}(x, ...)
+
+\method{required_pkgs}{cal_estimate_multinomial}(x, ...)
 
 \method{required_pkgs}{cal_estimate_multinomial}(x, ...)
 
