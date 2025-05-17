@@ -42,6 +42,7 @@ cal_estimate_none.data.frame <- function(.data,
                                          ...,
                                          .by = NULL) {
   stop_null_parameters(parameters)
+  rlang::check_dots_empty()
 
   info <- get_prediction_data(.data,
                               truth = {{ truth }},
@@ -50,12 +51,19 @@ cal_estimate_none.data.frame <- function(.data,
 
   model <- nothing_over_groups(info, ...)
 
+  if (length(info$levels) > 2) {
+    cal_type <- "multiclass"
+  } else {
+    cal_type <- NULL
+  }
+
   as_cal_object(
     estimate = model,
     levels = info$map,
     truth = info$truth,
     method = "No calibration",
     rows = nrow(info$predictions),
+    type = cal_type,
     source_class = cal_class_name(.data),
     additional_classes = "cal_estimate_none"
   )
@@ -68,9 +76,16 @@ cal_estimate_none.tune_results <- function(.data,
                                            estimate = dplyr::starts_with(".pred"),
                                            parameters = NULL,
                                            ...) {
+  rlang::check_dots_empty()
   info <- get_tune_data(.data, parameters)
 
   model <- nothing_over_groups(info, ...)
+
+  if (length(info$levels) > 2) {
+    cal_type <- "multiclass"
+  } else {
+    cal_type <- NULL
+  }
 
   as_cal_object(
     estimate = model,
@@ -78,6 +93,7 @@ cal_estimate_none.tune_results <- function(.data,
     truth = info$truth,
     method = "No calibration",
     rows = nrow(info$predictions),
+    type = cal_type,
     source_class = cal_class_name(.data),
     additional_classes = "cal_estimate_none"
   )

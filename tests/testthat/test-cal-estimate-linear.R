@@ -1,22 +1,22 @@
 test_that("Linear estimates work - data.frame", {
   skip_if_not_installed("modeldata")
 
-  sl_logistic <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
-  expect_cal_type(sl_logistic, "regression")
-  expect_cal_method(sl_logistic, "Linear")
-  expect_cal_estimate(sl_logistic, "butchered_glm")
-  expect_cal_rows(sl_logistic, 2000)
-  expect_snapshot(print(sl_logistic))
+  sl_linear <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
+  expect_cal_type(sl_linear, "regression")
+  expect_cal_method(sl_linear, "Linear")
+  expect_cal_estimate(sl_linear, "butchered_glm")
+  expect_cal_rows(sl_linear, 2000)
+  expect_snapshot(print(sl_linear))
 
-  sl_logistic_group <- boosting_predictions_oob |>
+  sl_linear_group <- boosting_predictions_oob |>
     dplyr::mutate(group = .pred > 0.5) |>
     cal_estimate_linear(outcome, smooth = FALSE, .by = group)
 
-  expect_cal_type(sl_logistic_group, "regression")
-  expect_cal_method(sl_logistic_group, "Linear")
-  expect_cal_estimate(sl_logistic_group, "butchered_glm")
-  expect_cal_rows(sl_logistic_group, 2000)
-  expect_snapshot(print(sl_logistic_group))
+  expect_cal_type(sl_linear_group, "regression")
+  expect_cal_method(sl_linear_group, "Linear")
+  expect_cal_estimate(sl_linear_group, "butchered_glm")
+  expect_cal_rows(sl_linear_group, 2000)
+  expect_snapshot(print(sl_linear_group))
 
   expect_snapshot_error(
     boosting_predictions_oob |>
