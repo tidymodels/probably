@@ -5,7 +5,7 @@
     Message
       
       -- Regression Calibration 
-      Method: Linear
+      Method: Linear calibration
       Source class: Data Frame
       Data points: 2,000
       Truth variable: `outcome`
@@ -18,7 +18,7 @@
     Message
       
       -- Regression Calibration 
-      Method: Linear
+      Method: Linear calibration
       Source class: Data Frame
       Data points: 2,000, split in 2 groups
       Truth variable: `outcome`
@@ -37,7 +37,7 @@
     Message
       
       -- Regression Calibration 
-      Method: Linear
+      Method: Linear calibration
       Source class: Tune Results
       Data points: 750, split in 10 groups
       Truth variable: `outcome`
@@ -55,7 +55,7 @@
     Message
       
       -- Regression Calibration 
-      Method: Generalized additive model
+      Method: Generalized additive model calibration
       Source class: Data Frame
       Data points: 2,000
       Truth variable: `outcome`
@@ -68,7 +68,7 @@
     Message
       
       -- Regression Calibration 
-      Method: Generalized additive model
+      Method: Generalized additive model calibration
       Source class: Data Frame
       Data points: 2,000, split in 2 groups
       Truth variable: `outcome`
@@ -87,13 +87,48 @@
     Message
       
       -- Regression Calibration 
-      Method: Generalized additive model
+      Method: Generalized additive model calibration
       Source class: Tune Results
       Data points: 750, split in 10 groups
       Truth variable: `outcome`
       Estimate variable: `.pred`
 
 # Linear spline switches to linear if too few unique
+
+    Code
+      sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)
+    Condition
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+
+---
+
+    Code
+      sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id,
+        smooth = TRUE)
+    Condition
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+      Warning:
+      Too few unique observations for spline-based calibrator. Setting `smooth = FALSE`.
+
+---
 
     Code
       sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)

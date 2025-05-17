@@ -4,13 +4,13 @@ test_that("Multinomial estimates work - data.frame", {
 
   sp_multi <- cal_estimate_multinomial(species_probs, Species, smooth = FALSE)
   expect_cal_type(sp_multi, "multiclass")
-  expect_cal_method(sp_multi, "Multinomial regression")
+  expect_cal_method(sp_multi, "Multinomial regression calibration")
   expect_cal_rows(sp_multi, n = 110)
   expect_snapshot(print(sp_multi))
 
   sp_smth_multi <- cal_estimate_multinomial(species_probs, Species, smooth = TRUE)
   expect_cal_type(sp_smth_multi, "multiclass")
-  expect_cal_method(sp_smth_multi, "Generalized additive model")
+  expect_cal_method(sp_smth_multi, "Generalized additive model calibration")
   expect_cal_rows(sp_smth_multi, n = 110)
   expect_snapshot(print(sp_smth_multi))
 
@@ -19,7 +19,7 @@ test_that("Multinomial estimates work - data.frame", {
     cal_estimate_multinomial(Species, smooth = FALSE, .by = group)
 
   expect_cal_type(sl_multi_group, "multiclass")
-  expect_cal_method(sl_multi_group, "Multinomial regression")
+  expect_cal_method(sl_multi_group, "Multinomial regression calibration")
   expect_cal_rows(sl_multi_group, n = 110)
   expect_snapshot(print(sl_multi_group))
 
@@ -40,7 +40,7 @@ test_that("Multinomial estimates work - tune_results", {
 
   tl_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = FALSE)
   expect_cal_type(tl_multi, "multiclass")
-  expect_cal_method(tl_multi, "Multinomial regression")
+  expect_cal_method(tl_multi, "Multinomial regression calibration")
   expect_snapshot(print(tl_multi))
 
   expect_equal(
@@ -54,7 +54,7 @@ test_that("Multinomial estimates work - tune_results", {
 
   tl_smth_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = TRUE)
   expect_cal_type(tl_smth_multi, "multiclass")
-  expect_cal_method(tl_smth_multi, "Generalized additive model")
+  expect_cal_method(tl_smth_multi, "Generalized additive model calibration")
   expect_snapshot(print(tl_smth_multi))
 
   expect_equal(

@@ -108,7 +108,6 @@ test_that("Logistic spline estimates work - tune_results", {
 
 test_that("Logistic spline switches to linear if too few unique", {
   skip_if_not_installed("modeldata")
-  skip("until refactored")
 
   segment_logistic$.pred_good <- rep(
     x = 1,

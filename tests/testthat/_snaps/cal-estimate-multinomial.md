@@ -5,7 +5,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Multinomial regression
+      Method: Multinomial regression calibration
       Type: Multiclass
       Source class: Data Frame
       Data points: 110
@@ -22,7 +22,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Generalized additive model
+      Method: Generalized additive model calibration
       Type: Multiclass
       Source class: Data Frame
       Data points: 110
@@ -39,7 +39,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Multinomial regression
+      Method: Multinomial regression calibration
       Type: Multiclass
       Source class: Data Frame
       Data points: 110, split in 2 groups
@@ -62,7 +62,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Multinomial regression
+      Method: Multinomial regression calibration
       Type: Multiclass
       Source class: Tune Results
       Data points: 5,000, split in 10 groups
@@ -79,7 +79,7 @@
     Message
       
       -- Probability Calibration 
-      Method: Generalized additive model
+      Method: Generalized additive model calibration
       Type: Multiclass
       Source class: Tune Results
       Data points: 5,000, split in 10 groups

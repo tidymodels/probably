@@ -3,7 +3,7 @@ test_that("Linear estimates work - data.frame", {
 
   sl_linear <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
   expect_cal_type(sl_linear, "regression")
-  expect_cal_method(sl_linear, "Linear")
+  expect_cal_method(sl_linear, "Linear calibration")
   expect_cal_estimate(sl_linear, "butchered_glm")
   expect_cal_rows(sl_linear, 2000)
   expect_snapshot(print(sl_linear))
@@ -13,7 +13,7 @@ test_that("Linear estimates work - data.frame", {
     cal_estimate_linear(outcome, smooth = FALSE, .by = group)
 
   expect_cal_type(sl_linear_group, "regression")
-  expect_cal_method(sl_linear_group, "Linear")
+  expect_cal_method(sl_linear_group, "Linear calibration")
   expect_cal_estimate(sl_linear_group, "butchered_glm")
   expect_cal_rows(sl_linear_group, 2000)
   expect_snapshot(print(sl_linear_group))
@@ -29,7 +29,7 @@ test_that("Linear estimates work - data.frame", {
 test_that("Linear estimates work - tune_results", {
   tl_linear <- cal_estimate_linear(testthat_cal_reg(), outcome, smooth = FALSE)
   expect_cal_type(tl_linear, "regression")
-  expect_cal_method(tl_linear, "Linear")
+  expect_cal_method(tl_linear, "Linear calibration")
   expect_cal_estimate(tl_linear, "butchered_glm")
   expect_snapshot(print(tl_linear))
 
@@ -47,7 +47,7 @@ test_that("Linear spline estimates work - data.frame", {
 
   sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome)
   expect_cal_type(sl_gam, "regression")
-  expect_cal_method(sl_gam, "Generalized additive model")
+  expect_cal_method(sl_gam, "Generalized additive model calibration")
   expect_cal_estimate(sl_gam, "butchered_gam")
   expect_cal_rows(sl_gam, 2000)
   expect_snapshot(print(sl_gam))
@@ -57,7 +57,7 @@ test_that("Linear spline estimates work - data.frame", {
     cal_estimate_linear(outcome, .by = group)
 
   expect_cal_type(sl_gam_group, "regression")
-  expect_cal_method(sl_gam_group, "Generalized additive model")
+  expect_cal_method(sl_gam_group, "Generalized additive model calibration")
   expect_cal_estimate(sl_gam_group, "butchered_gam")
   expect_cal_rows(sl_gam_group, 2000)
   expect_snapshot(print(sl_gam_group))
@@ -72,7 +72,7 @@ test_that("Linear spline estimates work - data.frame", {
 test_that("Linear spline estimates work - tune_results", {
   tl_gam <- cal_estimate_linear(testthat_cal_reg(), outcome)
   expect_cal_type(tl_gam, "regression")
-  expect_cal_method(tl_gam, "Generalized additive model")
+  expect_cal_method(tl_gam, "Generalized additive model calibration")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
 
@@ -84,7 +84,6 @@ test_that("Linear spline estimates work - tune_results", {
 
 test_that("Linear spline switches to linear if too few unique", {
   skip_if_not_installed("modeldata")
-  skip("until refactored")
 
   boosting_predictions_oob$.pred <- rep(
     x = 1:5,
