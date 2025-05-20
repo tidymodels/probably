@@ -38,7 +38,7 @@ cal_estimate_none(
 \item{.data}{An ungrouped \code{data.frame} object, or \code{tune_results} object,
 that contains predictions and probability columns.}
 
-\item{truth}{The column identifier for the true class results
+\item{truth}{The column identifier for the true outcome results
 (that is factor or numeric). This should be an unquoted column name.}
 
 \item{estimate}{A vector of column identifiers, or one of \code{dplyr} selector
@@ -70,11 +70,17 @@ reference when tuning over different calibration methods.
 nada <- cal_estimate_none(boosting_predictions_oob, outcome, .pred)
 nada
 
-identical(cal_apply(boosting_predictions_oob, nada), boosting_predictions_oob)
+identical(
+  cal_apply(boosting_predictions_oob, nada),
+  boosting_predictions_oob
+)
 
 # ------------------------------------------------------------------------------
 
 nichts <- cal_estimate_none(segment_logistic, Class)
 
-identical(cal_apply(segment_logistic, nichts), segment_logistic)
+identical(
+  cal_apply(segment_logistic, nichts),
+  segment_logistic
+)
 }

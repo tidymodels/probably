@@ -3,7 +3,7 @@
 #' Do not calibrate model predictions.
 #' @inheritParams cal_estimate_logistic
 #' @include cal-estimate-utils.R
-#' @param truth The column identifier for the true class results
+#' @param truth The column identifier for the true outcome results
 #' (that is factor or numeric). This should be an unquoted column name.
 #' @param estimate A vector of column identifiers, or one of `dplyr` selector
 #' functions to choose which variables contains the class probabilities or
