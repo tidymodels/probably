@@ -111,7 +111,28 @@ intervals for the five new samples in parallel:
 predict(lm_conform, new_dat)
 }\if{html}{\out{</div>}}
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{## # A tibble: 5 x 2
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## Warning in serialize(data, node$con, xdr = FALSE): 'package:workflowsets' may
+## not be available when loading
+## Warning in serialize(data, node$con, xdr = FALSE): 'package:workflowsets' may
+## not be available when loading
+## Warning in serialize(data, node$con, xdr = FALSE): 'package:workflowsets' may
+## not be available when loading
+## Warning in serialize(data, node$con, xdr = FALSE): 'package:workflowsets' may
+## not be available when loading
+## Warning in serialize(data, node$con, xdr = FALSE): 'package:workflowsets' may
+## not be available when loading
+## Warning in serialize(data, node$con, xdr = FALSE): 'package:workflowsets' may
+## not be available when loading
+## Warning in serialize(data, node$con, xdr = FALSE): 'package:workflowsets' may
+## not be available when loading
+## Warning in serialize(data, node$con, xdr = FALSE): 'package:workflowsets' may
+## not be available when loading
+## Warning in serialize(data, node$con, xdr = FALSE): 'package:workflowsets' may
+## not be available when loading
+## Warning in serialize(data, node$con, xdr = FALSE): 'package:workflowsets' may
+## not be available when loading
+
+## # A tibble: 5 x 2
 ##   .pred_lower .pred_upper
 ##         <dbl>       <dbl>
 ## 1       -17.9        59.6

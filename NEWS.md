@@ -1,10 +1,18 @@
 # probably (development version)
 
-* A bug was fixed where `cal_estimate_isotonic()` always used a bootstrap sample.
+## New Features
+
+* A new set of calibration functions are added that don’t calibrate the model (called `cal_*_none()`). These can be used as a reference implementation when tuning the calibration method (#174). 
+
+* A new function `bound_prediction()` is available to constrain the values of a numeric prediction (#142).
+
+* `cal_estimate_linear()` and `cal_estimate_logistic()` now sets `smooth = FALSE` if data contains too few unique observations for splines to be fit, throwing a warning instead of an error (#167).
 
 * Transition from the magrittr pipe to the base R pipe.
 
-* A new function `bound_prediction()` is available to constrain the values of a numeric prediction (#142).
+## Bug fixes
+
+* A bug was fixed where `cal_estimate_isotonic()` always used a bootstrap sample.
 
 * Fixed a bug where non-standard names of class probability estimates resulted in an error for some calibration models (#145).
 
@@ -13,8 +21,6 @@
 * Fixed an error in `int_conformal_cv()` when grouped resampling was used (#141). 
 
 * Fixed an issue where the `distance` metric appeared inconsistently when using `threshold_perf()` with custom metric sets (@jrwinget, #149).
-
-* `cal_estimate_linear()` and `cal_estimate_logistic()` now sets `smooth = FALSE` if data contains too few unique observations for splines to be fit, throwing a warning instead of an error (#167).
 
 # probably 1.0.3
 
