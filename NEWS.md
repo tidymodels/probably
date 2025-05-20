@@ -2,7 +2,7 @@
 
 ## New Features
 
-* A new set of calibration functions are added that don’t calibrate the model (called `cal_*_none()`). These can be used as a reference implmentation when tuning the calibration method. 
+* A new set of calibration functions are added that don’t calibrate the model (called `cal_*_none()`). These can be used as a reference implementation when tuning the calibration method (#174). 
 
 * A new function `bound_prediction()` is available to constrain the values of a numeric prediction (#142).
 

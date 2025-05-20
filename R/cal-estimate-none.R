@@ -17,13 +17,19 @@
 #' nada <- cal_estimate_none(boosting_predictions_oob, outcome, .pred)
 #' nada
 #'
-#' identical(cal_apply(boosting_predictions_oob, nada), boosting_predictions_oob)
+#' identical(
+#'   cal_apply(boosting_predictions_oob, nada),
+#'   boosting_predictions_oob
+#' )
 #'
 #' # ------------------------------------------------------------------------------
 #'
 #' nichts <- cal_estimate_none(segment_logistic, Class)
 #'
-#' identical(cal_apply(segment_logistic, nichts), segment_logistic)
+#' identical(
+#'   cal_apply(segment_logistic, nichts),
+#'   segment_logistic
+#' )
 #' @export
 cal_estimate_none <- function(.data,
                               truth = NULL,
