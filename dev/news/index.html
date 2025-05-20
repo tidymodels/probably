@@ -38,15 +38,22 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="probably-development-version">probably (development version)<a class="anchor" aria-label="anchor" href="#probably-development-version"></a></h2>
-<ul><li><p>A bug was fixed where <code><a href="../reference/cal_estimate_isotonic.html">cal_estimate_isotonic()</a></code> always used a bootstrap sample.</p></li>
-<li><p>Transition from the magrittr pipe to the base R pipe.</p></li>
+<div class="section level3">
+<h3 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+<ul><li><p>A new set of calibration functions are added that don’t calibrate the model (called <code>cal_*_none()</code>). These can be used as a reference implementation when tuning the calibration method (<a href="https://github.com/tidymodels/probably/issues/174" class="external-link">#174</a>).</p></li>
 <li><p>A new function <code><a href="../reference/bound_prediction.html">bound_prediction()</a></code> is available to constrain the values of a numeric prediction (<a href="https://github.com/tidymodels/probably/issues/142" class="external-link">#142</a>).</p></li>
+<li><p><code><a href="../reference/cal_estimate_linear.html">cal_estimate_linear()</a></code> and <code><a href="../reference/cal_estimate_logistic.html">cal_estimate_logistic()</a></code> now sets <code>smooth = FALSE</code> if data contains too few unique observations for splines to be fit, throwing a warning instead of an error (<a href="https://github.com/tidymodels/probably/issues/167" class="external-link">#167</a>).</p></li>
+<li><p>Transition from the magrittr pipe to the base R pipe.</p></li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<ul><li><p>A bug was fixed where <code><a href="../reference/cal_estimate_isotonic.html">cal_estimate_isotonic()</a></code> always used a bootstrap sample.</p></li>
 <li><p>Fixed a bug where non-standard names of class probability estimates resulted in an error for some calibration models (<a href="https://github.com/tidymodels/probably/issues/145" class="external-link">#145</a>).</p></li>
 <li><p>Bug fix for <code><a href="../reference/cal_plot_breaks.html">cal_plot_breaks()</a></code> with binary classification with custom probability column names (<a href="https://github.com/tidymodels/probably/issues/144" class="external-link">#144</a>).</p></li>
 <li><p>Fixed an error in <code><a href="../reference/int_conformal_cv.html">int_conformal_cv()</a></code> when grouped resampling was used (<a href="https://github.com/tidymodels/probably/issues/141" class="external-link">#141</a>).</p></li>
 <li><p>Fixed an issue where the <code>distance</code> metric appeared inconsistently when using <code><a href="../reference/threshold_perf.html">threshold_perf()</a></code> with custom metric sets (<a href="https://github.com/jrwinget" class="external-link">@jrwinget</a>, <a href="https://github.com/tidymodels/probably/issues/149" class="external-link">#149</a>).</p></li>
-<li><p><code><a href="../reference/cal_estimate_linear.html">cal_estimate_linear()</a></code> and <code><a href="../reference/cal_estimate_logistic.html">cal_estimate_logistic()</a></code> now sets <code>smooth = FALSE</code> if data contains too few unique observations for splines to be fit, throwing a warning instead of an error (<a href="https://github.com/tidymodels/probably/issues/167" class="external-link">#167</a>).</p></li>
 </ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.0.3" id="probably-103">probably 1.0.3<a class="anchor" aria-label="anchor" href="#probably-103"></a></h2><p class="text-muted">CRAN release: 2024-02-23</p>
 <ul><li>Fixed a bug where the grouping for calibration methods was sensitive to the type of the grouping variables (<a href="https://github.com/tidymodels/probably/issues/127" class="external-link">#127</a>).</li>
