@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">probably</a>
 
-    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.0.3.9002</small>
+    <small class="nav-text text-danger me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="In-development version">1.1.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,15 +38,19 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="probably-development-version">probably (development version)<a class="anchor" aria-label="anchor" href="#probably-development-version"></a></h2>
-<div class="section level3">
-<h3 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.1.0" id="probably-110">probably 1.1.0<a class="anchor" aria-label="anchor" href="#probably-110"></a></h2><p class="text-muted">CRAN release: 2025-05-21</p>
+<ul><li>Significant refactoring of the code underlying the calibration functions. The user-facing APIs have not changed.</li>
+</ul><div class="section level3">
+<h3 id="new-features-1-1-0">New Features<a class="anchor" aria-label="anchor" href="#new-features-1-1-0"></a></h3>
 <ul><li><p>A new set of calibration functions are added that don’t calibrate the model (called <code>cal_*_none()</code>). These can be used as a reference implementation when tuning the calibration method (<a href="https://github.com/tidymodels/probably/issues/174" class="external-link">#174</a>).</p></li>
 <li><p>A new function <code><a href="../reference/bound_prediction.html">bound_prediction()</a></code> is available to constrain the values of a numeric prediction (<a href="https://github.com/tidymodels/probably/issues/142" class="external-link">#142</a>).</p></li>
 <li><p><code><a href="../reference/cal_estimate_linear.html">cal_estimate_linear()</a></code> and <code><a href="../reference/cal_estimate_logistic.html">cal_estimate_logistic()</a></code> now sets <code>smooth = FALSE</code> if data contains too few unique observations for splines to be fit, throwing a warning instead of an error (<a href="https://github.com/tidymodels/probably/issues/167" class="external-link">#167</a>).</p></li>
 <li><p>Transition from the magrittr pipe to the base R pipe.</p></li>
 </ul></div>
 <div class="section level3">
-<h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
+<h3 id="bug-fixes-1-1-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-1-0"></a></h3>
 <ul><li><p>A bug was fixed where <code><a href="../reference/cal_estimate_isotonic.html">cal_estimate_isotonic()</a></code> always used a bootstrap sample.</p></li>
 <li><p>Fixed a bug where non-standard names of class probability estimates resulted in an error for some calibration models (<a href="https://github.com/tidymodels/probably/issues/145" class="external-link">#145</a>).</p></li>
 <li><p>Bug fix for <code><a href="../reference/cal_plot_breaks.html">cal_plot_breaks()</a></code> with binary classification with custom probability column names (<a href="https://github.com/tidymodels/probably/issues/144" class="external-link">#144</a>).</p></li>
