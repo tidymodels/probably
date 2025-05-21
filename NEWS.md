@@ -1,4 +1,6 @@
-# probably (development version)
+# probably 1.1.0
+
+* Significant refactoring of the code underlying the calibration functions. The user-facing APIs have not changed. 
 
 ## New Features
 
