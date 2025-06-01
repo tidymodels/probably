@@ -167,7 +167,7 @@ get_prediction_data <- function(
     .by = NULL
 ) {
   if (!inherits(.data, "tbl_df")) {
-    data <- dplyr::as_tibble(.data)
+    .data <- dplyr::as_tibble(.data)
   }
 
   truth <- names(tidyselect::eval_select(rlang::enquo(truth), .data))
