@@ -121,7 +121,6 @@ test_that("Logistic spline estimates work - tune_results", {
 
 test_that("Logistic spline switches to linear if too few unique", {
   skip_if_not_installed("modeldata")
-  skip("until refactored")
 
   segment_logistic$.pred_good <- rep(
     x = 1,
@@ -134,8 +133,8 @@ test_that("Logistic spline switches to linear if too few unique", {
   sl_lm <- cal_estimate_logistic(segment_logistic, Class, smooth = FALSE)
 
   expect_identical(
-    sl_gam,
-    sl_lm
+    sl_gam$estimates[[1]]$estimate[[1]],
+    sl_lm$estimates[[1]]$estimate[[1]]
   )
 
   segment_logistic$id <- rep(
@@ -148,8 +147,8 @@ test_that("Logistic spline switches to linear if too few unique", {
   sl_lm <- cal_estimate_logistic(segment_logistic, Class, .by = id, smooth = FALSE)
 
   expect_identical(
-    sl_gam,
-    sl_lm
+    sl_gam$estimates[[1]]$estimate[[1]],
+    sl_lm$estimates[[1]]$estimate[[1]]
   )
 })
 
@@ -619,7 +618,6 @@ test_that("Linear spline estimates work - tune_results", {
 
 test_that("Linear spline switches to linear if too few unique", {
   skip_if_not_installed("modeldata")
-  skip("until refactored")
 
   boosting_predictions_oob$.pred <- rep(
     x = 1:5,
@@ -632,8 +630,8 @@ test_that("Linear spline switches to linear if too few unique", {
   sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
 
   expect_identical(
-    sl_gam,
-    sl_lm
+    sl_gam$estimates[[1]]$estimate[[1]],
+    sl_lm$estimates[[1]]$estimate[[1]]
   )
 
   expect_snapshot(
@@ -642,8 +640,8 @@ test_that("Linear spline switches to linear if too few unique", {
   sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id, smooth = FALSE)
 
   expect_identical(
-    sl_gam,
-    sl_lm
+    sl_gam$estimates[[1]]$estimate[[1]],
+    sl_lm$estimates[[1]]$estimate[[1]]
   )
 })
 

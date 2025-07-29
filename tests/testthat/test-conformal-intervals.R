@@ -185,7 +185,7 @@ test_that("conformal intervals", {
     parsnip::linear_reg() |> fit_resamples(outcome ~ ., cv, control = ctrl)
   grid_res <-
     parsnip::mlp(penalty = tune()) |>
-    set_mode("regression") |>
+    parsnip::set_mode("regression") |>
     tune_grid(outcome ~ ., cv, grid = 2, control = ctrl)
 
   # ----------------------------------------------------------------------------
@@ -258,7 +258,7 @@ test_that("group resampling to conformal CV intervals", {
 
   set.seed(484)
   nnet_wflow <-
-    workflow(y ~ x, mlp(hidden_units = 2) |> set_mode("regression"))
+    workflow(y ~ x, parsnip::mlp(hidden_units = 2) |> parsnip::set_mode("regression"))
 
   group_folds <- group_vfold_cv(train_data, group = color)
 
