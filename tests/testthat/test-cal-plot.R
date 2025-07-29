@@ -57,10 +57,9 @@ test_that("Binary breaks functions work with group argument", {
     rlang::expr_text(res$mapping$fill),
     "~id"
   )
-  expect_equal(
-    res$labels,
-    list(x = "Bin Midpoint", y = "Event Rate")
-  )
+
+  expect_snapshot(get_labs(res))
+
   expect_equal(length(res$layers), 4)
 
   expect_snapshot_error(
@@ -253,10 +252,9 @@ test_that("Binary logistic functions work with group argument", {
     rlang::expr_text(res$mapping$fill),
     "~id"
   )
-  expect_equal(
-    res$labels,
-    list(x = "Probability", y = "Predicted Event Rate")
-  )
+
+  expect_snapshot(get_labs(res))
+
   expect_equal(length(res$layers), 3)
 
   expect_snapshot_error(
@@ -510,12 +508,9 @@ test_that("regression functions work", {
   expect_null(res$mapping$colour)
   expect_null(res$mapping$fill)
 
-  expect_equal(
-    res$labels,
-    list(x = "Observed", y = "Predicted")
-  )
-  expect_equal(length(res$layers), 3)
+  expect_snapshot(get_labs(res))
 
+  expect_equal(length(res$layers), 3)
 
   res <- cal_plot_regression(boosting_predictions_oob, outcome, .pred, .by = id)
   expect_s3_class(res, "ggplot")
@@ -536,12 +531,9 @@ test_that("regression functions work", {
   expect_null(res$mapping$colour)
   expect_null(res$mapping$fill)
 
-  expect_equal(
-    res$labels,
-    list(x = "Observed", y = "Predicted")
-  )
-  expect_equal(length(res$layers), 3)
+  expect_snapshot(get_labs(res))
 
+  expect_equal(length(res$layers), 3)
 
   res <- cal_plot_regression(obj)
   expect_s3_class(res, "ggplot")
@@ -565,12 +557,9 @@ test_that("regression functions work", {
   expect_null(res$mapping$colour)
   expect_null(res$mapping$fill)
 
-  expect_equal(
-    res$labels,
-    list(x = "Observed", y = "Predicted")
-  )
-  expect_equal(length(res$layers), 3)
+  expect_snapshot(get_labs(res))
 
+  expect_equal(length(res$layers), 3)
 
   res <- print(cal_plot_regression(obj), alpha = 1 / 5, smooth = FALSE)
   expect_s3_class(res, "ggplot")
@@ -594,12 +583,9 @@ test_that("regression functions work", {
   expect_null(res$mapping$colour)
   expect_null(res$mapping$fill)
 
-  expect_equal(
-    res$labels,
-    list(x = "Observed", y = "Predicted")
-  )
-  expect_equal(length(res$layers), 3)
+  expect_snapshot(get_labs(res))
 
+  expect_equal(length(res$layers), 3)
 
   res <- cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE)
   expect_s3_class(res, "ggplot")
@@ -621,13 +607,9 @@ test_that("regression functions work", {
   expect_null(res$mapping$colour)
   expect_null(res$mapping$fill)
 
-  expect_equal(
-    res$labels,
-    list(x = "Observed", y = "Predicted")
-  )
+  expect_snapshot(get_labs(res))
+
   expect_equal(length(res$layers), 3)
-
-
 })
 
 test_that("regression plot function errors - grouped_df", {
