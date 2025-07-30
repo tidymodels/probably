@@ -68,6 +68,9 @@ cal_validate_logistic.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
+    cl <- match.call()
+    validation_check(.data, cl)
+
     if (!is.null(truth)) {
       cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
@@ -151,6 +154,9 @@ cal_validate_isotonic.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
+    cl <- match.call()
+    validation_check(.data, cl)
+
     if (!is.null(truth)) {
       cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
@@ -236,6 +242,9 @@ cal_validate_isotonic_boot.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
+    cl <- match.call()
+    validation_check(.data, cl)
+
     if (!is.null(truth)) {
       cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
@@ -321,6 +330,12 @@ cal_validate_beta.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
+    cl <- match.call()
+    validation_check(.data, cl)
+
+    cl <- match.call()
+    validation_check(.data, cl)
+
     if (!is.null(truth)) {
       cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
@@ -401,6 +416,9 @@ cal_validate_multinomial.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
+    cl <- match.call()
+    validation_check(.data, cl)
+
     if (!is.null(truth)) {
       cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
@@ -515,6 +533,7 @@ cal_validate <- function(rset,
   predictions_out <- pull_pred(rset, analysis = FALSE)
 
   est_fn_name <- paste0("cal_estimate_", cal_function)
+
   est_cl <-
     rlang::call2(
       est_fn_name,
@@ -560,18 +579,23 @@ cal_validate <- function(rset,
 }
 
 pull_pred <- function(x, analysis = TRUE) {
-  has_dot_row <- any(names(x$splits[[1]]$data) == ".row")
   if (analysis) {
     what <- "analysis"
   } else {
     what <- "assessment"
   }
-  preds <- purrr::map(x$splits, as.data.frame, data = what)
-  if (!has_dot_row) {
-    rows <- purrr::map(x$splits, ~ dplyr::tibble(.row = as.integer(.x, data = what)))
-    preds <- purrr::map2(preds, rows, ~ dplyr::bind_cols(.x, .y))
-  }
 
+  if (inherits(x$splits[[1]], "val_split")) {
+    preds <- as.data.frame(x$splits[[1]], what)
+  } else {
+    has_dot_row <- any(names(x$splits[[1]]$data) == ".row")
+
+    preds <- purrr::map(x$splits, as.data.frame, data = what)
+    if (!has_dot_row) {
+      rows <- purrr::map(x$splits, ~ dplyr::tibble(.row = as.integer(.x, data = what)))
+      preds <- purrr::map2(preds, rows, ~ dplyr::bind_cols(.x, .y))
+    }
+  }
   preds
 }
 
@@ -655,6 +679,9 @@ cal_validate_linear.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
+    cl <- match.call()
+    validation_check(.data, cl)
+
     if (!is.null(truth)) {
       cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
@@ -748,6 +775,9 @@ cal_validate_none.resample_results <-
            metrics = NULL,
            save_pred = FALSE,
            ...) {
+    cl <- match.call()
+    validation_check(.data, cl)
+
     if (!is.null(truth)) {
       cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
     }
@@ -803,8 +833,14 @@ convert_resamples <- function(x) {
   predictions <-
     tune::collect_predictions(x, summarize = TRUE) |>
     dplyr::arrange(.row)
+
+  # Not all prediction sets, when collected, will match the size of the original
+  # data so buff out the data set
+  data_ind <- dplyr::tibble(.row = seq_len(nrow(x$splits[[1]]$data)))
+  all_data <- dplyr::full_join(data_ind, predictions, by = ".row")
+
   for (i in seq_along(x$splits)) {
-    x$splits[[i]]$data <- predictions
+    x$splits[[i]]$data <- all_data
   }
   class(x) <- c("rset", "tbl_df", "tbl", "data.frame")
   x
@@ -891,3 +927,18 @@ collect_predictions.cal_rset <- function(x, summarize = TRUE, ...) {
   }
   res
 }
+
+validation_check <- function(x, cl = NULL, call = rlang::caller_env()) {
+  fn <- as.character(cl[[1]])
+  fn <- strsplit(fn, "\\.")[[1]][1]
+
+  if (inherits(x$splits[[1]], "val_split")) {
+    cli::cli_abort(
+      "For validation sets, please make a resampling object from the predictions
+      prior to calling {.fn {fn}}",
+      call = call
+    )
+  }
+  invisible(NULL)
+}
+

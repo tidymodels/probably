@@ -1,5 +1,9 @@
 # probably (development version)
 
+* Updated unit tests for new ggplot2 release (#180).
+
+* Better error message when using one of the `cal_validate_*()` functions with a validation set (#182). 
+
 # probably 1.1.0
 
 * Significant refactoring of the code underlying the calibration functions. The user-facing APIs have not changed. 

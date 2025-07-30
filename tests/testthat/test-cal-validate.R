@@ -348,8 +348,8 @@ test_that("Logistic validation with `fit_resamples`", {
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    names(val_with_pred$.predictions_cal[[1]]),
-    c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
+    sort(names(val_with_pred$.predictions_cal[[1]])),
+    sort(c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class"))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -380,8 +380,8 @@ test_that("Isotonic classification validation with `fit_resamples`", {
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    names(val_with_pred$.predictions_cal[[1]]),
-    c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
+    sort(names(val_with_pred$.predictions_cal[[1]])),
+    sort(c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class"))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -413,8 +413,8 @@ test_that("Bootstrapped isotonic classification validation with `fit_resamples`"
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    names(val_with_pred$.predictions_cal[[1]]),
-    c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
+    sort(names(val_with_pred$.predictions_cal[[1]])),
+    sort(c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class"))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -446,8 +446,8 @@ test_that("Beta calibration validation with `fit_resamples`", {
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    names(val_with_pred$.predictions_cal[[1]]),
-    c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
+    sort(names(val_with_pred$.predictions_cal[[1]])),
+    sort(c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class"))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -481,8 +481,8 @@ test_that("Multinomial calibration validation with `fit_resamples`", {
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    names(val_with_pred$.predictions_cal[[1]]),
-    c(".pred_one", ".pred_two", ".pred_three", ".row", "outcome", ".config", ".pred_class")
+    sort(names(val_with_pred$.predictions_cal[[1]])),
+    sort(c(".pred_one", ".pred_two", ".pred_three", ".row", "outcome", ".config", ".pred_class"))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -513,8 +513,8 @@ test_that("Validation without calibration with `fit_resamples`", {
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    names(val_with_pred$.predictions_cal[[1]]),
-    c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class")
+    sort(names(val_with_pred$.predictions_cal[[1]])),
+    sort(c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class"))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -548,8 +548,8 @@ test_that("Linear validation with `fit_resamples`", {
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    names(val_with_pred$.predictions_cal[[1]]),
-    c(".pred", ".row", "outcome", ".config")
+    sort(names(val_with_pred$.predictions_cal[[1]])),
+    sort(c(".pred", ".row", "outcome", ".config"))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -621,8 +621,8 @@ test_that("Isotonic regression validation with `fit_resamples`", {
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    names(val_with_pred$.predictions_cal[[1]]),
-    c(".pred", ".row", "outcome", ".config")
+    sort(names(val_with_pred$.predictions_cal[[1]])),
+    sort(c(".pred", ".row", "outcome", ".config"))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -657,8 +657,8 @@ test_that("Isotonic bootstrapped regression validation with `fit_resamples`", {
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    names(val_with_pred$.predictions_cal[[1]]),
-    c(".pred", ".row", "outcome", ".config")
+    sort(names(val_with_pred$.predictions_cal[[1]])),
+    sort(c(".pred", ".row", "outcome", ".config"))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -669,7 +669,6 @@ test_that("Isotonic bootstrapped regression validation with `fit_resamples`", {
 })
 
 # ------------------------------------------------------------------------------
-
 
 test_that("validation functions error with tune_results input", {
   skip_if_not_installed("modeldata")
@@ -697,4 +696,28 @@ test_that("validation functions error with tune_results input", {
   expect_snapshot_error(
     cal_validate_none(testthat_cal_binary())
   )
+})
+
+# ------------------------------------------------------------------------------
+
+test_that("validation sets fail with better message", {
+  library(tune)
+  set.seed(1)
+  mt_split <- rsample::initial_validation_split(mtcars)
+  mt_rset <- rsample::validation_set(mt_split)
+  mt_res <-
+    parsnip::linear_reg() |>
+    fit_resamples(
+      mpg ~ .,
+      resamples = mt_rset,
+      control = control_resamples(save_pred = TRUE)
+    )
+
+  expect_snapshot(cal_validate_beta(mt_res), error = TRUE)
+  expect_snapshot(cal_validate_isotonic(mt_res), error = TRUE)
+  expect_snapshot(cal_validate_isotonic_boot(mt_res), error = TRUE)
+  expect_snapshot(cal_validate_linear(mt_res), error = TRUE)
+  expect_snapshot(cal_validate_logistic(mt_res), error = TRUE)
+  expect_snapshot(cal_validate_multinomial(mt_res), error = TRUE)
+  expect_snapshot(cal_validate_none(mt_res), error = TRUE)
 })
