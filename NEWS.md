@@ -1,4 +1,4 @@
-# probably (development version)
+# probably 1.1.1
 
 * Updated unit tests for new ggplot2 release (#180).
 
