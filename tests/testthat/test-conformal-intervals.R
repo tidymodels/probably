@@ -229,6 +229,16 @@ test_that("conformal intervals", {
   expect_true(
     all(grid_bounds$.pred_lower < grid_bounds_90$.pred_lower)
   )
+
+  expect_identical(
+    required_pkgs(smol_obj),
+    c(required_pkgs(smol_obj$wflow), "probably")
+  )
+
+  expect_identical(
+    required_pkgs(grid_int),
+    c(unique(unlist(map(grid_int$models, required_pkgs))), "probably")
+  )
 })
 
 test_that("conformal control", {

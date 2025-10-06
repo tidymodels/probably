@@ -64,4 +64,9 @@ test_that("split conformal intervals", {
     nrow(new_int),
     nrow(sim_new)
   )
+
+  expect_identical(
+    required_pkgs(lm_int),
+    c(required_pkgs(lm_int$wflow), "probably")
+  )
 })
