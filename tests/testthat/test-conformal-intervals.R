@@ -234,10 +234,18 @@ test_that("conformal intervals", {
     required_pkgs(smol_obj),
     c(required_pkgs(smol_obj$wflow), "probably")
   )
+  expect_identical(
+    required_pkgs(smol_obj, infra = FALSE),
+    required_pkgs(smol_obj$wflow, infra = FALSE)
+  )
 
   expect_identical(
     required_pkgs(grid_int),
     c(unique(unlist(map(grid_int$models, required_pkgs))), "probably")
+  )
+  expect_identical(
+    required_pkgs(grid_int, infra = FALSE),
+    unique(unlist(map(grid_int$models, required_pkgs, infra = FALSE)))
   )
 })
 

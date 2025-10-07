@@ -9,13 +9,13 @@
 \title{S3 methods to track which additional packages are needed for prediction
 intervals via conformal inference}
 \usage{
-\method{required_pkgs}{int_conformal_full}(x, ...)
+\method{required_pkgs}{int_conformal_full}(x, infra = TRUE, ...)
 
-\method{required_pkgs}{int_conformal_cv}(x, ...)
+\method{required_pkgs}{int_conformal_cv}(x, infra = TRUE, ...)
 
-\method{required_pkgs}{int_conformal_quantile}(x, ...)
+\method{required_pkgs}{int_conformal_quantile}(x, infra = TRUE, ...)
 
-\method{required_pkgs}{int_conformal_split}(x, ...)
+\method{required_pkgs}{int_conformal_split}(x, infra = TRUE, ...)
 }
 \arguments{
 \item{x}{a conformal interval object}
