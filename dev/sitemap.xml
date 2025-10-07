@@ -50,6 +50,7 @@
 <url><loc>https://probably.tidymodels.org/dev/reference/reexports.html</loc></url>
 <url><loc>https://probably.tidymodels.org/dev/reference/reportable_rate.html</loc></url>
 <url><loc>https://probably.tidymodels.org/dev/reference/required_pkgs.cal_object.html</loc></url>
+<url><loc>https://probably.tidymodels.org/dev/reference/required_pkgs.int_conformal_cv.html</loc></url>
 <url><loc>https://probably.tidymodels.org/dev/reference/segment_naive_bayes.html</loc></url>
 <url><loc>https://probably.tidymodels.org/dev/reference/species_probs.html</loc></url>
 <url><loc>https://probably.tidymodels.org/dev/reference/threshold_perf.html</loc></url>
