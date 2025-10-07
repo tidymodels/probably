@@ -1,5 +1,7 @@
 # probably (development version)
 
+* Add `required_pkgs()` methods to `int_conformal_cv()`, `int_conformal_full()`, `int_conformal_quantile()`,  and `int_conformal_split()`. (#190)
+
 # probably 1.1.1
 
 * Updated unit tests for new ggplot2 release (#180).

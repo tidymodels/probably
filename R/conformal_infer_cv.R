@@ -148,6 +148,23 @@ print.int_conformal_cv <- function(x, ...) {
   invisible(x)
 }
 
+#' S3 methods to track which additional packages are needed for prediction 
+#' intervals via conformal inference
+#' @param x a conformal interval object
+#' @inheritParams generics::required_pkgs
+#' @export
+required_pkgs.int_conformal_cv <- function(x, infra = TRUE, ...) {
+  model_pkgs <- map(x$models, required_pkgs, infra = infra)
+  model_pkgs <- unlist(model_pkgs)
+  
+  if (infra) {
+    model_pkgs <- c(model_pkgs, "probably")
+  }
+  
+  model_pkgs <- unique(model_pkgs)
+  model_pkgs
+}
+
 # ------------------------------------------------------------------------------
 # helpers
 

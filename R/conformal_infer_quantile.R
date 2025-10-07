@@ -115,6 +115,20 @@ print.int_conformal_quantile <- function(x, ...) {
   invisible(x)
 }
 
+#' @rdname required_pkgs.int_conformal_cv
+#' @keywords internal
+#' @export
+required_pkgs.int_conformal_quantile <- function(x, infra = TRUE, ...) {
+  model_pkgs <- required_pkgs(x$wflow, infra = infra)
+
+  if (infra) {
+    model_pkgs <- c(model_pkgs, "probably")
+  }
+  
+  model_pkgs <- unique(model_pkgs)
+  model_pkgs
+}
+
 #' @export
 #' @rdname predict.int_conformal_full
 predict.int_conformal_quantile <- function(object, new_data, ...) {
