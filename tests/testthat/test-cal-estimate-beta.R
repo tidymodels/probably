@@ -5,6 +5,10 @@ test_that("Beta estimates work - data.frame", {
   expect_cal_method(sl_beta, "Beta calibration")
   expect_cal_rows(sl_beta)
   expect_snapshot(print(sl_beta))
+  expect_equal(
+    required_pkgs(sl_beta),
+    c("betacal", "probably")
+  )
 
   sl_beta_group <- segment_logistic |>
     dplyr::mutate(group = .pred_poor > 0.5) |>

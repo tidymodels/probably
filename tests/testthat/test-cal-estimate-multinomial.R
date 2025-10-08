@@ -7,12 +7,20 @@ test_that("Multinomial estimates work - data.frame", {
   expect_cal_method(sp_multi, "Multinomial regression calibration")
   expect_cal_rows(sp_multi, n = 110)
   expect_snapshot(print(sp_multi))
+  expect_equal(
+    required_pkgs(sp_multi),
+    c("nnet", "probably")
+  )
 
   sp_smth_multi <- cal_estimate_multinomial(species_probs, Species, smooth = TRUE)
   expect_cal_type(sp_smth_multi, "multiclass")
   expect_cal_method(sp_smth_multi, "Generalized additive model calibration")
   expect_cal_rows(sp_smth_multi, n = 110)
   expect_snapshot(print(sp_smth_multi))
+  expect_equal(
+    required_pkgs(sp_smth_multi),
+    c("mgcv", "probably")
+  )
 
   sl_multi_group <- species_probs |>
     dplyr::mutate(group = .pred_bobcat > 0.5) |>
