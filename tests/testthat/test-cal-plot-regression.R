@@ -8,7 +8,7 @@ test_that("regression functions work", {
   expect_s3_class(res, "ggplot")
 
   expect_equal(
-    res$data[0,],
+    res$data[0, ],
     dplyr::tibble(outcome = numeric(0), .pred = numeric(0), id = character(0))
   )
 
@@ -31,7 +31,7 @@ test_that("regression functions work", {
   expect_s3_class(res, "ggplot")
 
   expect_equal(
-    res$data[0,],
+    res$data[0, ],
     dplyr::tibble(outcome = numeric(0), .pred = numeric(0), id = character(0))
   )
 
@@ -55,10 +55,14 @@ test_that("regression functions work", {
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    res$data[0,],
-    dplyr::tibble(.pred = numeric(0), .row = numeric(0),
-                   predictor_01 = integer(0), outcome = numeric(0),
-                   .config = character())
+    res$data[0, ],
+    dplyr::tibble(
+      .pred = numeric(0),
+      .row = numeric(0),
+      predictor_01 = integer(0),
+      outcome = numeric(0),
+      .config = character()
+    )
   )
 
   expect_equal(
@@ -81,10 +85,14 @@ test_that("regression functions work", {
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
-    res$data[0,],
-    dplyr::tibble(.pred = numeric(0), .row = numeric(0),
-                   predictor_01 = integer(0), outcome = numeric(0),
-                   .config = character())
+    res$data[0, ],
+    dplyr::tibble(
+      .pred = numeric(0),
+      .row = numeric(0),
+      predictor_01 = integer(0),
+      outcome = numeric(0),
+      .config = character()
+    )
   )
 
   expect_equal(
@@ -102,13 +110,17 @@ test_that("regression functions work", {
 
   expect_equal(length(res$layers), 3)
 
-  res <- cal_plot_regression(boosting_predictions_oob, outcome, .pred, smooth = FALSE)
+  res <- cal_plot_regression(
+    boosting_predictions_oob,
+    outcome,
+    .pred,
+    smooth = FALSE
+  )
   expect_s3_class(res, "ggplot")
 
   expect_equal(
-    res$data[0,],
-    dplyr::tibble(outcome = numeric(0), .pred = numeric(0),
-                   id = character())
+    res$data[0, ],
+    dplyr::tibble(outcome = numeric(0), .pred = numeric(0), id = character())
   )
 
   expect_equal(

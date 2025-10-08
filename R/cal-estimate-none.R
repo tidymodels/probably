@@ -31,29 +31,35 @@
 #'   segment_logistic
 #' )
 #' @export
-cal_estimate_none <- function(.data,
-                              truth = NULL,
-                              estimate = dplyr::starts_with(".pred"),
-                              parameters = NULL,
-                              ...) {
+cal_estimate_none <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  parameters = NULL,
+  ...
+) {
   UseMethod("cal_estimate_none")
 }
 
 #' @export
 #' @rdname cal_estimate_none
-cal_estimate_none.data.frame <- function(.data,
-                                         truth = NULL,
-                                         estimate = dplyr::starts_with(".pred"),
-                                         parameters = NULL,
-                                         ...,
-                                         .by = NULL) {
+cal_estimate_none.data.frame <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  parameters = NULL,
+  ...,
+  .by = NULL
+) {
   stop_null_parameters(parameters)
   rlang::check_dots_empty()
 
-  info <- get_prediction_data(.data,
-                              truth = {{ truth }},
-                              estimate = {{ estimate }},
-                              .by = {{ .by }})
+  info <- get_prediction_data(
+    .data,
+    truth = {{ truth }},
+    estimate = {{ estimate }},
+    .by = {{ .by }}
+  )
 
   model <- nothing_over_groups(info, ...)
 
@@ -77,11 +83,13 @@ cal_estimate_none.data.frame <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_none
-cal_estimate_none.tune_results <- function(.data,
-                                           truth = NULL,
-                                           estimate = dplyr::starts_with(".pred"),
-                                           parameters = NULL,
-                                           ...) {
+cal_estimate_none.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  parameters = NULL,
+  ...
+) {
   rlang::check_dots_empty()
   info <- get_tune_data(.data, parameters)
 
@@ -107,17 +115,19 @@ cal_estimate_none.tune_results <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_none
-cal_estimate_none.grouped_df <- function(.data,
-                                         truth = NULL,
-                                         estimate = NULL,
-                                         parameters = NULL,
-                                         ...) {
+cal_estimate_none.grouped_df <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  parameters = NULL,
+  ...
+) {
   abort_if_grouped_df()
 }
 
 #------------------------------ Implementation ---------------------------------
 
-nothing_over_groups <- function(info,  ...) {
+nothing_over_groups <- function(info, ...) {
   grp_df <- make_group_df(info$predictions, group = info$group)
   nst_df <- vctrs::vec_split(x = info$predictions, by = grp_df)
   fltrs <- make_cal_filters(nst_df$key)
@@ -153,4 +163,3 @@ print.no_calibration <- function(x, ...) {
 required_pkgs.cal_estimate_none <- function(x, ...) {
   c("probably")
 }
-

@@ -22,7 +22,8 @@ print.cal_regression <- function(x, ...) {
 
 print_cls_cal <- function(x, upv = FALSE, ...) {
   print_type <-
-    switch(x$type,
+    switch(
+      x$type,
       "binary" = "Binary",
       "multiclass" = "Multiclass",
       "one_vs_all" = "Multiclass (1 v All)",
@@ -30,11 +31,13 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
       NA_character_
     )
 
-  cli::cli_div(theme = list(
-    span.val0 = list(color = "blue"),
-    span.val1 = list(color = "yellow"),
-    span.val2 = list(color = "darkgreen")
-  ))
+  cli::cli_div(
+    theme = list(
+      span.val0 = list(color = "blue"),
+      span.val1 = list(color = "yellow"),
+      span.val2 = list(color = "darkgreen")
+    )
+  )
   rows <- prettyNum(x$rows, ",")
   cli::cli_h3("Probability Calibration")
   cli::cli_text("Method: {.val2 {x$method}}")
@@ -65,11 +68,13 @@ print_cls_cal <- function(x, upv = FALSE, ...) {
 
 
 print_reg_cal <- function(x, upv = FALSE, ...) {
-  cli::cli_div(theme = list(
-    span.val0 = list(color = "blue"),
-    span.val1 = list(color = "yellow"),
-    span.val2 = list(color = "darkgreen")
-  ))
+  cli::cli_div(
+    theme = list(
+      span.val0 = list(color = "blue"),
+      span.val1 = list(color = "yellow"),
+      span.val2 = list(color = "darkgreen")
+    )
+  )
   rows <- prettyNum(x$rows, ",")
   cli::cli_h3("Regression Calibration")
   cli::cli_text("Method: {.val2 {x$method}}")
@@ -121,7 +126,6 @@ cal_class_name.rset <- function(x) {
 
 # ------------------------------- Data Ingestion -------------------------------
 
-
 get_tune_data <- function(x, parameters = NULL) {
   .data <- collect_predictions(
     x,
@@ -161,10 +165,10 @@ get_tune_data <- function(x, parameters = NULL) {
 }
 
 get_prediction_data <- function(
-    .data,
-    truth = NULL,
-    estimate = dplyr::starts_with(".pred_"),
-    .by = NULL
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  .by = NULL
 ) {
   if (!inherits(.data, "tbl_df")) {
     .data <- dplyr::as_tibble(.data)
@@ -176,7 +180,7 @@ get_prediction_data <- function(
 
   # So that we ignore non-numeric columns that are accidentally selected such
   # as `.pred_class`
-  is_num_est <- purrr::map_lgl(.data[,estimate], is.numeric)
+  is_num_est <- purrr::map_lgl(.data[, estimate], is.numeric)
   estimate <- estimate[is_num_est]
 
   lvls <- levels(.data[[truth]])
@@ -231,7 +235,6 @@ check_tm_format <- function(estimate, lvls) {
 
   tm_nms <- paste0(".pred_", lvls)
   if (identical(sort(estimate), sort(tm_nms))) {
-
     estimate <- tm_nms
   }
   estimate
@@ -239,14 +242,15 @@ check_tm_format <- function(estimate, lvls) {
 
 # ------------------------------- Utils ----------------------------------------
 
-as_regression_cal_object <- function(estimate,
-                                     truth,
-                                     levels,
-                                     method,
-                                     rows,
-                                     additional_class = NULL,
-                                     source_class = NULL) {
-
+as_regression_cal_object <- function(
+  estimate,
+  truth,
+  levels,
+  method,
+  rows,
+  additional_class = NULL,
+  source_class = NULL
+) {
   as_cal_object(
     estimate = estimate,
     truth = truth,
@@ -259,14 +263,16 @@ as_regression_cal_object <- function(estimate,
   )
 }
 
-as_cal_object <- function(estimate,
-                          truth,
-                          levels,
-                          method,
-                          rows,
-                          additional_classes = NULL,
-                          source_class = NULL,
-                          type = NULL) {
+as_cal_object <- function(
+  estimate,
+  truth,
+  levels,
+  method,
+  rows,
+  additional_classes = NULL,
+  source_class = NULL,
+  type = NULL
+) {
   if (length(levels) == 1) {
     type <- "regression"
     obj_class <- "cal_regression"
@@ -317,7 +323,10 @@ split_dplyr_groups <- function(.data) {
     grp_keys <- purrr::map(grp_keys, as.character)
     grp_var <- .data |> dplyr::group_vars()
     grp_data <- .data |> tidyr::nest()
-    grp_filters <- purrr::map(grp_keys[[1]], ~ expr(!!parse_expr(grp_var) == !!.x))
+    grp_filters <- purrr::map(
+      grp_keys[[1]],
+      ~ expr(!!parse_expr(grp_var) == !!.x)
+    )
     grp_n <- purrr::map_int(grp_data$data, nrow)
     res <- vector(mode = "list", length = length(grp_filters))
     for (i in seq_along(res)) {
@@ -333,7 +342,9 @@ split_dplyr_groups <- function(.data) {
 
 stop_null_parameters <- function(x) {
   if (!is.null(x)) {
-    cli::cli_abort("The {.arg parameters} argument is only valid for {.code tune_results}.")
+    cli::cli_abort(
+      "The {.arg parameters} argument is only valid for {.code tune_results}."
+    )
   }
 }
 
@@ -389,7 +400,7 @@ make_cal_filters <- function(key) {
     if (i == 1) {
       res <- tmp
     } else {
-      res <- purrr::map2(res, tmp, ~  rlang::expr(!!.x & !!.y))
+      res <- purrr::map2(res, tmp, ~ rlang::expr(!!.x & !!.y))
     }
   }
 
@@ -434,7 +445,12 @@ multinomial_f_from_str <- function(y, x) {
   res
 }
 
-turn_off_smooth_if_too_few_unique <- function(.data, estimate, smooth, min_vals = 10) {
+turn_off_smooth_if_too_few_unique <- function(
+  .data,
+  estimate,
+  smooth,
+  min_vals = 10
+) {
   predictors <- .data[, estimate]
   if (smooth) {
     n_unique <- purrr::map_int(predictors, vctrs::vec_unique_count)
@@ -452,7 +468,7 @@ turn_off_smooth_if_too_few_unique <- function(.data, estimate, smooth, min_vals 
 # ------------------------------ 1 versus all helpers --------------------------
 
 fit_over_classes <- function(.fn, .data, truth, estimate, ...) {
-  lvls <- levels(.data[[ truth ]])
+  lvls <- levels(.data[[truth]])
   prob_cols <- estimate
 
   res <- purrr::map2(
@@ -470,12 +486,11 @@ fit_over_classes <- function(.fn, .data, truth, estimate, ...) {
 }
 
 fit_1_vs_all <- function(class, prob_col, .fn, .data, truth, estimate, ...) {
-
   # Redefine the outcome class as the current class level
-  outcome <- .data[[ truth ]]
+  outcome <- .data[[truth]]
   new_class <- ifelse(outcome == class, class, ".other")
   new_class <- factor(new_class, levels = c(class, ".other"))
-  .data[[ truth ]] <- new_class
+  .data[[truth]] <- new_class
 
   res <- .fn(.data, truth = truth, estimate = prob_col, ...)
   res

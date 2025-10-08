@@ -93,14 +93,16 @@ threshold_perf <- function(.data, ...) {
 
 #' @rdname threshold_perf
 #' @export
-threshold_perf.data.frame <- function(.data,
-                                      truth,
-                                      estimate,
-                                      thresholds = NULL,
-                                      metrics = NULL,
-                                      na_rm = TRUE,
-                                      event_level = "first",
-                                      ...) {
+threshold_perf.data.frame <- function(
+  .data,
+  truth,
+  estimate,
+  thresholds = NULL,
+  metrics = NULL,
+  na_rm = TRUE,
+  event_level = "first",
+  ...
+) {
   if (is.null(thresholds)) {
     thresholds <- seq(0.5, 1, length = 21)
   }
@@ -187,7 +189,6 @@ threshold_perf.data.frame <- function(.data,
     .data <- .data |> dplyr::group_by(.threshold)
   }
 
-
   .data_metrics <- metrics(
     .data,
     truth = truth,
@@ -239,7 +240,7 @@ check_thresholded_metrics <- function(x) {
   # check to see if sensitivity and specificity are in the lists
   has_sens <-
     any(y$metric %in% c("sens", "sensitivity")) &
-      any(y$metric %in% c("spec", "specificity"))
+    any(y$metric %in% c("spec", "specificity"))
   has_sens
 }
 

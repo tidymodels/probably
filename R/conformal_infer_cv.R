@@ -76,7 +76,9 @@ int_conformal_cv <- function(object, ...) {
 #' @export
 #' @rdname int_conformal_cv
 int_conformal_cv.default <- function(object, ...) {
-  cli::cli_abort("No known {.fn int_conformal_cv} methods for this type of object.")
+  cli::cli_abort(
+    "No known {.fn int_conformal_cv} methods for this type of object."
+  )
 }
 
 #' @export
@@ -106,7 +108,11 @@ int_conformal_cv.tune_results <- function(object, parameters, ...) {
   y_name <- tune::.get_tune_outcome_names(object)
 
   resids <-
-    tune::collect_predictions(object, parameters = parameters, summarize = TRUE) |>
+    tune::collect_predictions(
+      object,
+      parameters = parameters,
+      summarize = TRUE
+    ) |>
     dplyr::mutate(.abs_resid = abs(.pred - !!rlang::sym(y_name)))
 
   new_infer_cv(model_list, resids$.abs_resid)
@@ -144,11 +150,13 @@ print.int_conformal_cv <- function(x, ...) {
   cat("number of models:", format(length(x$models), big.mark = ","), "\n")
   cat("training set size:", format(length(x$abs_resid), big.mark = ","), "\n\n")
 
-  cat("Use `predict(object, new_data, level)` to compute prediction intervals\n")
+  cat(
+    "Use `predict(object, new_data, level)` to compute prediction intervals\n"
+  )
   invisible(x)
 }
 
-#' S3 methods to track which additional packages are needed for prediction 
+#' S3 methods to track which additional packages are needed for prediction
 #' intervals via conformal inference
 #' @param x a conformal interval object
 #' @inheritParams generics::required_pkgs
@@ -156,11 +164,11 @@ print.int_conformal_cv <- function(x, ...) {
 required_pkgs.int_conformal_cv <- function(x, infra = TRUE, ...) {
   model_pkgs <- map(x$models, required_pkgs, infra = infra)
   model_pkgs <- unlist(model_pkgs)
-  
+
   if (infra) {
     model_pkgs <- c(model_pkgs, "probably")
   }
-  
+
   model_pkgs <- unique(model_pkgs)
   model_pkgs
 }
@@ -182,7 +190,9 @@ new_infer_cv <- function(models, resid) {
   }
   is_wflow <- purrr::map_lgl(models, workflows::is_trained_workflow)
   if (all(!is_wflow)) {
-    cli::cli_abort("The {.arg .extracts} argument does not contain fitted workflows.")
+    cli::cli_abort(
+      "The {.arg .extracts} argument does not contain fitted workflows."
+    )
   }
   if (any(!is_wflow)) {
     models <- models[is_wflow]

@@ -7,15 +7,19 @@ test_that("lower_limit bounds for numeric predictions", {
 
   # ------------------------------------------------------------------------------
 
-  expect_snapshot(bound_prediction(modeldata::solubility_test, lower_limit = 2), error = TRUE)
+  expect_snapshot(
+    bound_prediction(modeldata::solubility_test, lower_limit = 2),
+    error = TRUE
+  )
   expect_snapshot(
     modeldata::solubility_test |>
       mutate(.pred = format(prediction)) |>
       bound_prediction(lower_limit = 2),
-    error = TRUE)
+    error = TRUE
+  )
 
   sol <- modeldata::solubility_test |> set_names(c("solubility", ".pred"))
-  
+
   expect_equal(bound_prediction(sol), sol)
   expect_equal(bound_prediction(sol, lower_limit = NA), sol)
 
@@ -24,7 +28,10 @@ test_that("lower_limit bounds for numeric predictions", {
   expect_equal(res_1$.pred[sol$.pred >= -1], sol$.pred[sol$.pred >= -1])
 
   expect_snapshot(bound_prediction(sol, lower_limit = tune2()), error = TRUE)
-  expect_snapshot(bound_prediction(as.matrix(sol), lower_limit = 1), error = TRUE)
+  expect_snapshot(
+    bound_prediction(as.matrix(sol), lower_limit = 1),
+    error = TRUE
+  )
 })
 
 test_that("upper_limit bounds for numeric predictions", {
@@ -36,12 +43,16 @@ test_that("upper_limit bounds for numeric predictions", {
 
   # ------------------------------------------------------------------------------
 
-  expect_snapshot(bound_prediction(modeldata::solubility_test, lower_limit = 2), error = TRUE)
+  expect_snapshot(
+    bound_prediction(modeldata::solubility_test, lower_limit = 2),
+    error = TRUE
+  )
   expect_snapshot(
     modeldata::solubility_test |>
       mutate(.pred = format(prediction)) |>
       bound_prediction(lower_limit = 2),
-    error = TRUE)
+    error = TRUE
+  )
 
   sol <- modeldata::solubility_test |> set_names(c("solubility", ".pred"))
 

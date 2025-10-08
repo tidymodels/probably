@@ -22,13 +22,13 @@
 #' }
 #' @export
 cal_estimate_beta <- function(
-    .data,
-    truth = NULL,
-    shape_params = 2,
-    location_params = 1,
-    estimate = dplyr::starts_with(".pred_"),
-    parameters = NULL,
-    ...
+  .data,
+  truth = NULL,
+  shape_params = 2,
+  location_params = 1,
+  estimate = dplyr::starts_with(".pred_"),
+  parameters = NULL,
+  ...
 ) {
   UseMethod("cal_estimate_beta")
 }
@@ -36,14 +36,14 @@ cal_estimate_beta <- function(
 #' @export
 #' @rdname cal_estimate_beta
 cal_estimate_beta.data.frame <- function(
-    .data,
-    truth = NULL,
-    shape_params = 2,
-    location_params = 1,
-    estimate = dplyr::starts_with(".pred_"),
-    parameters = NULL,
-    ...,
-    .by = NULL
+  .data,
+  truth = NULL,
+  shape_params = 2,
+  location_params = 1,
+  estimate = dplyr::starts_with(".pred_"),
+  parameters = NULL,
+  ...,
+  .by = NULL
 ) {
   stop_null_parameters(parameters)
 
@@ -70,13 +70,13 @@ cal_estimate_beta.data.frame <- function(
 #' @export
 #' @rdname cal_estimate_beta
 cal_estimate_beta.tune_results <- function(
-    .data,
-    truth = NULL,
-    shape_params = 2,
-    location_params = 1,
-    estimate = dplyr::starts_with(".pred_"),
-    parameters = NULL,
-    ...
+  .data,
+  truth = NULL,
+  shape_params = 2,
+  location_params = 1,
+  estimate = dplyr::starts_with(".pred_"),
+  parameters = NULL,
+  ...
 ) {
   info <- get_tune_data(.data, parameters)
 
@@ -96,13 +96,13 @@ cal_estimate_beta.tune_results <- function(
 #' @export
 #' @rdname cal_estimate_beta
 cal_estimate_beta.grouped_df <- function(
-    .data,
-    truth = NULL,
-    shape_params = 2,
-    location_params = 1,
-    estimate = NULL,
-    parameters = NULL,
-    ...
+  .data,
+  truth = NULL,
+  shape_params = 2,
+  location_params = 1,
+  estimate = NULL,
+  parameters = NULL,
+  ...
 ) {
   abort_if_grouped_df()
 }
@@ -137,12 +137,12 @@ beta_fit_over_groups <- function(info, shape_params, location_params, ...) {
 
 
 fit_all_beta_models <- function(
-    .data,
-    truth = NULL,
-    shape = 2,
-    location = 1,
-    estimate = NULL,
-    ...
+  .data,
+  truth = NULL,
+  shape = 2,
+  location = 1,
+  estimate = NULL,
+  ...
 ) {
   lvls <- levels(.data[[truth]])
   num_lvls <- length(lvls)
@@ -176,12 +176,12 @@ fit_all_beta_models <- function(
 
 
 fit_beta_model <- function(
-    .data,
-    truth = NULL,
-    shape = 2,
-    location = 1,
-    estimate = NULL,
-    ...
+  .data,
+  truth = NULL,
+  shape = 2,
+  location = 1,
+  estimate = NULL,
+  ...
 ) {
   outcome_data <- .data[[truth]]
   lvls <- levels(outcome_data)
@@ -255,6 +255,8 @@ check_cal_groups <- function(group, .data, call = rlang::env_parent()) {
 
 #' @export
 print.betacal <- function(x, ...) {
-  cli::cli_inform("Beta calibration ({x$parameters}) using {x$model$df.null} samples")
+  cli::cli_inform(
+    "Beta calibration ({x$parameters}) using {x$model$df.null} samples"
+  )
   invisible(x)
 }

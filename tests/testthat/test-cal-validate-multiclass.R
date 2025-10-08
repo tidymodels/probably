@@ -46,12 +46,28 @@ test_that("Isotonic validation with `fit_resamples` - Multiclass", {
   expect_equal(nrow(val_with_pred), nrow(res$multin))
   expect_equal(
     names(val_with_pred),
-    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+    c(
+      "splits",
+      "id",
+      ".notes",
+      ".predictions",
+      ".metrics",
+      ".metrics_cal",
+      ".predictions_cal"
+    )
   )
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     sort(names(val_with_pred$.predictions_cal[[1]])),
-    sort(c(".pred_one", ".pred_two", ".pred_three", ".row", "outcome", ".config", ".pred_class"))
+    sort(c(
+      ".pred_one",
+      ".pred_two",
+      ".pred_three",
+      ".row",
+      "outcome",
+      ".config",
+      ".pred_class"
+    ))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),

@@ -46,25 +46,29 @@
 #' cal_plot_windowed(new_test_pred, truth = class, window_size = 0.1, step_size = 0.03)
 #'
 #' @export
-cal_estimate_multinomial <- function(.data,
-                                     truth = NULL,
-                                     estimate = dplyr::starts_with(".pred_"),
-                                     smooth = TRUE,
-                                     parameters = NULL,
-                                     ...) {
+cal_estimate_multinomial <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+) {
   UseMethod("cal_estimate_multinomial")
 }
 
 #' @export
 #' @rdname cal_estimate_multinomial
 cal_estimate_multinomial.data.frame <-
-  function(.data,
-           truth = NULL,
-           estimate = dplyr::starts_with(".pred_"),
-           smooth = TRUE,
-           parameters = NULL,
-           ...,
-           .by = NULL) {
+  function(
+    .data,
+    truth = NULL,
+    estimate = dplyr::starts_with(".pred_"),
+    smooth = TRUE,
+    parameters = NULL,
+    ...,
+    .by = NULL
+  ) {
     stop_null_parameters(parameters)
 
     info <- get_prediction_data(
@@ -78,8 +82,10 @@ cal_estimate_multinomial.data.frame <-
 
     if (smooth) {
       method <- "Generalized additive model calibration"
-      additional_class <- c("cal_estimate_multinomial_spline",
-                            "cal_estimate_multinomial")
+      additional_class <- c(
+        "cal_estimate_multinomial_spline",
+        "cal_estimate_multinomial"
+      )
     } else {
       method <- "Multinomial regression calibration"
       additional_class <- "cal_estimate_multinomial"
@@ -100,13 +106,14 @@ cal_estimate_multinomial.data.frame <-
 #' @export
 #' @rdname cal_estimate_multinomial
 cal_estimate_multinomial.tune_results <-
-  function(.data,
-           truth = NULL,
-           estimate = dplyr::starts_with(".pred_"),
-           smooth = TRUE,
-           parameters = NULL,
-           ...) {
-
+  function(
+    .data,
+    truth = NULL,
+    estimate = dplyr::starts_with(".pred_"),
+    smooth = TRUE,
+    parameters = NULL,
+    ...
+  ) {
     info <- get_tune_data(.data, parameters)
 
     model <- mtnml_fit_over_groups(info, smooth, ...)
@@ -131,12 +138,14 @@ cal_estimate_multinomial.tune_results <-
 
 #' @export
 #' @rdname cal_estimate_multinomial
-cal_estimate_multinomial.grouped_df <- function(.data,
-                                                truth = NULL,
-                                                estimate = NULL,
-                                                smooth = TRUE,
-                                                parameters = NULL,
-                                                ...) {
+cal_estimate_multinomial.grouped_df <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+) {
   abort_if_grouped_df()
 }
 
@@ -194,7 +203,9 @@ fit_multinomial_model <- function(.data, smooth, estimate, outcome, ...) {
 
 mtnml_fit_over_groups <- function(info, smooth = TRUE, ...) {
   if (length(info$levels) == 2) {
-    cli::cli_abort("This function is meant to be used with multi-class outcomes only.")
+    cli::cli_abort(
+      "This function is meant to be used with multi-class outcomes only."
+    )
   }
 
   grp_df <- make_group_df(info$predictions, group = info$group)

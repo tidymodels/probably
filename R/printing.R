@@ -37,7 +37,6 @@ cat_levels <- function(x, width = getOption("width")) {
   drop <- n_lev > maxl
 
   cat(
-
     # Print number of levels if we had to drop some
     if (drop) {
       paste(format(n_lev), "")
@@ -46,14 +45,11 @@ cat_levels <- function(x, width = getOption("width")) {
     # Print `Levels: `
     header,
     paste(
-
       # `first levels ... last levels`
       if (drop) {
         c(lev[1L:max(1, maxl - 1)], "...", if (maxl > 1) lev[n_lev])
-      }
-
-      # print all levels
-      else {
+      } else {
+        # print all levels
         lev
       },
       collapse = colsep

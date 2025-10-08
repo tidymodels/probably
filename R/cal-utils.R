@@ -40,7 +40,10 @@ truth_estimate_map <- function(.data, truth, estimate, validate = FALSE) {
       if (length(estimate_str) == 1) {
         est_map <- list(sym(estimate_str), NULL)
       } else {
-        est_map <- purrr::map(seq_along(truth_levels), ~ sym(estimate_str[[.x]]))
+        est_map <- purrr::map(
+          seq_along(truth_levels),
+          ~ sym(estimate_str[[.x]])
+        )
       }
     }
     if (validate) {

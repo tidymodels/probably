@@ -69,7 +69,9 @@ int_conformal_full <- function(object, ...) {
 #' @export
 #' @rdname int_conformal_full
 int_conformal_full.default <- function(object, ...) {
-  cli::cli_abort("No known {.fn int_conformal_full} methods for this type of object.")
+  cli::cli_abort(
+    "No known {.fn int_conformal_full} methods for this type of object."
+  )
 }
 
 #' @export
@@ -84,7 +86,14 @@ int_conformal_full.workflow <-
     # check req packages
 
     pkgs <- required_pkgs(object)
-    pkgs <- unique(c(pkgs, "workflows", "parsnip", "probably", "mgcv", control$required_pkgs))
+    pkgs <- unique(c(
+      pkgs,
+      "workflows",
+      "parsnip",
+      "probably",
+      "mgcv",
+      control$required_pkgs
+    ))
     rlang::check_installed(pkgs)
     control$required_pkgs <- pkgs
 
@@ -109,7 +118,9 @@ print.int_conformal_full <- function(x, ...) {
   cat("model:", .get_fit_type(x$wflow), "\n")
   cat("training set size:", format(nrow(x$training), big.mark = ","), "\n\n")
 
-  cat("Use `predict(object, new_data, level)` to compute prediction intervals\n")
+  cat(
+    "Use `predict(object, new_data, level)` to compute prediction intervals\n"
+  )
   invisible(x)
 }
 
@@ -122,7 +133,7 @@ required_pkgs.int_conformal_full <- function(x, infra = TRUE, ...) {
   if (infra) {
     model_pkgs <- c(model_pkgs, "probably")
   }
-  
+
   model_pkgs <- unique(model_pkgs)
   model_pkgs
 }
@@ -167,9 +178,21 @@ predict.int_conformal_full <- function(object, new_data, level = 0.95, ...) {
   # compute intervals
 
   if (object$control$method == "grid") {
-    res <- grid_all(new_nest$data, object$wflow, object$training, level, object$control)
+    res <- grid_all(
+      new_nest$data,
+      object$wflow,
+      object$training,
+      level,
+      object$control
+    )
   } else {
-    res <- optimize_all(new_nest$data, object$wflow, object$training, level, object$control)
+    res <- optimize_all(
+      new_nest$data,
+      object$wflow,
+      object$training,
+      level,
+      object$control
+    )
   }
   if (object$control$progress) {
     cat("\n")
@@ -209,7 +232,10 @@ get_mode <- function(x) {
 
 check_workflow <- function(x, call = rlang::caller_env()) {
   if (!workflows::is_trained_workflow(x)) {
-    cli::cli_abort("{.arg object} should be a fitted workflow object.", call = call)
+    cli::cli_abort(
+      "{.arg object} should be a fitted workflow object.",
+      call = call
+    )
   }
   if (get_mode(x) != "regression") {
     cli::cli_abort("{.arg object} should be a regression model.", call = call)
@@ -239,7 +265,8 @@ var_model <- function(object, train_data, call = caller_env()) {
   # deviation at a given prediction.
   var_mod <-
     try(
-      mgcv::gam(sq ~ s(.pred),
+      mgcv::gam(
+        sq ~ s(.pred),
         data = train_res,
         family = stats::Gamma(link = "log")
       ),
@@ -337,16 +364,16 @@ grid_one <- function(new_data, model, train_data, level, ctrl) {
   new_data[[y_name]] <- NA_real_
   trial_data <- dplyr::bind_rows(train_data, new_data)
 
-  trial_vals <- seq(pred_val - bound, pred_val + bound, length.out = ctrl$trial_points)
+  trial_vals <- seq(
+    pred_val - bound,
+    pred_val + bound,
+    length.out = ctrl$trial_points
+  )
 
   res <-
     purrr::map_dfr(
       trial_vals,
-      ~ trial_fit(.x,
-        trial_data = trial_data,
-        wflow = model,
-        level = level
-      )
+      ~ trial_fit(.x, trial_data = trial_data, wflow = model, level = level)
     )
 
   compute_bound(res, pred_val)
@@ -412,20 +439,30 @@ optimize_one <- function(new_data, model, train_data, level, ctrl) {
 
   upper <-
     try(
-      stats::uniroot(get_diff, c(pred_val, pred_val + bound),
-        maxiter = ctrl$max_iter, tol = ctrl$tolerance,
+      stats::uniroot(
+        get_diff,
+        c(pred_val, pred_val + bound),
+        maxiter = ctrl$max_iter,
+        tol = ctrl$tolerance,
         extendInt = "upX",
-        trial_data, model, level
+        trial_data,
+        model,
+        level
       ),
       silent = TRUE
     )
 
   lower <-
     try(
-      stats::uniroot(get_diff, c(pred_val - bound, pred_val),
-        maxiter = ctrl$max_iter, tol = ctrl$tolerance,
+      stats::uniroot(
+        get_diff,
+        c(pred_val - bound, pred_val),
+        maxiter = ctrl$max_iter,
+        tol = ctrl$tolerance,
         extendInt = "downX",
-        trial_data, model, level
+        trial_data,
+        model,
+        level
       ),
       silent = TRUE
     )
@@ -473,9 +510,16 @@ get_root <- function(x, ctrl) {
 #' @return A list object with the options given by the user.
 #' @export
 control_conformal_full <-
-  function(method = "iterative", trial_points = 100, var_multiplier = 10,
-           max_iter = 100, tolerance = .Machine$double.eps^0.25, progress = FALSE,
-           required_pkgs = character(0), seed = sample.int(10^5, 1)) {
+  function(
+    method = "iterative",
+    trial_points = 100,
+    var_multiplier = 10,
+    max_iter = 100,
+    tolerance = .Machine$double.eps^0.25,
+    progress = FALSE,
+    required_pkgs = character(0),
+    seed = sample.int(10^5, 1)
+  ) {
     method <- rlang::arg_match0(method, c("iterative", "grid"))
 
     list(

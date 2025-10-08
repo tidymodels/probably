@@ -50,29 +50,35 @@
 #' @param .data An `rset` object or the results of [tune::fit_resamples()] with
 #' a `.predictions` column.
 #' @export
-cal_validate_logistic <- function(.data,
-                                  truth = NULL,
-                                  estimate = dplyr::starts_with(".pred_"),
-                                  metrics = NULL,
-                                  save_pred = FALSE,
-                                  ...) {
+cal_validate_logistic <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   UseMethod("cal_validate_logistic")
 }
 
 #' @export
 #' @rdname cal_validate_logistic
 cal_validate_logistic.resample_results <-
-  function(.data,
-           truth = NULL,
-           estimate = dplyr::starts_with(".pred_"),
-           metrics = NULL,
-           save_pred = FALSE,
-           ...) {
+  function(
+    .data,
+    truth = NULL,
+    estimate = dplyr::starts_with(".pred_"),
+    metrics = NULL,
+    save_pred = FALSE,
+    ...
+  ) {
     cl <- match.call()
     validation_check(.data, cl)
 
     if (!is.null(truth)) {
-      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
+      cli::cli_warn(
+        "{.arg truth} is automatically set when this type of object is used."
+      )
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -91,12 +97,14 @@ cal_validate_logistic.resample_results <-
 
 #' @export
 #' @rdname cal_validate_logistic
-cal_validate_logistic.rset <- function(.data,
-                                       truth = NULL,
-                                       estimate = dplyr::starts_with(".pred_"),
-                                       metrics = NULL,
-                                       save_pred = FALSE,
-                                       ...) {
+cal_validate_logistic.rset <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   cal_validate(
     rset = .data,
     truth = {{ truth }},
@@ -110,12 +118,14 @@ cal_validate_logistic.rset <- function(.data,
 
 #' @export
 #' @rdname cal_validate_logistic
-cal_validate_logistic.tune_results <- function(.data,
-                                               truth = NULL,
-                                               estimate = NULL,
-                                               metrics = NULL,
-                                               save_pred = FALSE,
-                                               ...) {
+cal_validate_logistic.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   abort_if_tune_result()
 }
 
@@ -136,29 +146,35 @@ cal_validate_logistic.tune_results <- function(.data,
 #'   cal_validate_isotonic(Class)
 #'
 #' @export
-cal_validate_isotonic <- function(.data,
-                                  truth = NULL,
-                                  estimate = dplyr::starts_with(".pred"),
-                                  metrics = NULL,
-                                  save_pred = FALSE,
-                                  ...) {
+cal_validate_isotonic <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   UseMethod("cal_validate_isotonic")
 }
 
 #' @export
 #' @rdname cal_validate_isotonic
 cal_validate_isotonic.resample_results <-
-  function(.data,
-           truth = NULL,
-           estimate = dplyr::starts_with(".pred"),
-           metrics = NULL,
-           save_pred = FALSE,
-           ...) {
+  function(
+    .data,
+    truth = NULL,
+    estimate = dplyr::starts_with(".pred"),
+    metrics = NULL,
+    save_pred = FALSE,
+    ...
+  ) {
     cl <- match.call()
     validation_check(.data, cl)
 
     if (!is.null(truth)) {
-      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
+      cli::cli_warn(
+        "{.arg truth} is automatically set when this type of object is used."
+      )
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -177,12 +193,14 @@ cal_validate_isotonic.resample_results <-
 
 #' @export
 #' @rdname cal_validate_isotonic
-cal_validate_isotonic.rset <- function(.data,
-                                       truth = NULL,
-                                       estimate = dplyr::starts_with(".pred"),
-                                       metrics = NULL,
-                                       save_pred = FALSE,
-                                       ...) {
+cal_validate_isotonic.rset <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   cal_validate(
     rset = .data,
     truth = {{ truth }},
@@ -196,12 +214,14 @@ cal_validate_isotonic.rset <- function(.data,
 
 #' @export
 #' @rdname cal_validate_isotonic
-cal_validate_isotonic.tune_results <- function(.data,
-                                               truth = NULL,
-                                               estimate = NULL,
-                                               metrics = NULL,
-                                               save_pred = FALSE,
-                                               ...) {
+cal_validate_isotonic.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   abort_if_tune_result()
 }
 
@@ -224,29 +244,35 @@ cal_validate_isotonic.tune_results <- function(.data,
 #'   cal_validate_isotonic_boot(Class)
 #'
 #' @export
-cal_validate_isotonic_boot <- function(.data,
-                                       truth = NULL,
-                                       estimate = dplyr::starts_with(".pred"),
-                                       metrics = NULL,
-                                       save_pred = FALSE,
-                                       ...) {
+cal_validate_isotonic_boot <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   UseMethod("cal_validate_isotonic_boot")
 }
 
 #' @export
 #' @rdname cal_validate_isotonic_boot
 cal_validate_isotonic_boot.resample_results <-
-  function(.data,
-           truth = NULL,
-           estimate = dplyr::starts_with(".pred"),
-           metrics = NULL,
-           save_pred = FALSE,
-           ...) {
+  function(
+    .data,
+    truth = NULL,
+    estimate = dplyr::starts_with(".pred"),
+    metrics = NULL,
+    save_pred = FALSE,
+    ...
+  ) {
     cl <- match.call()
     validation_check(.data, cl)
 
     if (!is.null(truth)) {
-      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
+      cli::cli_warn(
+        "{.arg truth} is automatically set when this type of object is used."
+      )
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -265,12 +291,14 @@ cal_validate_isotonic_boot.resample_results <-
 
 #' @export
 #' @rdname cal_validate_isotonic_boot
-cal_validate_isotonic_boot.rset <- function(.data,
-                                            truth = NULL,
-                                            estimate = dplyr::starts_with(".pred"),
-                                            metrics = NULL,
-                                            save_pred = FALSE,
-                                            ...) {
+cal_validate_isotonic_boot.rset <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   cal_validate(
     rset = .data,
     truth = {{ truth }},
@@ -284,12 +312,14 @@ cal_validate_isotonic_boot.rset <- function(.data,
 
 #' @export
 #' @rdname cal_validate_isotonic_boot
-cal_validate_isotonic_boot.tune_results <- function(.data,
-                                                    truth = NULL,
-                                                    estimate = NULL,
-                                                    metrics = NULL,
-                                                    save_pred = FALSE,
-                                                    ...) {
+cal_validate_isotonic_boot.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   abort_if_tune_result()
 }
 
@@ -312,24 +342,28 @@ cal_validate_isotonic_boot.tune_results <- function(.data,
 #'     cal_validate_beta(Class)
 #' }
 #' @export
-cal_validate_beta <- function(.data,
-                              truth = NULL,
-                              estimate = dplyr::starts_with(".pred_"),
-                              metrics = NULL,
-                              save_pred = FALSE,
-                              ...) {
+cal_validate_beta <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   UseMethod("cal_validate_beta")
 }
 
 #' @export
 #' @rdname cal_validate_beta
 cal_validate_beta.resample_results <-
-  function(.data,
-           truth = NULL,
-           estimate = dplyr::starts_with(".pred_"),
-           metrics = NULL,
-           save_pred = FALSE,
-           ...) {
+  function(
+    .data,
+    truth = NULL,
+    estimate = dplyr::starts_with(".pred_"),
+    metrics = NULL,
+    save_pred = FALSE,
+    ...
+  ) {
     cl <- match.call()
     validation_check(.data, cl)
 
@@ -337,7 +371,9 @@ cal_validate_beta.resample_results <-
     validation_check(.data, cl)
 
     if (!is.null(truth)) {
-      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
+      cli::cli_warn(
+        "{.arg truth} is automatically set when this type of object is used."
+      )
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -356,12 +392,14 @@ cal_validate_beta.resample_results <-
 
 #' @export
 #' @rdname cal_validate_beta
-cal_validate_beta.rset <- function(.data,
-                                   truth = NULL,
-                                   estimate = dplyr::starts_with(".pred_"),
-                                   metrics = NULL,
-                                   save_pred = FALSE,
-                                   ...) {
+cal_validate_beta.rset <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   cal_validate(
     rset = .data,
     truth = {{ truth }},
@@ -375,12 +413,14 @@ cal_validate_beta.rset <- function(.data,
 
 #' @export
 #' @rdname cal_validate_beta
-cal_validate_beta.tune_results <- function(.data,
-                                           truth = NULL,
-                                           estimate = NULL,
-                                           metrics = NULL,
-                                           save_pred = FALSE,
-                                           ...) {
+cal_validate_beta.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   abort_if_tune_result()
 }
 
@@ -398,29 +438,35 @@ cal_validate_beta.tune_results <- function(.data,
 #'   cal_validate_multinomial(Species)
 #'
 #' @export
-cal_validate_multinomial <- function(.data,
-                                     truth = NULL,
-                                     estimate = dplyr::starts_with(".pred_"),
-                                     metrics = NULL,
-                                     save_pred = FALSE,
-                                     ...) {
+cal_validate_multinomial <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   UseMethod("cal_validate_multinomial")
 }
 
 #' @export
 #' @rdname cal_validate_multinomial
 cal_validate_multinomial.resample_results <-
-  function(.data,
-           truth = NULL,
-           estimate = dplyr::starts_with(".pred_"),
-           metrics = NULL,
-           save_pred = FALSE,
-           ...) {
+  function(
+    .data,
+    truth = NULL,
+    estimate = dplyr::starts_with(".pred_"),
+    metrics = NULL,
+    save_pred = FALSE,
+    ...
+  ) {
     cl <- match.call()
     validation_check(.data, cl)
 
     if (!is.null(truth)) {
-      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
+      cli::cli_warn(
+        "{.arg truth} is automatically set when this type of object is used."
+      )
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -439,12 +485,14 @@ cal_validate_multinomial.resample_results <-
 
 #' @export
 #' @rdname cal_validate_multinomial
-cal_validate_multinomial.rset <- function(.data,
-                                          truth = NULL,
-                                          estimate = dplyr::starts_with(".pred_"),
-                                          metrics = NULL,
-                                          save_pred = FALSE,
-                                          ...) {
+cal_validate_multinomial.rset <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   cal_validate(
     rset = .data,
     truth = {{ truth }},
@@ -458,12 +506,14 @@ cal_validate_multinomial.rset <- function(.data,
 
 #' @export
 #' @rdname cal_validate_multinomial
-cal_validate_multinomial.tune_results <- function(.data,
-                                                  truth = NULL,
-                                                  estimate = NULL,
-                                                  metrics = NULL,
-                                                  save_pred = FALSE,
-                                                  ...) {
+cal_validate_multinomial.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   abort_if_tune_result()
 }
 
@@ -500,7 +550,9 @@ check_validation_metrics <- function(metrics, model_mode) {
     } else if (model_mode == "classification") {
       allowed <- c("prob_metric", "class_metric")
       if (any(!(metric_info$class %in% allowed))) {
-        cli::cli_abort("Metric type should be {.val prob_metric} or {.val class_metric}.")
+        cli::cli_abort(
+          "Metric type should be {.val prob_metric} or {.val class_metric}."
+        )
       }
     } else {
       cli::cli_abort("Unknown mode {.val {model_mode}}")
@@ -510,13 +562,15 @@ check_validation_metrics <- function(metrics, model_mode) {
 }
 
 
-cal_validate <- function(rset,
-                         truth = NULL,
-                         estimate = NULL,
-                         cal_function = NULL,
-                         metrics = NULL,
-                         save_pred = FALSE,
-                         ...) {
+cal_validate <- function(
+  rset,
+  truth = NULL,
+  estimate = NULL,
+  cal_function = NULL,
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -524,7 +578,8 @@ cal_validate <- function(rset,
     cli::cli_abort("No calibration function provided")
   }
 
-  outcomes <- dplyr::select(rset$splits[[1]]$data, {{ truth }}) |> purrr::pluck(1)
+  outcomes <- dplyr::select(rset$splits[[1]]$data, {{ truth }}) |>
+    purrr::pluck(1)
   model_mode <- get_problem_type(outcomes)
 
   metrics <- check_validation_metrics(metrics, model_mode)
@@ -563,7 +618,8 @@ cal_validate <- function(rset,
   rset$.metrics <- NULL
 
   metric_res <-
-    purrr::map2_dfr(cals,
+    purrr::map2_dfr(
+      cals,
       predictions_out,
       compute_cal_metrics,
       metrics = metrics,
@@ -592,14 +648,24 @@ pull_pred <- function(x, analysis = TRUE) {
 
     preds <- purrr::map(x$splits, as.data.frame, data = what)
     if (!has_dot_row) {
-      rows <- purrr::map(x$splits, ~ dplyr::tibble(.row = as.integer(.x, data = what)))
+      rows <- purrr::map(
+        x$splits,
+        ~ dplyr::tibble(.row = as.integer(.x, data = what))
+      )
       preds <- purrr::map2(preds, rows, ~ dplyr::bind_cols(.x, .y))
     }
   }
   preds
 }
 
-compute_cal_metrics <- function(calib, preds, metrics, truth_col, est_cols, pred = FALSE) {
+compute_cal_metrics <- function(
+  calib,
+  preds,
+  metrics,
+  truth_col,
+  est_cols,
+  pred = FALSE
+) {
   if (has_configs(preds)) {
     configs <- preds$.config
   } else {
@@ -628,7 +694,6 @@ compute_cal_metrics <- function(calib, preds, metrics, truth_col, est_cols, pred
 
   res
 }
-
 
 
 #' @importFrom pillar type_sum
@@ -661,29 +726,35 @@ type_sum.cal_object <- function(x, ...) {
 #'   vfold_cv() |>
 #'   cal_validate_linear(truth = outcome, smooth = FALSE, metrics = reg_stats)
 #' @export
-cal_validate_linear <- function(.data,
-                                truth = NULL,
-                                estimate = dplyr::starts_with(".pred"),
-                                metrics = NULL,
-                                save_pred = FALSE,
-                                ...) {
+cal_validate_linear <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   UseMethod("cal_validate_linear")
 }
 
 #' @export
 #' @rdname cal_validate_linear
 cal_validate_linear.resample_results <-
-  function(.data,
-           truth = NULL,
-           estimate = dplyr::starts_with(".pred"),
-           metrics = NULL,
-           save_pred = FALSE,
-           ...) {
+  function(
+    .data,
+    truth = NULL,
+    estimate = dplyr::starts_with(".pred"),
+    metrics = NULL,
+    save_pred = FALSE,
+    ...
+  ) {
     cl <- match.call()
     validation_check(.data, cl)
 
     if (!is.null(truth)) {
-      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
+      cli::cli_warn(
+        "{.arg truth} is automatically set when this type of object is used."
+      )
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -702,12 +773,14 @@ cal_validate_linear.resample_results <-
 
 #' @export
 #' @rdname cal_validate_linear
-cal_validate_linear.rset <- function(.data,
-                                     truth = NULL,
-                                     estimate = dplyr::starts_with(".pred"),
-                                     metrics = NULL,
-                                     save_pred = FALSE,
-                                     ...) {
+cal_validate_linear.rset <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   cal_validate(
     rset = .data,
     truth = {{ truth }},
@@ -757,29 +830,35 @@ cal_validate_linear.rset <- function(.data,
 #'   collect_metrics()
 #'
 #' @export
-cal_validate_none <- function(.data,
-                              truth = NULL,
-                              estimate = dplyr::starts_with(".pred_"),
-                              metrics = NULL,
-                              save_pred = FALSE,
-                              ...) {
+cal_validate_none <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   UseMethod("cal_validate_none")
 }
 
 #' @export
 #' @rdname cal_validate_none
 cal_validate_none.resample_results <-
-  function(.data,
-           truth = NULL,
-           estimate = dplyr::starts_with(".pred_"),
-           metrics = NULL,
-           save_pred = FALSE,
-           ...) {
+  function(
+    .data,
+    truth = NULL,
+    estimate = dplyr::starts_with(".pred_"),
+    metrics = NULL,
+    save_pred = FALSE,
+    ...
+  ) {
     cl <- match.call()
     validation_check(.data, cl)
 
     if (!is.null(truth)) {
-      cli::cli_warn("{.arg truth} is automatically set when this type of object is used.")
+      cli::cli_warn(
+        "{.arg truth} is automatically set when this type of object is used."
+      )
     }
     truth <- tune::.get_tune_outcome_names(.data)
     # Change splits$data to be the predictions instead of the original
@@ -798,12 +877,14 @@ cal_validate_none.resample_results <-
 
 #' @export
 #' @rdname cal_validate_none
-cal_validate_none.rset <- function(.data,
-                                   truth = NULL,
-                                   estimate = dplyr::starts_with(".pred_"),
-                                   metrics = NULL,
-                                   save_pred = FALSE,
-                                   ...) {
+cal_validate_none.rset <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred_"),
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   cal_validate(
     rset = .data,
     truth = {{ truth }},
@@ -817,12 +898,14 @@ cal_validate_none.rset <- function(.data,
 
 #' @export
 #' @rdname cal_validate_none
-cal_validate_none.tune_results <- function(.data,
-                                           truth = NULL,
-                                           estimate = NULL,
-                                           metrics = NULL,
-                                           save_pred = FALSE,
-                                           ...) {
+cal_validate_none.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  metrics = NULL,
+  save_pred = FALSE,
+  ...
+) {
   abort_if_tune_result()
 }
 
@@ -941,4 +1024,3 @@ validation_check <- function(x, cl = NULL, call = rlang::caller_env()) {
   }
   invisible(NULL)
 }
-

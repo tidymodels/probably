@@ -2,8 +2,16 @@
 
 # This function iterates through each of the class levels. For binary it selects
 # the appropriate one based on the `event_level` selected
-.cal_class_grps <- function(.data, truth, cuts, levels, event_level, conf_level,
-                            method = "breaks", smooth = NULL) {
+.cal_class_grps <- function(
+  .data,
+  truth,
+  cuts,
+  levels,
+  event_level,
+  conf_level,
+  method = "breaks",
+  smooth = NULL
+) {
   truth <- enquo(truth)
 
   lev <- process_level(event_level)
@@ -18,7 +26,9 @@
   }
 
   if (length_levels > 2 & lev == 2) {
-    cli::cli_abort("Only {.val auto} {.arg event_level} is valid for multi-class models.")
+    cli::cli_abort(
+      "Only {.val auto} {.arg event_level} is valid for multi-class models."
+    )
   }
 
   no_levels <- levels
@@ -73,14 +83,16 @@
   res
 }
 
-.cal_model_grps <- function(.data,
-                            truth = NULL,
-                            estimate = NULL,
-                            conf_level = 0.90,
-                            event_level = c("auto", "first", "second"),
-                            lev,
-                            level,
-                            smooth = TRUE) {
+.cal_model_grps <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  conf_level = 0.90,
+  event_level = c("auto", "first", "second"),
+  lev,
+  level,
+  smooth = TRUE
+) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -128,8 +140,15 @@
 }
 
 # This function iterates through each breaks/windows of the plot
-.cal_cut_grps <- function(.data, truth, estimate, cuts,
-                          level, lev, conf_level) {
+.cal_cut_grps <- function(
+  .data,
+  truth,
+  estimate,
+  cuts,
+  level,
+  lev,
+  conf_level
+) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
 
@@ -202,18 +221,23 @@ process_level <- function(x) {
     ret <- 2
   }
   if (is.null(ret)) {
-    cli::cli_abort("Invalid {.arg event_level} entry: {x}. Valid entries are
-                   {.val first}, {.val second}, or {.val auto}.", call = NULL)
+    cli::cli_abort(
+      "Invalid {.arg event_level} entry: {x}. Valid entries are
+                   {.val first}, {.val second}, or {.val auto}.",
+      call = NULL
+    )
   }
   ret
 }
 
-tune_results_args <- function(.data,
-                              truth,
-                              estimate,
-                              event_level,
-                              parameters = NULL,
-                              ...) {
+tune_results_args <- function(
+  .data,
+  truth,
+  estimate,
+  event_level,
+  parameters = NULL,
+  ...
+) {
   if (!(".predictions" %in% colnames(.data))) {
     rlang::abort(
       paste0(
@@ -259,11 +283,21 @@ tune_results_args <- function(.data,
 
 #--------------------------------- Plot ----------------------------------------
 
-cal_plot_impl <- function(tbl, x, y,
-                          .data, truth, estimate, group,
-                          x_label, y_label,
-                          include_ribbon, include_rug, include_points,
-                          is_tune_results = FALSE) {
+cal_plot_impl <- function(
+  tbl,
+  x,
+  y,
+  .data,
+  truth,
+  estimate,
+  group,
+  x_label,
+  y_label,
+  include_ribbon,
+  include_rug,
+  include_points,
+  is_tune_results = FALSE
+) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -290,7 +324,10 @@ cal_plot_impl <- function(tbl, x, y,
     dplyr_group <- NULL
   }
 
-  res <- ggplot(data = tbl, aes(x = !!x, color = !!dplyr_group, fill = !!dplyr_group)) +
+  res <- ggplot(
+    data = tbl,
+    aes(x = !!x, color = !!dplyr_group, fill = !!dplyr_group)
+  ) +
     geom_abline(col = "#aaaaaa", linetype = 2) +
     geom_line(aes(y = !!y))
 
@@ -317,7 +354,9 @@ cal_plot_impl <- function(tbl, x, y,
     level1 <- levels[[1]]
 
     if (length(levels) > 1 & !is_tune_results) {
-      cli::cli_warn("Multiple class columns identified. Using: {.code {level1}}")
+      cli::cli_warn(
+        "Multiple class columns identified. Using: {.code {level1}}"
+      )
     }
 
     truth_values <- 1:2
@@ -347,10 +386,11 @@ cal_plot_impl <- function(tbl, x, y,
     theme(aspect.ratio = 1)
 
   if (!quo_is_null(group) & length(tbl_groups)) {
-    res <- res + facet_grid(
-      rows = vars(!!group),
-      cols = vars(!!parse_expr(tbl_groups))
-    )
+    res <- res +
+      facet_grid(
+        rows = vars(!!group),
+        cols = vars(!!parse_expr(tbl_groups))
+      )
   } else {
     if (!quo_is_null(group)) {
       res <- res + facet_wrap(group)

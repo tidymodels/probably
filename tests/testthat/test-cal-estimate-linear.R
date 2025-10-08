@@ -1,7 +1,11 @@
 test_that("Linear estimates work - data.frame", {
   skip_if_not_installed("modeldata")
 
-  sl_linear <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
+  sl_linear <- cal_estimate_linear(
+    boosting_predictions_oob,
+    outcome,
+    smooth = FALSE
+  )
   expect_cal_type(sl_linear, "regression")
   expect_cal_method(sl_linear, "Linear calibration")
   expect_cal_estimate(sl_linear, "butchered_glm")
@@ -27,7 +31,6 @@ test_that("Linear estimates work - data.frame", {
       dplyr::mutate(group1 = 1, group2 = 2) |>
       cal_estimate_linear(outcome, smooth = FALSE, .by = c(group1, group2))
   )
-
 })
 
 test_that("Linear estimates work - tune_results", {
@@ -36,7 +39,6 @@ test_that("Linear estimates work - tune_results", {
   expect_cal_method(tl_linear, "Linear calibration")
   expect_cal_estimate(tl_linear, "butchered_glm")
   expect_snapshot(print(tl_linear))
-
 })
 
 test_that("Linear estimates errors - grouped_df", {
@@ -55,7 +57,7 @@ test_that("Linear spline estimates work - data.frame", {
   expect_cal_estimate(sl_gam, "butchered_gam")
   expect_cal_rows(sl_gam, 2000)
   expect_snapshot(print(sl_gam))
-    expect_equal(
+  expect_equal(
     required_pkgs(sl_gam),
     c("mgcv", "probably")
   )
@@ -99,9 +101,17 @@ test_that("Linear spline switches to linear if too few unique", {
   )
 
   expect_snapshot(
-    sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)
+    sl_gam <- cal_estimate_linear(
+      boosting_predictions_oob,
+      outcome,
+      smooth = TRUE
+    )
   )
-  sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
+  sl_lm <- cal_estimate_linear(
+    boosting_predictions_oob,
+    outcome,
+    smooth = FALSE
+  )
 
   expect_identical(
     sl_gam$estimates,
@@ -109,13 +119,22 @@ test_that("Linear spline switches to linear if too few unique", {
   )
 
   expect_snapshot(
-    sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id, smooth = TRUE)
+    sl_gam <- cal_estimate_linear(
+      boosting_predictions_oob,
+      outcome,
+      .by = id,
+      smooth = TRUE
+    )
   )
-  sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id, smooth = FALSE)
+  sl_lm <- cal_estimate_linear(
+    boosting_predictions_oob,
+    outcome,
+    .by = id,
+    smooth = FALSE
+  )
 
   expect_identical(
     sl_gam$estimates,
     sl_lm$estimates
   )
 })
-

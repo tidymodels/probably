@@ -1,4 +1,3 @@
-
 test_that("Binary windowed functions work", {
   skip_if_not_installed("modeldata")
 
@@ -11,18 +10,20 @@ test_that("Binary windowed functions work", {
   )
 
   x30_1 <- segment_logistic |>
-    dplyr::mutate(x = dplyr::case_when(
-      .pred_good <= 0.05 ~ 1,
-      .pred_good >= 0.06 & .pred_good <= 0.16 ~ 2,
-      .pred_good >= 0.17 & .pred_good <= 0.27 ~ 3,
-      .pred_good >= 0.28 & .pred_good <= 0.38 ~ 4,
-      .pred_good >= 0.39 & .pred_good <= 0.49 ~ 5,
-      .pred_good >= 0.50 & .pred_good <= 0.60 ~ 6,
-      .pred_good >= 0.61 & .pred_good <= 0.71 ~ 7,
-      .pred_good >= 0.72 & .pred_good <= 0.82 ~ 8,
-      .pred_good >= 0.83 & .pred_good <= 0.93 ~ 9,
-      .pred_good >= 0.94 & .pred_good <= 1 ~ 10,
-    )) |>
+    dplyr::mutate(
+      x = dplyr::case_when(
+        .pred_good <= 0.05 ~ 1,
+        .pred_good >= 0.06 & .pred_good <= 0.16 ~ 2,
+        .pred_good >= 0.17 & .pred_good <= 0.27 ~ 3,
+        .pred_good >= 0.28 & .pred_good <= 0.38 ~ 4,
+        .pred_good >= 0.39 & .pred_good <= 0.49 ~ 5,
+        .pred_good >= 0.50 & .pred_good <= 0.60 ~ 6,
+        .pred_good >= 0.61 & .pred_good <= 0.71 ~ 7,
+        .pred_good >= 0.72 & .pred_good <= 0.82 ~ 8,
+        .pred_good >= 0.83 & .pred_good <= 0.93 ~ 9,
+        .pred_good >= 0.94 & .pred_good <= 1 ~ 10,
+      )
+    ) |>
     dplyr::filter(!is.na(x)) |>
     dplyr::count(x)
 
@@ -44,18 +45,20 @@ test_that("Binary windowed functions work", {
 
   x32_1 <- testthat_cal_binary() |>
     tune::collect_predictions(summarize = TRUE) |>
-    dplyr::mutate(x = dplyr::case_when(
-      .pred_class_1 <= 0.05 ~ 1,
-      .pred_class_1 >= 0.06 & .pred_class_1 <= 0.16 ~ 2,
-      .pred_class_1 >= 0.17 & .pred_class_1 <= 0.27 ~ 3,
-      .pred_class_1 >= 0.28 & .pred_class_1 <= 0.38 ~ 4,
-      .pred_class_1 >= 0.39 & .pred_class_1 <= 0.49 ~ 5,
-      .pred_class_1 >= 0.50 & .pred_class_1 <= 0.60 ~ 6,
-      .pred_class_1 >= 0.61 & .pred_class_1 <= 0.71 ~ 7,
-      .pred_class_1 >= 0.72 & .pred_class_1 <= 0.82 ~ 8,
-      .pred_class_1 >= 0.83 & .pred_class_1 <= 0.93 ~ 9,
-      .pred_class_1 >= 0.94 & .pred_class_1 <= 1 ~ 10,
-    )) |>
+    dplyr::mutate(
+      x = dplyr::case_when(
+        .pred_class_1 <= 0.05 ~ 1,
+        .pred_class_1 >= 0.06 & .pred_class_1 <= 0.16 ~ 2,
+        .pred_class_1 >= 0.17 & .pred_class_1 <= 0.27 ~ 3,
+        .pred_class_1 >= 0.28 & .pred_class_1 <= 0.38 ~ 4,
+        .pred_class_1 >= 0.39 & .pred_class_1 <= 0.49 ~ 5,
+        .pred_class_1 >= 0.50 & .pred_class_1 <= 0.60 ~ 6,
+        .pred_class_1 >= 0.61 & .pred_class_1 <= 0.71 ~ 7,
+        .pred_class_1 >= 0.72 & .pred_class_1 <= 0.82 ~ 8,
+        .pred_class_1 >= 0.83 & .pred_class_1 <= 0.93 ~ 9,
+        .pred_class_1 >= 0.94 & .pred_class_1 <= 1 ~ 10,
+      )
+    ) |>
     dplyr::filter(!is.na(x)) |>
     dplyr::count(.config, x)
 
@@ -70,9 +73,9 @@ test_that("Binary windowed functions work", {
   expect_true(has_facet(x33))
 
   win_configs <-
-    bin_with_configs() |> cal_plot_windowed(truth = Class, estimate = .pred_good)
+    bin_with_configs() |>
+    cal_plot_windowed(truth = Class, estimate = .pred_good)
   expect_true(has_facet(win_configs))
-
 
   # ------------------------------------------------------------------------------
   # multinomial outcome, binary windowed plots
@@ -82,7 +85,6 @@ test_that("Binary windowed functions work", {
   expect_s3_class(multi_configs_from_tune, "ggplot")
   # should be faceted by .config and class
   expect_true(inherits(multi_configs_from_tune$facet, "FacetGrid"))
-
 
   multi_configs_from_df <-
     mnl_with_configs() |> cal_plot_windowed(truth = obs, estimate = c(VF:L))
@@ -132,18 +134,20 @@ test_that("Groupings that may not match work", {
     )
 
   x51_1 <- combined |>
-    dplyr::mutate(x = dplyr::case_when(
-      .pred_good <= 0.05 ~ 1,
-      .pred_good >= 0.06 & .pred_good <= 0.16 ~ 2,
-      .pred_good >= 0.17 & .pred_good <= 0.27 ~ 3,
-      .pred_good >= 0.28 & .pred_good <= 0.38 ~ 4,
-      .pred_good >= 0.39 & .pred_good <= 0.49 ~ 5,
-      .pred_good >= 0.50 & .pred_good <= 0.60 ~ 6,
-      .pred_good >= 0.61 & .pred_good <= 0.71 ~ 7,
-      .pred_good >= 0.72 & .pred_good <= 0.82 ~ 8,
-      .pred_good >= 0.83 & .pred_good <= 0.93 ~ 9,
-      .pred_good >= 0.94 & .pred_good <= 1 ~ 10,
-    )) |>
+    dplyr::mutate(
+      x = dplyr::case_when(
+        .pred_good <= 0.05 ~ 1,
+        .pred_good >= 0.06 & .pred_good <= 0.16 ~ 2,
+        .pred_good >= 0.17 & .pred_good <= 0.27 ~ 3,
+        .pred_good >= 0.28 & .pred_good <= 0.38 ~ 4,
+        .pred_good >= 0.39 & .pred_good <= 0.49 ~ 5,
+        .pred_good >= 0.50 & .pred_good <= 0.60 ~ 6,
+        .pred_good >= 0.61 & .pred_good <= 0.71 ~ 7,
+        .pred_good >= 0.72 & .pred_good <= 0.82 ~ 8,
+        .pred_good >= 0.83 & .pred_good <= 0.93 ~ 9,
+        .pred_good >= 0.94 & .pred_good <= 1 ~ 10,
+      )
+    ) |>
     dplyr::filter(!is.na(x)) |>
     dplyr::count(source, x)
 

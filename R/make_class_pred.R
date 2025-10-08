@@ -69,10 +69,12 @@
 #'   )
 #'
 #' @export
-make_class_pred <- function(...,
-                            levels,
-                            ordered = FALSE,
-                            min_prob = 1 / length(levels)) {
+make_class_pred <- function(
+  ...,
+  levels,
+  ordered = FALSE,
+  min_prob = 1 / length(levels)
+) {
   dots <- rlang::quos(...)
   probs <- lapply(dots, rlang::eval_tidy)
 
@@ -129,11 +131,13 @@ make_class_pred <- function(...,
 
 #' @rdname make_class_pred
 #' @export
-make_two_class_pred <- function(estimate,
-                                levels,
-                                threshold = 0.5,
-                                ordered = FALSE,
-                                buffer = NULL) {
+make_two_class_pred <- function(
+  estimate,
+  levels,
+  threshold = 0.5,
+  ordered = FALSE,
+  buffer = NULL
+) {
   if (length(levels) != 2 || !is.character(levels)) {
     cli::cli_abort("{.arg levels} must be a character vector of length 2.")
   }
@@ -221,12 +225,14 @@ make_two_class_pred <- function(estimate,
 #' )
 #'
 #' @export
-append_class_pred <- function(.data,
-                              ...,
-                              levels,
-                              ordered = FALSE,
-                              min_prob = 1 / length(levels),
-                              name = ".class_pred") {
+append_class_pred <- function(
+  .data,
+  ...,
+  levels,
+  ordered = FALSE,
+  min_prob = 1 / length(levels),
+  name = ".class_pred"
+) {
   if (!is.data.frame(.data) && ncol(.data) < 2) {
     cli::cli_abort(
       "{.arg .data} should be a data frame or tibble with at least 2 columns."

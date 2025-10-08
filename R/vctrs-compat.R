@@ -81,7 +81,13 @@ vec_cast.ordered.class_pred <- function(x, to, ...) {
 }
 
 #' @export
-vec_cast.class_pred.character <- function(x, to, ..., x_arg = "x", to_arg = "to") {
+vec_cast.class_pred.character <- function(
+  x,
+  to,
+  ...,
+  x_arg = "x",
+  to_arg = "to"
+) {
   # first cast character -> factor
   # then add class pred attributes
 

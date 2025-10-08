@@ -59,8 +59,14 @@ test_that("factor from numeric", {
   tab_1 <- table(new_fac_1)
   expect_s3_class(new_fac_1, "factor")
   expect_true(isTRUE(all.equal(levels(new_fac_1), levels(ex_data$outcome))))
-  expect_equal(unname(tab_1["Cl1"]), sum(ex_data$prob_est >= ex_data$prob_est[1]))
-  expect_equal(unname(tab_1["Cl2"]), sum(ex_data$prob_est < ex_data$prob_est[1]))
+  expect_equal(
+    unname(tab_1["Cl1"]),
+    sum(ex_data$prob_est >= ex_data$prob_est[1])
+  )
+  expect_equal(
+    unname(tab_1["Cl2"]),
+    sum(ex_data$prob_est < ex_data$prob_est[1])
+  )
 
   # missing data
   new_fac_2 <-
@@ -74,8 +80,14 @@ test_that("factor from numeric", {
   expect_s3_class(new_fac_2, "factor")
   cmpl_probs <- ex_data_miss$prob_est[!is.na(ex_data_miss$prob_est)]
   expect_true(isTRUE(all.equal(is.na(new_fac_2), is.na(ex_data_miss$prob_est))))
-  expect_true(isTRUE(all.equal(levels(new_fac_2), levels(ex_data_miss$outcome))))
-  expect_equal(unname(tab_2["Cl1"]), sum(cmpl_probs >= ex_data_miss$prob_est[1]))
+  expect_true(isTRUE(all.equal(
+    levels(new_fac_2),
+    levels(ex_data_miss$outcome)
+  )))
+  expect_equal(
+    unname(tab_2["Cl1"]),
+    sum(cmpl_probs >= ex_data_miss$prob_est[1])
+  )
   expect_equal(unname(tab_2["Cl2"]), sum(cmpl_probs < ex_data_miss$prob_est[1]))
 
   new_fac_3 <-
@@ -88,8 +100,14 @@ test_that("factor from numeric", {
   tab_3 <- table(new_fac_3)
   expect_s3_class(new_fac_3, "factor")
   expect_true(isTRUE(all.equal(levels(new_fac_3), levels(ex_data$outcome))))
-  expect_equal(unname(tab_3["Cl1"]), sum(ex_data$prob_est < ex_data$prob_est[1]))
-  expect_equal(unname(tab_3["Cl2"]), sum(ex_data$prob_est >= ex_data$prob_est[1]))
+  expect_equal(
+    unname(tab_3["Cl1"]),
+    sum(ex_data$prob_est < ex_data$prob_est[1])
+  )
+  expect_equal(
+    unname(tab_3["Cl2"]),
+    sum(ex_data$prob_est >= ex_data$prob_est[1])
+  )
 })
 
 test_that("single group", {

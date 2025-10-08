@@ -9,7 +9,8 @@ test_that("Logistic estimates work - data.frame", {
   expect_snapshot(print(sl_logistic))
 
   expect_snapshot_error(
-    segment_logistic |> cal_estimate_logistic(truth = Class, estimate = .pred_poor)
+    segment_logistic |>
+      cal_estimate_logistic(truth = Class, estimate = .pred_poor)
   )
 
   data(hpc_cv, package = "yardstick")
@@ -31,7 +32,6 @@ test_that("Logistic estimates work - data.frame", {
     "probably"
   )
 
-
   expect_snapshot_error(
     segment_logistic |>
       dplyr::mutate(group1 = 1, group2 = 2) |>
@@ -41,12 +41,20 @@ test_that("Logistic estimates work - data.frame", {
   # ------------------------------------------------------------------------------
 
   data(two_class_example, package = "modeldata")
-  two_cls_plist <- two_class_example[0,]
+  two_cls_plist <- two_class_example[0, ]
   two_cls_mod <-
-    cal_estimate_logistic(two_class_example, truth = truth, estimate = c(Class1, Class2))
+    cal_estimate_logistic(
+      two_class_example,
+      truth = truth,
+      estimate = c(Class1, Class2)
+    )
 
-  two_cls_res <- cal_apply(two_class_example, two_cls_mod, pred_class = predicted)
-  expect_equal(two_cls_res[0,], two_cls_plist)
+  two_cls_res <- cal_apply(
+    two_class_example,
+    two_cls_mod,
+    pred_class = predicted
+  )
+  expect_equal(two_cls_res[0, ], two_cls_plist)
   expect_equal(
     required_pkgs(two_cls_mod),
     c("mgcv", "probably")
@@ -107,7 +115,7 @@ test_that("Logistic spline estimates work - tune_results", {
   expect_cal_method(tl_gam, "Generalized additive model calibration")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
-    expect_equal(
+  expect_equal(
     required_pkgs(tl_gam),
     c("mgcv", "probably")
   )
@@ -141,9 +149,19 @@ test_that("Logistic spline switches to linear if too few unique", {
     length.out = nrow(segment_logistic)
   )
   expect_snapshot(
-    sl_gam <- cal_estimate_logistic(segment_logistic, Class, .by = id, smooth = TRUE)
+    sl_gam <- cal_estimate_logistic(
+      segment_logistic,
+      Class,
+      .by = id,
+      smooth = TRUE
+    )
   )
-  sl_lm <- cal_estimate_logistic(segment_logistic, Class, .by = id, smooth = FALSE)
+  sl_lm <- cal_estimate_logistic(
+    segment_logistic,
+    Class,
+    .by = id,
+    smooth = FALSE
+  )
 
   expect_identical(
     sl_gam$estimates,

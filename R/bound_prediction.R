@@ -15,13 +15,19 @@
 #'
 #' bound_prediction(solubility_test, lower_limit = -1)
 #' @export
-bound_prediction <- function(x, lower_limit = -Inf, upper_limit = Inf,
-                             call = rlang::current_env()) {
+bound_prediction <- function(
+  x,
+  lower_limit = -Inf,
+  upper_limit = Inf,
+  call = rlang::current_env()
+) {
   check_data_frame(x, call = call)
 
   if (!any(names(x) == ".pred")) {
-    cli::cli_abort("The argument {.arg x} should have a column named {.code .pred}.",
-                   call = call)
+    cli::cli_abort(
+      "The argument {.arg x} should have a column named {.code .pred}.",
+      call = call
+    )
   }
   if (!is.numeric(x$.pred)) {
     cli::cli_abort("Column {.code .pred} should be numeric.", call = call)
@@ -39,4 +45,3 @@ bound_prediction <- function(x, lower_limit = -Inf, upper_limit = Inf,
   }
   x
 }
-

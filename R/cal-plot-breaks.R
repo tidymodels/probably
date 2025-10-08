@@ -89,32 +89,36 @@
 #'   theme(legend.position = "")
 #' @seealso [cal_plot_logistic()], [cal_plot_windowed()]
 #' @export
-cal_plot_breaks <- function(.data,
-                            truth = NULL,
-                            estimate = dplyr::starts_with(".pred"),
-                            num_breaks = 10,
-                            conf_level = 0.90,
-                            include_ribbon = TRUE,
-                            include_rug = TRUE,
-                            include_points = TRUE,
-                            event_level = c("auto", "first", "second"),
-                            ...) {
+cal_plot_breaks <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  num_breaks = 10,
+  conf_level = 0.90,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   UseMethod("cal_plot_breaks")
 }
 
 #' @export
 #' @rdname cal_plot_breaks
-cal_plot_breaks.data.frame <- function(.data,
-                                       truth = NULL,
-                                       estimate = dplyr::starts_with(".pred"),
-                                       num_breaks = 10,
-                                       conf_level = 0.90,
-                                       include_ribbon = TRUE,
-                                       include_rug = TRUE,
-                                       include_points = TRUE,
-                                       event_level = c("auto", "first", "second"),
-                                       ...,
-                                       .by = NULL) {
+cal_plot_breaks.data.frame <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  num_breaks = 10,
+  conf_level = 0.90,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...,
+  .by = NULL
+) {
   group <- get_group_argument({{ .by }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
@@ -134,16 +138,18 @@ cal_plot_breaks.data.frame <- function(.data,
 }
 #' @export
 #' @rdname cal_plot_breaks
-cal_plot_breaks.tune_results <- function(.data,
-                                         truth = NULL,
-                                         estimate = dplyr::starts_with(".pred"),
-                                         num_breaks = 10,
-                                         conf_level = 0.90,
-                                         include_ribbon = TRUE,
-                                         include_rug = TRUE,
-                                         include_points = TRUE,
-                                         event_level = c("auto", "first", "second"),
-                                         ...) {
+cal_plot_breaks.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  num_breaks = 10,
+  conf_level = 0.90,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -169,34 +175,42 @@ cal_plot_breaks.tune_results <- function(.data,
 
 #' @export
 #' @rdname cal_plot_breaks
-cal_plot_breaks.grouped_df <- function(.data,
-                                       truth = NULL,
-                                       estimate = NULL,
-                                       num_breaks = 10,
-                                       conf_level = 0.90,
-                                       include_ribbon = TRUE,
-                                       include_rug = TRUE,
-                                       include_points = TRUE,
-                                       event_level = c("auto", "first", "second"),
-                                       ...) {
+cal_plot_breaks.grouped_df <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  num_breaks = 10,
+  conf_level = 0.90,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   abort_if_grouped_df()
 }
 
 #--------------------------- >> Implementation ---------------------------------
 
-cal_plot_breaks_impl <- function(.data,
-                                 truth = NULL,
-                                 estimate = dplyr::starts_with(".pred"),
-                                 group = NULL,
-                                 num_breaks = 10,
-                                 conf_level = 0.90,
-                                 include_ribbon = TRUE,
-                                 include_rug = TRUE,
-                                 include_points = TRUE,
-                                 event_level = c("auto", "first", "second"),
-                                 is_tune_results = FALSE,
-                                 ...) {
-  rlang::arg_match0(event_level, c("auto", "first", "second"), error_call = NULL)
+cal_plot_breaks_impl <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  group = NULL,
+  num_breaks = 10,
+  conf_level = 0.90,
+  include_ribbon = TRUE,
+  include_rug = TRUE,
+  include_points = TRUE,
+  event_level = c("auto", "first", "second"),
+  is_tune_results = FALSE,
+  ...
+) {
+  rlang::arg_match0(
+    event_level,
+    c("auto", "first", "second"),
+    error_call = NULL
+  )
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -269,27 +283,31 @@ cal_plot_breaks_impl <- function(.data,
 #' @rdname cal_binary_tables
 #' @export
 #' @keywords internal
-.cal_table_breaks <- function(.data,
-                              truth = NULL,
-                              estimate = NULL,
-                              .by = NULL,
-                              num_breaks = 10,
-                              conf_level = 0.90,
-                              event_level = c("auto", "first", "second"),
-                              ...) {
+.cal_table_breaks <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  .by = NULL,
+  num_breaks = 10,
+  conf_level = 0.90,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   UseMethod(".cal_table_breaks")
 }
 
 #' @export
 #' @keywords internal
-.cal_table_breaks.data.frame <- function(.data,
-                                         truth = NULL,
-                                         estimate = NULL,
-                                         .by = NULL,
-                                         num_breaks = 10,
-                                         conf_level = 0.90,
-                                         event_level = c("auto", "first", "second"),
-                                         ...) {
+.cal_table_breaks.data.frame <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  .by = NULL,
+  num_breaks = 10,
+  conf_level = 0.90,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   .cal_table_breaks_impl(
     .data = .data,
     truth = {{ truth }},
@@ -303,14 +321,16 @@ cal_plot_breaks_impl <- function(.data,
 
 #' @export
 #' @keywords internal
-.cal_table_breaks.tune_results <- function(.data,
-                                           truth = NULL,
-                                           estimate = NULL,
-                                           .by = NULL,
-                                           num_breaks = 10,
-                                           conf_level = 0.90,
-                                           event_level = c("auto", "first", "second"),
-                                           ...) {
+.cal_table_breaks.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  .by = NULL,
+  num_breaks = 10,
+  conf_level = 0.90,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -331,14 +351,16 @@ cal_plot_breaks_impl <- function(.data,
 }
 
 #--------------------------- >> Implementation ---------------------------------
-.cal_table_breaks_impl <- function(.data,
-                                   truth,
-                                   estimate,
-                                   group,
-                                   num_breaks = 10,
-                                   conf_level = 0.90,
-                                   event_level = c("auto", "first", "second"),
-                                   ...) {
+.cal_table_breaks_impl <- function(
+  .data,
+  truth,
+  estimate,
+  group,
+  num_breaks = 10,
+  conf_level = 0.90,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -373,14 +395,16 @@ cal_plot_breaks_impl <- function(.data,
   res
 }
 
-.cal_table_breaks_grp <- function(.data,
-                                  truth,
-                                  group,
-                                  num_breaks = 10,
-                                  conf_level = 0.90,
-                                  event_level = c("auto", "first", "second"),
-                                  levels,
-                                  ...) {
+.cal_table_breaks_grp <- function(
+  .data,
+  truth,
+  group,
+  num_breaks = 10,
+  conf_level = 0.90,
+  event_level = c("auto", "first", "second"),
+  levels,
+  ...
+) {
   side <- seq(0, 1, by = 1 / num_breaks)
 
   cuts <- list(

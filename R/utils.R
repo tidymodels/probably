@@ -15,7 +15,9 @@ quote_collapse <- function(x, quote = "`", collapse = ", ") {
 
 abort_default <- function(x, fn) {
   cls <- quote_collapse(class(x))
-  cli::cli_abort("No implementation of {.fn {fn}} for {.obj_type_friendly {cls}}.")
+  cli::cli_abort(
+    "No implementation of {.fn {fn}} for {.obj_type_friendly {cls}}."
+  )
 }
 
 # Check if a class_pred object came from an ordered factor
