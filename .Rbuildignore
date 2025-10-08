@@ -12,3 +12,5 @@
 ^pkgdown$
 ^CRAN-SUBMISSION$
 ^man-roxygen$
+^[.]?air[.]toml$
+^\.vscode$
