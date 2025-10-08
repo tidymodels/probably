@@ -7,6 +7,10 @@ test_that("Linear estimates work - data.frame", {
   expect_cal_estimate(sl_linear, "butchered_glm")
   expect_cal_rows(sl_linear, 2000)
   expect_snapshot(print(sl_linear))
+  expect_equal(
+    required_pkgs(sl_linear),
+    c("probably")
+  )
 
   sl_linear_group <- boosting_predictions_oob |>
     dplyr::mutate(group = .pred > 0.5) |>
@@ -51,6 +55,10 @@ test_that("Linear spline estimates work - data.frame", {
   expect_cal_estimate(sl_gam, "butchered_gam")
   expect_cal_rows(sl_gam, 2000)
   expect_snapshot(print(sl_gam))
+    expect_equal(
+    required_pkgs(sl_gam),
+    c("mgcv", "probably")
+  )
 
   sl_gam_group <- boosting_predictions_oob |>
     dplyr::mutate(group = .pred > 0.5) |>
@@ -108,35 +116,6 @@ test_that("Linear spline switches to linear if too few unique", {
   expect_identical(
     sl_gam$estimates,
     sl_lm$estimates
-  )
-})
-
-test_that("Linear spline switches to linear if too few unique", {
-  skip_if_not_installed("modeldata")
-
-  boosting_predictions_oob$.pred <- rep(
-    x = 1:5,
-    length.out = nrow(boosting_predictions_oob)
-  )
-
-  expect_snapshot(
-    sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = TRUE)
-  )
-  sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
-
-  expect_identical(
-    sl_gam$estimate,
-    sl_lm$estimate
-  )
-
-  expect_snapshot(
-    sl_gam <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id, smooth = TRUE)
-  )
-  sl_lm <- cal_estimate_linear(boosting_predictions_oob, outcome, .by = id, smooth = FALSE)
-
-  expect_identical(
-    sl_gam$estimate,
-    sl_lm$estimate
   )
 })
 

@@ -26,6 +26,11 @@ test_that("Logistic estimates work - data.frame", {
   expect_cal_estimate(sl_logistic_group, "butchered_glm")
   expect_cal_rows(sl_logistic_group)
   expect_snapshot(print(sl_logistic_group))
+  expect_equal(
+    required_pkgs(sl_logistic_group),
+    "probably"
+  )
+
 
   expect_snapshot_error(
     segment_logistic |>
@@ -42,7 +47,10 @@ test_that("Logistic estimates work - data.frame", {
 
   two_cls_res <- cal_apply(two_class_example, two_cls_mod, pred_class = predicted)
   expect_equal(two_cls_res[0,], two_cls_plist)
-
+  expect_equal(
+    required_pkgs(two_cls_mod),
+    c("mgcv", "probably")
+  )
 })
 
 test_that("Logistic estimates work - tune_results", {
@@ -99,6 +107,10 @@ test_that("Logistic spline estimates work - tune_results", {
   expect_cal_method(tl_gam, "Generalized additive model calibration")
   expect_cal_estimate(tl_gam, "butchered_gam")
   expect_snapshot(print(tl_gam))
+    expect_equal(
+    required_pkgs(tl_gam),
+    c("mgcv", "probably")
+  )
 
   expect_equal(
     testthat_cal_binary_count(),
