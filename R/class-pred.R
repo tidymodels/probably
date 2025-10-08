@@ -1,7 +1,14 @@
 # ------------------------------------------------------------------------------
 # Creation
 
-new_class_pred <- function(x, labels, ordered = FALSE, equivocal = "[EQ]", ..., subclass = NULL) {
+new_class_pred <- function(
+  x,
+  labels,
+  ordered = FALSE,
+  equivocal = "[EQ]",
+  ...,
+  subclass = NULL
+) {
   stopifnot(is.integer(x))
   stopifnot(is.character(labels))
   stopifnot(is.logical(ordered) && length(ordered) == 1L)
@@ -77,8 +84,10 @@ class_pred <- function(x = factor(), which = integer(), equivocal = "[EQ]") {
 
   # Check for `equivocal` in labels. Not allowed.
   if (equivocal %in% labs) {
-    cli::cli_abort("{.arg equivocal} is reserved for equivocal values and must
-                   not already be a level.")
+    cli::cli_abort(
+      "{.arg equivocal} is reserved for equivocal values and must
+                   not already be a level."
+    )
   }
 
   # rip out the underlying integer structure

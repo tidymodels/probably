@@ -5,10 +5,12 @@ cal_apply_binary <- function(object, .data, pred_class) {
 }
 
 #' @export
-cal_apply_binary.cal_estimate_logistic <- function(object,
-                                                   .data,
-                                                   pred_class = NULL,
-                                                   ...) {
+cal_apply_binary.cal_estimate_logistic <- function(
+  object,
+  .data,
+  pred_class = NULL,
+  ...
+) {
   apply_model_predict(
     object = object,
     .data = .data
@@ -16,10 +18,12 @@ cal_apply_binary.cal_estimate_logistic <- function(object,
 }
 
 #' @export
-cal_apply_binary.cal_estimate_logistic_spline <- function(object,
-                                                          .data,
-                                                          pred_class = NULL,
-                                                          ...) {
+cal_apply_binary.cal_estimate_logistic_spline <- function(
+  object,
+  .data,
+  pred_class = NULL,
+  ...
+) {
   apply_model_predict(
     object = object,
     .data = .data

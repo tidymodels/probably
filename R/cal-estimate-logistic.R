@@ -94,7 +94,6 @@ cal_estimate_logistic.data.frame <- function(
     source_class = cal_class_name(.data),
     type = "binary"
   )
-
 }
 
 #' @export
@@ -107,7 +106,6 @@ cal_estimate_logistic.tune_results <- function(
   parameters = NULL,
   ...
 ) {
-
   info <- get_tune_data(.data, parameters)
 
   model <- logistic_fit_over_groups(info, smooth, ...)
@@ -172,11 +170,10 @@ fit_logistic_model <- function(.data, smooth, estimate, outcome, ...) {
   } else {
     # TODO check for failures
     model <- glm(f, data = .data, family = "binomial", ...)
-
-}
+  }
   model <- butcher::butcher(model)
   model
-  }
+}
 
 logistic_fit_over_groups <- function(info, smooth = TRUE, ...) {
   if (length(info$levels) > 2) {
@@ -202,4 +199,3 @@ logistic_fit_over_groups <- function(info, smooth = TRUE, ...) {
 
   purrr::map2(fits, fltrs, ~ list(filter = .y, estimate = .x))
 }
-

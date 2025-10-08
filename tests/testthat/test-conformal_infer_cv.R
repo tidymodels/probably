@@ -24,7 +24,6 @@ test_that("bad inputs to conformal intervals", {
   set.seed(182)
   sim_new <- sim_regression(2)
 
-
   ctrl <- control_resamples(save_pred = TRUE, extract = I)
 
   set.seed(382)
@@ -172,7 +171,10 @@ test_that("group resampling to conformal CV intervals", {
 
   set.seed(484)
   nnet_wflow <-
-    workflow(y ~ x, parsnip::mlp(hidden_units = 2) |> parsnip::set_mode("regression"))
+    workflow(
+      y ~ x,
+      parsnip::mlp(hidden_units = 2) |> parsnip::set_mode("regression")
+    )
 
   group_folds <- group_vfold_cv(train_data, group = color)
 

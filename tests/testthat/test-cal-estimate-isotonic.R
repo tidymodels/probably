@@ -24,7 +24,6 @@ test_that("Isotonic estimates work - data.frame", {
       dplyr::mutate(group1 = 1, group2 = 2) |>
       cal_estimate_isotonic(Class, .by = c(group1, group2))
   )
-
 })
 
 test_that("Isotonic estimates work - tune_results", {
@@ -66,7 +65,11 @@ test_that("Isotonic linear estimates work - data.frame", {
   skip_if_not_installed("modeldata")
 
   set.seed(2983)
-  sl_logistic <- cal_estimate_isotonic(boosting_predictions_oob, outcome, estimate = .pred)
+  sl_logistic <- cal_estimate_isotonic(
+    boosting_predictions_oob,
+    outcome,
+    estimate = .pred
+  )
   expect_cal_type(sl_logistic, "regression")
   expect_cal_method(sl_logistic, "Isotonic regression calibration")
   expect_cal_rows(sl_logistic, 2000)
@@ -103,7 +106,10 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
     cal_estimate_isotonic_boot(Class, .by = group)
 
   expect_cal_type(sl_boot_group, "binary")
-  expect_cal_method(sl_boot_group, "Bootstrapped isotonic regression calibration")
+  expect_cal_method(
+    sl_boot_group,
+    "Bootstrapped isotonic regression calibration"
+  )
   expect_snapshot(print(sl_boot_group))
 
   expect_snapshot_error(
@@ -111,7 +117,6 @@ test_that("Isotonic Bootstrapped estimates work - data.frame", {
       dplyr::mutate(group1 = 1, group2 = 2) |>
       cal_estimate_isotonic_boot(Class, .by = c(group1, group2))
   )
-
 })
 
 test_that("Isotonic Bootstrapped estimates work - tune_results", {
@@ -134,7 +139,10 @@ test_that("Isotonic Bootstrapped estimates work - tune_results", {
   set.seed(100)
   mtnl_isotonic <- cal_estimate_isotonic_boot(testthat_cal_multiclass())
   expect_cal_type(mtnl_isotonic, "one_vs_all")
-  expect_cal_method(mtnl_isotonic, "Bootstrapped isotonic regression calibration")
+  expect_cal_method(
+    mtnl_isotonic,
+    "Bootstrapped isotonic regression calibration"
+  )
   expect_snapshot(print(mtnl_isotonic))
 
   expect_equal(
@@ -174,11 +182,14 @@ test_that("non-standard column names", {
   seg <- segment_logistic |>
     rename_with(~ paste0(.x, "-1"), matches(".pred")) |>
     mutate(
-      Class = paste0(Class,"-1"),
+      Class = paste0(Class, "-1"),
       Class = factor(Class),
       .pred_class = ifelse(`.pred_poor-1` >= 0.5, "poor-1", "good-1")
     )
   calib <- cal_estimate_isotonic(seg, Class)
   new_pred <- cal_apply(seg, calib, pred_class = .pred_class)
-  expect_named(new_pred, c(".pred_poor-1", ".pred_good-1", "Class", ".pred_class"))
+  expect_named(
+    new_pred,
+    c(".pred_poor-1", ".pred_good-1", "Class", ".pred_class")
+  )
 })

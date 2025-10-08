@@ -75,7 +75,6 @@ test_that("no calibration works - data.frame", {
       dplyr::mutate(group1 = 1, group2 = 2) |>
       cal_estimate_none(Species, .by = c(group1, group2))
   )
-
 })
 
 test_that("no calibration works - tune_results", {
@@ -119,14 +118,10 @@ test_that("no calibration works - tune_results", {
     cal_apply(multi_pred, nope_multi),
     multi_pred
   )
-
 })
 
 test_that("no calibration fails - grouped_df", {
-
   expect_snapshot_error(
     cal_estimate_none(dplyr::group_by(mtcars, vs))
   )
-
 })
-

@@ -24,7 +24,6 @@ test_that("Beta estimates work - data.frame", {
       dplyr::mutate(group1 = 1, group2 = 2) |>
       cal_estimate_beta(Class, smooth = FALSE, .by = c(group1, group2))
   )
-
 })
 
 test_that("Beta estimates work - tune_results", {

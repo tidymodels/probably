@@ -1,5 +1,9 @@
 test_that("Multinomial apply works - data.frame", {
-  sl_multinomial <- cal_estimate_multinomial(species_probs, Species, smooth = FALSE)
+  sl_multinomial <- cal_estimate_multinomial(
+    species_probs,
+    Species,
+    smooth = FALSE
+  )
   ap_multinomial <- cal_apply(species_probs, sl_multinomial)
 
   pred_bobcat <- ap_multinomial$.pred_bobcat
@@ -13,7 +17,7 @@ test_that("Logistic apply works - tune_results", {
   tct <- testthat_cal_multiclass()
   tl_multinomial <- cal_estimate_multinomial(tct, smooth = FALSE)
   tap_multinomial <- cal_apply(tct, tl_multinomial)
-  
+
   expect_equal(
     testthat_cal_multiclass_count(),
     nrow(tap_multinomial)

@@ -39,30 +39,34 @@
 #' )
 #' @seealso [cal_plot_breaks()], [cal_plot_windowed()]
 #' @export
-cal_plot_logistic <- function(.data,
-                              truth = NULL,
-                              estimate = dplyr::starts_with(".pred"),
-                              conf_level = 0.90,
-                              smooth = TRUE,
-                              include_rug = TRUE,
-                              include_ribbon = TRUE,
-                              event_level = c("auto", "first", "second"),
-                              ...) {
+cal_plot_logistic <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  conf_level = 0.90,
+  smooth = TRUE,
+  include_rug = TRUE,
+  include_ribbon = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   UseMethod("cal_plot_logistic")
 }
 
 #' @export
 #' @rdname cal_plot_logistic
-cal_plot_logistic.data.frame <- function(.data,
-                                         truth = NULL,
-                                         estimate = dplyr::starts_with(".pred"),
-                                         conf_level = 0.90,
-                                         smooth = TRUE,
-                                         include_rug = TRUE,
-                                         include_ribbon = TRUE,
-                                         event_level = c("auto", "first", "second"),
-                                         ...,
-                                         .by = NULL) {
+cal_plot_logistic.data.frame <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  conf_level = 0.90,
+  smooth = TRUE,
+  include_rug = TRUE,
+  include_ribbon = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...,
+  .by = NULL
+) {
   group <- get_group_argument({{ .by }}, .data)
   .data <- dplyr::group_by(.data, dplyr::across({{ group }}))
 
@@ -81,15 +85,17 @@ cal_plot_logistic.data.frame <- function(.data,
 }
 #' @export
 #' @rdname cal_plot_logistic
-cal_plot_logistic.tune_results <- function(.data,
-                                           truth = NULL,
-                                           estimate = dplyr::starts_with(".pred"),
-                                           conf_level = 0.90,
-                                           smooth = TRUE,
-                                           include_rug = TRUE,
-                                           include_ribbon = TRUE,
-                                           event_level = c("auto", "first", "second"),
-                                           ...) {
+cal_plot_logistic.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  conf_level = 0.90,
+  smooth = TRUE,
+  include_rug = TRUE,
+  include_ribbon = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -114,31 +120,39 @@ cal_plot_logistic.tune_results <- function(.data,
 
 #' @export
 #' @rdname cal_plot_logistic
-cal_plot_logistic.grouped_df <- function(.data,
-                                         truth = NULL,
-                                         estimate = NULL,
-                                         conf_level = 0.90,
-                                         smooth = TRUE,
-                                         include_rug = TRUE,
-                                         include_ribbon = TRUE,
-                                         event_level = c("auto", "first", "second"),
-                                         ...) {
+cal_plot_logistic.grouped_df <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  conf_level = 0.90,
+  smooth = TRUE,
+  include_rug = TRUE,
+  include_ribbon = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   abort_if_grouped_df()
 }
 
 #--------------------------- >> Implementation ---------------------------------
-cal_plot_logistic_impl <- function(.data,
-                                   truth = NULL,
-                                   estimate = dplyr::starts_with(".pred"),
-                                   group = NULL,
-                                   conf_level = 0.90,
-                                   smooth = TRUE,
-                                   include_rug = TRUE,
-                                   include_ribbon = TRUE,
-                                   event_level = c("auto", "first", "second"),
-                                   is_tune_results = FALSE,
-                                   ...) {
-  rlang::arg_match0(event_level, c("auto", "first", "second"), error_call = NULL)
+cal_plot_logistic_impl <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::starts_with(".pred"),
+  group = NULL,
+  conf_level = 0.90,
+  smooth = TRUE,
+  include_rug = TRUE,
+  include_ribbon = TRUE,
+  event_level = c("auto", "first", "second"),
+  is_tune_results = FALSE,
+  ...
+) {
+  rlang::arg_match0(
+    event_level,
+    c("auto", "first", "second"),
+    error_call = NULL
+  )
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -175,27 +189,31 @@ cal_plot_logistic_impl <- function(.data,
 #' @rdname cal_binary_tables
 #' @export
 #' @keywords internal
-.cal_table_logistic <- function(.data,
-                                truth = NULL,
-                                estimate = NULL,
-                                .by = NULL,
-                                conf_level = 0.90,
-                                smooth = TRUE,
-                                event_level = c("auto", "first", "second"),
-                                ...) {
+.cal_table_logistic <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  .by = NULL,
+  conf_level = 0.90,
+  smooth = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   UseMethod(".cal_table_logistic")
 }
 
 #' @export
 #' @keywords internal
-.cal_table_logistic.data.frame <- function(.data,
-                                           truth = NULL,
-                                           estimate = NULL,
-                                           .by = NULL,
-                                           conf_level = 0.90,
-                                           smooth = TRUE,
-                                           event_level = c("auto", "first", "second"),
-                                           ...) {
+.cal_table_logistic.data.frame <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  .by = NULL,
+  conf_level = 0.90,
+  smooth = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   .cal_table_logistic_impl(
     .data = .data,
     truth = {{ truth }},
@@ -209,14 +227,16 @@ cal_plot_logistic_impl <- function(.data,
 
 #' @export
 #' @keywords internal
-.cal_table_logistic.tune_results <- function(.data,
-                                             truth = NULL,
-                                             estimate = NULL,
-                                             .by = NULL,
-                                             conf_level = 0.90,
-                                             smooth = TRUE,
-                                             event_level = c("auto", "first", "second"),
-                                             ...) {
+.cal_table_logistic.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  .by = NULL,
+  conf_level = 0.90,
+  smooth = TRUE,
+  event_level = c("auto", "first", "second"),
+  ...
+) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -237,14 +257,16 @@ cal_plot_logistic_impl <- function(.data,
 }
 
 #--------------------------- >> Implementation ---------------------------------
-.cal_table_logistic_impl <- function(.data,
-                                     truth = NULL,
-                                     estimate = NULL,
-                                     group = NULL,
-                                     conf_level = 0.90,
-                                     event_level = c("auto", "first", "second"),
-                                     smooth = TRUE,
-                                     ...) {
+.cal_table_logistic_impl <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  group = NULL,
+  conf_level = 0.90,
+  event_level = c("auto", "first", "second"),
+  smooth = TRUE,
+  ...
+) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)

@@ -3,7 +3,12 @@ test_that("Logistic validation with data frame input", {
 
   df <- testthat_cal_sampled()
   val_obj <- cal_validate_logistic(df, Class)
-  val_with_pred <- cal_validate_logistic(df, Class, save_pred = TRUE, smooth = TRUE)
+  val_with_pred <- cal_validate_logistic(
+    df,
+    Class,
+    save_pred = TRUE,
+    smooth = TRUE
+  )
 
   expect_s3_class(val_obj, "data.frame")
   expect_s3_class(val_obj, "cal_rset")
@@ -52,7 +57,12 @@ test_that("Logistic validation with data frame input", {
   expect_equal(
     names(pred_rs),
     c(
-      ".pred_class", ".pred_poor", ".pred_good", "Class", ".row", ".config",
+      ".pred_class",
+      ".pred_poor",
+      ".pred_good",
+      "Class",
+      ".row",
+      ".config",
       ".type"
     )
   )
@@ -155,7 +165,12 @@ test_that("Multinomial classification validation with data frame input", {
 
   df <- rsample::vfold_cv(testthat_cal_sim_multi())
   val_obj <- cal_validate_multinomial(df, class)
-  val_with_pred <- cal_validate_multinomial(df, class, save_pred = TRUE, smooth = TRUE)
+  val_with_pred <- cal_validate_multinomial(
+    df,
+    class,
+    save_pred = TRUE,
+    smooth = TRUE
+  )
 
   expect_s3_class(val_obj, "data.frame")
   expect_s3_class(val_obj, "cal_rset")
@@ -233,7 +248,12 @@ test_that("Validation without calibration with data frame input", {
   expect_equal(
     names(pred_rs),
     c(
-      ".pred_class", ".pred_poor", ".pred_good", "Class", ".row", ".config",
+      ".pred_class",
+      ".pred_poor",
+      ".pred_good",
+      "Class",
+      ".row",
+      ".config",
       ".type"
     )
   )
@@ -245,7 +265,12 @@ test_that("Validation without calibration with data frame input", {
 test_that("Linear validation with data frame input", {
   df <- testthat_cal_reg_sampled()
   val_obj <- cal_validate_linear(df, outcome)
-  val_with_pred <- cal_validate_linear(df, outcome, save_pred = TRUE, smooth = FALSE)
+  val_with_pred <- cal_validate_linear(
+    df,
+    outcome,
+    save_pred = TRUE,
+    smooth = FALSE
+  )
 
   expect_s3_class(val_obj, "data.frame")
   expect_s3_class(val_obj, "cal_rset")
@@ -328,7 +353,11 @@ test_that("Bootstrapped Isotonic regression validation with data frame input", {
 test_that("Logistic validation with `fit_resamples`", {
   res <- testthat_cal_fit_rs()
   val_obj <- cal_validate_logistic(res$binary)
-  val_with_pred <- cal_validate_logistic(res$binary, save_pred = TRUE, smooth = TRUE)
+  val_with_pred <- cal_validate_logistic(
+    res$binary,
+    save_pred = TRUE,
+    smooth = TRUE
+  )
 
   expect_s3_class(val_obj, "data.frame")
   expect_s3_class(val_obj, "cal_rset")
@@ -343,13 +372,28 @@ test_that("Logistic validation with `fit_resamples`", {
   expect_equal(nrow(val_with_pred), nrow(res$binary))
   expect_equal(
     names(val_with_pred),
-    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+    c(
+      "splits",
+      "id",
+      ".notes",
+      ".predictions",
+      ".metrics",
+      ".metrics_cal",
+      ".predictions_cal"
+    )
   )
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     sort(names(val_with_pred$.predictions_cal[[1]])),
-    sort(c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class"))
+    sort(c(
+      ".pred_class_1",
+      ".pred_class_2",
+      ".row",
+      "outcome",
+      ".config",
+      ".pred_class"
+    ))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -375,13 +419,28 @@ test_that("Isotonic classification validation with `fit_resamples`", {
   expect_equal(nrow(val_with_pred), nrow(res$binary))
   expect_equal(
     names(val_with_pred),
-    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+    c(
+      "splits",
+      "id",
+      ".notes",
+      ".predictions",
+      ".metrics",
+      ".metrics_cal",
+      ".predictions_cal"
+    )
   )
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     sort(names(val_with_pred$.predictions_cal[[1]])),
-    sort(c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class"))
+    sort(c(
+      ".pred_class_1",
+      ".pred_class_2",
+      ".row",
+      "outcome",
+      ".config",
+      ".pred_class"
+    ))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -408,13 +467,28 @@ test_that("Bootstrapped isotonic classification validation with `fit_resamples`"
   expect_equal(nrow(val_with_pred), nrow(res$binary))
   expect_equal(
     names(val_with_pred),
-    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+    c(
+      "splits",
+      "id",
+      ".notes",
+      ".predictions",
+      ".metrics",
+      ".metrics_cal",
+      ".predictions_cal"
+    )
   )
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     sort(names(val_with_pred$.predictions_cal[[1]])),
-    sort(c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class"))
+    sort(c(
+      ".pred_class_1",
+      ".pred_class_2",
+      ".row",
+      "outcome",
+      ".config",
+      ".pred_class"
+    ))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -441,13 +515,28 @@ test_that("Beta calibration validation with `fit_resamples`", {
   expect_equal(nrow(val_with_pred), nrow(res$binary))
   expect_equal(
     names(val_with_pred),
-    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+    c(
+      "splits",
+      "id",
+      ".notes",
+      ".predictions",
+      ".metrics",
+      ".metrics_cal",
+      ".predictions_cal"
+    )
   )
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     sort(names(val_with_pred$.predictions_cal[[1]])),
-    sort(c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class"))
+    sort(c(
+      ".pred_class_1",
+      ".pred_class_2",
+      ".row",
+      "outcome",
+      ".config",
+      ".pred_class"
+    ))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -461,7 +550,11 @@ test_that("Multinomial calibration validation with `fit_resamples`", {
 
   res <- testthat_cal_fit_rs()
   val_obj <- cal_validate_multinomial(res$multin)
-  val_with_pred <- cal_validate_multinomial(res$multin, save_pred = TRUE, smooth = TRUE)
+  val_with_pred <- cal_validate_multinomial(
+    res$multin,
+    save_pred = TRUE,
+    smooth = TRUE
+  )
 
   expect_s3_class(val_obj, "data.frame")
   expect_s3_class(val_obj, "cal_rset")
@@ -476,13 +569,29 @@ test_that("Multinomial calibration validation with `fit_resamples`", {
   expect_equal(nrow(val_with_pred), nrow(res$multin))
   expect_equal(
     names(val_with_pred),
-    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+    c(
+      "splits",
+      "id",
+      ".notes",
+      ".predictions",
+      ".metrics",
+      ".metrics_cal",
+      ".predictions_cal"
+    )
   )
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     sort(names(val_with_pred$.predictions_cal[[1]])),
-    sort(c(".pred_one", ".pred_two", ".pred_three", ".row", "outcome", ".config", ".pred_class"))
+    sort(c(
+      ".pred_one",
+      ".pred_two",
+      ".pred_three",
+      ".row",
+      "outcome",
+      ".config",
+      ".pred_class"
+    ))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -508,13 +617,28 @@ test_that("Validation without calibration with `fit_resamples`", {
   expect_equal(nrow(val_with_pred), nrow(res$binary))
   expect_equal(
     names(val_with_pred),
-    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+    c(
+      "splits",
+      "id",
+      ".notes",
+      ".predictions",
+      ".metrics",
+      ".metrics_cal",
+      ".predictions_cal"
+    )
   )
 
   skip_if_not_installed("tune", "1.2.0")
   expect_equal(
     sort(names(val_with_pred$.predictions_cal[[1]])),
-    sort(c(".pred_class_1", ".pred_class_2", ".row", "outcome", ".config", ".pred_class"))
+    sort(c(
+      ".pred_class_1",
+      ".pred_class_2",
+      ".row",
+      "outcome",
+      ".config",
+      ".pred_class"
+    ))
   )
   expect_equal(
     purrr::map_int(val_with_pred$splits, ~ holdout_length(.x)),
@@ -543,7 +667,15 @@ test_that("Linear validation with `fit_resamples`", {
   expect_equal(nrow(val_with_pred), nrow(res$reg))
   expect_equal(
     names(val_with_pred),
-    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+    c(
+      "splits",
+      "id",
+      ".notes",
+      ".predictions",
+      ".metrics",
+      ".metrics_cal",
+      ".predictions_cal"
+    )
   )
 
   skip_if_not_installed("tune", "1.2.0")
@@ -601,7 +733,11 @@ test_that("Isotonic regression validation with `fit_resamples`", {
   res <- testthat_cal_fit_rs()
   mtr <- yardstick::metric_set(yardstick::rmse, yardstick::rsq)
   val_obj <- cal_validate_isotonic(res$reg, estimate = .pred, metrics = mtr)
-  val_with_pred <- cal_validate_isotonic(res$reg, save_pred = TRUE, smooth = TRUE)
+  val_with_pred <- cal_validate_isotonic(
+    res$reg,
+    save_pred = TRUE,
+    smooth = TRUE
+  )
 
   expect_s3_class(val_obj, "data.frame")
   expect_s3_class(val_obj, "cal_rset")
@@ -616,7 +752,15 @@ test_that("Isotonic regression validation with `fit_resamples`", {
   expect_equal(nrow(val_with_pred), nrow(res$reg))
   expect_equal(
     names(val_with_pred),
-    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+    c(
+      "splits",
+      "id",
+      ".notes",
+      ".predictions",
+      ".metrics",
+      ".metrics_cal",
+      ".predictions_cal"
+    )
   )
 
   skip_if_not_installed("tune", "1.2.0")
@@ -636,8 +780,16 @@ test_that("Isotonic regression validation with `fit_resamples`", {
 test_that("Isotonic bootstrapped regression validation with `fit_resamples`", {
   res <- testthat_cal_fit_rs()
   mtr <- yardstick::metric_set(yardstick::rmse, yardstick::rsq)
-  val_obj <- cal_validate_isotonic_boot(res$reg, estimate = .pred, metrics = mtr)
-  val_with_pred <- cal_validate_isotonic_boot(res$reg, save_pred = TRUE, smooth = TRUE)
+  val_obj <- cal_validate_isotonic_boot(
+    res$reg,
+    estimate = .pred,
+    metrics = mtr
+  )
+  val_with_pred <- cal_validate_isotonic_boot(
+    res$reg,
+    save_pred = TRUE,
+    smooth = TRUE
+  )
 
   expect_s3_class(val_obj, "data.frame")
   expect_s3_class(val_obj, "cal_rset")
@@ -652,7 +804,15 @@ test_that("Isotonic bootstrapped regression validation with `fit_resamples`", {
   expect_equal(nrow(val_with_pred), nrow(res$reg))
   expect_equal(
     names(val_with_pred),
-    c("splits", "id", ".notes", ".predictions", ".metrics", ".metrics_cal", ".predictions_cal")
+    c(
+      "splits",
+      "id",
+      ".notes",
+      ".predictions",
+      ".metrics",
+      ".metrics_cal",
+      ".predictions_cal"
+    )
   )
 
   skip_if_not_installed("tune", "1.2.0")

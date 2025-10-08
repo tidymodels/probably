@@ -107,7 +107,10 @@ apply_beta_column <- function(.data, est_filter, estimates) {
   }
 
   ret <-
-    purrr::imap(estimates, ~ apply_beta_single(model = .x, df = df, est_name = .y))
+    purrr::imap(
+      estimates,
+      ~ apply_beta_single(model = .x, df = df, est_name = .y)
+    )
 
   names_ret <- names(ret)
   for (i in seq_along(names_ret)) {

@@ -30,20 +30,24 @@
 #'   alpha = 1 / 6, cex = 3, smooth = FALSE
 #' )
 #' @export
-cal_plot_regression <- function(.data,
-                                truth = NULL,
-                                estimate = NULL,
-                                smooth = TRUE,
-                                ...) {
+cal_plot_regression <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  ...
+) {
   UseMethod("cal_plot_regression")
 }
 
-cal_plot_regression_impl <- function(.data,
-                                     truth = NULL,
-                                     estimate = NULL,
-                                     smooth = TRUE,
-                                     ...,
-                                     .by = NULL) {
+cal_plot_regression_impl <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  ...,
+  .by = NULL
+) {
   group <- get_group_argument({{ .by }}, .data)
 
   truth <- enquo(truth)
@@ -68,11 +72,13 @@ cal_plot_regression.data.frame <- cal_plot_regression_impl
 
 #' @export
 #' @rdname cal_plot_regression
-cal_plot_regression.tune_results <- function(.data,
-                                             truth = NULL,
-                                             estimate = NULL,
-                                             smooth = TRUE,
-                                             ...) {
+cal_plot_regression.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  ...
+) {
   tune_args <- tune_results_args(
     .data = .data,
     truth = {{ truth }},
@@ -92,16 +98,17 @@ cal_plot_regression.tune_results <- function(.data,
 
 #' @export
 #' @rdname cal_plot_regression
-cal_plot_regression.grouped_df <- function(.data,
-                                           truth = NULL,
-                                           estimate = NULL,
-                                           smooth = TRUE,
-                                           ...) {
+cal_plot_regression.grouped_df <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  ...
+) {
   abort_if_grouped_df()
 }
 
-regression_plot_impl <- function(.data, truth, estimate, group,
-                                 smooth, ...) {
+regression_plot_impl <- function(.data, truth, estimate, group, smooth, ...) {
   truth <- enquo(truth)
   estimate <- enquo(estimate)
   group <- enquo(group)
@@ -144,7 +151,8 @@ regression_plot_impl <- function(.data, truth, estimate, group,
 
   if (smooth) {
     res <-
-      res + geom_smooth(
+      res +
+      geom_smooth(
         se = FALSE,
         col = "blue",
         method = "gam",
@@ -152,7 +160,8 @@ regression_plot_impl <- function(.data, truth, estimate, group,
       )
   } else {
     res <-
-      res + geom_smooth(
+      res +
+      geom_smooth(
         se = FALSE,
         col = "blue",
         method = "lm",
@@ -166,7 +175,6 @@ regression_plot_impl <- function(.data, truth, estimate, group,
 
   res
 }
-
 
 
 assert_truth_numeric <- function(.data, truth) {

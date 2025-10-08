@@ -1,5 +1,10 @@
 test_that("Binary breaks functions work", {
-  x10 <- .cal_table_breaks(segment_logistic, Class, .pred_good, event_level = "first")
+  x10 <- .cal_table_breaks(
+    segment_logistic,
+    Class,
+    .pred_good,
+    event_level = "first"
+  )
 
   expect_equal(
     x10$predicted_midpoint,
@@ -38,11 +43,15 @@ test_that("Binary breaks functions work with group argument", {
   expect_s3_class(res, "ggplot")
 
   expect_equal(
-    res$data[0,],
+    res$data[0, ],
     dplyr::tibble(
       id = factor(0, levels = paste(0:1)),
-      predicted_midpoint = double(), event_rate = double(), events = double(),
-      total = integer(), lower = double(), upper = double()
+      predicted_midpoint = double(),
+      event_rate = double(),
+      events = double(),
+      total = integer(),
+      lower = double(),
+      upper = double()
     )
   )
 
@@ -166,14 +175,24 @@ test_that("custom names for cal_plot_breaks()", {
 })
 
 test_that("Event level handling works", {
-  x7 <- .cal_table_breaks(segment_logistic, Class, .pred_good, event_level = "second")
+  x7 <- .cal_table_breaks(
+    segment_logistic,
+    Class,
+    .pred_good,
+    event_level = "second"
+  )
   expect_equal(
     which(x7$predicted_midpoint == min(x7$predicted_midpoint)),
     which(x7$event_rate == max(x7$event_rate))
   )
 
   expect_snapshot_error(
-    .cal_table_breaks(segment_logistic, Class, .pred_good, event_level = "invalid")
+    .cal_table_breaks(
+      segment_logistic,
+      Class,
+      .pred_good,
+      event_level = "invalid"
+    )
   )
 })
 

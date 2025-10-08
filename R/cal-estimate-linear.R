@@ -65,25 +65,29 @@
 #' These methods estimate the relationship in the unmodified predicted values
 #' and then remove that trend when [cal_apply()] is invoked.
 #' @export
-cal_estimate_linear <- function(.data,
-                                truth = NULL,
-                                estimate = dplyr::matches("^.pred$"),
-                                smooth = TRUE,
-                                parameters = NULL,
-                                ...,
-                                .by = NULL) {
+cal_estimate_linear <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::matches("^.pred$"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...,
+  .by = NULL
+) {
   UseMethod("cal_estimate_linear")
 }
 
 #' @export
 #' @rdname cal_estimate_linear
-cal_estimate_linear.data.frame <- function(.data,
-                                           truth = NULL,
-                                           estimate = dplyr::matches("^.pred$"),
-                                           smooth = TRUE,
-                                           parameters = NULL,
-                                           ...,
-                                           .by = NULL) {
+cal_estimate_linear.data.frame <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::matches("^.pred$"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...,
+  .by = NULL
+) {
   stop_null_parameters(parameters)
 
   info <- get_prediction_data(
@@ -114,17 +118,18 @@ cal_estimate_linear.data.frame <- function(.data,
     additional_class = additional_class,
     source_class = cal_class_name(.data)
   )
-
 }
 
 #' @export
 #' @rdname cal_estimate_linear
-cal_estimate_linear.tune_results <- function(.data,
-                                             truth = NULL,
-                                             estimate = dplyr::matches("^.pred$"),
-                                             smooth = TRUE,
-                                             parameters = NULL,
-                                             ...) {
+cal_estimate_linear.tune_results <- function(
+  .data,
+  truth = NULL,
+  estimate = dplyr::matches("^.pred$"),
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+) {
   info <- get_tune_data(.data, parameters)
 
   model_fit <- lin_reg_fit_over_groups(info, smooth, ...)
@@ -152,12 +157,14 @@ cal_estimate_linear.tune_results <- function(.data,
 
 #' @export
 #' @rdname cal_estimate_linear
-cal_estimate_linear.grouped_df <- function(.data,
-                                           truth = NULL,
-                                           estimate = NULL,
-                                           smooth = TRUE,
-                                           parameters = NULL,
-                                           ...) {
+cal_estimate_linear.grouped_df <- function(
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  smooth = TRUE,
+  parameters = NULL,
+  ...
+) {
   abort_if_grouped_df()
 }
 
@@ -198,7 +205,9 @@ fit_regression_model <- function(.data, smooth, estimate, outcome, ...) {
 
 lin_reg_fit_over_groups <- function(info, smooth = TRUE, ...) {
   if (length(info$levels) == 2) {
-    cli::cli_abort("This function is meant to be used with multi-class outcomes only.")
+    cli::cli_abort(
+      "This function is meant to be used with multi-class outcomes only."
+    )
   }
 
   grp_df <- make_group_df(info$predictions, group = info$group)

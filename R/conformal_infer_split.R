@@ -65,7 +65,9 @@ int_conformal_split <- function(object, ...) {
 #' @export
 #' @rdname int_conformal_split
 int_conformal_split.default <- function(object, ...) {
-  cli::cli_abort("No known {.fn int_conformal_split} methods for this type of object.")
+  cli::cli_abort(
+    "No known {.fn int_conformal_split} methods for this type of object."
+  )
 }
 
 #' @export
@@ -77,7 +79,11 @@ int_conformal_split.workflow <- function(object, cal_data, ...) {
   y_name <- names(hardhat::extract_mold(object)$outcomes)
   cal_pred <- generics::augment(object, cal_data)
   cal_pred$.resid <- cal_pred[[y_name]] - cal_pred$.pred
-  res <- list(resid = sort(abs(cal_pred$.resid)), wflow = object, n = nrow(cal_pred))
+  res <- list(
+    resid = sort(abs(cal_pred$.resid)),
+    wflow = object,
+    n = nrow(cal_pred)
+  )
   class(res) <- c("conformal_reg_split", "int_conformal_split")
   res
 }
@@ -90,7 +96,9 @@ print.int_conformal_split <- function(x, ...) {
   cat("model:", .get_fit_type(x$wflow), "\n")
   cat("calibration set size:", format(x$n, big.mark = ","), "\n\n")
 
-  cat("Use `predict(object, new_data, level)` to compute prediction intervals\n")
+  cat(
+    "Use `predict(object, new_data, level)` to compute prediction intervals\n"
+  )
   invisible(x)
 }
 
@@ -103,7 +111,7 @@ required_pkgs.int_conformal_split <- function(x, infra = TRUE, ...) {
   if (infra) {
     model_pkgs <- c(model_pkgs, "probably")
   }
-  
+
   model_pkgs <- unique(model_pkgs)
   model_pkgs
 }

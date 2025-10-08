@@ -3,12 +3,14 @@ test_that("Binary logistic functions work", {
 
   x20 <- .cal_table_logistic(segment_logistic, Class, .pred_good)
 
-  model20 <- mgcv::gam(Class ~ s(.pred_good, k = 10),
+  model20 <- mgcv::gam(
+    Class ~ s(.pred_good, k = 10),
     data = segment_logistic,
     family = binomial()
   )
 
-  preds20 <- predict(model20,
+  preds20 <- predict(
+    model20,
     data.frame(.pred_good = seq(0, 1, by = .01)),
     type = "response"
   )
@@ -23,22 +25,24 @@ test_that("Binary logistic functions work", {
 
   x22 <- .cal_table_logistic(testthat_cal_binary())
 
-
   x22_1 <- testthat_cal_binary() |>
     tune::collect_predictions(summarize = TRUE) |>
     dplyr::group_by(.config) |>
-    dplyr::group_map(~ {
-      model <- mgcv::gam(
-        class ~ s(.pred_class_1, k = 10),
-        data = .x,
-        family = binomial()
-      )
-      preds <- predict(model,
-        data.frame(.pred_class_1 = seq(0, 1, by = .01)),
-        type = "response"
-      )
-      1 - preds
-    }) |>
+    dplyr::group_map(
+      ~ {
+        model <- mgcv::gam(
+          class ~ s(.pred_class_1, k = 10),
+          data = .x,
+          family = binomial()
+        )
+        preds <- predict(
+          model,
+          data.frame(.pred_class_1 = seq(0, 1, by = .01)),
+          type = "response"
+        )
+        1 - preds
+      }
+    ) |>
     purrr::reduce(c)
 
   expect_equal(sd(x22$prob), sd(x22_1), tolerance = 0.000001)
@@ -49,11 +53,21 @@ test_that("Binary logistic functions work", {
   expect_s3_class(x23, "ggplot")
   expect_true(has_facet(x23))
 
-  x24 <- .cal_table_logistic(segment_logistic, Class, .pred_good, smooth = FALSE)
+  x24 <- .cal_table_logistic(
+    segment_logistic,
+    Class,
+    .pred_good,
+    smooth = FALSE
+  )
 
-  model24 <- stats::glm(Class ~ .pred_good, data = segment_logistic, family = binomial())
+  model24 <- stats::glm(
+    Class ~ .pred_good,
+    data = segment_logistic,
+    family = binomial()
+  )
 
-  preds24 <- predict(model24,
+  preds24 <- predict(
+    model24,
     data.frame(.pred_good = seq(0, 1, by = .01)),
     type = "response"
   )
@@ -74,7 +88,8 @@ test_that("Binary logistic functions work", {
   )
 
   lgst_configs <-
-    bin_with_configs() |> cal_plot_logistic(truth = Class, estimate = .pred_good)
+    bin_with_configs() |>
+    cal_plot_logistic(truth = Class, estimate = .pred_good)
   expect_true(has_facet(lgst_configs))
 
   # ------------------------------------------------------------------------------
@@ -85,7 +100,6 @@ test_that("Binary logistic functions work", {
   expect_s3_class(multi_configs_from_tune, "ggplot")
   # should be faceted by .config and class
   expect_true(inherits(multi_configs_from_tune$facet, "FacetGrid"))
-
 
   multi_configs_from_df <-
     mnl_with_configs() |> cal_plot_logistic(truth = obs, estimate = c(VF:L))
@@ -109,10 +123,13 @@ test_that("Binary logistic functions work with group argument", {
   expect_s3_class(res, "ggplot")
 
   expect_equal(
-    res$data[0,],
+    res$data[0, ],
     dplyr::tibble(
       id = factor(0, levels = paste(0:1)),
-      estimate = double(), prob = double(), lower = double(), upper = double()
+      estimate = double(),
+      prob = double(),
+      lower = double(),
+      upper = double()
     )
   )
 
@@ -140,7 +157,8 @@ test_that("Binary logistic functions work with group argument", {
   )
 
   lgst_configs <-
-    bin_with_configs() |> cal_plot_logistic(truth = Class, estimate = .pred_good)
+    bin_with_configs() |>
+    cal_plot_logistic(truth = Class, estimate = .pred_good)
   expect_true(has_facet(lgst_configs))
 })
 

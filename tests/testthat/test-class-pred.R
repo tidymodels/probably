@@ -152,7 +152,10 @@ test_that("casting factor to class_pred", {
   expect_equal(vec_cast(fc1, cp1), class_pred(factor(c("a", "b", "b", "b"))))
 
   # converting to ordered class_pred maintains orderedness
-  expect_equal(vec_cast(fc2, cp4), class_pred(factor(c("a", "b", "b", "c"), ordered = TRUE)))
+  expect_equal(
+    vec_cast(fc2, cp4),
+    class_pred(factor(c("a", "b", "b", "c"), ordered = TRUE))
+  )
 
   # convert to class_pred with NA already present is not lossy
   expect_warning(vec_cast(fc3, class_pred()), NA)
@@ -160,7 +163,10 @@ test_that("casting factor to class_pred", {
   # convert ordered factor to class_pred
   # order-ness depends on class_pred type, not order factor
   or1 <- as.ordered(fc1)
-  expect_equal(vec_cast(or1, class_pred()), class_pred(factor(c("a", "b", "b", "b"))))
+  expect_equal(
+    vec_cast(or1, class_pred()),
+    class_pred(factor(c("a", "b", "b", "b")))
+  )
 })
 
 test_that("casting character to class_pred", {
@@ -217,8 +223,14 @@ test_that("unknown casts are handled correctly", {
 })
 
 test_that("ptype2 checks are handled correctly", {
-  expect_error(vec_ptype2(manual_creation_eq, numeric()), class = "vctrs_error_incompatible_type")
-  expect_equal(vec_ptype2(manual_creation_eq, vctrs::unspecified()), vec_ptype(manual_creation_eq))
+  expect_error(
+    vec_ptype2(manual_creation_eq, numeric()),
+    class = "vctrs_error_incompatible_type"
+  )
+  expect_equal(
+    vec_ptype2(manual_creation_eq, vctrs::unspecified()),
+    vec_ptype(manual_creation_eq)
+  )
 
   expect_equal(vec_ptype2(character(), manual_creation_eq), character())
   expect_equal(vec_ptype2(manual_creation_eq, character()), character())

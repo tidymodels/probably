@@ -238,15 +238,22 @@ testthat_cal_fit_rs <- function() {
         modeldata::sim_classification(100)[, 1:3] |>
         dplyr::rename(outcome = class) |>
         vfold_cv() |>
-        fit_resamples(logistic_reg(), outcome ~ ., resamples = ., control = ctrl)
+        fit_resamples(
+          logistic_reg(),
+          outcome ~ .,
+          resamples = .,
+          control = ctrl
+        )
       set.seed(112)
       rs_mlt <-
         sim_multinom_df(500) |>
         dplyr::rename(outcome = class) |>
         vfold_cv() |>
-        fit_resamples(mlp() |> set_mode("classification"),
+        fit_resamples(
+          mlp() |> set_mode("classification"),
           outcome ~ .,
-          resamples = ., control = ctrl
+          resamples = .,
+          control = ctrl
         )
       set.seed(113)
       rs_reg <-
@@ -333,7 +340,9 @@ are_groups_configs <- function(x) {
 bin_with_configs <- function() {
   set.seed(1)
   segment_logistic |>
-    dplyr::mutate(.config = sample(letters[1:2], nrow(segment_logistic), replace = TRUE))
+    dplyr::mutate(
+      .config = sample(letters[1:2], nrow(segment_logistic), replace = TRUE)
+    )
 }
 
 mnl_with_configs <- function() {
@@ -341,7 +350,9 @@ mnl_with_configs <- function() {
 
   set.seed(1)
   modeldata::hpc_cv |>
-    dplyr::mutate(.config = sample(letters[1:2], nrow(modeldata::hpc_cv), replace = TRUE))
+    dplyr::mutate(
+      .config = sample(letters[1:2], nrow(modeldata::hpc_cv), replace = TRUE)
+    )
 }
 
 reg_with_configs <- function() {
@@ -350,7 +361,13 @@ reg_with_configs <- function() {
   set.seed(1)
 
   modeldata::solubility_test |>
-    dplyr::mutate(.config = sample(letters[1:2], nrow(modeldata::solubility_test), replace = TRUE))
+    dplyr::mutate(
+      .config = sample(
+        letters[1:2],
+        nrow(modeldata::solubility_test),
+        replace = TRUE
+      )
+    )
 }
 
 holdout_length <- function(x) {

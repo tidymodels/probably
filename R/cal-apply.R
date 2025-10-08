@@ -31,22 +31,26 @@
 #'
 #' cal_apply(segment_logistic, w_calibration)
 #' @export
-cal_apply <- function(.data,
-                      object,
-                      pred_class = NULL,
-                      parameters = NULL,
-                      ...) {
+cal_apply <- function(
+  .data,
+  object,
+  pred_class = NULL,
+  parameters = NULL,
+  ...
+) {
   rlang::check_dots_empty()
   UseMethod("cal_apply")
 }
 
 #' @export
 #' @rdname cal_apply
-cal_apply.data.frame <- function(.data,
-                                 object,
-                                 pred_class = NULL,
-                                 parameters = NULL,
-                                 ...) {
+cal_apply.data.frame <- function(
+  .data,
+  object,
+  pred_class = NULL,
+  parameters = NULL,
+  ...
+) {
   cal_pkg_check(required_pkgs(object))
 
   stop_null_parameters(parameters)
@@ -60,11 +64,13 @@ cal_apply.data.frame <- function(.data,
 
 #' @export
 #' @rdname cal_apply
-cal_apply.tune_results <- function(.data,
-                                   object,
-                                   pred_class = NULL,
-                                   parameters = NULL,
-                                   ...) {
+cal_apply.tune_results <- function(
+  .data,
+  object,
+  pred_class = NULL,
+  parameters = NULL,
+  ...
+) {
   cal_pkg_check(required_pkgs(object))
 
   if (!(".predictions" %in% colnames(.data))) {
@@ -99,11 +105,13 @@ cal_apply.tune_results <- function(.data,
 
 #' @export
 #' @rdname cal_apply
-cal_apply.cal_object <- function(.data,
-                                 object,
-                                 pred_class = NULL,
-                                 parameters = NULL,
-                                 ...) {
+cal_apply.cal_object <- function(
+  .data,
+  object,
+  pred_class = NULL,
+  parameters = NULL,
+  ...
+) {
   if ("data.frame" %in% class(object)) {
     cli::cli_abort(
       c(
@@ -140,10 +148,12 @@ cal_adjust.cal_estimate_isotonic_boot <- function(object, .data, pred_class) {
 }
 
 #' @export
-cal_adjust.cal_estimate_beta <- function(object,
-                                         .data,
-                                         pred_class = NULL,
-                                         ...) {
+cal_adjust.cal_estimate_beta <- function(
+  object,
+  .data,
+  pred_class = NULL,
+  ...
+) {
   apply_beta_impl(
     object = object,
     .data = .data
@@ -182,11 +192,13 @@ cal_adjust.cal_estimate_none <- function(object, .data, pred_class) {
   .data
 }
 
-cal_adjust_update <- function(.data,
-                              object,
-                              pred_class = NULL,
-                              parameters = NULL,
-                              ...) {
+cal_adjust_update <- function(
+  .data,
+  object,
+  pred_class = NULL,
+  parameters = NULL,
+  ...
+) {
   if (object$type != "regression") {
     pred_class <- enquo(pred_class)
   } else {

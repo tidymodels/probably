@@ -12,7 +12,11 @@ test_that("Multinomial estimates work - data.frame", {
     c("nnet", "probably")
   )
 
-  sp_smth_multi <- cal_estimate_multinomial(species_probs, Species, smooth = TRUE)
+  sp_smth_multi <- cal_estimate_multinomial(
+    species_probs,
+    Species,
+    smooth = TRUE
+  )
   expect_cal_type(sp_smth_multi, "multiclass")
   expect_cal_method(sp_smth_multi, "Generalized additive model calibration")
   expect_cal_rows(sp_smth_multi, n = 110)
@@ -46,7 +50,10 @@ test_that("Multinomial estimates work - tune_results", {
   skip_if_not_installed("modeldata")
   skip_if_not_installed("nnet")
 
-  tl_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = FALSE)
+  tl_multi <- cal_estimate_multinomial(
+    testthat_cal_multiclass(),
+    smooth = FALSE
+  )
   expect_cal_type(tl_multi, "multiclass")
   expect_cal_method(tl_multi, "Multinomial regression calibration")
   expect_snapshot(print(tl_multi))
@@ -60,7 +67,10 @@ test_that("Multinomial estimates work - tune_results", {
       nrow()
   )
 
-  tl_smth_multi <- cal_estimate_multinomial(testthat_cal_multiclass(), smooth = TRUE)
+  tl_smth_multi <- cal_estimate_multinomial(
+    testthat_cal_multiclass(),
+    smooth = TRUE
+  )
   expect_cal_type(tl_smth_multi, "multiclass")
   expect_cal_method(tl_smth_multi, "Generalized additive model calibration")
   expect_snapshot(print(tl_smth_multi))
@@ -98,9 +108,17 @@ test_that("Multinomial spline switches to linear if too few unique", {
     dplyr::slice_head(n = 2, by = Species)
 
   expect_snapshot(
-    sl_gam <- cal_estimate_multinomial(smol_species_probs, Species, smooth = TRUE)
+    sl_gam <- cal_estimate_multinomial(
+      smol_species_probs,
+      Species,
+      smooth = TRUE
+    )
   )
-  sl_glm <- cal_estimate_multinomial(smol_species_probs, Species, smooth = FALSE)
+  sl_glm <- cal_estimate_multinomial(
+    smol_species_probs,
+    Species,
+    smooth = FALSE
+  )
 
   expect_identical(
     sl_gam$estimates,
@@ -113,9 +131,19 @@ test_that("Multinomial spline switches to linear if too few unique", {
     dplyr::mutate(id = rep(1:2, 6))
 
   expect_snapshot(
-    sl_gam <- cal_estimate_multinomial(smol_by_species_probs, Species, .by = id, smooth = TRUE)
+    sl_gam <- cal_estimate_multinomial(
+      smol_by_species_probs,
+      Species,
+      .by = id,
+      smooth = TRUE
+    )
   )
-  sl_glm <- cal_estimate_multinomial(smol_by_species_probs, Species, .by = id, smooth = FALSE)
+  sl_glm <- cal_estimate_multinomial(
+    smol_by_species_probs,
+    Species,
+    .by = id,
+    smooth = FALSE
+  )
 
   expect_identical(
     sl_gam$estimates,

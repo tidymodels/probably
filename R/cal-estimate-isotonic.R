@@ -175,7 +175,6 @@ cal_estimate_isotonic_boot.data.frame <- function(
     source_class = cal_class_name(.data),
     additional_classes = "cal_estimate_isotonic_boot"
   )
-
 }
 
 #' @export
@@ -188,7 +187,6 @@ cal_estimate_isotonic_boot.tune_results <- function(
   parameters = NULL,
   ...
 ) {
-
   info <- get_tune_data(.data, parameters)
 
   model <- isoreg_fit_over_groups(info, times = times, ...)
@@ -202,7 +200,6 @@ cal_estimate_isotonic_boot.tune_results <- function(
     source_class = cal_class_name(.data),
     additional_classes = "cal_estimate_isotonic_boot"
   )
-
 }
 
 #' @export
@@ -241,13 +238,12 @@ isoreg_fit_over_groups <- function(info, times = 1, ...) {
 }
 
 fit_ensemble_isoreg_models <- function(
-    .data,
-    truth = NULL,
-    estimate = NULL,
-    times = 1,
-    ...
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  times = 1,
+  ...
 ) {
-
   is_sampled <- times > 1
 
   iso_models <- purrr::map(
@@ -269,11 +265,11 @@ fit_ensemble_isoreg_models <- function(
 }
 
 fit_all_isoreg_models <- function(
-    .data,
-    truth = NULL,
-    estimate = NULL,
-    sampled = FALSE,
-    ...
+  .data,
+  truth = NULL,
+  estimate = NULL,
+  sampled = FALSE,
+  ...
 ) {
   lvls <- levels(.data[[truth]])
   num_lvls <- length(lvls)
@@ -310,7 +306,6 @@ fit_isoreg_model <- function(
   sampled = FALSE,
   ...
 ) {
-
   estimate <- estimate[1]
   sorted_data <- dplyr::arrange(.data, !!rlang::syms(estimate))
 
@@ -322,8 +317,8 @@ fit_isoreg_model <- function(
     )
   }
 
-  x <- sorted_data[[ estimate ]]
-  y <- sorted_data[[ truth ]]
+  x <- sorted_data[[estimate]]
+  y <- sorted_data[[truth]]
 
   if (is.factor(y)) {
     lvls <- levels(y)

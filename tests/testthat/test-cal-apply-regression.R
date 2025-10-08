@@ -1,5 +1,9 @@
 test_that("Linear apply works - data.frame", {
-  sl_linear <- cal_estimate_linear(boosting_predictions_oob, outcome, smooth = FALSE)
+  sl_linear <- cal_estimate_linear(
+    boosting_predictions_oob,
+    outcome,
+    smooth = FALSE
+  )
   ap_linear <- cal_apply(boosting_predictions_oob, sl_linear)
 
   pred <- ap_linear$.pred

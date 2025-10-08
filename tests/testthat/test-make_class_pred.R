@@ -20,7 +20,13 @@ test_that("two class succeeds with vector interface", {
 })
 
 test_that("multi class succeeds with vector interface", {
-  res <- make_class_pred(bobcat, coyote, gray_fox, levels = lvls2, min_prob = 0.5)
+  res <- make_class_pred(
+    bobcat,
+    coyote,
+    gray_fox,
+    levels = lvls2,
+    min_prob = 0.5
+  )
 
   fct <- factor(c("gray_fox", "gray_fox", "bobcat", "gray_fox", "coyote"))
   known <- class_pred(fct, which = 5)
@@ -38,17 +44,34 @@ test_that("multi class succeeds with data frame helper", {
     name = "cp_test"
   )
 
-  known <- make_class_pred(bobcat, coyote, gray_fox, levels = lvls2, min_prob = 0.5)
+  known <- make_class_pred(
+    bobcat,
+    coyote,
+    gray_fox,
+    levels = lvls2,
+    min_prob = 0.5
+  )
 
   expect_s3_class(res, "data.frame")
   expect_equal(res[["cp_test"]], known)
 })
 
 
-
 test_that("ordered passes through to class_pred", {
-  res <- make_class_pred(bobcat, coyote, gray_fox, levels = lvls2, ordered = TRUE)
-  res2 <- make_class_pred(bobcat, coyote, gray_fox, levels = lvls2, ordered = TRUE)
+  res <- make_class_pred(
+    bobcat,
+    coyote,
+    gray_fox,
+    levels = lvls2,
+    ordered = TRUE
+  )
+  res2 <- make_class_pred(
+    bobcat,
+    coyote,
+    gray_fox,
+    levels = lvls2,
+    ordered = TRUE
+  )
 
   expect_true(is_ordered_class_pred(res))
   expect_true(is_ordered_class_pred(res2))
