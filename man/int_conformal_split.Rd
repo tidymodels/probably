@@ -45,7 +45,7 @@ quantile (e.g., the 95th for 95\% interval) and should not include rows that
 were in the original training set.
 }
 \examples{
-\dontshow{if (!probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip", "nnet"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (!probably:::is_cran_check() & rlang::is_installed(c("modeldata", "parsnip", "nnet"))) withAutoprint(\{ # examplesIf}
 library(workflows)
 library(dplyr)
 library(parsnip)

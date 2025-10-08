@@ -60,7 +60,7 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Collate: 
     'bound_prediction.R'
     'cal-apply-binary.R'
@@ -72,7 +72,7 @@ Collate:
     'cal-estimate-isotonic.R'
     'cal-estimate-linear.R'
     'cal-estimate-logistic.R'
-    'cal-estimate-multinom.R'
+    'cal-estimate-multinomial.R'
     'cal-estimate-utils.R'
     'cal-estimate-none.R'
     'cal-pkg-check.R'
