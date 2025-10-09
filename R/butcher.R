@@ -11,6 +11,7 @@
 #'   from butchering?
 #' @param ... Extra arguments possibly used by underlying methods.
 #'
+#' @keywords internal
 #' @name inf_conformal-butcher
 
 # int_conformal_full

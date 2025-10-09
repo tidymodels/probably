@@ -24,45 +24,45 @@
 \alias{axe_fitted.int_conformal_cv}
 \title{Butcher methods for conformal inteference intervals}
 \usage{
-axe_call.int_conformal_full(x, verbose = FALSE, ...)
+\method{axe_call}{int_conformal_full}(x, verbose = FALSE, ...)
 
-axe_ctrl.int_conformal_full(x, verbose = FALSE, ...)
+\method{axe_ctrl}{int_conformal_full}(x, verbose = FALSE, ...)
 
-axe_data.int_conformal_full(x, verbose = FALSE, ...)
+\method{axe_data}{int_conformal_full}(x, verbose = FALSE, ...)
 
-axe_env.int_conformal_full(x, verbose = FALSE, ...)
+\method{axe_env}{int_conformal_full}(x, verbose = FALSE, ...)
 
-axe_fitted.int_conformal_full(x, verbose = FALSE, ...)
+\method{axe_fitted}{int_conformal_full}(x, verbose = FALSE, ...)
 
-axe_call.int_conformal_split(x, verbose = FALSE, ...)
+\method{axe_call}{int_conformal_split}(x, verbose = FALSE, ...)
 
-axe_ctrl.int_conformal_split(x, verbose = FALSE, ...)
+\method{axe_ctrl}{int_conformal_split}(x, verbose = FALSE, ...)
 
-axe_data.int_conformal_split(x, verbose = FALSE, ...)
+\method{axe_data}{int_conformal_split}(x, verbose = FALSE, ...)
 
-axe_env.int_conformal_split(x, verbose = FALSE, ...)
+\method{axe_env}{int_conformal_split}(x, verbose = FALSE, ...)
 
-axe_fitted.int_conformal_split(x, verbose = FALSE, ...)
+\method{axe_fitted}{int_conformal_split}(x, verbose = FALSE, ...)
 
-axe_call.int_conformal_quantile(x, verbose = FALSE, ...)
+\method{axe_call}{int_conformal_quantile}(x, verbose = FALSE, ...)
 
-axe_ctrl.int_conformal_quantile(x, verbose = FALSE, ...)
+\method{axe_ctrl}{int_conformal_quantile}(x, verbose = FALSE, ...)
 
-axe_data.int_conformal_quantile(x, verbose = FALSE, ...)
+\method{axe_data}{int_conformal_quantile}(x, verbose = FALSE, ...)
 
-axe_env.int_conformal_quantile(x, verbose = FALSE, ...)
+\method{axe_env}{int_conformal_quantile}(x, verbose = FALSE, ...)
 
-axe_fitted.int_conformal_quantile(x, verbose = FALSE, ...)
+\method{axe_fitted}{int_conformal_quantile}(x, verbose = FALSE, ...)
 
-axe_call.int_conformal_cv(x, verbose = FALSE, ...)
+\method{axe_call}{int_conformal_cv}(x, verbose = FALSE, ...)
 
-axe_ctrl.int_conformal_cv(x, verbose = FALSE, ...)
+\method{axe_ctrl}{int_conformal_cv}(x, verbose = FALSE, ...)
 
-axe_data.int_conformal_cv(x, verbose = FALSE, ...)
+\method{axe_data}{int_conformal_cv}(x, verbose = FALSE, ...)
 
-axe_env.int_conformal_cv(x, verbose = FALSE, ...)
+\method{axe_env}{int_conformal_cv}(x, verbose = FALSE, ...)
 
-axe_fitted.int_conformal_cv(x, verbose = FALSE, ...)
+\method{axe_fitted}{int_conformal_cv}(x, verbose = FALSE, ...)
 }
 \arguments{
 \item{x}{A conformal inference interval object.}
@@ -79,3 +79,4 @@ conformal inference interval object, the only guarantee is that you will
 still be able to \code{predict()} from that conformal inference interval object.
 Other functions may not work as expected.
 }
+\keyword{internal}
