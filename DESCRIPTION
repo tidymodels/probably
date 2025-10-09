@@ -63,6 +63,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 Collate: 
     'bound_prediction.R'
+    'butcher.R'
     'cal-apply-binary.R'
     'cal-apply-impl.R'
     'cal-apply-multi.R'
