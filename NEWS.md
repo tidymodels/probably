@@ -1,3 +1,5 @@
+# probably (development version)
+
 # probably 1.2.0
 
 * Add `required_pkgs()` methods to `int_conformal_cv()`, `int_conformal_full()`, `int_conformal_quantile()`,  and `int_conformal_split()`. (#190)
