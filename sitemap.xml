@@ -38,6 +38,7 @@
 <url><loc>https://probably.tidymodels.org/reference/collect_predictions.cal_rset.html</loc></url>
 <url><loc>https://probably.tidymodels.org/reference/control_conformal_full.html</loc></url>
 <url><loc>https://probably.tidymodels.org/reference/index.html</loc></url>
+<url><loc>https://probably.tidymodels.org/reference/inf_conformal-butcher.html</loc></url>
 <url><loc>https://probably.tidymodels.org/reference/int_conformal_cv.html</loc></url>
 <url><loc>https://probably.tidymodels.org/reference/int_conformal_full.html</loc></url>
 <url><loc>https://probably.tidymodels.org/reference/int_conformal_quantile.html</loc></url>
@@ -51,6 +52,7 @@
 <url><loc>https://probably.tidymodels.org/reference/reexports.html</loc></url>
 <url><loc>https://probably.tidymodels.org/reference/reportable_rate.html</loc></url>
 <url><loc>https://probably.tidymodels.org/reference/required_pkgs.cal_object.html</loc></url>
+<url><loc>https://probably.tidymodels.org/reference/required_pkgs.int_conformal_cv.html</loc></url>
 <url><loc>https://probably.tidymodels.org/reference/segment_naive_bayes.html</loc></url>
 <url><loc>https://probably.tidymodels.org/reference/species_probs.html</loc></url>
 <url><loc>https://probably.tidymodels.org/reference/threshold_perf.html</loc></url>
