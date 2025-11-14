@@ -14,7 +14,7 @@
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Where does probably fit in?">
 <meta name="robots" content="noindex">
-<script defer data-domain="probably.tidymodels.org,all.tidymodels.org" src="https://plausible.io/js/plausible.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/posit-dev/supported-by-posit/js/badge.min.js" data-max-height="43" data-light-bg="#666f76" data-light-fg="#f9f9f9"></script><script defer data-domain="probably.tidymodels.org,all.tidymodels.org" src="https://plausible.io/js/plausible.js"></script>
 </head>
 <body>
     <a href="#container" class="visually-hidden-focusable">Skip to content</a>
@@ -64,7 +64,7 @@
                         <h4 data-toc-skip class="author">Davis
 Vaughan</h4>
             
-            <h4 data-toc-skip class="date">2025-10-16</h4>
+            <h4 data-toc-skip class="date">2025-11-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/tidymodels/probably/blob/main/vignettes/where-to-use.Rmd" class="external-link"><code>vignettes/where-to-use.Rmd</code></a></small>
       <div class="d-none name"><code>where-to-use.Rmd</code></div>
@@ -459,7 +459,7 @@ performance to find our optimal threshold for maximizing
 <span>    title <span class="op">=</span> <span class="st">"Balancing performance by varying the threshold"</span>,</span>
 <span>    subtitle <span class="op">=</span> <span class="st">"Sensitivity or specificity alone might not be enough!\nVertical line = Max J-Index"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="where-to-use_files/figure-html/unnamed-chunk-12-1.png" alt="Line chart. `good` threshold along the x-axis, metric estimate along the y-axis. 3 lines are shown for the following three metrics; j_index, sens, and spec. A vertical line is spaced at x = 0.945. The range on the x-axis is 0.5 to 1, and 0 to 1 on the y-axis. Reading from the left, sens starts at y = 1, starts decreasing around x = 0.8, ending at 0 for x = 1. spec follows the same path but starting at 0 and ending at 1. j_index starts at 0, increases at around 0.8, to a high around 0.945. Sens and spec cross each other at x = 0.945." width="672" style="display: block; margin: auto;"></p>
+<p><img src="where-to-use_files/figure-html/unnamed-chunk-12-1.png" class="r-plt" alt="Line chart. `good` threshold along the x-axis, metric estimate along the y-axis. 3 lines are shown for the following three metrics; j_index, sens, and spec. A vertical line is spaced at x = 0.945. The range on the x-axis is 0.5 to 1, and 0 to 1 on the y-axis. Reading from the left, sens starts at y = 1, starts decreasing around x = 0.8, ending at 0 for x = 1. spec follows the same path but starting at 0 and ending at 1. j_index starts at 0, increases at around 0.8, to a high around 0.945. Sens and spec cross each other at x = 0.945." width="672" style="display: block; margin: auto;"></p>
 <p>It’s clear from this visual that the optimal threshold is very high,
 exactly 0.945. This is pretty high, so again, this optimization method
 won’t be useful for all cases. To wrap up, here are all of the test set
@@ -487,7 +487,7 @@ metrics for that threshold value.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
   </div></footer>
