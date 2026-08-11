@@ -161,7 +161,7 @@ cal_plot_logistic_impl <- function(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
-    group = !!group,
+    .by = !!group,
     conf_level = conf_level,
     event_level = event_level,
     smooth = smooth

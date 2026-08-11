@@ -167,6 +167,13 @@ test_that("don't facet if there is only one .config", {
   expect_s3_class(res_breaks, "ggplot")
 })
 
+test_that("tune_results plot can be built - facet variable is in the data (#202)", {
+  res_breaks <- cal_plot_breaks(testthat_cal_binary())
+
+  expect_true(".config" %in% names(res_breaks$data))
+  expect_no_error(ggplot2::ggplot_build(res_breaks))
+})
+
 test_that("custom names for cal_plot_breaks()", {
   data(segment_logistic)
   segment_logistic_1 <- dplyr::rename(segment_logistic, good_prob = .pred_good)

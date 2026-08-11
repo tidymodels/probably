@@ -219,7 +219,7 @@ cal_plot_breaks_impl <- function(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
-    group = !!group,
+    .by = !!group,
     num_breaks = num_breaks,
     conf_level = conf_level,
     event_level = event_level

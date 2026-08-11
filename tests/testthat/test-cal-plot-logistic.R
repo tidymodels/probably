@@ -182,6 +182,13 @@ test_that("don't facet if there is only one .config", {
   expect_s3_class(res_logistic, "ggplot")
 })
 
+test_that("tune_results plot can be built - facet variable is in the data (#202)", {
+  res_logistic <- cal_plot_logistic(testthat_cal_binary())
+
+  expect_true(".config" %in% names(res_logistic$data))
+  expect_no_error(ggplot2::ggplot_build(res_logistic))
+})
+
 
 test_that("Groups are respected", {
   preds <- segment_logistic |>

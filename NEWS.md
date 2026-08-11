@@ -1,5 +1,7 @@
 # probably (development version)
 
+* Fixed `cal_plot_breaks()`, `cal_plot_logistic()`, and `cal_plot_windowed()` so that plots of tuning results with more than one model configuration can be rendered. The grouping column was dropped before the plot was faceted (#202).
+
 # probably 1.2.0
 
 * Add `required_pkgs()` methods to `int_conformal_cv()`, `int_conformal_full()`, `int_conformal_quantile()`,  and `int_conformal_split()`. (#190)
