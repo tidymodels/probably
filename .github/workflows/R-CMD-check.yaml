@@ -57,6 +57,13 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      ## Due to the RSPM setting opemp improperly circa 2026-06-30
+      - name: Install gower from source (macOS only)
+        if: runner.os == 'macOS'
+        run: |
+          install.packages("gower", type = "source")
+        shell: Rscript {0}
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
