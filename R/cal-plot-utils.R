@@ -318,6 +318,7 @@ cal_plot_impl <- function(
     grouping_var <- tbl[, gp_vars][[1]]
     if (is.numeric(grouping_var)) {
       tbl[, gp_vars] <- as.factor(format(grouping_var))
+      .data[, gp_vars] <- as.factor(format(.data[, gp_vars][[1]]))
     }
   } else {
     has_groups <- FALSE
@@ -344,7 +345,7 @@ cal_plot_impl <- function(
       )
   }
 
-  if (include_rug & !has_groups & !length(tbl_groups) & !is_tune_results) {
+  if (include_rug & !length(tbl_groups) & !is_tune_results) {
     levels <- truth_estimate_map(
       .data = .data,
       truth = !!truth,
@@ -363,8 +364,17 @@ cal_plot_impl <- function(
     side_values <- c("t", "b")
     for (i in seq_along(truth_values)) {
       level_tbl <- dplyr::filter(.data, as.integer(!!truth) == truth_values[i])
-      res <- res +
-        geom_rug(
+      if (has_groups) {
+        rug_layer <- geom_rug(
+          data = level_tbl,
+          aes(x = !!level1, color = !!dplyr_group),
+          sides = side_values[i],
+          length = unit(0.015, "npc"),
+          alpha = 0.7,
+          show.legend = FALSE
+        )
+      } else {
+        rug_layer <- geom_rug(
           data = level_tbl,
           aes(x = !!level1),
           color = "#999999",
@@ -373,6 +383,8 @@ cal_plot_impl <- function(
           alpha = 0.7,
           show.legend = FALSE
         )
+      }
+      res <- res + rug_layer
     }
   }
 

@@ -70,12 +70,44 @@ test_that("Binary breaks functions work with group argument", {
 
   expect_snapshot(get_labs(res))
 
-  expect_equal(length(res$layers), 4)
+  expect_equal(length(res$layers), 6)
 
   expect_snapshot_error(
     segment_logistic |>
       dplyr::mutate(group1 = 1, group2 = 2) |>
       cal_plot_breaks(Class, .pred_good, .by = c(group1, group2))
+  )
+})
+
+test_that("rug layers are included when using the group argument (#188)", {
+  grouped <- segment_logistic |>
+    dplyr::mutate(id = dplyr::row_number() %% 2)
+
+  rug_layers <- function(x) {
+    Filter(\(y) inherits(y$geom, "GeomRug"), x$layers)
+  }
+
+  res <- cal_plot_breaks(grouped, Class, .pred_good, .by = id)
+  rugs <- rug_layers(res)
+
+  expect_equal(length(rugs), 2)
+  expect_equal(
+    unname(purrr::map_chr(rugs, \(x) x$geom_params$sides)),
+    c("t", "b")
+  )
+  # the rug is colored by the grouping variable, which has to be a factor to
+  # match the color scale used by the other layers
+  expect_equal(
+    unname(purrr::map_chr(rugs, \(x) rlang::expr_text(x$mapping$colour))),
+    rep("~id", 2)
+  )
+  expect_true(all(purrr::map_lgl(rugs, \(x) is.factor(x$data$id))))
+
+  expect_equal(
+    length(rug_layers(
+      cal_plot_breaks(grouped, Class, .pred_good, .by = id, include_rug = FALSE)
+    )),
+    0
   )
 })
 
