@@ -32,6 +32,7 @@ of the equivocal values.
 ## Examples
 
 ``` r
+
 x <- class_pred(factor(1:10), which = c(2, 5))
 
 is_equivocal(x)

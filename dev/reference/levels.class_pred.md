@@ -19,6 +19,7 @@ levels(x)
 ## Examples
 
 ``` r
+
 x <- class_pred(factor(1:5), which = 1)
 
 # notice that even though `1` is not in the `class_pred` vector, the

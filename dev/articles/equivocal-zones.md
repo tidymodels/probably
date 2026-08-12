@@ -1,6 +1,7 @@
 # Equivocal zones
 
 ``` r
+
 library(probably)
 ```
 
@@ -30,6 +31,7 @@ hard class predictions that is very similar to a factor, but allows you
 to mark certain values as equivocal.
 
 ``` r
+
 x <- factor(c("Yes", "No", "Yes", "Yes"))
 
 # Create a class_pred object from a factor
@@ -61,6 +63,7 @@ and
 [`make_two_class_pred()`](https://probably.tidymodels.org/dev/reference/make_class_pred.md).
 
 ``` r
+
 library(dplyr)
 data("segment_logistic")
 segment_logistic
@@ -113,6 +116,7 @@ of `threshold +/- buffer` and any values inside the zone are
 automatically marked as equivocal.
 
 ``` r
+
 # Convert probabilities into predictions
 #        x > 0.55 = good
 #        x < 0.45 = poor
@@ -149,6 +153,7 @@ object is converted to a factor. It’s also worth noting that the `[EQ]`
 label is not treated as a separate level.
 
 ``` r
+
 segment_pred |>
   mutate(.pred_fct = as.factor(.pred)) |>
   count(.pred, .pred_fct)
@@ -169,6 +174,7 @@ evaluation. So converting them to `NA` and then leaving the default
 `na_rm = TRUE` in any yardstick metric removes them from consideration.
 
 ``` r
+
 library(yardstick)
 
 # No equivocal zone

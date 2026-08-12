@@ -27,6 +27,7 @@ as_class_pred(x, which = integer(), equivocal = "[EQ]")
 ## Examples
 
 ``` r
+
 x <- factor(c("Yes", "No", "Yes", "Yes"))
 as_class_pred(x)
 #> [1] Yes No  Yes Yes

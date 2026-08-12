@@ -65,6 +65,7 @@ append_class_pred(
 ## Examples
 
 ``` r
+
 # The following two examples are equivalent and demonstrate
 # the helper, append_class_pred()
 

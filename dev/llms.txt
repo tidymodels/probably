@@ -19,12 +19,14 @@ probably contains tools to facilitate activities such as:
 You can install probably from CRAN with:
 
 ``` r
+
 install.packages("probably")
 ```
 
 You can install the development version of probably from GitHub with:
 
 ``` r
+
 # install.packages("pak")
 pak::pak("tidymodels/probably")
 ```

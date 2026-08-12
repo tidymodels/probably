@@ -67,6 +67,7 @@ A vector of class
 ## Examples
 
 ``` r
+
 library(dplyr)
 
 good <- segment_logistic$.pred_good

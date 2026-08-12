@@ -83,6 +83,7 @@ when tuning over different calibration methods.
 ## Examples
 
 ``` r
+
 nada <- cal_estimate_none(boosting_predictions_oob, outcome, .pred)
 nada
 #> 

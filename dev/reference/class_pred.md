@@ -33,6 +33,7 @@ exclude from performance calculations or other metrics.
 ## Examples
 
 ``` r
+
 x <- factor(c("Yes", "No", "Yes", "Yes"))
 
 # Create a class_pred object from a factor

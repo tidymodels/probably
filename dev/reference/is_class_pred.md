@@ -17,6 +17,7 @@ is_class_pred(x)
 ## Examples
 
 ``` r
+
 x <- class_pred(factor(1:5))
 
 is_class_pred(x)

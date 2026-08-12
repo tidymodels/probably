@@ -162,46 +162,50 @@ resampled_threshold_perf
 #> # A tibble: 100 × 5
 #>    resample .threshold .metric     .estimator .estimate
 #>    <chr>         <dbl> <chr>       <chr>          <dbl>
-#>  1 1               0.5 sensitivity binary         0.711
-#>  2 1               0.6 sensitivity binary         0.632
-#>  3 1               0.7 sensitivity binary         0.579
-#>  4 1               0.8 sensitivity binary         0.421
-#>  5 1               0.9 sensitivity binary         0.316
-#>  6 2               0.5 sensitivity binary         0.781
-#>  7 2               0.6 sensitivity binary         0.625
-#>  8 2               0.7 sensitivity binary         0.594
-#>  9 2               0.8 sensitivity binary         0.469
-#> 10 2               0.9 sensitivity binary         0.188
+#>  1 1               0.5 sensitivity binary         0.676
+#>  2 1               0.6 sensitivity binary         0.595
+#>  3 1               0.7 sensitivity binary         0.568
+#>  4 1               0.8 sensitivity binary         0.405
+#>  5 1               0.9 sensitivity binary         0.297
+#>  6 2               0.5 sensitivity binary         0.794
+#>  7 2               0.6 sensitivity binary         0.676
+#>  8 2               0.7 sensitivity binary         0.618
+#>  9 2               0.8 sensitivity binary         0.5  
+#> 10 2               0.9 sensitivity binary         0.235
 #> # ℹ 90 more rows
 
 # Average over the resamples
 resampled_threshold_perf |>
   group_by(.metric, .threshold) |>
   summarise(.estimate = mean(.estimate))
-#> `summarise()` has grouped output by '.metric'. You can override using
-#> the `.groups` argument.
+#> `summarise()` has regrouped the output.
+#> ℹ Summaries were computed grouped by .metric and .threshold.
+#> ℹ Output is grouped by .metric.
+#> ℹ Use `summarise(.groups = "drop_last")` to silence this message.
+#> ℹ Use `summarise(.by = c(.metric, .threshold))` for per-operation
+#>   grouping (`?dplyr::dplyr_by`) instead.
 #> # A tibble: 20 × 3
 #> # Groups:   .metric [4]
 #>    .metric     .threshold .estimate
 #>    <chr>            <dbl>     <dbl>
-#>  1 distance           0.5     0.140
-#>  2 distance           0.6     0.171
-#>  3 distance           0.7     0.212
-#>  4 distance           0.8     0.335
-#>  5 distance           0.9     0.590
-#>  6 j_index            0.5     0.494
-#>  7 j_index            0.6     0.473
-#>  8 j_index            0.7     0.466
-#>  9 j_index            0.8     0.374
-#> 10 j_index            0.9     0.213
-#> 11 sensitivity        0.5     0.698
-#> 12 sensitivity        0.6     0.621
-#> 13 sensitivity        0.7     0.553
-#> 14 sensitivity        0.8     0.428
-#> 15 sensitivity        0.9     0.235
-#> 16 specificity        0.5     0.796
-#> 17 specificity        0.6     0.852
-#> 18 specificity        0.7     0.913
-#> 19 specificity        0.8     0.946
+#>  1 distance           0.5     0.138
+#>  2 distance           0.6     0.172
+#>  3 distance           0.7     0.211
+#>  4 distance           0.8     0.338
+#>  5 distance           0.9     0.582
+#>  6 j_index            0.5     0.500
+#>  7 j_index            0.6     0.480
+#>  8 j_index            0.7     0.475
+#>  9 j_index            0.8     0.377
+#> 10 j_index            0.9     0.218
+#> 11 sensitivity        0.5     0.697
+#> 12 sensitivity        0.6     0.620
+#> 13 sensitivity        0.7     0.555
+#> 14 sensitivity        0.8     0.427
+#> 15 sensitivity        0.9     0.240
+#> 16 specificity        0.5     0.803
+#> 17 specificity        0.6     0.860
+#> 18 specificity        0.7     0.920
+#> 19 specificity        0.8     0.950
 #> 20 specificity        0.9     0.978
 ```

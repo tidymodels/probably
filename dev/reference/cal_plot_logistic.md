@@ -143,6 +143,7 @@ A ggplot object.
 ## Examples
 
 ``` r
+
 library(ggplot2)
 library(dplyr)
 

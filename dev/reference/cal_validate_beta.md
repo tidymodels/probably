@@ -128,6 +128,7 @@ before, and after the calibration.
 ## Examples
 
 ``` r
+
 library(dplyr)
 
 if (rlang::is_installed("betacal")) {

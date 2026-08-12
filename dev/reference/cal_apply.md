@@ -61,6 +61,7 @@ cal_apply(.data, object, pred_class = NULL, parameters = NULL, ...)
 ## Examples
 
 ``` r
+
 # ------------------------------------------------------------------------------
 # classification example
 

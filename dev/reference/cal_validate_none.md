@@ -130,6 +130,7 @@ before, and after the calibration.
 ## Examples
 
 ``` r
+
 library(dplyr)
 
 species_probs |>
@@ -139,6 +140,6 @@ species_probs |>
 #> # A tibble: 2 × 7
 #>   .metric     .type        .estimator  mean     n std_err .config
 #>   <chr>       <chr>        <chr>      <dbl> <int>   <dbl> <chr>  
-#> 1 brier_class uncalibrated multiclass 0.165    10  0.0273 config 
-#> 2 brier_class calibrated   multiclass 0.165    10  0.0273 config 
+#> 1 brier_class uncalibrated multiclass 0.165    10  0.0137 config 
+#> 2 brier_class calibrated   multiclass 0.165    10  0.0137 config 
 ```

@@ -22,6 +22,7 @@ The reportable rate is calculated as `(n_not_equivocal / n)`.
 ## Examples
 
 ``` r
+
 x <- class_pred(factor(1:5), which = c(1, 2))
 
 # 3 / 5

@@ -19,6 +19,7 @@ probably to investigate what happens to performance when you vary the
 threshold of what a “good” loan is.
 
 ``` r
+
 library(parsnip)
 library(probably)
 library(dplyr)
@@ -56,6 +57,7 @@ Let’s split this into 75% training and 25% testing for something to
 predict on.
 
 ``` r
+
 # 75% train, 25% test
 set.seed(123)
 
@@ -69,6 +71,7 @@ Before we do anything, let’s look at the counts of what we are going to
 be predicting, the `Class` of the loan.
 
 ``` r
+
 count(lending_train, Class)
 #> # A tibble: 2 × 2
 #>   Class     n
@@ -94,6 +97,7 @@ to be `glm` and then actually fit the model using our data and the model
 formula.
 
 ``` r
+
 logi_reg <- logistic_reg()
 logi_reg_glm <- logi_reg |> set_engine("glm")
 
@@ -211,6 +215,7 @@ Now let’s predict on our testing set, and use `type = "prob"` to get
 these with probably to investigate performance.
 
 ``` r
+
 predictions <- logi_reg_fit |>
   predict(new_data = lending_test, type = "prob")
 
@@ -248,6 +253,7 @@ above `0.5`, then classify this prediction as a “good” loan, otherwise,
 bad.
 
 ``` r
+
 hard_pred_0.5 <- lending_test_pred |>
   mutate(
     .pred = make_two_class_pred(
@@ -274,6 +280,7 @@ classified as a “good” loan, and might require a probability of `0.75`
 as the threshold.
 
 ``` r
+
 hard_pred_0.75 <- lending_test_pred |>
   mutate(
     .pred = make_two_class_pred(
@@ -306,6 +313,7 @@ tradeoff here, which can be somewhat captured by the metrics
   loans
 
 ``` r
+
 library(yardstick)
 
 sens(hard_pred_0.5, Class, .pred)
@@ -337,7 +345,9 @@ reclassifying some of the good loans as bad). It would be nice to have
 some combination of these metrics to represent this tradeoff. Luckily,
 `j_index` is exactly that.
 
-$$j\_ index = sens + spec - 1$$
+``` math
+ j\_index = sens + spec - 1 
+```
 
 `j_index` has a maximum value of 1 when there are no false positives and
 no false negatives. It can be used as justification of whether or not an
@@ -346,6 +356,7 @@ results in more of an increase in the specificity than a decrease in the
 sensitivity, we can see that with `j_index`.
 
 ``` r
+
 j_index(hard_pred_0.5, Class, .pred)
 #> # A tibble: 1 × 3
 #>   .metric .estimator .estimate
@@ -368,6 +379,7 @@ will recalculate a number of metrics across varying thresholds. One of
 these is `j_index`.
 
 ``` r
+
 threshold_data <- lending_test_pred |>
   threshold_perf(Class, .pred_good, thresholds = seq(0.5, 1, by = 0.0025))
 
@@ -394,6 +406,7 @@ With `ggplot2`, we can easily visualize this varying performance to find
 our optimal threshold for maximizing `j_index`.
 
 ``` r
+
 library(ggplot2)
 
 threshold_data <- threshold_data |>
@@ -438,6 +451,7 @@ won’t be useful for all cases. To wrap up, here are all of the test set
 metrics for that threshold value.
 
 ``` r
+
 threshold_data |>
   filter(.threshold == max_j_index_threshold)
 #> # A tibble: 3 × 5

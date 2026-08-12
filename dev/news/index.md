@@ -2,6 +2,15 @@
 
 ## probably (development version)
 
+- Fixed
+  [`cal_plot_breaks()`](https://probably.tidymodels.org/dev/reference/cal_plot_breaks.md),
+  [`cal_plot_logistic()`](https://probably.tidymodels.org/dev/reference/cal_plot_logistic.md),
+  and
+  [`cal_plot_windowed()`](https://probably.tidymodels.org/dev/reference/cal_plot_windowed.md)
+  so that plots of tuning results with more than one model configuration
+  can be rendered. The grouping column was dropped before the plot was
+  faceted ([\#202](https://github.com/tidymodels/probably/issues/202)).
+
 ## probably 1.2.0
 
 CRAN release: 2025-10-16
