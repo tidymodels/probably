@@ -21,11 +21,15 @@
       $slope
       [1] "slope"
       
-      $colour
-      [1] "colour"
-      
       $fill
       [1] "fill"
+      attr(,"fallback")
+      [1] TRUE
+      
+      $colour
+      [1] "colour"
+      attr(,"fallback")
+      [1] TRUE
       
       $alt
       [1] ""
@@ -54,11 +58,15 @@
       $slope
       [1] "slope"
       
-      $colour
-      [1] "colour"
-      
       $fill
       [1] "fill"
+      attr(,"fallback")
+      [1] TRUE
+      
+      $colour
+      [1] "colour"
+      attr(,"fallback")
+      [1] TRUE
       
       $alt
       [1] ""
@@ -87,11 +95,15 @@
       $slope
       [1] "slope"
       
-      $colour
-      [1] "colour"
-      
       $fill
       [1] "fill"
+      attr(,"fallback")
+      [1] TRUE
+      
+      $colour
+      [1] "colour"
+      attr(,"fallback")
+      [1] TRUE
       
       $alt
       [1] ""
@@ -120,11 +132,15 @@
       $slope
       [1] "slope"
       
-      $colour
-      [1] "colour"
-      
       $fill
       [1] "fill"
+      attr(,"fallback")
+      [1] TRUE
+      
+      $colour
+      [1] "colour"
+      attr(,"fallback")
+      [1] TRUE
       
       $alt
       [1] ""
@@ -153,11 +169,15 @@
       $slope
       [1] "slope"
       
-      $colour
-      [1] "colour"
-      
       $fill
       [1] "fill"
+      attr(,"fallback")
+      [1] TRUE
+      
+      $colour
+      [1] "colour"
+      attr(,"fallback")
+      [1] TRUE
       
       $alt
       [1] ""

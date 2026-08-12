@@ -179,7 +179,7 @@ cal_plot_windowed_impl <- function(
     .data = .data,
     truth = !!truth,
     estimate = !!estimate,
-    group = !!group,
+    .by = !!group,
     window_size = window_size,
     step_size = step_size,
     conf_level = conf_level,

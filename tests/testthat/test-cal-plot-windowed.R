@@ -113,6 +113,13 @@ test_that("don't facet if there is only one .config", {
   expect_s3_class(res_windowed, "ggplot")
 })
 
+test_that("tune_results plot can be built - facet variable is in the data (#202)", {
+  res_windowed <- cal_plot_windowed(testthat_cal_binary())
+
+  expect_true(".config" %in% names(res_windowed$data))
+  expect_no_error(ggplot2::ggplot_build(res_windowed))
+})
+
 
 test_that("Groupings that may not match work", {
   model <- glm(Class ~ .pred_good, segment_logistic, family = "binomial")
