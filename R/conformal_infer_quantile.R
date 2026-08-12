@@ -152,7 +152,7 @@ quant_train <- function(train_data, y_name, ...) {
   cl <- rlang::call2(
     "quantregForest",
     .ns = "quantregForest",
-    x = quote(train_data |> select(-dplyr::all_of(y_name))),
+    x = quote(dplyr::select(train_data, -dplyr::all_of(y_name))),
     y = quote(train_data[[y_name]]),
     ...
   )
