@@ -148,7 +148,7 @@ test_that("Binary logistic functions work with group argument", {
 
   expect_snapshot(get_labs(res))
 
-  expect_equal(length(res$layers), 3)
+  expect_equal(length(res$layers), 5)
 
   expect_snapshot_error(
     segment_logistic |>
