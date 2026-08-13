@@ -3,6 +3,13 @@
 ## probably (development version)
 
 - Fixed
+  [`int_conformal_quantile()`](https://probably.tidymodels.org/dev/reference/int_conformal_quantile.md)
+  so that it works when dplyr is not attached. An internal call to
+  [`select()`](https://dplyr.tidyverse.org/reference/select.html) was
+  not namespaced
+  ([\#198](https://github.com/tidymodels/probably/issues/198)).
+
+- Fixed
   [`cal_plot_breaks()`](https://probably.tidymodels.org/dev/reference/cal_plot_breaks.md),
   [`cal_plot_logistic()`](https://probably.tidymodels.org/dev/reference/cal_plot_logistic.md),
   and
