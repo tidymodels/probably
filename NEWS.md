@@ -1,5 +1,7 @@
 # probably (development version)
 
+* Fixed `int_conformal_quantile()` so that it works when dplyr is not attached. An internal call to `select()` was not namespaced (#198).
+
 * Fixed `cal_plot_breaks()`, `cal_plot_logistic()`, and `cal_plot_windowed()` so that plots of tuning results with more than one model configuration can be rendered. The grouping column was dropped before the plot was faceted (#202).
 
 # probably 1.2.0
