@@ -18,6 +18,15 @@
   can be rendered. The grouping column was dropped before the plot was
   faceted ([\#202](https://github.com/tidymodels/probably/issues/202)).
 
+- Fixed
+  [`cal_plot_breaks()`](https://probably.tidymodels.org/dev/reference/cal_plot_breaks.md),
+  [`cal_plot_logistic()`](https://probably.tidymodels.org/dev/reference/cal_plot_logistic.md),
+  and
+  [`cal_plot_windowed()`](https://probably.tidymodels.org/dev/reference/cal_plot_windowed.md)
+  so that the rug layers are included when the `.by` argument is used.
+  The rug is colored by the grouping variable
+  ([\#188](https://github.com/tidymodels/probably/issues/188)).
+
 ## probably 1.2.0
 
 CRAN release: 2025-10-16
